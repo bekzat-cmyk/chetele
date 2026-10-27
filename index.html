@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
+  <script src="assets/deeds.js"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
     :root { --ink:#18222d; --muted:#7d8793; --surface:#fff; --page:#f4f5f8; --line:#e9ebef; --accent:#1cab67; --accent-soft:#e7f8ee; --green:#22a678; --shadow:0 8px 28px rgba(27,39,55,.055); }
@@ -324,7 +325,7 @@
       return value ? Object.fromEntries(NAFIL.map(item=>[item.id,true])) : {};
     }
     function nafilCompleted(){ return NAFIL.filter(item=>nafilValues()[item.id]).length; }
-    function dailyMax(){ return TASKS.length-1+NAFIL.length+1; }
+    function dailyMax(){ return ChetDeeds.DAILY_MAX; }
     function recordDay(date=entryDateKey){
       const count=completed();
       if(!count && !state.history?.[date]) return;
@@ -337,10 +338,7 @@
     function entryCompletedCount(entry){
       if(!entry) return 0;
       if(!entry.tasks) return Number(entry.completed)||0;
-      const tasks=entry.tasks, nafil=tasks.nafil&&typeof tasks.nafil==='object'?tasks.nafil:{};
-      return ['quran','jauchan','kitap','salawat','tasbihat'].filter(id=>Number(tasks[id])>0).length
-        +(tasks.tahajjud==='yes'?1:0)+NAFIL.filter(item=>nafil[item.id]).length
-        +(Object.values(entry.qaza||{}).some(value=>Number(value)>0)?1:0);
+      return ChetDeeds.countDeeds(entry.tasks,entry.qaza);
     }
     function entryHasProgress(entry){
       if(Number(entry?.completed)>0) return true;
@@ -438,7 +436,7 @@
       return false;
     }
     function isDone(task){ const v=state.tasks[task.id]; return task.type==='number' ? Number(v)>0 : task.type==='yesno' ? v==='yes' : task.type==='nafil' ? nafilCompleted()===NAFIL.length : !!v; }
-    function completed(){ return TASKS.reduce((count,task)=>count+(task.type==='nafil' ? nafilCompleted() : Number(isDone(task))),0) + (Object.values(state.qaza).filter(v=>Number(v)>0).length ? 1 : 0); }
+    function completed(){ return ChetDeeds.countDeeds(state.tasks,state.qaza); }
     function render(){
       document.querySelector('#welcome').textContent = `Ассаламу алейкум, ${state.name}`;
       renderProfile(); renderAchievementsTeaser();
