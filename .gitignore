@@ -1,0 +1,11 @@
+# Server secrets: database password, VAPID private key, admin password
+api/config.php
+# Local copies of server files taken before each deploy (contain config.php)
+backup-server-*/
+# Unrelated projects stored in the same folder
+asco-*/
+tv-distance-motion/
+# Local tooling
+.claude/
+.DS_Store
+node_modules/

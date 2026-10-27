@@ -1,0 +1,15 @@
+Options -Indexes
+
+<FilesMatch "^(\.env|package\.json|pnpm-lock\.yaml)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  </FilesMatch>
+</IfModule>
+
+RewriteEngine On
+RewriteRule ^api/?$ api/index.php [QSA,L]
+RewriteRule ^api/(.*)$ api/index.php?path=$1 [QSA,L]

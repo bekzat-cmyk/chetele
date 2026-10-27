@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS events (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(120) NOT NULL,
+  description TEXT NULL,
+  metric VARCHAR(24) NOT NULL DEFAULT 'salawat',
+  goal BIGINT UNSIGNED NOT NULL DEFAULT 0,
+  starts_on DATE NOT NULL,
+  ends_on DATE NOT NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'draft',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_events_status_dates (status, starts_on, ends_on)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS event_participants (
+  event_id BIGINT UNSIGNED NOT NULL,
+  user_id CHAR(36) NOT NULL,
+  joined_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (event_id, user_id),
+  CONSTRAINT fk_event_participant_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+  CONSTRAINT fk_event_participant_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
