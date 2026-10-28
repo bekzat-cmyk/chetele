@@ -371,7 +371,6 @@
       syncTimer=setTimeout(syncCurrentEntry, 700);
     }
     function setSaveStatus(text){ const status=document.querySelector('#save-status'); if(status) status.textContent=text; }
-    let leaderboardStatus='loading';
     async function syncCurrentEntry(){
       if(!state.userId) return false;
       try {
@@ -381,13 +380,13 @@
         });
         if(response.status===404){ delete state.userId; save(); ensureRemoteUser(); return null; }
         if(!response.ok) throw new Error('Sync failed');
-        leaderboardStatus='online'; document.querySelector('.autosave')?.classList.remove('is-saving'); setSaveStatus('Сохранено в кабинете'); fetchLeaderboard(); return true;
-      } catch { leaderboardStatus='offline'; const autosave=document.querySelector('.autosave'); autosave?.classList.remove('is-saving'); autosave?.classList.add('is-offline'); setSaveStatus('Сохранено на телефоне — отправим, когда появится связь'); renderBoard(); return false; }
+        document.querySelector('.autosave')?.classList.remove('is-saving'); setSaveStatus('Сохранено в кабинете'); refreshVisibleLeaderboards(1500); return true;
+      } catch { const autosave=document.querySelector('.autosave'); autosave?.classList.remove('is-saving'); autosave?.classList.add('is-offline'); setSaveStatus('Сохранено на телефоне — отправим, когда появится связь'); renderBoard(); return false; }
     }
     async function ensureRemoteUser(){
       if(!state.name) return false;
       if(state.userId){
-        fetchLeaderboard();
+        refreshVisibleLeaderboards();
         /* On a Home Screen launch, restore the server copy before a local save
            can overwrite today's entry in a separate browser context. */
         fetchPersonalEntries(true).then(restored=>{ if(!restored) queueSync(); });
@@ -398,24 +397,39 @@
         const response=await apiFetch(apiUrl('users'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({displayName:state.name,login:state.login,password:registrationPassword})});
         if(!response.ok){ const data=await response.json().catch(()=>({})); throw new Error(data.error||'Не удалось создать кабинет.'); }
         const user=await response.json();
-        state.userId=user.id; state.login=user.login; state.token=user.token; registrationPassword=''; leaderboardStatus='online'; save(); fetchLeaderboard(); fetchPersonalEntries(); loadPushStatus();
+        state.userId=user.id; state.login=user.login; state.token=user.token; registrationPassword=''; save(); refreshVisibleLeaderboards(); fetchPersonalEntries(); loadPushStatus();
         return true;
-      } catch (error) { leaderboardStatus='offline'; registrationError=error.message||'Не удалось создать кабинет.'; renderBoard(); return false; }
+      } catch (error) { registrationError=error.message||'Не удалось создать кабинет.'; renderBoard(); return false; }
     }
-    async function fetchLeaderboard(){
-      try {
-        /* All-time rows feed the profile; the week is fetched only while that tab is chosen. */
-        const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50`);
-        if(!response.ok) throw new Error('Leaderboard failed');
-        const rows=await response.json();
-        if(Array.isArray(rows)){ state.remoteLeaderboard=rows; leaderboardStatus='online'; renderBoard(); renderProfile(); }
-        if(ratingPeriod()==='week'){
-          const weekResponse=await apiFetch(`${apiUrl('leaderboard')}&limit=50&period=week`);
-          if(!weekResponse.ok) throw new Error('Leaderboard failed');
-          const weekRows=await weekResponse.json();
-          if(Array.isArray(weekRows)){ state.weekLeaderboard=weekRows; renderBoard(); }
-        }
-      } catch { leaderboardStatus='offline'; renderBoard(); }
+    /* Leaderboard: week and all time are loaded separately, each with its own status,
+       and only for what is on screen. Saving a day refreshes the visible rating once,
+       a moment later, instead of fetching both periods after every save. */
+    const boardStatus={week:'idle',all:'idle'}, boardLoading={};
+    function loadLeaderboard(period){
+      if(boardLoading[period]) return boardLoading[period];
+      if(boardStatus[period]!=='online') boardStatus[period]='loading';
+      renderBoard();
+      boardLoading[period]=(async()=>{
+        try {
+          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='week'?'&period=week':''}`);
+          if(!response.ok) throw new Error('leaderboard_failed');
+          const rows=await response.json();
+          if(!Array.isArray(rows)) throw new Error('leaderboard_failed');
+          if(period==='week') state.weekLeaderboard=rows; else state.remoteLeaderboard=rows;
+          boardStatus[period]='online';
+        } catch { boardStatus[period]='offline'; }
+        finally { delete boardLoading[period]; renderBoard(); if(period==='all') renderProfile(); }
+      })();
+      return boardLoading[period];
+    }
+    function visibleBoardPeriods(){
+      const view=document.querySelector('.view.active')?.id;
+      return view==='rating-view'?[ratingPeriod()]:view==='profile-view'?['all']:[];
+    }
+    let boardRefreshTimer=null;
+    function refreshVisibleLeaderboards(delay=0){
+      clearTimeout(boardRefreshTimer);
+      boardRefreshTimer=setTimeout(()=>visibleBoardPeriods().forEach(loadLeaderboard),delay);
     }
     async function fetchPersonalEntries(restoreCurrent=false){
       if(!state.userId) return;
@@ -786,13 +800,13 @@
     }
     function ratingPeriod(){ return state.ratingPeriod==='all'?'all':'week'; }
     function renderBoard(){
-      const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:state.remoteLeaderboard;
+      const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:state.remoteLeaderboard, status=boardStatus[period];
       document.querySelectorAll('[data-rating-period]').forEach(button=>{ const on=button.dataset.ratingPeriod===period; button.classList.toggle('active',on); button.setAttribute('aria-checked',String(on)); });
       const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1})) : [];
       const leaderboard=document.querySelector('#leaderboard'), hint=document.querySelector('#rating-hint');
       const initial=name=>escapeHtml(Array.from(String(name).trim())[0]||'·');
       const crown='<svg class="podium-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
-      if(leaderboardStatus==='offline' && !people.length){
+      if(status==='offline' && !people.length){
         leaderboard.innerHTML='<div class="rating-empty"><b>Рейтинг недоступен</b><span>Ваши очки не потеряются — рейтинг обновится, когда появится интернет.</span></div>';
       } else if(!Array.isArray(source)){
         const slot=height=>`<div class="podium-slot"><span class="podium-avatar sk-light"></span><span class="sk-line sk-light"></span><div class="podium-step sk-light" style="height:${height}px"></div></div>`;
@@ -810,13 +824,13 @@
         const rest=listed.filter(person=>(top.length>=3?person.place>3:true)&&!person.me);
         leaderboard.innerHTML=podium+meCard+(rest.length?`<div class="rank-list">${rest.map(p=>`<div class="rank"><span class="rank-num">${p.place}</span><span class="rank-avatar">${initial(p.name)}</span><span class="rank-name">${escapeHtml(p.name)}</span><span class="rank-points">${p.points}</span></div>`).join('')}</div>`:'');
       }
-      if(leaderboardStatus==='online') hint.textContent=period==='week'?'Очки за последние 7 дней. Каждое дело — 10 очков.':'Очки за всё время. Каждое дело — 10 очков.';
-      else if(leaderboardStatus==='offline') hint.textContent=people.length?'Нет связи с сервером. Рейтинг обновится, когда появится интернет.':'';
+      if(status==='online'||(status==='loading'&&people.length)) hint.textContent=period==='week'?'Очки за последние 7 дней. Каждое дело — 10 очков.':'Очки за всё время. Каждое дело — 10 очков.';
+      else if(status==='offline') hint.textContent=people.length?'Нет связи с сервером. Рейтинг обновится, когда появится интернет.':'';
       else hint.textContent='Загрузка рейтинга…';
     }
     document.addEventListener('click',event=>{
       const button=event.target.closest('[data-rating-period]'); if(!button||button.dataset.ratingPeriod===ratingPeriod()) return;
-      state.ratingPeriod=button.dataset.ratingPeriod; save(); renderBoard(); fetchLeaderboard();
+      state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod());
     });
     /* Events page: status and mode pills, progress, my numbers, leaders and the join button. */
     function eventsEmptyCard(title,text,action){
@@ -930,7 +944,8 @@
       document.querySelector(`.nav [data-view="${viewId}"]`)?.classList.add('active');
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
-      if(viewId==='rating-view') fetchLeaderboard();
+      if(viewId==='rating-view') loadLeaderboard(ratingPeriod());
+      if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
       if(viewId==='zikr-view'){ renderZikr(); if(!state.events) fetchEvents(); }
       if(viewId==='stats-view'){ renderStats(true); fetchPersonalEntries(); }
@@ -1097,7 +1112,7 @@
       try {
         const response=await apiFetch(apiUrl('auth/login'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login,password})});
         if(!response.ok){ const data=await response.json().catch(()=>({})); throw new Error(data.error||'Неверное имя или пароль.'); }
-        const user=await response.json(); state={...blankState(),name:user.displayName,login:user.login,userId:user.id,token:user.token,rememberMe:document.querySelector('#login-remember').checked}; leaderboardStatus='online'; showCabinet(); save(); fetchLeaderboard(); fetchPersonalEntries(true); loadPushStatus();
+        const user=await response.json(); state={...blankState(),name:user.displayName,login:user.login,userId:user.id,token:user.token,rememberMe:document.querySelector('#login-remember').checked}; showCabinet(); save(); refreshVisibleLeaderboards(); fetchPersonalEntries(true); loadPushStatus();
       } catch (error) { showAuthError(form,passwordInput,error.message||'Не удалось войти. Проверьте подключение.'); }
     });
     function openRenameSheet(){ const input=document.querySelector('#rename-input'); input.value=state.name||''; document.querySelector('#rename-error').textContent=''; openSheet('rename-sheet'); }
@@ -1221,13 +1236,13 @@
     else if(state.name && (state.userId || !state.login)){
       showCabinet();
       if(state.userId){
-        fetchLeaderboard();
+        refreshVisibleLeaderboards();
         fetchPersonalEntries(true).then(restored=>{ if(!restored){ resetIfNewDay(); queueSync(); } });
         loadPushStatus();
       } else { resetIfNewDay(); ensureRemoteUser(); loadPushStatus(); }
     } else { resetIfNewDay(); setReminderUi(); setTimeout(dismissPreloader,260); }
-    window.addEventListener('online',()=>{ if(state.userId){ fetchPersonalEntries(true); fetchLeaderboard(); fetchEvents(); } });
-    document.addEventListener('visibilitychange',()=>{ if(!state.userId) return; if(document.visibilityState==='hidden') syncCurrentEntry(); else { fetchPersonalEntries(true); fetchLeaderboard(); fetchEvents(); } });
+    window.addEventListener('online',()=>{ if(state.userId){ fetchPersonalEntries(true); refreshVisibleLeaderboards(); fetchEvents(); } });
+    document.addEventListener('visibilitychange',()=>{ if(!state.userId) return; if(document.visibilityState==='hidden') syncCurrentEntry(); else { fetchPersonalEntries(true); refreshVisibleLeaderboards(); fetchEvents(); } });
     scheduleMidnightReset();
     scheduleZikrFlush(1500);
     if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(()=>getVapidPublicKey().catch(()=>{})).catch(()=>{}));
