@@ -5,6 +5,8 @@ ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
+require_once __DIR__ . '/zikr.php';
+
 function respond(int $status, $data) {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -250,14 +252,7 @@ function normalizeEntry(array $input): array {
         $nafil[$name] = !empty($nafilInput[$name]);
     }
     /* Per-zikr counts from the Zikr counter; the totals themselves live in salawat and tasbihat. */
-    $zikrInput = isset($tasks['zikr']) && is_array($tasks['zikr']) ? $tasks['zikr'] : [];
-    $zikr = [];
-    foreach ($zikrInput as $key => $value) {
-        if (count($zikr) >= 60) break;
-        if (!is_string($key) || preg_match('/^[a-z0-9_]{1,32}$/', $key) !== 1) continue;
-        $count = amount($value);
-        if ($count > 0) $zikr[$key] = $count;
-    }
+    $zikr = cleanZikrMap($tasks['zikr'] ?? []);
     $normalizedTasks = [
         'quran' => amount($tasks['quran'] ?? 0),
         'jauchan' => amount($tasks['jauchan'] ?? 0),
@@ -493,6 +488,32 @@ try {
         respond(200, $entries);
     }
 
+    /* Zikr counter taps: {"deltas": {"subhanallah": 3}} added to the stored counts
+       in one transaction, so concurrent phones never lose each other's taps. */
+    if ($method === 'POST' && count($parts) === 5 && $parts[0] === 'users' && $parts[2] === 'entries' && $parts[4] === 'zikr') {
+        $userId = $parts[1];
+        $date = $parts[3];
+        if (!preg_match('/^[a-f0-9-]{36}$/i', $userId) || !validDate($date)) respond(400, ['error' => 'Некорректный запрос.']);
+        requireUser($db, $userId);
+        $deltas = requestBody()['deltas'] ?? null;
+        if (!is_array($deltas) || !$deltas) respond(400, ['error' => 'Нет изменений счётчика.']);
+        $db->beginTransaction();
+        $db->prepare("INSERT IGNORE INTO daily_entries (user_id, entry_date, tasks, qaza, completed_count, points) VALUES (?, ?, '{}', '{}', 0, 0)")->execute([$userId, $date]);
+        $row = $db->prepare('SELECT tasks, qaza FROM daily_entries WHERE user_id = ? AND entry_date = ? FOR UPDATE');
+        $row->execute([$userId, $date]);
+        $stored = $row->fetch() ?: ['tasks' => '{}', 'qaza' => '{}'];
+        $tasks = json_decode((string)$stored['tasks'], true);
+        $qaza = json_decode((string)$stored['qaza'], true);
+        $tasks = is_array($tasks) ? $tasks : [];
+        $zikr = cleanZikrMap($tasks['zikr'] ?? []);
+        $tasks = withZikr($tasks, manualPart($tasks, $zikr), applyZikrDeltas($zikr, $deltas));
+        $entry = normalizeEntry(['tasks' => $tasks, 'qaza' => is_array($qaza) ? $qaza : []]);
+        $update = $db->prepare('UPDATE daily_entries SET tasks = ?, qaza = ?, completed_count = ?, points = ? WHERE user_id = ? AND entry_date = ?');
+        $update->execute([json_encode($entry['tasks'], JSON_UNESCAPED_UNICODE), json_encode($entry['qaza'], JSON_UNESCAPED_UNICODE), $entry['completed'], $entry['points'], $userId, $date]);
+        $db->commit();
+        respond(200, $entry);
+    }
+
     if (count($parts) === 4 && $parts[0] === 'users' && $parts[2] === 'entries') {
         [$ignored, $userId, $ignoredEntries, $date] = $parts;
         if (!preg_match('/^[a-f0-9-]{36}$/i', $userId) || !validDate($date)) respond(400, ['error' => 'Некорректный запрос.']);
@@ -512,9 +533,23 @@ try {
             $checkUser = $db->prepare('SELECT 1 FROM users WHERE id = ?');
             $checkUser->execute([$userId]);
             if (!$checkUser->fetchColumn()) respond(404, ['error' => 'Пользователь не найден.']);
-            $entry = normalizeEntry(requestBody());
+            $body = requestBody();
+            $db->beginTransaction();
+            if (($body['zikrSync'] ?? null) === 2) {
+                /* Per-zikr counts belong to the zikr route below. The phone's day
+                   totals are reduced to their manual part and the stored counts
+                   are added back, so a stale sync cannot erase another phone's taps. */
+                $stored = $db->prepare('SELECT tasks FROM daily_entries WHERE user_id = ? AND entry_date = ? FOR UPDATE');
+                $stored->execute([$userId, $date]);
+                $storedTasks = json_decode((string)($stored->fetchColumn() ?: '{}'), true);
+                $storedZikr = cleanZikrMap(is_array($storedTasks) ? ($storedTasks['zikr'] ?? []) : []);
+                $tasks = is_array($body['tasks'] ?? null) ? $body['tasks'] : [];
+                $body['tasks'] = withZikr($tasks, manualPart($tasks, cleanZikrMap($tasks['zikr'] ?? [])), $storedZikr);
+            }
+            $entry = normalizeEntry($body);
             $statement = $db->prepare('INSERT INTO daily_entries (user_id, entry_date, tasks, qaza, completed_count, points) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE tasks = VALUES(tasks), qaza = VALUES(qaza), completed_count = VALUES(completed_count), points = VALUES(points)');
             $statement->execute([$userId, $date, json_encode($entry['tasks'], JSON_UNESCAPED_UNICODE), json_encode($entry['qaza'], JSON_UNESCAPED_UNICODE), $entry['completed'], $entry['points']]);
+            $db->commit();
             respond(200, $entry);
         }
     }

@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js"></script>
+  <script src="assets/zikr-sync.js"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
     :root { --ink:#18222d; --muted:#7d8793; --surface:#fff; --page:#f4f5f8; --line:#e9ebef; --accent:#1cab67; --accent-soft:#e7f8ee; --green:#22a678; --shadow:0 8px 28px rgba(27,39,55,.055); }
@@ -376,7 +377,7 @@
       try {
         const response=await apiFetch(apiUrl(`users/${state.userId}/entries/${entryDateKey}`), {
           method:'PUT', headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({tasks:state.tasks,qaza:state.qaza})
+          body:JSON.stringify({tasks:state.tasks,qaza:state.qaza,zikrSync:2})
         });
         if(response.status===404){ delete state.userId; save(); ensureRemoteUser(); return null; }
         if(!response.ok) throw new Error('Sync failed');
@@ -558,10 +559,39 @@
       const field=id==='salawat'?'salawat':'tasbihat', total=Math.max(0,(Number(state.tasks[field])||0)+change);
       const breakdown={...(state.tasks.zikr&&typeof state.tasks.zikr==='object'?state.tasks.zikr:{}),[id]:next}; if(!next) delete breakdown[id];
       state.tasks={...state.tasks,zikr:breakdown,[field]:total?String(total):''};
+      state.zikrPending=ChetZikrSync.addPending(state.zikrPending,entryDateKey,id,change); scheduleZikrFlush();
       if(change>0) state.zikrLast={id,at:Date.now()};
       if(change>0&&next%item.goal===0){ zikrCelebrate=true; navigator.vibrate?.([20,40,20]); } else navigator.vibrate?.(8);
       scoreUpdate(before);
     }
+    /* Waiting taps go to the server, the only writer of per-zikr counts, so two
+       phones counting on the same day add up instead of overwriting each other. */
+    let zikrFlushTimer=null, zikrFlushing=false;
+    function scheduleZikrFlush(delay=500){ clearTimeout(zikrFlushTimer); zikrFlushTimer=setTimeout(flushZikr,delay); }
+    async function flushZikr(){
+      if(zikrFlushing||!state.userId||!state.token) return;
+      const date=Object.keys(state.zikrPending||{})[0]; if(!date) return;
+      const deltas=state.zikrPending[date];
+      state.zikrPending=Object.entries(deltas).reduce((pending,[id,delta])=>ChetZikrSync.addPending(pending,date,id,-delta),state.zikrPending);
+      zikrFlushing=true;
+      let sent=false;
+      try {
+        const response=await apiFetch(apiUrl(`users/${state.userId}/entries/${date}/zikr`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({deltas})});
+        if(!response.ok) throw new Error('zikr_sync_failed');
+        const entry=await response.json(); sent=true;
+        if(date===entryDateKey){
+          const merged=ChetZikrSync.adoptServer(state.tasks,entry?.tasks?.zikr,(state.zikrPending||{})[date]);
+          state.tasks={...state.tasks,zikr:merged.zikr,salawat:merged.salawat?String(merged.salawat):'',tasbihat:merged.tasbihat?String(merged.tasbihat):''};
+          render();
+        }
+      } catch {
+        state.zikrPending=Object.entries(deltas).reduce((pending,[id,delta])=>ChetZikrSync.addPending(pending,date,id,delta),state.zikrPending);
+      } finally {
+        zikrFlushing=false; save();
+        if(sent&&Object.keys(state.zikrPending||{}).length) scheduleZikrFlush(0);
+      }
+    }
+    window.addEventListener('online',()=>scheduleZikrFlush(0));
     function renderZikr(){
       const root=document.querySelector('#zikr-view'); if(!root) return;
       const number=new Intl.NumberFormat(appLocale());
@@ -1199,6 +1229,7 @@
     window.addEventListener('online',()=>{ if(state.userId){ fetchPersonalEntries(true); fetchLeaderboard(); fetchEvents(); } });
     document.addEventListener('visibilitychange',()=>{ if(!state.userId) return; if(document.visibilityState==='hidden') syncCurrentEntry(); else { fetchPersonalEntries(true); fetchLeaderboard(); fetchEvents(); } });
     scheduleMidnightReset();
+    scheduleZikrFlush(1500);
     if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(()=>getVapidPublicKey().catch(()=>{})).catch(()=>{}));
   </script><script>
     (()=>{
