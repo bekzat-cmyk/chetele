@@ -253,7 +253,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <main id="app" class="app on-today" hidden>
     <header class="top"><div><div class="eyebrow" id="welcome">Ассаламу алейкум</div><span id="top-day" class="top-day">Сегодня</span><h1>Мой день</h1></div><button class="avatar" id="avatar" aria-label="Открыть профиль"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></button></header>
     <section id="today-view" class="view active"><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
-    <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
+    <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><div class="prayer-countdown"><div class="prayer-countdown-row"><span id="prayer-countdown-label">Осталось</span><b id="prayer-timer" aria-hidden="true">—</b></div><div id="prayer-progress" class="prayer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Время до следующего намаза"><i id="prayer-progress-fill"></i><span id="prayer-progress-knob"></span></div><div class="prayer-progress-ends"><span id="prayer-from"></span><span id="prayer-to"></span></div></div><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
     <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Эта неделя</h2><span id="week-streak" class="week-streak"></span></div><div id="week-calendar" class="week-calendar"></div></button>
     <section class="streak-card" aria-label="Серия дней"><div id="streak-ring-big" class="streak-ring-big" role="progressbar" aria-label="Прогресс серии" aria-valuemin="0" aria-valuenow="0" aria-valuemax="3"><div class="streak-ring-core"><b id="streak-detail">0</b><span id="streak-unit">дней</span></div></div><div class="streak-copy"><h3 id="streak-title">Вы держите ритм</h3><p id="streak-detail-text">Добавляйте хотя бы одно дело каждый день.</p><div class="streak-meta"><span class="streak-pill"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b id="streak-best">0</b><em id="streak-best-label">дней подряд</em></span><span id="streak-next">Рекорд: 0</span></div></div></section>
     <section class="achievement-teaser" aria-label="Ближайшее достижение"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2"/></svg></i><div><b id="achievement-teaser-title">Достижения ждут вас</b><span id="achievement-teaser-text">Откройте первое достижение в профиле.</span></div><button id="open-achievements" type="button" aria-label="Смотреть достижения"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></section>
@@ -2351,6 +2351,21 @@ body #app .achievement-teaser button:after{content:none}
 body #app .achievement-teaser button .lucide{width:20px;height:20px;stroke:#10161A}
 body.app-dark #app .achievement-teaser button .lucide{stroke:var(--ink)}
 
+body #app .prayer-countdown{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+body #app .prayer-countdown-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;color:#5E6A71;font-size:15px}
+body #app #prayer-timer{color:#10161A;font-size:24px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+body #app .prayer-progress{--done:0;position:relative;height:6px;border-radius:3px;background:rgba(16,22,26,.08)}
+body #app #prayer-progress-fill{position:absolute;left:0;top:0;bottom:0;width:calc(var(--done) * 100%);border-radius:3px;background:#10161A;transition:width 1s linear}
+body #app #prayer-progress-knob{position:absolute;top:50%;left:calc(var(--done) * 100%);width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;border:2px solid #10161A;box-sizing:border-box;box-shadow:0 2px 6px rgba(16,22,26,.18);transition:left 1s linear}
+body #app .prayer-progress-ends{display:flex;justify-content:space-between;color:#7A858B;font-size:12px}
+body #app .prayer-left:empty{display:none}
+body.app-dark #app #prayer-timer{color:var(--ink)}
+body.app-dark #app .prayer-progress{background:rgba(255,255,255,.12)}
+body.app-dark #app #prayer-progress-fill{background:#EEF5F2}
+body.app-dark #app #prayer-progress-knob{background:#17201E;border-color:#EEF5F2}
+body.a11y-reduce #app #prayer-progress-fill,body.a11y-reduce #app #prayer-progress-knob{transition:none}
+@media (prefers-reduced-motion: reduce){body #app #prayer-progress-fill,body #app #prayer-progress-knob{transition:none}}
+
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
 body.app-dark #app .day-hero,body.app-dark #app .hadith-card,body.app-dark #app .reading-list,body.app-dark #app .prayer-body,body.app-dark #app .dhikr-row,body.app-dark #app .achievement-teaser,body.app-dark #app .past-day-banner,body.app-dark #app .week-calendar{border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.06)!important;box-shadow:none}
@@ -2393,7 +2408,7 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
   const pin = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>';
   const locate = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>';
   const close = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
-  const tick = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  const checkMark = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
 
   const ky = () => appLocale() === 'ky-KG';
   const label = item => ky() ? KY_NAMES[item.id] : item.name;
@@ -2415,13 +2430,30 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     return h ? `${h} ч ${m} мин` : `${m} мин`;
   }
 
-  // Today's and tomorrow's prayers in one line, to look past Isha.
+  // Yesterday's, today's and tomorrow's prayers in one line, so the countdown
+  // always has the prayer before and the prayer after.
   function sequence(now, where) {
     const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
     return [
+      ...P.timesFor(yesterday, where).filter(item => item.prayer).map(item => ({ ...item, yesterday: true })),
       ...P.timesFor(now, where).filter(item => item.prayer),
       ...P.timesFor(tomorrow, where).filter(item => item.prayer).map(item => ({ ...item, tomorrow: true }))
     ];
+  }
+
+  // The seconds tick on their own; the rest of the card repaints every 30 seconds.
+  let countdown = null;
+  function tick() {
+    if (!countdown) return;
+    const now = Date.now(), left = countdown.to - now;
+    if (left <= 0) { paintCard(); return; }
+    const total = Math.floor(left / 1000), h = Math.floor(total / 3600), m = Math.floor(total / 60) % 60, sec = total % 60;
+    const two = n => String(n).padStart(2, '0');
+    document.querySelector('#prayer-timer').textContent = h ? `${h}:${two(m)}:${two(sec)}` : `${two(m)}:${two(sec)}`;
+    const share = Math.min(1, Math.max(0, (now - countdown.from) / (countdown.to - countdown.from)));
+    document.querySelector('#prayer-progress').style.setProperty('--done', share.toFixed(4));
+    document.querySelector('#prayer-progress').setAttribute('aria-valuenow', String(Math.round(share * 100)));
   }
 
   function paintCard() {
@@ -2430,12 +2462,17 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     const line = sequence(now, where), index = line.findIndex(item => item.time > now), next = line[index];
     document.querySelector('#prayer-city-name').textContent = where.name;
     document.querySelector('#prayer-next').textContent = ky() ? `${label(next)} — ${clock(next.time)}` : `${label(next)} в ${clock(next.time)}`;
-    const wait = ky() ? `${until(next.time - now)} калды.` : `${next.tomorrow ? 'Завтра, осталось' : 'Осталось'} ${until(next.time - now)}.`;
+    const previous = line[index - 1];
+    countdown = { from: previous.time, to: next.time };
+    document.querySelector('#prayer-countdown-label').textContent = ky() ? 'Калды' : next.tomorrow ? 'Завтра, осталось' : 'Осталось';
+    document.querySelector('#prayer-from').textContent = `${label(previous)} ${clock(previous.time)}`;
+    document.querySelector('#prayer-to').textContent = `${label(next)} ${clock(next.time)}`;
+    document.querySelector('#prayer-progress').setAttribute('aria-valuetext', ky() ? `${until(next.time - now)} калды` : `Осталось ${until(next.time - now)}`);
+    tick();
     // As on the canvas: before Asr and Isha, a reminder of the nafil that follows them.
-    const hint = NAFIL_AFTER.includes(next.id)
-      ? (ky() ? ` ${label(next)} намазынан кийинки напилди төмөндө белгилесеңиз болот.` : ` Нафиль после ${label(next)} можно отметить ниже, в разделе «Намаз».`)
+    document.querySelector('#prayer-left').textContent = NAFIL_AFTER.includes(next.id)
+      ? (ky() ? `${label(next)} намазынан кийинки напилди төмөндө белгилесеңиз болот.` : `Нафиль после ${label(next)} можно отметить ниже, в разделе «Намаз».`)
       : '';
-    document.querySelector('#prayer-left').textContent = wait + hint;
     document.querySelector('#prayer-strip').innerHTML = day.map(item => {
       const isNext = !next.tomorrow && item.id === next.id, past = item.time <= now;
       const state = isNext ? 'next' : past ? 'past' : '';
@@ -2482,7 +2519,7 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     const element = sheet('prayer-city-sheet', ky() ? 'Сиздин шаар' : 'Ваш город');
     const where = place();
     element.querySelector('.sheet-sub').textContent = ky() ? 'Намаз убактысын эсептөө үчүн' : 'Для расчёта времени намазов';
-    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-geo" data-prayer-geo>${locate}<span><b>${ky() ? 'Автоматтык аныктоо' : 'Определить автоматически'}</b><small>${ky() ? 'Геолокация эсептөө үчүн гана керек' : 'Геопозиция нужна только для расчёта и остаётся на телефоне'}</small></span></button><p class="prayer-status" role="status">${escapeHtml(status)}</p><ul class="prayer-cities">${P.CITIES.map(city => `<li><button type="button" data-prayer-pick="${city.id}" aria-pressed="${city.id === where.id}">${city.name}${tick}</button></li>`).join('')}</ul>`;
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-geo" data-prayer-geo>${locate}<span><b>${ky() ? 'Автоматтык аныктоо' : 'Определить автоматически'}</b><small>${ky() ? 'Геолокация эсептөө үчүн гана керек' : 'Геопозиция нужна только для расчёта и остаётся на телефоне'}</small></span></button><p class="prayer-status" role="status">${escapeHtml(status)}</p><ul class="prayer-cities">${P.CITIES.map(city => `<li><button type="button" data-prayer-pick="${city.id}" aria-pressed="${city.id === where.id}">${city.name}${checkMark}</button></li>`).join('')}</ul>`;
     return element;
   }
 
@@ -2526,6 +2563,7 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
 
   paintCard();
   setInterval(paintCard, 30000);
+  setInterval(() => { if (!document.hidden) tick(); }, 1000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) paintCard(); });
   window.chetelePaintPrayer = paintCard;
 })();
