@@ -2366,6 +2366,29 @@ body.app-dark #app #prayer-progress-knob{background:#17201E;border-color:#EEF5F2
 body.a11y-reduce #app #prayer-progress-fill,body.a11y-reduce #app #prayer-progress-knob{transition:none}
 @media (prefers-reduced-motion: reduce){body #app #prayer-progress-fill,body #app #prayer-progress-knob{transition:none}}
 
+/* Prayer sheets in the soft style */
+body .prayer-sheet .calendar-sheet-panel{gap:18px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body .prayer-sheet .sheet-header h2{font-size:22px;font-weight:600;letter-spacing:-.02em}
+body .prayer-sheet .sheet-sub{margin-top:4px;font-size:14px;font-weight:400}
+body .prayer-sheet .prayer-sheet-content{display:flex;flex-direction:column;gap:16px}
+body .prayer-sheet .prayer-place{min-height:64px;padding:0 8px 0 16px;gap:12px;border-radius:20px}
+body .prayer-sheet .prayer-place b{font-size:16px;font-weight:600}
+body .prayer-sheet .prayer-place small{margin-top:2px;font-size:13px;font-weight:400}
+body .prayer-sheet .prayer-place em{height:36px;padding:0 14px;border-radius:18px;background:var(--surface);color:var(--ink);display:flex;align-items:center;font-size:14px;font-weight:600;box-shadow:0 2px 8px rgba(16,22,26,.06)}
+body .prayer-sheet .prayer-rows{gap:2px}
+body .prayer-sheet .prayer-row{min-height:60px;padding:0 16px 0 12px;border-radius:20px}
+body .prayer-sheet .prayer-row span{justify-content:center}
+body .prayer-sheet .prayer-row b{font-size:16px;font-weight:600}
+body .prayer-sheet .prayer-row small{font-size:13px;font-weight:400}
+body .prayer-sheet .prayer-row time{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+body .prayer-sheet .prayer-row i{width:40px;height:40px;border-radius:20px}
+body .prayer-sheet .prayer-row.past b,body .prayer-sheet .prayer-row.past time{opacity:.55}
+body .prayer-sheet .prayer-note{padding:0 12px;font-size:12px;font-weight:400}
+body .prayer-sheet .prayer-geo b,body .prayer-sheet .prayer-cities button{font-weight:600}
+body .prayer-sheet .prayer-cities button[aria-pressed="true"]{font-weight:700}
+body .prayer-sheet .prayer-geo small{font-weight:400}
+body .prayer-sheet .prayer-geo{min-height:60px;border-radius:20px}
+
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
 body.app-dark #app .day-hero,body.app-dark #app .hadith-card,body.app-dark #app .reading-list,body.app-dark #app .prayer-body,body.app-dark #app .dhikr-row,body.app-dark #app .achievement-teaser,body.app-dark #app .past-day-banner,body.app-dark #app .week-calendar{border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.06)!important;box-shadow:none}
@@ -2510,16 +2533,16 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
       const isNext = next && item.id === next.id, past = item.time <= now;
       const sub = item.id === 'sunrise' ? (ky() ? 'Багымдаттын убактысы бүтөт' : 'конец времени Фаджра')
         : isNext ? `${ky() ? 'калды' : 'через'} ${until(item.time - now)}` : past ? (ky() ? 'өттү' : 'прошёл') : '';
-      return `<li class="prayer-row ${isNext ? 'next' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b><small>${sub || '&nbsp;'}</small></span><time>${clock(item.time)}</time></li>`;
+      return `<li class="prayer-row ${isNext ? 'next' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b>${sub ? `<small>${sub}</small>` : ''}</span><time>${clock(item.time)}</time></li>`;
     }).join('');
-    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Эсептөө' : 'Расчёт'}: ${P.METHOD_LABEL}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul><p class="prayer-note">${ky() ? 'Убакыт тандалган жер үчүн эсептелген. Мечитиңиз менен салыштырыңыз.' : 'Время рассчитано для выбранного места. Сверяйтесь с вашей мечетью.'}</p>`;
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Ханафий мазхабы' : 'Ханафитский мазхаб'}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul><p class="prayer-note">${ky() ? `Эсептөө: ${P.METHOD_LABEL}. Мечитиңиз менен салыштырыңыз.` : `Расчёт: ${P.METHOD_LABEL}. Сверяйтесь с вашей мечетью.`}</p>`;
   }
 
   function paintCities(status = '') {
     const element = sheet('prayer-city-sheet', ky() ? 'Сиздин шаар' : 'Ваш город');
     const where = place();
     element.querySelector('.sheet-sub').textContent = ky() ? 'Намаз убактысын эсептөө үчүн' : 'Для расчёта времени намазов';
-    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-geo" data-prayer-geo>${locate}<span><b>${ky() ? 'Автоматтык аныктоо' : 'Определить автоматически'}</b><small>${ky() ? 'Геолокация эсептөө үчүн гана керек' : 'Геопозиция нужна только для расчёта и остаётся на телефоне'}</small></span></button><p class="prayer-status" role="status">${escapeHtml(status)}</p><ul class="prayer-cities">${P.CITIES.map(city => `<li><button type="button" data-prayer-pick="${city.id}" aria-pressed="${city.id === where.id}">${city.name}${checkMark}</button></li>`).join('')}</ul>`;
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-geo" data-prayer-geo>${locate}<span><b>${ky() ? 'Автоматтык аныктоо' : 'Определить автоматически'}</b><small>${ky() ? 'Геолокация эсептөө үчүн гана керек' : 'Геопозиция остаётся только на телефоне'}</small></span></button><p class="prayer-status" role="status">${escapeHtml(status)}</p><ul class="prayer-cities">${P.CITIES.map(city => `<li><button type="button" data-prayer-pick="${city.id}" aria-pressed="${city.id === where.id}">${city.name}${checkMark}</button></li>`).join('')}</ul>`;
     return element;
   }
 
