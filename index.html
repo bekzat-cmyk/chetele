@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js"></script>
   <script src="assets/zikr-sync.js"></script>
@@ -253,13 +253,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <main id="app" class="app on-today" hidden>
     <header class="top"><div><div class="eyebrow" id="welcome">Ассаламу алейкум</div><h1>Мой день</h1></div><button class="avatar" id="avatar" aria-label="Открыть профиль"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></button></header>
     <section id="today-view" class="view active"><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
-    <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Ваш ритм</h2><span>последние 7 дней</span></div><div id="week-calendar" class="week-calendar"></div></button>
+    <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
+    <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Эта неделя</h2><span id="week-streak" class="week-streak"></span></div><div id="week-calendar" class="week-calendar"></div></button>
     <section class="streak-card" aria-label="Серия дней"><div id="streak-ring-big" class="streak-ring-big" role="progressbar" aria-label="Прогресс серии" aria-valuemin="0" aria-valuenow="0" aria-valuemax="3"><div class="streak-ring-core"><b id="streak-detail">0</b><span id="streak-unit">дней</span></div></div><div class="streak-copy"><h3 id="streak-title">Вы держите ритм</h3><p id="streak-detail-text">Добавляйте хотя бы одно дело каждый день.</p><div class="streak-meta"><span class="streak-pill"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b id="streak-best">0</b><em id="streak-best-label">дней подряд</em></span><span id="streak-next">Рекорд: 0</span></div></div></section>
     <section class="achievement-teaser" aria-label="Ближайшее достижение"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15.48 12.89 1.52 8.55a.5.5 0 0 1-.81.47l-3.59-2.69a1 1 0 0 0-1.19 0l-3.6 2.7a.5.5 0 0 1-.8-.47l1.51-8.55"/><circle cx="12" cy="8" r="6"/></svg></i><div><b>Достижения ждут вас</b><span id="achievement-teaser-text">Откройте первое достижение в профиле.</span></div><button id="open-achievements" type="button">Смотреть</button></section>
     <section class="hadith-card" aria-label="Хадис дня"><div class="hadith-top"><div class="hadith-icon"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg></div><strong class="hadith-title">Хадис дня</strong><span id="hadith-source" class="hadith-source"></span></div><p id="hadith-text" class="hadith-text"></p><button id="hadith-more" class="hadith-more">Подробнее</button></section>
       <div class="section-head"><h2 id="tasks-heading">Сегодняшние дела</h2><span id="today-date" class="date"></span></div>
       <div id="task-list" class="list"></div>
-      <div class="qaza-card"><div class="qaza-heading"><strong>Каза намаз</strong><span>Количество</span></div><div class="qaza-grid" id="qaza-grid"></div></div>
+      <div class="qaza-card"><div class="qaza-heading"><strong>Пропущенные намазы</strong><span>Количество</span></div><div class="qaza-grid" id="qaza-grid"></div></div>
       <div class="autosave" aria-live="polite"><span class="autosave-dot"></span><p id="save-status" class="save-status">Изменения сохраняются автоматически</p></div>
     </section>
     <section id="zikr-view" class="view" aria-label="Зикр"></section>
@@ -284,7 +285,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
     const NAFIL = [
-      { id:'asr', label:'Аср' }, { id:'kuptan', label:'Куптан' },
+      { id:'asr', label:'Аср' }, { id:'kuptan', label:'Иша' },
       { id:'avvabin', label:'Аввабин' }, { id:'duha', label:'Духа' }
     ];
     const TASKS = [
@@ -297,6 +298,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       { id:'tasbihat', title:'Зикр', sub:'Количество прочитанных', type:'number', suffix:'раз' }
     ];
     const QAZA = ['Багымдат','Пешим','Аср','Шам','Куптан'];
+    /* Saved qaza keys stay as they are; the screen shows the common Russian prayer names. */
+    const QAZA_LABEL = {'Багымдат':'Фаджр','Пешим':'Зухр','Аср':'Аср','Шам':'Магриб','Куптан':'Иша'};
     /* Lucide icons (ISC licence). Rendered as stroke SVG in the current text colour. */
     const ICON_PATHS = {
       bookOpen:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
@@ -535,7 +538,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         if(task.type==='nafil'){
           const values=nafilValues(), count=nafilCompleted(), tahajjud=TASKS.find(item=>item.id==='tahajjud');
           const group=document.createElement('section'); group.className='prayer-group';
-          group.innerHTML=`<div class="group-head prayer-heading"><h3>Намаз</h3><span class="nafil-count">${appLocale()==='ky-KG'?`напил ${count}/${NAFIL.length}`:`нафиль ${count} из ${NAFIL.length}`}</span></div><div class="prayer-body"><div class="prayer-tahajjud"><span class="task-icon icon-moon">${icon('moonStar')}</span><div class="task-copy"><div class="task-title">${tahajjud.title}</div><div class="task-sub">${tahajjud.sub}</div></div><div class="pill"><button data-choice="yes" data-id="tahajjud" class="${state.tasks.tahajjud==='yes'?'active':''}">Да</button><button data-choice="no" data-id="tahajjud" class="${state.tasks.tahajjud==='no'?'active':''}">Нет</button></div></div><div class="prayer-list">${NAFIL.map(item=>`<button class="prayer-option ${values[item.id]?'done':''}" data-nafil="${item.id}" aria-pressed="${!!values[item.id]}"><span class="mini-check ${values[item.id]?'done':''}"></span>${item.label}</button>`).join('')}</div><section class="prayer-qaza"><div class="qaza-head"><h4>Каза намаз</h4><button type="button" class="qaza-reset" data-qaza-reset>Сбросить</button></div><div class="qaza-grid" id="qaza-grid"></div><p class="qaza-hint">Нажмите — добавить, удерживайте — убрать</p></section></div>`;
+          group.innerHTML=`<div class="group-head prayer-heading"><h3>Намаз</h3><span class="nafil-count">${appLocale()==='ky-KG'?`напил ${count}/${NAFIL.length}`:`нафиль ${count} из ${NAFIL.length}`}</span></div><div class="prayer-body"><div class="prayer-tahajjud"><span class="task-icon icon-moon">${icon('moonStar')}</span><div class="task-copy"><div class="task-title">${tahajjud.title}</div><div class="task-sub">${tahajjud.sub}</div></div><div class="pill"><button data-choice="yes" data-id="tahajjud" class="${state.tasks.tahajjud==='yes'?'active':''}">Да</button><button data-choice="no" data-id="tahajjud" class="${state.tasks.tahajjud==='no'?'active':''}">Нет</button></div></div><div class="prayer-list">${NAFIL.map(item=>`<button class="prayer-option ${values[item.id]?'done':''}" data-nafil="${item.id}" aria-pressed="${!!values[item.id]}"><span class="mini-check ${values[item.id]?'done':''}"></span>${item.label}</button>`).join('')}</div><section class="prayer-qaza"><div class="qaza-head"><h4>Пропущенные намазы</h4><button type="button" class="qaza-reset" data-qaza-reset>Сбросить</button></div><div class="qaza-grid" id="qaza-grid"></div><p class="qaza-hint">Нажмите — добавить, удерживайте — убрать</p></section></div>`;
           list.append(group); return;
         }
         if(task.id==='tahajjud') return;
@@ -554,7 +557,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         else { control=`<button aria-label="Отметить ${task.title}" class="check ${done?'done':''}" data-check="${task.id}"></button>`; row.innerHTML=`<div class="task-copy"><div class="task-title">${task.title}</div><div class="task-sub">${task.sub}</div></div>${control}`; }
         list.append(row);
       });
-      const grid=document.querySelector('#qaza-grid'); grid.innerHTML=QAZA.map(n=>{ const value=Number(state.qaza[n])||0; return `<button type="button" class="qaza-tap ${value>0?'filled':''}" data-qaza-inc="${n}" aria-label="Каза ${n}: ${value}. Нажмите, чтобы добавить, удерживайте, чтобы убрать"><b>${value}</b><span>${n}</span></button>`; }).join('');
+      const grid=document.querySelector('#qaza-grid'); grid.innerHTML=QAZA.map(n=>{ const value=Number(state.qaza[n])||0; return `<button type="button" class="qaza-tap ${value>0?'filled':''}" data-qaza-inc="${n}" aria-label="Пропущенный ${QAZA_LABEL[n]}: ${value}. Нажмите, чтобы добавить, удерживайте, чтобы убрать"><b>${value}</b><span>${QAZA_LABEL[n]}</span></button>`; }).join('');
       renderCalendar();
       renderHadith();
       renderBoard();
@@ -783,7 +786,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const qazaIcons={'Багымдат':'sunrise','Пешим':'sun','Аср':'cloudSun','Шам':'sunset','Куптан':'moon'};
       const nafilBar=item=>{ const value=totals.nafilBy[item.id]; return `<div class="nafil-bar-row"><i class="stat-icon">${icon(nafilIcons[item.id])}</i><span>${item.label}</span><div class="nafil-bar"><i style="width:${Math.min(100,Math.round(value/periodDays*100))}%"></i></div><b>${number.format(value)}/${number.format(periodDays)}</b></div>`; };
       const plainRow=(name,value,unit,iconName)=>`<div class="plain-stat-row"><i class="stat-icon">${icon(iconName)}</i><span>${name}</span><b>${number.format(value)} ${unit==='раз'&&!ky?plural(value,'раз','раза','раз'):unit}</b></div>`;
-      content.innerHTML=`<section class="stats-group nafil-bars"><h3>Нафиль намаз</h3><div class="nafil-bar-list">${NAFIL.map(nafilBar).join('')}</div></section>${(()=>{ const rows=ZIKR.filter(item=>totals.zikrBy[item.id]).sort((a,b)=>totals.zikrBy[b.id]-totals.zikrBy[a.id]); return `<section class="stats-group plain-stat-group"><h3>Зикры</h3>${rows.length?`<div class="plain-stat-list">${rows.map(item=>plainRow(item.title,totals.zikrBy[item.id],'раз',item.id==='salawat'?'sparkles':'repeat')).join('')}</div>`:'<p class="zikr-stats-empty">Считайте зикры во вкладке «Зикр» — они появятся здесь.</p>'}</section>`; })()}<section class="stats-group plain-stat-group"><h3>Остальные дела</h3><div class="plain-stat-list">${plainRow('Жавшан',totals.jauchan,'стр.','scroll')}${plainRow('Китеп',totals.kitap,'стр.','book')}${plainRow('Зикр',totals.tasbihat,'раз','repeat')}</div></section><section class="stats-group plain-stat-group"><h3>Каза намаз</h3><div class="plain-stat-list">${QAZA.map(name=>plainRow(name,totals.qaza[name],'раз',qazaIcons[name])).join('')}</div></section>`;
+      content.innerHTML=`<section class="stats-group nafil-bars"><h3>Нафиль намаз</h3><div class="nafil-bar-list">${NAFIL.map(nafilBar).join('')}</div></section>${(()=>{ const rows=ZIKR.filter(item=>totals.zikrBy[item.id]).sort((a,b)=>totals.zikrBy[b.id]-totals.zikrBy[a.id]); return `<section class="stats-group plain-stat-group"><h3>Зикры</h3>${rows.length?`<div class="plain-stat-list">${rows.map(item=>plainRow(item.title,totals.zikrBy[item.id],'раз',item.id==='salawat'?'sparkles':'repeat')).join('')}</div>`:'<p class="zikr-stats-empty">Считайте зикры во вкладке «Зикр» — они появятся здесь.</p>'}</section>`; })()}<section class="stats-group plain-stat-group"><h3>Остальные дела</h3><div class="plain-stat-list">${plainRow('Жавшан',totals.jauchan,'стр.','scroll')}${plainRow('Китеп',totals.kitap,'стр.','book')}${plainRow('Зикр',totals.tasbihat,'раз','repeat')}</div></section><section class="stats-group plain-stat-group"><h3>Пропущенные намазы</h3><div class="plain-stat-list">${QAZA.map(name=>plainRow(QAZA_LABEL[name],totals.qaza[name],'раз',qazaIcons[name])).join('')}</div></section>`;
       note.textContent=state.statsOnline===false?'Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Нажмите на столбик, чтобы увидеть день. Сегодняшние отметки уже учтены.';
     }
     document.addEventListener('click',event=>{ const bar=event.target.closest('[data-stat-bar]'); if(!bar) return; statsSelected=bar.dataset.statBar; renderStats(false); });
@@ -971,8 +974,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     document.querySelector('#personal-goal-form').addEventListener('submit',event=>{ event.preventDefault(); const target=Number(document.querySelector('#personal-goal-input').value); if(!Number.isInteger(target)||target<1){ document.querySelector('#personal-goal-error').textContent='Укажите цель больше нуля.'; return; } const button=personalGoalButton; closePersonalGoalModal(); if(button) joinEvent(button,target); });
     function renderCalendar(){
       const calendar=document.querySelector('#week-calendar'), formatter=new Intl.DateTimeFormat(appLocale(),{weekday:'short'}), now=new Date();
-      const checkIcon=icon('check'), flameIcon=icon('flame');
-      calendar.innerHTML=Array.from({length:7},(_,index)=>{ const date=new Date(now); date.setDate(now.getDate()-6+index); const key=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`; const entry=entryForCalendarDate(key), ratio=entry ? Math.min(entry.completed/entry.max,1) : 0, current=key===todayKey, complete=ratio===1; const marker=complete?checkIcon:flameIcon; return `<div class="calendar-day ${current?'current':''} ${complete?'complete':''}"><span>${formatter.format(date).replace('.','')}</span><span class="day-ring"><i class="day-core">${marker}</i></span></div>`; }).join('');
+      const flameIcon=icon('flame');
+      calendar.innerHTML=Array.from({length:7},(_,index)=>{ const date=new Date(now); date.setDate(now.getDate()-6+index); const key=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`; const entry=entryForCalendarDate(key), ratio=entry ? Math.min(entry.completed/entry.max,1) : 0, current=key===todayKey, complete=ratio===1; return `<div class="calendar-day ${current?'current':''} ${complete?'complete':''} ${ratio>0?'has-progress':''}"><span>${formatter.format(date).replace('.','')}</span><b>${date.getDate()}</b><i class="day-dot" aria-hidden="true"></i></div>`; }).join('');
       const todayEntry=entryDateKey===todayKey?{completed:completed(),tasks:state.tasks,qaza:state.qaza}:((state.remoteEntries||[]).find(entry=>entry?.date===todayKey)||state.history?.[todayKey]);
       const streak=Number(state.streak||0),best=Number(state.bestStreak||streak),streakRing=document.querySelector('#streak-ring-big'),ky=appLocale()==='ky-KG',todayActive=entryHasProgress(todayEntry);
       const milestones=[3,7,14,30,40,100],nextMilestone=milestones.find(value=>value>streak),ringTarget=nextMilestone||Math.max(streak,1);
@@ -989,6 +992,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       streakRing.style.setProperty('--streak-fill',`${doneToday/max*360}deg`);
       streakRing.setAttribute('aria-label',ky?'Бүгүнкү иштер':'Дела за сегодня');
       streakRing.setAttribute('aria-valuenow',String(doneToday)); streakRing.setAttribute('aria-valuemax',String(max)); streakRing.setAttribute('aria-valuetext',ky?`${doneToday} / ${max}`:`${doneToday} из ${max}`);
+      /* The glass hero above the prayer card and the streak beside «Эта неделя». */
+      const heroDone=document.querySelector('#day-hero-done');
+      if(heroDone){ heroDone.textContent=ky?`Күндүн иштери · ${doneToday} / ${max}`:`Дела дня · ${doneToday} из ${max}`; document.querySelector('#day-hero-percent').textContent=`${Math.round(doneToday/max*100)}%`; document.querySelector('#day-hero-ring').style.strokeDasharray=`${(44*doneToday/max).toFixed(1)} 44`; }
+      const weekStreak=document.querySelector('#week-streak'); if(weekStreak) weekStreak.innerHTML=`${flameIcon}${ky?`${streak} күн катары менен`:`${streak} ${plural(streak)} подряд`}`;
     }
     let calendarCursor=null, calendarSelectedDate='';
     function entryForCalendarDate(key){
@@ -1440,7 +1447,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         'Месяц':'Ай','Всё':'Баары','Тахаджуд':'Тахажжуд','Лучшая серия':'Эң узун серия','Остальные дела':'Башка иштер',
         'Неделя':'Апта','Всё время':'Бардык убакыт','Рейтинг недоступен':'Рейтинг жеткиликсиз','Рейтинг пока пуст':'Рейтинг азырынча бош',
         'Отмечено':'Белгиленди','Ещё не начато':'Азырынча баштала элек','страниц за сегодня':'бүгүнкү беттер','раз за сегодня':'бүгүн, жолу','Намаз':'Намаз','Сбросить':'Тазалоо','Сохраняем…':'Сакталууда…','Сохранено в кабинете':'Кабинетке сакталды','Изменения сохраняются автоматически':'Өзгөрүүлөр автоматтык түрдө сакталат','Сохранено на телефоне — отправим, когда появится связь':'Телефонго сакталды — байланыш болгондо жөнөтөбүз',
-        'Добро пожаловать':'Кош келиңиз','На пути к сильному таква':'Бекем такыбалык жолунда','Путь к сильному таква':'Бекем такыбалык жолунда','Отмечайте свой путь, сохраняйте постоянство и растите вместе с другими.':'Жолуңузду белгилеп, туруктуулукту сактап, башкалар менен бирге өсүңүз.','Как вас зовут?':'Атыңыз ким?','Придумайте пароль':'Сырсөз ойлоп табыңыз','Показать пароль':'Сырсөздү көрсөтүү','Запомнить меня':'Мени эстеп кал','Создать кабинет':'Кабинет ачуу','У меня уже есть аккаунт':'Менде аккаунт бар','С возвращением':'Кайра кош келдиңиз','Введите имя и пароль, чтобы продолжить свой путь.':'Жолуңузду улантуу үчүн атыңызды жана сырсөзүңүздү жазыңыз.','Ваше имя':'Сиздин атыңыз','Ваш пароль':'Сиздин сырсөзүңүз','Войти в кабинет':'Кабинетке кирүү','Создать аккаунт':'Аккаунт ачуу','Открыть профиль':'Профилди ачуу','Ваш ритм':'Сиздин ыргагыңыз','последние 7 дней':'акыркы 7 күн','дней':'күн','Вы держите ритм':'Ыргакты сактап жатасыз','Добавляйте хотя бы одно дело каждый день.':'Күн сайын жок дегенде бир ишти белгилеңиз.','🔥 Серия продолжается':'🔥 Серия уланууда','Достижения ждут вас':'Жетишкендиктер күтөт','Откройте первое достижение в профиле.':'Профилден биринчи жетишкендикти ачыңыз.','Смотреть':'Көрүү','Хадис дня':'Күндүн хадиси','Подробнее':'Кененирээк','Профиль':'Профиль','В главное':'Башкы бетке','Ваш ежедневный путь в Chetele':'Cheteleдеги күнүмдүк жолуӊуз','Всего баллов':'Жалпы упай','Место в рейтинге':'Рейтингдеги орун','мягкие напоминания':'жумшак эскертмелер','Будьте в своём ритме':'Өз ыргагыңызда болуңуз','Три бережных сигнала в течение дня':'Күндүз үч жумшак белги','начать путь':'жолду баштоо','мягко продолжить':'жай улантуу','подвести итог':'жыйынтык чыгаруу','Включите — и мы деликатно напомним о ваших делах.':'Күйгүзүңүз — иштериңизди сылык эскертебиз.','Закрыть':'Жабуу','Календарь':'Календарь','Нажмите на дату':'Күндү тандаңыз','Открыть дела за этот день':'Бул күндүн иштерин ачуу','Смысл хадиса':'Хадистин мааниси','Небольшой шаг на сегодня':'Бүгүнкү кичинекей кадам','Изменить имя':'Атын өзгөртүү','Сохранить':'Сактоо','Цель выполнена':'Максат аткарылды','Вы завершили все дела на сегодня. Пусть этот ритм приносит вам пользу.':'Бүгүнкү бардык иштерди аткардыңыз. Бул ыргак сизге пайда алып келсин.','Нажмите, чтобы продолжить':'Улантуу үчүн басыңыз','Минимум дня выполнен':'Күндүн минимуму аткарылды','Ваша личная цель':'Жеке максатыңыз','Выберите спокойный и достижимый ориентир для этого события.':'Бул окуя үчүн жетүүгө боло турган максатты тандаңыз.','Личная цель':'Жеке максат','Отмена':'Жокко чыгаруу','Участвовать':'Катышуу','Чтение':'Окуу','Сколько страниц прочитали?':'Канча бет окудуңуз?','стр.':'бет','Нафиль намаз':'Напил намаз','Отмечайте каждый совершённый намаз':'Ар бир окулган намазды белгилеңиз','Прочитали сегодня?':'Бүгүн окудуңузбу?','Совершили сегодня?':'Бүгүн окудуңузбу?','Да':'Ооба','Нет':'Жок','Каза намаз':'Каза намаз','Зикр и салават':'Зикир жана салават','Количество прочитанных':'Окулган саны','раз':'жолу','Сегодняшние дела':'Бүгүнкү иштер','Дела за выбранный день':'Тандалган күндүн иштери','Остальные дела':'Башка иштер','Выполняйте условия в карточках, чтобы открыть достижения.':'Жетишкендиктерди ачуу үчүн карточкадагы шарттарды аткарыңыз.','Рейтинг пока пуст.':'Рейтинг азырынча бош.','Не удалось получить рейтинг.':'Рейтингди алуу мүмкүн болгон жок.','Рейтинг обновляется после каждого выполненного дела.':'Рейтинг ар бир аткарылган иштен кийин жаңыланат.','Загрузка рейтинга…':'Рейтинг жүктөлүүдө…','Сейчас нет активных событий. Скоро здесь появится новая общая цель.':'Азыр активдүү окуялар жок. Жакында жаңы жалпы максат чыгат.','Лидеры события':'Окуянын лидерлери','Пока нет участников':'Катышуучулар азырынча жок','Личный путь':'Жеке жол','Общая цель сообщества.':'Коомчулуктун жалпы максаты.','Личный путь в своём темпе.':'Өз ыргагыңыздагы жеке жол.','Вы участвуете':'Сиз катышып жатасыз','Ваш путь':'Сиздин жолуңуз','Присоединяем…':'Кошулуп жатабыз…','Не удалось вступить':'Кошулуу мүмкүн болгон жок.','Укажите цель больше нуля.':'Нөлдөн чоң максатты жазыңыз.','Новое достижение!':'Жаңы жетишкендик!','Открыто достижение':'Жетишкендик ачылды','Все достижения уже открыты. Ма ша Аллах!':'Бардык жетишкендиктер ачылды. Ма шаа Аллах!','Версия приложения':'Тиркеменин нускасы','Выйти из аккаунта':'Аккаунттан чыгуу','Достижения':'Жетишкендиктер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Уведомления':'Эскертмелер','Время уведомления':'Эскертменин убактысы','Ежедневно':'Күн сайын','Ежедневное напоминание':'Күнүмдүк эскертме','Мягкий сигнал в удобное для вас время':'Ыңгайлуу убакыттагы жумшак белги','Пример уведомления':'Эскертменин мисалы','Утро':'Эртең менен','День':'Күндүз','Вечер':'Кечинде','салаватов':'салават','зикров':'зикир','страниц':'бет','тахаджудов':'тахажуд','участников':'катышуучу','Не удалось загрузить события. Проверьте подключение.':'Окуяларды жүктөө мүмкүн болгон жок. Байланышты текшериңиз.','Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Бул түзмөктө сакталган маалыматтар көрсөтүлдү. Толук тарых үчүн интернетке кошулуңуз.','Включая сегодняшний прогресс и все сохранённые дни.':'Бүгүнкү прогресс жана бардык сакталган күндөр кошо эсептелди.','Не удалось изменить настройку. Проверьте подключение.':'Жөндөөнү өзгөртүү мүмкүн болгон жок. Байланышты текшериңиз.','Напоминания включены.':'Эскертмелер күйгүзүлдү.','Напоминания выключены.':'Эскертмелер өчүрүлдү.','Время сохранено.':'Убакыт сакталды.','Пока нет активных событий':'Активдүү окуялар азырынча жок','Скоро здесь появится новая общая цель. Вы сможете присоединиться и идти к ней вместе.':'Жакында бул жерде жаңы жалпы максат пайда болот. Ага кошулуп, бирге бара аласыз.','Следите за обновлениями':'Жаңылыктарды байкаңыз','События пока недоступны':'Окуялар азырынча жеткиликсиз','Проверьте подключение к интернету и попробуйте снова.':'Интернет байланышын текшерип, кайра аракет кылыңыз.','Обновите страницу':'Баракты жаңыртыңыз'
+        'Добро пожаловать':'Кош келиңиз','На пути к сильному таква':'Бекем такыбалык жолунда','Путь к сильному таква':'Бекем такыбалык жолунда','Отмечайте свой путь, сохраняйте постоянство и растите вместе с другими.':'Жолуңузду белгилеп, туруктуулукту сактап, башкалар менен бирге өсүңүз.','Как вас зовут?':'Атыңыз ким?','Придумайте пароль':'Сырсөз ойлоп табыңыз','Показать пароль':'Сырсөздү көрсөтүү','Запомнить меня':'Мени эстеп кал','Создать кабинет':'Кабинет ачуу','У меня уже есть аккаунт':'Менде аккаунт бар','С возвращением':'Кайра кош келдиңиз','Введите имя и пароль, чтобы продолжить свой путь.':'Жолуңузду улантуу үчүн атыңызды жана сырсөзүңүздү жазыңыз.','Ваше имя':'Сиздин атыңыз','Ваш пароль':'Сиздин сырсөзүңүз','Войти в кабинет':'Кабинетке кирүү','Создать аккаунт':'Аккаунт ачуу','Открыть профиль':'Профилди ачуу','Ваш ритм':'Сиздин ыргагыңыз','последние 7 дней':'акыркы 7 күн','дней':'күн','Вы держите ритм':'Ыргакты сактап жатасыз','Добавляйте хотя бы одно дело каждый день.':'Күн сайын жок дегенде бир ишти белгилеңиз.','🔥 Серия продолжается':'🔥 Серия уланууда','Достижения ждут вас':'Жетишкендиктер күтөт','Откройте первое достижение в профиле.':'Профилден биринчи жетишкендикти ачыңыз.','Смотреть':'Көрүү','Хадис дня':'Күндүн хадиси','Подробнее':'Кененирээк','Профиль':'Профиль','В главное':'Башкы бетке','Ваш ежедневный путь в Chetele':'Cheteleдеги күнүмдүк жолуӊуз','Всего баллов':'Жалпы упай','Место в рейтинге':'Рейтингдеги орун','мягкие напоминания':'жумшак эскертмелер','Будьте в своём ритме':'Өз ыргагыңызда болуңуз','Три бережных сигнала в течение дня':'Күндүз үч жумшак белги','начать путь':'жолду баштоо','мягко продолжить':'жай улантуу','подвести итог':'жыйынтык чыгаруу','Включите — и мы деликатно напомним о ваших делах.':'Күйгүзүңүз — иштериңизди сылык эскертебиз.','Закрыть':'Жабуу','Календарь':'Календарь','Нажмите на дату':'Күндү тандаңыз','Открыть дела за этот день':'Бул күндүн иштерин ачуу','Смысл хадиса':'Хадистин мааниси','Небольшой шаг на сегодня':'Бүгүнкү кичинекей кадам','Изменить имя':'Атын өзгөртүү','Сохранить':'Сактоо','Цель выполнена':'Максат аткарылды','Вы завершили все дела на сегодня. Пусть этот ритм приносит вам пользу.':'Бүгүнкү бардык иштерди аткардыңыз. Бул ыргак сизге пайда алып келсин.','Нажмите, чтобы продолжить':'Улантуу үчүн басыңыз','Минимум дня выполнен':'Күндүн минимуму аткарылды','Ваша личная цель':'Жеке максатыңыз','Выберите спокойный и достижимый ориентир для этого события.':'Бул окуя үчүн жетүүгө боло турган максатты тандаңыз.','Личная цель':'Жеке максат','Отмена':'Жокко чыгаруу','Участвовать':'Катышуу','Чтение':'Окуу','Сколько страниц прочитали?':'Канча бет окудуңуз?','стр.':'бет','Нафиль намаз':'Напил намаз','Отмечайте каждый совершённый намаз':'Ар бир окулган намазды белгилеңиз','Прочитали сегодня?':'Бүгүн окудуңузбу?','Совершили сегодня?':'Бүгүн окудуңузбу?','Да':'Ооба','Нет':'Жок','Каза намаз':'Каза намаз','Пропущенные намазы':'Каза намаздар','Фаджр':'Багымдат','Восход':'Күн чыгыш','Зухр':'Бешим','Магриб':'Шам','Иша':'Куптан','Эта неделя':'Ушул апта','Следующий намаз':'Кийинки намаз','Расписание на день':'Күндүн тартиби','Дальше':'Андан кийин','Время намазов':'Намаз убактылары','Ваш город':'Сиздин шаар','Определить автоматически':'Автоматтык аныктоо','Зикр и салават':'Зикир жана салават','Количество прочитанных':'Окулган саны','раз':'жолу','Сегодняшние дела':'Бүгүнкү иштер','Дела за выбранный день':'Тандалган күндүн иштери','Остальные дела':'Башка иштер','Выполняйте условия в карточках, чтобы открыть достижения.':'Жетишкендиктерди ачуу үчүн карточкадагы шарттарды аткарыңыз.','Рейтинг пока пуст.':'Рейтинг азырынча бош.','Не удалось получить рейтинг.':'Рейтингди алуу мүмкүн болгон жок.','Рейтинг обновляется после каждого выполненного дела.':'Рейтинг ар бир аткарылган иштен кийин жаңыланат.','Загрузка рейтинга…':'Рейтинг жүктөлүүдө…','Сейчас нет активных событий. Скоро здесь появится новая общая цель.':'Азыр активдүү окуялар жок. Жакында жаңы жалпы максат чыгат.','Лидеры события':'Окуянын лидерлери','Пока нет участников':'Катышуучулар азырынча жок','Личный путь':'Жеке жол','Общая цель сообщества.':'Коомчулуктун жалпы максаты.','Личный путь в своём темпе.':'Өз ыргагыңыздагы жеке жол.','Вы участвуете':'Сиз катышып жатасыз','Ваш путь':'Сиздин жолуңуз','Присоединяем…':'Кошулуп жатабыз…','Не удалось вступить':'Кошулуу мүмкүн болгон жок.','Укажите цель больше нуля.':'Нөлдөн чоң максатты жазыңыз.','Новое достижение!':'Жаңы жетишкендик!','Открыто достижение':'Жетишкендик ачылды','Все достижения уже открыты. Ма ша Аллах!':'Бардык жетишкендиктер ачылды. Ма шаа Аллах!','Версия приложения':'Тиркеменин нускасы','Выйти из аккаунта':'Аккаунттан чыгуу','Достижения':'Жетишкендиктер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Уведомления':'Эскертмелер','Время уведомления':'Эскертменин убактысы','Ежедневно':'Күн сайын','Ежедневное напоминание':'Күнүмдүк эскертме','Мягкий сигнал в удобное для вас время':'Ыңгайлуу убакыттагы жумшак белги','Пример уведомления':'Эскертменин мисалы','Утро':'Эртең менен','День':'Күндүз','Вечер':'Кечинде','салаватов':'салават','зикров':'зикир','страниц':'бет','тахаджудов':'тахажуд','участников':'катышуучу','Не удалось загрузить события. Проверьте подключение.':'Окуяларды жүктөө мүмкүн болгон жок. Байланышты текшериңиз.','Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Бул түзмөктө сакталган маалыматтар көрсөтүлдү. Толук тарых үчүн интернетке кошулуңуз.','Включая сегодняшний прогресс и все сохранённые дни.':'Бүгүнкү прогресс жана бардык сакталган күндөр кошо эсептелди.','Не удалось изменить настройку. Проверьте подключение.':'Жөндөөнү өзгөртүү мүмкүн болгон жок. Байланышты текшериңиз.','Напоминания включены.':'Эскертмелер күйгүзүлдү.','Напоминания выключены.':'Эскертмелер өчүрүлдү.','Время сохранено.':'Убакыт сакталды.','Пока нет активных событий':'Активдүү окуялар азырынча жок','Скоро здесь появится новая общая цель. Вы сможете присоединиться и идти к ней вместе.':'Жакында бул жерде жаңы жалпы максат пайда болот. Ага кошулуп, бирге бара аласыз.','Следите за обновлениями':'Жаңылыктарды байкаңыз','События пока недоступны':'Окуялар азырынча жеткиликсиз','Проверьте подключение к интернету и попробуйте снова.':'Интернет байланышын текшерип, кайра аракет кылыңыз.','Обновите страницу':'Баракты жаңыртыңыз'
       };
       function translateNodeText(node){const source=originalText.get(node)??node.nodeValue;originalText.set(node,source);const trimmed=source.trim();if(!trimmed)return;let value=preferences.language==='ky'?(kyText[trimmed]||trimmed):trimmed;if(preferences.language==='ky') value=value.replace(/^(\d+) из (\d+)$/, '$1 ичинен $2').replace(/^(\d+) дня подряд$/, '$1 күн катары менен').replace(/^(\d+) дней подряд$/, '$1 күн катары менен');if(value!==trimmed)node.nodeValue=source.replace(trimmed,value);else node.nodeValue=source.replace(trimmed,preferences.language==='ru'?trimmed:value);}
       function localizeDocument(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const skip=new Set(['SCRIPT','STYLE']);let node;while(node=walker.nextNode()){if(!skip.has(node.parentElement?.tagName))translateNodeText(node);}document.querySelectorAll('[placeholder]').forEach(element=>{const source=element.dataset.i18nPlaceholder||element.getAttribute('placeholder');element.dataset.i18nPlaceholder=source;if(kyText[source])element.setAttribute('placeholder',preferences.language==='ky'?kyText[source]:source);});}
@@ -2099,5 +2106,378 @@ body .personal-goal-modal .personal-goal-save{font-size:15px}
 @keyframes win-pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion: reduce){body .calendar-sheet *,body .personal-goal-modal,body .personal-goal-modal *,body .exit-confirmation,body .exit-confirmation *{animation:none!important;transition:none!important}}
 </style>
+<style id="soft">
+/* Main screen in the soft glass style from the design canvas. Every selector starts
+   with body #app (or body for the prayer sheets) so it outranks the older layers. */
+body #app.on-today{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px}
+body #app.on-today,body #app .nav{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #app.on-today button,body #app.on-today input{font-family:inherit}
+
+/* Header */
+body #app.on-today .top{padding:24px 4px 22px}
+body #app.on-today .top .eyebrow{color:rgba(255,255,255,.78);font-size:14px;font-weight:500;margin-bottom:6px}
+body #app.on-today .top h1{color:#fff;font-size:clamp(24px,7.4vw,30px);font-weight:600;letter-spacing:-.02em}
+body #app.on-today .top .avatar{width:48px;height:48px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff}
+body #app.on-today .top .avatar svg{fill:none}
+
+/* Order of the main screen */
+body #app #today-view.active{gap:24px}
+body #app #today-view>*{margin-top:0;margin-bottom:0}
+body #app #today-view>.past-day-banner{order:0}
+body #app #today-view>.day-hero{order:1}
+body #app #today-view>.calendar-card{order:2}
+body #app #today-view>.hadith-card{order:3}
+body #app #today-view>.section-head{order:4}
+body #app #today-view>#task-list{order:5}
+body #app #today-view>.achievement-teaser{order:6}
+body #app #today-view>.autosave{order:7}
+body #app #today-view>.streak-card,body #app #today-view>.qaza-card{display:none}
+
+/* Shared glass */
+body #app .day-hero,body #app .hadith-card,body #app .reading-list,body #app .prayer-body,body #app .dhikr-row,body #app .achievement-teaser,body #app .past-day-banner{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06)}
+body #app #today-view .lucide{stroke-width:1.6}
+
+/* Hero: deeds of the day and the next prayer */
+body #app .day-hero{display:flex;flex-direction:column;border-radius:32px;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10)}
+body #app .day-hero-bar{height:52px;padding:0 22px;display:flex;align-items:center;gap:10px;color:#1D2A30;font-size:14px;font-weight:500}
+body #app .day-hero-bar span{flex:1}
+body #app .day-hero-bar b{font-weight:600}
+body #app .day-hero-ring{width:18px;height:18px;flex:none}
+body #app .day-hero-ring circle{fill:none;stroke:rgba(16,22,26,.15);stroke-width:2.4}
+body #app .day-hero-ring #day-hero-ring{stroke:#10161A;stroke-linecap:round;stroke-dasharray:0 44;transition:stroke-dasharray .6s cubic-bezier(.2,.8,.2,1)}
+body #app .prayer-card{margin:-1px;padding:24px 22px 22px;border-radius:32px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));box-shadow:0 14px 40px rgba(16,22,26,.12),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:12px}
+body #app .prayer-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#5E6A71;font-size:14px;font-weight:500}
+body #app .prayer-city{min-height:44px;margin:-12px -8px;padding:0 8px;border:0;border-radius:22px;background:transparent;color:#5E6A71;font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px}
+body #app .prayer-city .lucide{width:15px;height:15px}
+body #app #prayer-next{margin:8px 0 0;color:#10161A;font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+body #app .prayer-left{margin:0;color:#2B363C;font-size:15px;line-height:1.45}
+body #app .prayer-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;margin-top:6px}
+body #app .prayer-slot{height:54px;border-radius:16px;color:#10161A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0}
+body #app .prayer-slot small{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:10px;font-weight:500;opacity:.8}
+body #app .prayer-slot b{font-size:14px;font-weight:600}
+body #app .prayer-slot.past{color:#9AA3A8}
+body #app .prayer-slot.next{background:#0B0F12;color:#fff}
+body #app .prayer-schedule{align-self:flex-start;height:48px;margin-top:6px;padding:0 20px 0 6px;border:0;border-radius:24px;background:#0B0F12;color:#fff;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
+body #app .prayer-schedule i{width:36px;height:36px;border-radius:18px;background:#fff;color:#10161A;display:grid;place-items:center}
+body #app .prayer-schedule .lucide{width:19px;height:19px}
+body #app .day-hero-foot{min-height:54px;padding:0 22px;display:flex;align-items:center;gap:10px;font-size:14px}
+body #app .day-hero-foot span{color:#5E6A71}
+body #app .day-hero-foot b{font-weight:600;color:#10161A}
+
+/* This week */
+body #app .calendar-card{margin:0;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;color:#10161A;display:flex;flex-direction:column;gap:12px;text-align:left}
+body #app .calendar-top{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+body #app .calendar-top h2{margin:0;color:#5E6A71!important;font-size:14px;font-weight:500}
+body #app .week-streak{display:flex;align-items:center;gap:6px;color:#10161A!important;font-size:14px;font-weight:600}
+body #app .week-streak .lucide{width:16px;height:16px;stroke:#E0832B}
+body #app .week-calendar{margin:0;padding:8px;gap:2px;border-radius:26px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.5);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+body #app .calendar-day{min-height:76px;padding:0;border-radius:20px;background:transparent!important;box-shadow:none!important;color:#10161A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+body #app .calendar-day span{color:#8A949A;font-size:12px;font-weight:500;text-transform:capitalize}
+body #app .calendar-day b{font-size:18px;font-weight:500}
+body #app .day-dot{width:5px;height:5px;border-radius:3px;background:transparent}
+body #app .calendar-day.has-progress .day-dot{background:#8A949A}
+body #app .calendar-day.complete .day-dot{background:#10161A}
+body #app .calendar-day.current{background:rgba(255,255,255,.96)!important;box-shadow:0 6px 18px rgba(16,22,26,.10)!important;color:#10161A}
+body #app .calendar-day.current.has-progress .day-dot{background:#128A52}
+
+/* Hadith of the day */
+body #app .hadith-card{padding:22px;border-radius:28px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;column-gap:12px;row-gap:12px}
+body #app .hadith-card .hadith-title{grid-column:1;grid-row:1;align-self:center;color:#5E6A71;font-size:14px;font-weight:500;letter-spacing:0;text-transform:none}
+body #app .hadith-card .hadith-icon{grid-column:2;grid-row:1;width:36px;height:36px;border-radius:18px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(16,22,26,.06);color:#10161A}
+body #app .hadith-card .hadith-icon svg{width:18px;height:18px;stroke-width:1.6}
+body #app .hadith-card .hadith-text{grid-column:1/3;grid-row:2;color:#10161A;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1.35}
+body #app .hadith-card .hadith-source{grid-column:1;grid-row:3;color:#7A858B;font-size:13px;font-weight:400}
+body #app .hadith-card .hadith-more{grid-column:2;grid-row:3;height:40px;min-height:40px;padding:0 16px;border-radius:20px;background:#0B0F12;color:#fff;font-size:14px;font-weight:600}
+
+/* Section heads inside the deeds list */
+body #app #task-list{display:flex;flex-direction:column;gap:24px}
+body #app #task-list .group-head{margin:0 4px 12px;align-items:flex-end}
+body #app #task-list .group-head h3{color:#10161A;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app #task-list .group-head>span{color:#5E6A71;font-size:14px;font-weight:400}
+body #app #task-list .group-link{min-height:32px;padding:0;border:0;background:transparent;color:#10161A;font-size:14px;font-weight:600}
+
+/* Reading */
+body #app .reading-list{padding:6px;gap:2px;border-radius:28px}
+body #app .reading-row{min-height:68px;padding:0 6px 0 12px;gap:12px;border-radius:22px;background:transparent}
+body #app .reading-row.filled{background:rgba(255,255,255,.75)}
+body #app #today-view .task-icon{width:44px;height:44px;border-radius:22px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85)!important;box-shadow:0 2px 8px rgba(16,22,26,.06);color:#10161A!important}
+body #app #today-view .task-icon svg{width:21px;height:21px;stroke-width:1.6}
+body #app #today-view .task-title{color:#10161A;font-size:16px;font-weight:600}
+body #app #today-view .task-sub{color:#7A858B;font-size:13px;font-weight:400}
+body #app .reading-row.filled .task-sub{color:#128A52}
+body #app .reading-row .stepper{padding:0;gap:0;background:transparent}
+body #app .reading-row .step-btn{width:44px;height:44px;border-radius:22px;background:rgba(16,22,26,.06);color:#10161A;font-size:22px;font-weight:400}
+body #app .reading-row .step-btn.step-plus{background:#0B0F12;color:#fff;box-shadow:none}
+body #app .reading-row .stepper .field{width:38px;color:#10161A;font-size:18px;font-weight:600}
+
+/* Prayer: tahajjud, nafil, missed prayers */
+body #app .prayer-body{padding:16px;gap:14px;border-radius:28px}
+body #app .prayer-tahajjud{padding-bottom:14px;border-bottom:1px solid rgba(16,22,26,.08)}
+body #app .prayer-tahajjud .pill{flex:none;width:auto;display:flex;padding:4px;gap:0;border-radius:22px;background:rgba(16,22,26,.06)}
+body #app .prayer-tahajjud .task-copy{flex:1;min-width:0}
+body #app .prayer-tahajjud .pill button{min-width:0;min-height:40px;height:40px;padding:0 16px;border-radius:18px;background:transparent;color:#5E6A71;font-size:14px;font-weight:600;box-shadow:none}
+body #app .prayer-tahajjud .pill button.active{background:#fff;color:#10161A;box-shadow:0 2px 8px rgba(16,22,26,.10)}
+body #app .prayer-tahajjud .pill button[data-choice="yes"].active{background:#0B0F12;color:#fff}
+body #app .prayer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body #app .prayer-option{min-height:60px;padding:0 14px;gap:10px;border:1px solid rgba(255,255,255,.9);border-radius:20px;background:rgba(255,255,255,.35);color:#10161A;font-size:15px;font-weight:600;justify-content:flex-start}
+body #app .prayer-option.done{border-color:rgba(16,22,26,.12);background:rgba(255,255,255,.95);color:#10161A}
+body #app .prayer-option .mini-check{width:26px;height:26px;flex:none;border:1.5px solid rgba(16,22,26,.25);border-radius:13px;background:transparent}
+body #app .prayer-option.done .mini-check{border-color:#0B0F12;background:#0B0F12}
+body #app .prayer-option .mini-check{position:relative}
+body #app .prayer-option.done .mini-check:after{left:7px;top:7px;width:9px;height:5px;border-width:1.8px}
+body #app .prayer-qaza{padding-top:14px;border-top:1px solid rgba(16,22,26,.08)}
+body #app .prayer-qaza h4{color:#10161A;font-size:16px;font-weight:600}
+body #app .qaza-reset{color:#5E6A71;font-size:14px;font-weight:500}
+body #app .prayer-qaza .qaza-grid{padding:4px;gap:4px;border-radius:22px;background:rgba(16,22,26,.05)}
+body #app .qaza-tap{height:72px;border-radius:18px;background:transparent;color:#10161A;gap:4px}
+body #app .qaza-tap b{font-size:20px;font-weight:600}
+body #app .qaza-tap span{font-size:11px;font-weight:500;opacity:.75}
+body #app .qaza-tap.filled{background:#fff;color:#10161A;box-shadow:0 4px 12px rgba(16,22,26,.08)}
+body #app .qaza-hint{color:#7A858B;font-size:12px}
+
+/* Dhikr and salawat */
+body #app .dhikr-row{padding:18px 14px 14px;gap:4px;border-radius:28px}
+body #app .dhikr-row.filled{background:rgba(255,255,255,.62)}
+body #app .dhikr-row .task-title{color:#5E6A71;font-size:14px;font-weight:500}
+body #app .dhikr-row .field{height:44px;padding:0;border-radius:0;background:transparent;color:#10161A;font-size:34px;font-weight:600;letter-spacing:-.02em;box-shadow:none}
+body #app .dhikr-row.filled .field{color:#10161A}
+body #app .dhikr-row .field:focus{box-shadow:none;outline:0;border-bottom:2px solid #10161A}
+body #app .dhikr-quick{margin-top:8px}
+body #app .dhikr-quick button{height:44px;border-radius:22px;background:rgba(16,22,26,.07);color:#10161A;font-size:14px;font-weight:600;box-shadow:none}
+body #app .dhikr-quick button[data-step="100"]{background:#0B0F12;color:#fff}
+
+/* Next achievement and saving */
+body #app .achievement-teaser{padding:12px 12px 12px 14px;gap:12px;border-radius:24px;border-width:1px;border-color:rgba(255,255,255,.9);background-color:rgba(255,255,255,.62);background-image:none}
+body #app .achievement-teaser i{width:44px;height:44px;flex:none;border-radius:22px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(16,22,26,.06);display:grid;place-items:center}
+body #app .achievement-teaser i .lucide{width:20px;height:20px;stroke:#10161A}
+body #app .achievement-teaser b{color:#10161A;font-size:16px;font-weight:600}
+body #app .achievement-teaser span{color:#7A858B;font-size:13px;font-weight:400}
+body #app .achievement-teaser button{color:#10161A;font-size:14px;font-weight:600}
+body #app #today-view .autosave{justify-content:center;margin:0}
+body #app #today-view .autosave .save-status{color:#5E6A71;font-size:13px;font-weight:400}
+body #app .past-day-banner{border-radius:22px}
+
+/* Bottom menu: a glass capsule, the open section shows its name */
+body #app{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+body #app .nav{width:auto;max-width:calc(100% - 24px);bottom:calc(14px + env(safe-area-inset-bottom));gap:4px;padding:6px;border:1px solid rgba(255,255,255,.95);border-radius:30px;background:rgba(255,255,255,.72);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 12px 34px rgba(16,22,26,.16)}
+body #app .nav button{flex:0 0 auto;min-width:48px;height:48px;min-height:48px;padding:0;gap:8px;flex-direction:row;border-radius:24px;background:transparent;color:#4A555B;font-size:0;font-weight:600;letter-spacing:-.01em;transition:padding .25s cubic-bezier(.2,.8,.2,1),background .25s ease,color .25s ease}
+body #app .nav button.active{padding:0 18px 0 14px;background:#0B0F12;color:#fff;font-size:15px}
+body #app .nav i{display:grid;place-items:center;width:22px;height:22px;margin:0;background:transparent}
+body #app .nav i .lucide{width:22px;height:22px;stroke-width:1.6}
+body #app .nav button:active{transform:scale(.94)}
+
+/* Prayer sheets */
+body .prayer-sheet .sheet-sub{margin:2px 0 0;color:var(--muted);font-size:13px;font-weight:600}
+body .prayer-sheet .prayer-place{width:100%;min-height:56px;padding:0 14px;border:0;border-radius:16px;background:var(--page);color:var(--ink);display:flex;align-items:center;gap:10px;text-align:left}
+body .prayer-sheet .prayer-place .lucide{width:18px;height:18px;flex:none}
+body .prayer-sheet .prayer-place span{flex:1;min-width:0;display:flex;flex-direction:column}
+body .prayer-sheet .prayer-place b{font-size:15px;font-weight:800}
+body .prayer-sheet .prayer-place small{color:var(--muted);font-size:12px;font-weight:600}
+body .prayer-sheet .prayer-place em{font-style:normal;color:var(--accent-ink);font-size:13px;font-weight:800}
+body .prayer-sheet .prayer-rows{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+body .prayer-sheet .prayer-row{min-height:56px;padding:0 14px;border-radius:16px;display:flex;align-items:center;gap:12px;color:var(--ink)}
+body .prayer-sheet .prayer-row i{width:36px;height:36px;flex:none;border-radius:18px;background:var(--page);display:grid;place-items:center}
+body .prayer-sheet .prayer-row i .lucide{width:18px;height:18px}
+body .prayer-sheet .prayer-row span{flex:1;display:flex;flex-direction:column;gap:1px}
+body .prayer-sheet .prayer-row b{font-size:16px;font-weight:800}
+body .prayer-sheet .prayer-row small{color:var(--muted);font-size:12px;font-weight:700}
+body .prayer-sheet .prayer-row time{font-size:18px;font-weight:800;letter-spacing:-.01em}
+body .prayer-sheet .prayer-row.past{color:var(--muted)}
+body .prayer-sheet .prayer-row.next{background:#0B0F12;color:#fff}
+body .prayer-sheet .prayer-row.next small{color:rgba(255,255,255,.8)}
+body .prayer-sheet .prayer-row.next i{background:rgba(255,255,255,.16)}
+body .prayer-sheet .prayer-note{margin:0;color:var(--muted);font-size:12px;font-weight:600;line-height:1.45;text-align:center}
+body .prayer-sheet .prayer-geo{width:100%;min-height:56px;padding:0 14px;border:1.5px solid var(--line);border-radius:16px;background:transparent;color:var(--ink);display:flex;align-items:center;gap:12px;text-align:left}
+body .prayer-sheet .prayer-geo span{display:flex;flex-direction:column;gap:1px}
+body .prayer-sheet .prayer-geo b{font-size:15px;font-weight:800}
+body .prayer-sheet .prayer-geo small{color:var(--muted);font-size:12px;font-weight:600}
+body .prayer-sheet .prayer-geo .lucide{width:20px;height:20px;flex:none}
+body .prayer-sheet .prayer-status{margin:0;color:var(--muted);font-size:13px;font-weight:600}
+body .prayer-sheet .prayer-status:empty{display:none}
+body .prayer-sheet .prayer-cities{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+body .prayer-sheet .prayer-cities button{width:100%;min-height:52px;padding:0 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:600;text-align:left}
+body .prayer-sheet .prayer-cities button[aria-pressed="true"]{font-weight:800}
+body .prayer-sheet .prayer-cities .lucide{width:20px;height:20px;stroke-width:2.6;opacity:0}
+body .prayer-sheet .prayer-cities button[aria-pressed="true"] .lucide{opacity:1}
+
+/* Dark theme */
+body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
+body.app-dark #app .day-hero,body.app-dark #app .hadith-card,body.app-dark #app .reading-list,body.app-dark #app .prayer-body,body.app-dark #app .dhikr-row,body.app-dark #app .achievement-teaser,body.app-dark #app .past-day-banner,body.app-dark #app .week-calendar{border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.06)!important;box-shadow:none}
+body.app-dark #app .calendar-card{background:transparent!important;box-shadow:none!important}
+body.app-dark #app .prayer-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none}
+body.app-dark #app .day-hero-bar,body.app-dark #app #prayer-next,body.app-dark #app .prayer-slot,body.app-dark #app .day-hero-foot b,body.app-dark #app .calendar-card,body.app-dark #app .week-streak,body.app-dark #app .calendar-day,body.app-dark #app .hadith-card .hadith-text,body.app-dark #app #task-list .group-head h3,body.app-dark #app #task-list .group-link,body.app-dark #app #today-view .task-title,body.app-dark #app .reading-row .stepper .field,body.app-dark #app .prayer-option,body.app-dark #app .prayer-qaza h4,body.app-dark #app .qaza-tap,body.app-dark #app .dhikr-row .field,body.app-dark #app .achievement-teaser b,body.app-dark #app .achievement-teaser button{color:var(--ink)!important}
+body.app-dark #app .prayer-left{color:var(--muted)}
+body.app-dark #app .day-hero-ring #day-hero-ring{stroke:var(--ink)}
+body.app-dark #app .day-hero-ring circle{stroke:rgba(255,255,255,.18)}
+body.app-dark #app .prayer-slot.next,body.app-dark #app .prayer-schedule,body.app-dark #app .hadith-card .hadith-more,body.app-dark #app .reading-row .step-btn.step-plus,body.app-dark #app .dhikr-quick button[data-step="100"],body.app-dark #app .prayer-tahajjud .pill button[data-choice="yes"].active,body.app-dark #app .nav button.active{background:#EEF5F2!important;color:#0B1110!important}
+body.app-dark #app .prayer-schedule i{background:#0B1110;color:#EEF5F2}
+body.app-dark #app .calendar-day.current,body.app-dark #app .reading-row.filled,body.app-dark #app .prayer-option.done,body.app-dark #app .qaza-tap.filled,body.app-dark #app .prayer-tahajjud .pill button.active{background:rgba(255,255,255,.14)!important;box-shadow:none!important;color:var(--ink)}
+body.app-dark #app .calendar-day.complete .day-dot{background:var(--ink)}
+body.app-dark #app #today-view .task-icon,body.app-dark #app .hadith-card .hadith-icon,body.app-dark #app .achievement-teaser i{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1)!important;color:var(--ink)!important;box-shadow:none}
+body.app-dark #app .achievement-teaser i .lucide{stroke:var(--ink)}
+body.app-dark #app .reading-row .step-btn,body.app-dark #app .dhikr-quick button,body.app-dark #app .prayer-tahajjud .pill,body.app-dark #app .prayer-qaza .qaza-grid{background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .prayer-option .mini-check{border-color:rgba(255,255,255,.3)}
+body.app-dark #app .prayer-option.done .mini-check{border-color:#EEF5F2;background:#EEF5F2}
+body.app-dark #app .prayer-option.done .mini-check:after{border-color:#0B1110}
+body.app-dark #app .prayer-option{border-color:rgba(255,255,255,.1)}
+body.app-dark #app .nav{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.82);box-shadow:0 12px 34px rgba(0,0,0,.4)}
+body.app-dark #app .nav button{color:#9BAEA7}
+body.app-dark .prayer-sheet .prayer-row.next{background:#EEF5F2;color:#0B1110}
+body.app-dark .prayer-sheet .prayer-row.next small{color:rgba(11,17,16,.7)}
+
+@media (prefers-reduced-motion: reduce){body #app .nav button,body #app .day-hero-ring #day-hero-ring{transition:none}}
+body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero-ring{transition:none}
+</style>
+<script src="assets/prayer-times.js"></script>
+<script>
+/* Prayer times on the main screen and in two sheets: the day's schedule and the
+   choice of city. The chosen place is kept on this phone only. */
+(function () {
+  const P = window.ChetPrayer;
+  if (!P) return;
+  const placeKey = 'chetele-prayer-place';
+  const KY_NAMES = { fajr: 'Багымдат', sunrise: 'Күн чыгыш', dhuhr: 'Бешим', asr: 'Аср', maghrib: 'Шам', isha: 'Куптан' };
+  const NAFIL_AFTER = ['asr', 'isha'];
+  const ICONS = { fajr: 'moon', sunrise: 'sunrise', dhuhr: 'sun', asr: 'cloudSun', maghrib: 'sunset', isha: 'moon' };
+  const pin = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>';
+  const locate = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>';
+  const close = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+  const tick = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  const ky = () => appLocale() === 'ky-KG';
+  const label = item => ky() ? KY_NAMES[item.id] : item.name;
+  const clock = date => `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  const escapeHtml = value => String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+  function place() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(placeKey) || 'null');
+      if (saved && saved.id === 'geo' && Number.isFinite(saved.lat) && Number.isFinite(saved.lng)) return { id: 'geo', name: saved.name || 'Моё место', lat: saved.lat, lng: saved.lng };
+      return P.CITIES.find(city => city.id === saved?.id) || P.CITIES[0];
+    } catch { return P.CITIES[0]; }
+  }
+  function keep(value) { try { localStorage.setItem(placeKey, JSON.stringify(value)); } catch { /* private mode: the city resets next launch */ } }
+
+  function until(ms) {
+    const total = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(total / 60), m = total % 60;
+    if (ky()) return h ? `${h} саат ${m} мүн` : `${m} мүн`;
+    return h ? `${h} ч ${m} мин` : `${m} мин`;
+  }
+
+  // Today's and tomorrow's prayers in one line, to look past Isha.
+  function sequence(now, where) {
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    return [
+      ...P.timesFor(now, where).filter(item => item.prayer),
+      ...P.timesFor(tomorrow, where).filter(item => item.prayer).map(item => ({ ...item, tomorrow: true }))
+    ];
+  }
+
+  function paintCard() {
+    if (!document.querySelector('#day-hero')) return;
+    const now = new Date(), where = place(), day = P.timesFor(now, where);
+    const line = sequence(now, where), index = line.findIndex(item => item.time > now), next = line[index];
+    const current = [...line].reverse().find(item => item.time <= now);
+    document.querySelector('#prayer-city-name').textContent = where.name;
+    document.querySelector('#prayer-next').textContent = ky() ? `${label(next)} — ${clock(next.time)}` : `${label(next)} в ${clock(next.time)}`;
+    const wait = ky() ? `${until(next.time - now)} калды.` : `${next.tomorrow ? 'Завтра, осталось' : 'Осталось'} ${until(next.time - now)}.`;
+    const hint = current && NAFIL_AFTER.includes(current.id)
+      ? (ky() ? ` ${label(current)} намазынан кийинки напилди төмөндө белгилесеңиз болот.` : ` Нафиль после ${label(current)} можно отметить ниже, в разделе «Намаз».`)
+      : '';
+    document.querySelector('#prayer-left').textContent = wait + hint;
+    document.querySelector('#prayer-strip').innerHTML = day.map(item => {
+      const isNext = !next.tomorrow && item.id === next.id, past = item.time <= now;
+      const state = isNext ? 'next' : past ? 'past' : '';
+      const note = isNext ? (ky() ? ', кийинки' : ', следующий') : past ? (ky() ? ', өттү' : ', прошёл') : '';
+      return `<span role="listitem" class="prayer-slot ${state}" aria-label="${label(item)}, ${clock(item.time)}${note}"><small>${label(item)}</small><b>${clock(item.time)}</b></span>`;
+    }).join('');
+    const after = line.slice(index + 1, index + 3);
+    document.querySelector('#prayer-after').textContent = after.map((item, i) => {
+      const prefix = item.tomorrow && !(i > 0 && after[i - 1].tomorrow) && !next.tomorrow ? (ky() ? 'эртең ' : 'завтра ') : '';
+      return `${prefix}${label(item)} ${clock(item.time)}`;
+    }).join(' · ');
+    paintSchedule();
+  }
+
+  function sheet(id, title) {
+    let element = document.querySelector('#' + id);
+    if (element) return element;
+    element = document.createElement('div');
+    element.id = id;
+    element.className = 'calendar-sheet prayer-sheet';
+    element.hidden = true;
+    element.innerHTML = `<button class="calendar-sheet-backdrop" data-close-prayer="${id}" aria-label="Закрыть"></button><section class="calendar-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="${id}-title"><div class="sheet-grabber"></div><div class="sheet-header"><div><h2 id="${id}-title">${title}</h2><p class="sheet-sub"></p></div><button class="sheet-close" data-close-prayer="${id}" aria-label="Закрыть">${close}</button></div><div class="prayer-sheet-content"></div></section>`;
+    document.body.append(element);
+    return element;
+  }
+
+  function paintSchedule() {
+    const element = document.querySelector('#prayer-schedule-sheet');
+    if (!element || element.hidden) return;
+    const now = new Date(), where = place(), day = P.timesFor(now, where);
+    const next = day.find(item => item.prayer && item.time > now);
+    element.querySelector('#prayer-schedule-sheet-title').textContent = ky() ? 'Намаз убактылары' : 'Время намазов';
+    element.querySelector('.sheet-sub').textContent = `${ky() ? 'Бүгүн' : 'Сегодня'}, ${new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'long' }).format(now)}`;
+    const rows = day.map(item => {
+      const isNext = next && item.id === next.id, past = item.time <= now;
+      const sub = item.id === 'sunrise' ? (ky() ? 'Багымдаттын убактысы бүтөт' : 'конец времени Фаджра')
+        : isNext ? `${ky() ? 'калды' : 'через'} ${until(item.time - now)}` : past ? (ky() ? 'өттү' : 'прошёл') : '';
+      return `<li class="prayer-row ${isNext ? 'next' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b><small>${sub || '&nbsp;'}</small></span><time>${clock(item.time)}</time></li>`;
+    }).join('');
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Эсептөө' : 'Расчёт'}: ${P.METHOD_LABEL}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul><p class="prayer-note">${ky() ? 'Убакыт тандалган жер үчүн эсептелген. Мечитиңиз менен салыштырыңыз.' : 'Время рассчитано для выбранного места. Сверяйтесь с вашей мечетью.'}</p>`;
+  }
+
+  function paintCities(status = '') {
+    const element = sheet('prayer-city-sheet', ky() ? 'Сиздин шаар' : 'Ваш город');
+    const where = place();
+    element.querySelector('.sheet-sub').textContent = ky() ? 'Намаз убактысын эсептөө үчүн' : 'Для расчёта времени намазов';
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-geo" data-prayer-geo>${locate}<span><b>${ky() ? 'Автоматтык аныктоо' : 'Определить автоматически'}</b><small>${ky() ? 'Геолокация эсептөө үчүн гана керек' : 'Геопозиция нужна только для расчёта и остаётся на телефоне'}</small></span></button><p class="prayer-status" role="status">${escapeHtml(status)}</p><ul class="prayer-cities">${P.CITIES.map(city => `<li><button type="button" data-prayer-pick="${city.id}" aria-pressed="${city.id === where.id}">${city.name}${tick}</button></li>`).join('')}</ul>`;
+    return element;
+  }
+
+  function openSchedule() {
+    sheet('prayer-schedule-sheet', 'Время намазов');
+    openSheet('prayer-schedule-sheet');
+    paintSchedule();
+  }
+  function openCities() {
+    const element = paintCities();
+    element.remove(); document.body.append(element); // above the schedule when both are open
+    openSheet('prayer-city-sheet');
+  }
+
+  // The nearest listed city names the place; coordinates are rounded to about a kilometre.
+  function useLocation() {
+    if (!navigator.geolocation) { paintCities(ky() ? 'Бул түзмөк жайгашкан жерди аныктай албайт.' : 'Это устройство не умеет определять место. Выберите город из списка.'); return; }
+    paintCities(ky() ? 'Аныкталууда…' : 'Определяем…');
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = Math.round(position.coords.latitude * 100) / 100, lng = Math.round(position.coords.longitude * 100) / 100;
+      const distance = city => Math.hypot(city.lat - lat, (city.lng - lng) * Math.cos(lat * Math.PI / 180));
+      const nearest = P.CITIES.reduce((best, city) => distance(city) < distance(best) ? city : best);
+      const name = distance(nearest) < 0.35 ? nearest.name : (ky() ? 'Менин жерим' : 'Моё место');
+      keep({ id: 'geo', lat, lng, name });
+      closeSheet('prayer-city-sheet');
+      paintCard();
+    }, () => paintCities(ky() ? 'Жайгашкан жерди аныктоо мүмкүн болгон жок. Тизмеден тандаңыз.' : 'Не удалось определить место. Выберите город из списка.'), { timeout: 10000, maximumAge: 3600000 });
+  }
+
+  document.addEventListener('click', event => {
+    if (event.target.closest('[data-prayer-schedule]')) { openSchedule(); return; }
+    if (event.target.closest('[data-prayer-city]')) { openCities(); return; }
+    if (event.target.closest('[data-prayer-geo]')) { useLocation(); return; }
+    const pick = event.target.closest('[data-prayer-pick]');
+    if (pick) { keep({ id: pick.dataset.prayerPick }); closeSheet('prayer-city-sheet'); paintCard(); return; }
+    const shut = event.target.closest('[data-close-prayer]');
+    if (shut) { closeSheet(shut.dataset.closePrayer); return; }
+    // The language switch repaints the text built here.
+    if (event.target.closest('[data-setting="language"] button')) setTimeout(paintCard);
+  });
+
+  paintCard();
+  setInterval(paintCard, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) paintCard(); });
+  window.chetelePaintPrayer = paintCard;
+})();
+</script>
 </body>
 </html>
