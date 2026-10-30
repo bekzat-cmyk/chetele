@@ -273,7 +273,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="stats-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></i>Статистика</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
   </main>
   <section class="desktop-only"><div class="desktop-icon">⌁</div><h1>Chetele — на телефоне</h1><p>Это приложение создано для мобильного ритма дня. Откройте эту страницу со смартфона.</p></section>
-  <div id="calendar-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-calendar aria-label="Закрыть календарь"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="month-title"><div class="sheet-grabber" aria-label="Потяните вниз, чтобы закрыть"></div><div class="sheet-header"><h2>Ваш ритм</h2><button class="sheet-close" data-close-calendar aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="sheet-month-control"><button id="month-prev" class="month-arrow" aria-label="Предыдущий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div><h2 id="month-title">Календарь</h2><p id="month-subtitle">Нажмите на дату</p></div><button id="month-next" class="month-arrow" aria-label="Следующий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="month-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="month-grid" class="month-grid"></div><div class="month-legend" aria-hidden="true"><span><i class="lg-full"></i>Все дела дня</span><span><i class="lg-some"></i>Есть дела</span><span><i class="lg-pick"></i>Выбран</span></div><p id="month-summary" class="month-summary"></p><button id="open-selected-day" class="save-progress" hidden>Открыть дела за этот день</button></section></div>
+  <div id="calendar-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-calendar aria-label="Закрыть календарь"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="month-title"><div class="sheet-grabber" aria-label="Потяните вниз, чтобы закрыть"></div><div class="sheet-header"><h2>Ваш ритм</h2><button class="sheet-close" data-close-calendar aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="sheet-month-control"><button id="month-prev" class="month-arrow" aria-label="Предыдущий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div><h2 id="month-title">Календарь</h2><p id="month-subtitle">Нажмите на дату</p></div><button id="month-next" class="month-arrow" aria-label="Следующий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="month-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="month-grid" class="month-grid"></div><div class="month-legend" aria-hidden="true"><span><i class="lg-full"></i>все 11 дел</span><span><i class="lg-mid"></i>больше половины</span><span><i class="lg-some"></i>есть дела</span></div><p id="month-summary" class="month-summary"></p><button id="open-selected-day" class="save-progress" hidden>Открыть дела за этот день</button></section></div>
   <div id="hadith-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-hadith aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="hadith-sheet-title"><div class="sheet-grabber"></div><div class="sheet-header"><h2 id="hadith-sheet-title">Хадис дня</h2><button class="sheet-close" data-close-hadith aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><p id="hadith-full-text"></p><p id="hadith-full-source" class="credentials-note"></p><div class="hadith-insight"><b>Смысл хадиса</b><p id="hadith-explanation"></p></div><div class="hadith-practice"><b>Небольшой шаг на сегодня</b><p id="hadith-practice"></p></div></section></div>
   <div id="rename-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-rename aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="rename-title"><div class="sheet-grabber"></div><div class="sheet-header"><h2 id="rename-title">Изменить имя</h2><button class="sheet-close" data-close-rename aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><form id="rename-form"><label class="rename-label" for="rename-input">Как вас показывать в рейтинге</label><input id="rename-input" class="name-input" maxlength="24" autocomplete="name" required placeholder="Ваше имя" aria-describedby="rename-rule rename-error"><span class="rename-meta"><span id="rename-rule">Буквы, пробел, дефис или апостроф</span><span id="rename-count">0 / 24</span></span><p id="rename-error" class="rename-error" role="alert"></p><button id="rename-save" class="continue" type="submit">Сохранить</button><p class="rename-hint"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>После сохранения имя сразу обновится в рейтинге</p></form></section></div>
   <div id="celebration" class="reward reward-done" hidden role="dialog" aria-modal="true" aria-labelledby="reward-done-title"><div class="reward-confetti" aria-hidden="true"></div><section class="reward-card"><span class="rw-ring" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><circle class="rw-ring-value" cx="60" cy="60" r="52"/></svg><b id="reward-ring-label">11/11</b></span><h2 id="reward-done-title">Все 11 дел выполнены</h2><p id="reward-done-text"></p><div class="reward-stats"><div><b id="reward-points"></b><span>очков</span></div><div><b id="reward-streak"></b><span id="reward-streak-label">дней подряд</span></div><div><b id="reward-rank"></b><span id="reward-rank-label">в рейтинге</span></div></div><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
@@ -1296,7 +1296,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function formatDayLabel(key){ return new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`)); }
     function renderMonthCalendar(){
       const now=new Date(), cursor=calendarCursor||new Date(now.getFullYear(),now.getMonth(),1), year=cursor.getFullYear(), month=cursor.getMonth(), first=new Date(year,month,1), days=new Date(year,month+1,0).getDate(), offset=(first.getDay()+6)%7;
-      document.querySelector('#month-title').textContent=new Intl.DateTimeFormat(appLocale(),{month:'long',year:'numeric'}).format(cursor);
+      const monthTitle=new Intl.DateTimeFormat(appLocale(),{month:'long',year:'numeric'}).format(cursor).replace(/\s*г\.?$/,'');
+      document.querySelector('#month-title').textContent=monthTitle.charAt(0).toUpperCase()+monthTitle.slice(1);
       const currentMonth=year===now.getFullYear()&&month===now.getMonth(); document.querySelector('#month-next').disabled=currentMonth;
       const items=[];
       for(let i=0;i<offset;i++) items.push('<span class="month-day empty"></span>');
@@ -1311,7 +1312,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const selected=calendarSelectedDate&&entryForCalendarDate(calendarSelectedDate);
       const dayWord=n=>{ const d=n%10,h=n%100; return d===1&&h!==11?'день':d>=2&&d<=4&&(h<12||h>14)?'дня':'дней'; };
       document.querySelector('#month-subtitle').textContent=activeDays?`${activeDays} ${dayWord(activeDays)} с делами · ${fullDays} ${fullDays===1?'полный':'полных'}`:'Дел пока не отмечено';
-      document.querySelector('#month-summary').textContent=selected?`${formatDayLabel(calendarSelectedDate)}: ${selected.completed} из ${selected.max} дел.`:'Нажмите на дату, чтобы увидеть итог дня.';
+      // The chosen day's result with a bar, as on the canvas.
+      const summary=document.querySelector('#month-summary');
+      summary.classList.toggle('has-day',!!calendarSelectedDate);
+      summary.innerHTML=calendarSelectedDate?`<span class="month-summary-top"><b>${escapeHtml(formatDayLabel(calendarSelectedDate))}</b><span><strong>${selected?selected.completed:0}</strong> из ${selected?selected.max:dailyMax()} дел</span></span><span class="zg-track" aria-hidden="true"><i style="width:${selected?Math.round(Math.min(1,selected.completed/selected.max)*100):0}%"></i></span>`:'Нажмите на дату, чтобы увидеть итог дня.';
       const openButton=document.querySelector('#open-selected-day');
       openButton.hidden=!calendarSelectedDate;
       if(calendarSelectedDate) openButton.textContent=calendarSelectedDate===todayKey?'Вернуться к сегодняшним делам':`Открыть дела за ${formatDayLabel(calendarSelectedDate)}`;
@@ -3511,6 +3515,57 @@ body.app-dark #app .state-streak{border-color:rgba(255,255,255,.08);background:r
 body #app #rating-view :is(.sk,.sk-light){background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.8),rgba(255,255,255,.35));background-size:200% 100%;animation:soft-shimmer 1.4s linear infinite}
 @keyframes soft-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 body.app-dark #app #rating-view :is(.sk,.sk-light){background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.14),rgba(255,255,255,.05));background-size:200% 100%}
+
+/* Calendar sheet in the soft glass style */
+body #calendar-sheet .calendar-sheet-panel{gap:16px;border-radius:32px 32px 0 0;background:rgba(246,249,248,.96);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#10161A}
+body #calendar-sheet .sheet-header h2{font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #calendar-sheet .sheet-close{width:40px;height:40px;border-radius:20px;background:rgba(16,22,26,.06)}
+body #calendar-sheet .sheet-month-control{margin:0;padding:8px;border:1px solid rgba(16,22,26,.06);border-radius:24px;background:#fff;display:flex;align-items:center;gap:8px}
+body #calendar-sheet .sheet-month-control>div{flex:1;text-align:center}
+body #calendar-sheet #month-title{margin:0;font-size:17px;font-weight:600;text-transform:none}
+body #calendar-sheet .month-day.today::after{display:none}
+body #calendar-sheet #month-subtitle{margin:2px 0 0;color:#7A858B;font-size:12px;font-weight:400}
+body #calendar-sheet .month-arrow{width:44px;height:44px;flex:none;border:0;border-radius:22px;background:rgba(16,22,26,.06);color:#10161A;box-shadow:none}
+body #calendar-sheet .month-arrow:disabled{opacity:.35}
+body #calendar-sheet .month-weekdays{gap:6px;color:#8A949A;font-size:12px;font-weight:500}
+body #calendar-sheet .month-grid{gap:6px}
+body #calendar-sheet .month-day{height:44px;border:0;border-radius:14px;background:transparent;color:#10161A;font-size:15px;font-weight:500;box-shadow:none}
+body #calendar-sheet .month-day.active{background:rgba(16,22,26,.14)}
+body #calendar-sheet .month-day.mid{background:rgba(16,22,26,.45);color:#fff}
+body #calendar-sheet .month-day.full{background:#10161A;color:#fff}
+body #calendar-sheet .month-day.future{opacity:.35}
+body #calendar-sheet .month-day.today{box-shadow:inset 0 0 0 2px #10161A;font-weight:700}
+body #calendar-sheet .month-day.selected{box-shadow:inset 0 0 0 2px #C7782A;font-weight:700}
+body #calendar-sheet .month-day.full.today,body #calendar-sheet .month-day.mid.today{box-shadow:inset 0 0 0 2px #10161A,inset 0 0 0 4px #fff}
+body #calendar-sheet .month-legend{margin:0;display:flex;flex-wrap:wrap;gap:14px;color:#7A858B;font-size:12px}
+body #calendar-sheet .month-legend span{display:flex;align-items:center;gap:6px}
+body #calendar-sheet .month-legend i{width:12px;height:12px;border-radius:4px;border:0}
+body #calendar-sheet .month-legend .lg-full{background:#10161A}
+body #calendar-sheet .month-legend .lg-mid{background:rgba(16,22,26,.45)}
+body #calendar-sheet .month-legend .lg-some{background:rgba(16,22,26,.14)}
+body #calendar-sheet .month-summary{margin:0;color:#7A858B;font-size:13px;text-align:center}
+body #calendar-sheet .month-summary.has-day{padding:14px 16px;border:1px solid rgba(16,22,26,.06);border-radius:22px;background:#fff;display:flex;flex-direction:column;gap:10px;text-align:left}
+body #calendar-sheet .month-summary-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;color:#5E6A71;font-size:14px}
+body #calendar-sheet .month-summary-top b{color:#10161A;font-size:15px;font-weight:600}
+body #calendar-sheet .month-summary-top strong{color:#10161A;font-weight:600}
+body #calendar-sheet .zg-track{height:6px;border-radius:3px;background:rgba(16,22,26,.08);overflow:hidden;display:block}
+body #calendar-sheet .zg-track i{display:block;height:100%;border-radius:3px;background:#10161A}
+body #calendar-sheet #open-selected-day{width:100%;height:52px;margin:0;border:0;border-radius:26px;background:#0B0F12;color:#fff;font:600 16px Inter,-apple-system,sans-serif;box-shadow:none}
+body.app-dark #calendar-sheet .calendar-sheet-panel{background:rgba(23,32,30,.96);color:var(--ink)}
+body.app-dark #calendar-sheet .sheet-month-control,body.app-dark #calendar-sheet .month-summary.has-day{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.06)}
+body.app-dark #calendar-sheet .month-arrow,body.app-dark #calendar-sheet .sheet-close{background:rgba(255,255,255,.1);color:var(--ink)}
+body.app-dark #calendar-sheet .month-day{color:var(--ink)}
+body.app-dark #calendar-sheet .month-day.active{background:rgba(255,255,255,.14)}
+body.app-dark #calendar-sheet .month-day.mid{background:rgba(255,255,255,.45);color:#0B1110}
+body.app-dark #calendar-sheet .month-day.full{background:#EEF5F2;color:#0B1110}
+body.app-dark #calendar-sheet .month-day.today{box-shadow:inset 0 0 0 2px #EEF5F2}
+body.app-dark #calendar-sheet .month-legend .lg-full{background:#EEF5F2}
+body.app-dark #calendar-sheet .month-legend .lg-mid{background:rgba(255,255,255,.45)}
+body.app-dark #calendar-sheet .month-legend .lg-some{background:rgba(255,255,255,.14)}
+body.app-dark #calendar-sheet .month-summary-top b,body.app-dark #calendar-sheet .month-summary-top strong{color:var(--ink)}
+body.app-dark #calendar-sheet .zg-track{background:rgba(255,255,255,.1)}
+body.app-dark #calendar-sheet .zg-track i{background:#EEF5F2}
+body.app-dark #calendar-sheet #open-selected-day{background:#EEF5F2;color:#0B1110}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
