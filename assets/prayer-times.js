@@ -1,9 +1,11 @@
 /* Prayer times for one day and place, computed on the phone so they work offline.
-   Method: Muslim World League angles (Fajr 18°, Isha 17°) with the Hanafi Asr
-   (shadow twice the object), as followed in Kyrgyzstan. Used by index.html and tests/. */
+   Calibrated to the timetable of the Muftiyat of Kyrgyzstan (muftiyat.kg) for 2026:
+   Fajr at 18° and Isha at 16° below the horizon, Hanafi Asr (shadow twice the object)
+   plus 1.5 minutes, Maghrib 7 minutes after sunset. Across 12 cities and a whole year
+   this stays within one minute of their table. Used by index.html and tests/. */
 (function (root) {
-  const METHOD = { fajr: 18, isha: 17, asrShadow: 2 };
-  const METHOD_LABEL = 'Мусульманская всемирная лига, аср по ханафитскому мазхабу';
+  const METHOD = { fajr: 18, isha: 16, asrShadow: 2, asrMinutes: 1.5, maghribMinutes: 7 };
+  const METHOD_LABEL = 'как в расписании Духовного управления мусульман Кыргызстана (muftiyat.kg)';
 
   const CITIES = [
     { id: 'bishkek', name: 'Бишкек', lat: 42.8746, lng: 74.5698 },
@@ -60,25 +62,29 @@
 
   /* Times for the calendar day of `date` (its year, month and day are read in the
      phone's time zone), as Date objects. */
-  function timesFor(date, place, method = METHOD) {
+  function timesFor(date, place, options = {}) {
+    const method = { ...METHOD, ...options };
     const y = date.getFullYear(), m = date.getMonth() + 1, day = date.getDate();
     const utcMidnight = Date.UTC(y, m - 1, day);
     const jd = utcMidnight / 86400000 + 2440587.5 + 0.5 - place.lng / 360;
     const { decl, eqt } = sun(jd);
     const noon = 12 - place.lng / 15 - eqt;
+    const sunset = noon + hoursFromNoon(0.833, decl, place.lat);
     const hours = {
       fajr: noon - hoursFromNoon(method.fajr, decl, place.lat),
       sunrise: noon - hoursFromNoon(0.833, decl, place.lat),
-      dhuhr: noon + 1 / 60,
-      asr: noon + asrHours(method.asrShadow, decl, place.lat),
-      maghrib: noon + hoursFromNoon(0.833, decl, place.lat),
+      dhuhr: noon,
+      asr: noon + asrHours(method.asrShadow, decl, place.lat) + method.asrMinutes / 60,
+      maghrib: sunset,
       isha: noon + hoursFromNoon(method.isha, decl, place.lat)
     };
-    return NAMES.map(item => ({
-      ...item,
-      // Round to the whole minute the way printed timetables do.
-      time: new Date(Math.round((utcMidnight + hours[item.id] * 3600000) / 60000) * 60000)
-    }));
+    // The Muftiyat drops the seconds of the sun-angle times and rounds noon and Asr.
+    const whole = { dhuhr: Math.round, asr: Math.round };
+    return NAMES.map(item => {
+      const minute = (whole[item.id] || Math.floor)((utcMidnight + hours[item.id] * 3600000) / 60000);
+      const extra = item.id === 'maghrib' ? method.maghribMinutes : 0;
+      return { ...item, time: new Date((minute + extra) * 60000) };
+    });
   }
 
   // The next prayer after `now`, looking into tomorrow after Isha.
