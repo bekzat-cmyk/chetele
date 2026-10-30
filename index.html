@@ -2416,7 +2416,7 @@ body #app .prayer-slot{height:54px;border-radius:16px;color:#10161A;display:flex
 body #app .prayer-slot small{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:10px;font-weight:500;opacity:.8}
 body #app .prayer-slot b{font-size:14px;font-weight:600}
 body #app .prayer-slot.past{color:#9AA3A8}
-body #app .prayer-slot.next{background:#0B0F12;color:#fff}
+body #app .prayer-slot.current{background:#0B0F12;color:#fff}
 body #app .prayer-schedule{align-self:flex-start;height:48px;margin-top:6px;padding:0 20px 0 6px;border:0;border-radius:24px;background:#0B0F12;color:#fff;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
 body #app .prayer-schedule i{width:36px;height:36px;border-radius:18px;background:#fff;color:#10161A;display:grid;place-items:center}
 body #app .prayer-schedule .lucide{width:19px;height:19px}
@@ -2546,9 +2546,9 @@ body .prayer-sheet .prayer-row b{font-size:16px;font-weight:800}
 body .prayer-sheet .prayer-row small{color:var(--muted);font-size:12px;font-weight:700}
 body .prayer-sheet .prayer-row time{font-size:18px;font-weight:800;letter-spacing:-.01em}
 body .prayer-sheet .prayer-row.past{color:var(--muted)}
-body .prayer-sheet .prayer-row.next{background:#0B0F12;color:#fff}
-body .prayer-sheet .prayer-row.next small{color:rgba(255,255,255,.8)}
-body .prayer-sheet .prayer-row.next i{background:rgba(255,255,255,.16)}
+body .prayer-sheet .prayer-row.current{background:#0B0F12;color:#fff}
+body .prayer-sheet .prayer-row.current small{color:rgba(255,255,255,.8)}
+body .prayer-sheet .prayer-row.current i{background:rgba(255,255,255,.16)}
 body .prayer-sheet .prayer-note{margin:0;color:var(--muted);font-size:12px;font-weight:600;line-height:1.45;text-align:center}
 body .prayer-sheet .prayer-geo{width:100%;min-height:56px;padding:0 14px;border:1.5px solid var(--line);border-radius:16px;background:transparent;color:var(--ink);display:flex;align-items:center;gap:12px;text-align:left}
 body .prayer-sheet .prayer-geo span{display:flex;flex-direction:column;gap:1px}
@@ -3218,10 +3218,10 @@ body.app-dark #exit-confirmation .exit-card p{color:var(--muted)}
 body.app-dark #exit-confirmation .exit-cancel{background:rgba(255,255,255,.1);color:var(--ink)}
 body.app-dark #exit-confirmation .exit-approve{background:#C26B4E}
 
-/* Dark theme: the next prayer sits on a light pill, so its name, time and icon are dark. */
-body.app-dark #app .prayer-slot.next,body.app-dark #app .prayer-slot.next *,body.app-dark .prayer-sheet .prayer-row.next,body.app-dark .prayer-sheet .prayer-row.next b,body.app-dark .prayer-sheet .prayer-row.next time{color:#0B1110!important}
-body.app-dark #app .prayer-slot.next small,body.app-dark .prayer-sheet .prayer-row.next small{color:rgba(11,17,16,.7)!important}
-body.app-dark .prayer-sheet .prayer-row.next i{background:rgba(11,17,16,.08);color:#0B1110}
+/* Dark theme: the current prayer sits on a light pill, so its name, time and icon are dark. */
+body.app-dark #app .prayer-slot.current,body.app-dark #app .prayer-slot.current *,body.app-dark .prayer-sheet .prayer-row.current,body.app-dark .prayer-sheet .prayer-row.current b,body.app-dark .prayer-sheet .prayer-row.current time{color:#0B1110!important}
+body.app-dark #app .prayer-slot.current small,body.app-dark .prayer-sheet .prayer-row.current small{color:rgba(11,17,16,.7)!important}
+body.app-dark .prayer-sheet .prayer-row.current i{background:rgba(11,17,16,.08);color:#0B1110}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
@@ -3232,7 +3232,7 @@ body.app-dark #app .day-hero-bar,body.app-dark #app #prayer-next,body.app-dark #
 body.app-dark #app .prayer-left{color:var(--muted)}
 body.app-dark #app .day-hero-ring #day-hero-ring{stroke:var(--ink)}
 body.app-dark #app .day-hero-ring circle{stroke:rgba(255,255,255,.18)}
-body.app-dark #app .prayer-slot.next,body.app-dark #app .prayer-schedule,body.app-dark #app .hadith-card .hadith-more,body.app-dark #app .reading-row .step-btn.step-plus,body.app-dark #app .dhikr-quick button[data-step="100"],body.app-dark #app .prayer-tahajjud .pill button[data-choice="yes"].active,body.app-dark #app .nav button.active{background:#EEF5F2!important;color:#0B1110!important}
+body.app-dark #app .prayer-slot.current,body.app-dark #app .prayer-schedule,body.app-dark #app .hadith-card .hadith-more,body.app-dark #app .reading-row .step-btn.step-plus,body.app-dark #app .dhikr-quick button[data-step="100"],body.app-dark #app .prayer-tahajjud .pill button[data-choice="yes"].active,body.app-dark #app .nav button.active{background:#EEF5F2!important;color:#0B1110!important}
 body.app-dark #app .prayer-schedule i{background:#0B1110;color:#EEF5F2}
 body.app-dark #app .calendar-day.current,body.app-dark #app .reading-row.filled,body.app-dark #app .prayer-option.done,body.app-dark #app .qaza-tap.filled,body.app-dark #app .prayer-tahajjud .pill button.active{background:rgba(255,255,255,.14)!important;box-shadow:none!important;color:var(--ink)}
 body.app-dark #app .calendar-day.complete .day-dot{background:var(--ink)}
@@ -3245,8 +3245,8 @@ body.app-dark #app .prayer-option.done .mini-check:after{border-color:#0B1110}
 body.app-dark #app .prayer-option{border-color:rgba(255,255,255,.1)}
 body.app-dark #app .nav{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.82);box-shadow:0 12px 34px rgba(0,0,0,.4)}
 body.app-dark #app .nav button{color:#9BAEA7}
-body.app-dark .prayer-sheet .prayer-row.next{background:#EEF5F2;color:#0B1110}
-body.app-dark .prayer-sheet .prayer-row.next small{color:rgba(11,17,16,.7)}
+body.app-dark .prayer-sheet .prayer-row.current{background:#EEF5F2;color:#0B1110}
+body.app-dark .prayer-sheet .prayer-row.current small{color:rgba(11,17,16,.7)}
 
 @media (prefers-reduced-motion: reduce){body #app .nav button,body #app .day-hero-ring #day-hero-ring{transition:none}}
 body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero-ring{transition:none}
@@ -3319,6 +3319,14 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     ];
   }
 
+  /* The prayer whose time is on now. Fajr ends at sunrise, so between sunrise and Zuhr
+     there is none; after midnight and before Fajr it is still last night's Isha. */
+  function currentPrayer(now, day) {
+    const started = day.filter(item => item.time <= now), last = started[started.length - 1];
+    if (!last) return day.find(item => item.id === 'isha');
+    return last.prayer ? last : null;
+  }
+
   // The seconds tick on their own; the rest of the card repaints every 30 seconds.
   let countdown = null;
   function tick() {
@@ -3350,10 +3358,11 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     document.querySelector('#prayer-left').textContent = NAFIL_AFTER.includes(next.id)
       ? (ky() ? `${label(next)} намазынан кийинки напилди төмөндө белгилесеңиз болот.` : `Нафиль после ${label(next)} можно отметить ниже, в разделе «Намаз».`)
       : '';
+    const current = currentPrayer(now, day);
     document.querySelector('#prayer-strip').innerHTML = day.map(item => {
-      const isNext = !next.tomorrow && item.id === next.id, past = item.time <= now;
-      const state = isNext ? 'next' : past ? 'past' : '';
-      const note = isNext ? (ky() ? ', кийинки' : ', следующий') : past ? (ky() ? ', өттү' : ', прошёл') : '';
+      const isNow = current && item.id === current.id, past = !isNow && item.time <= now;
+      const state = isNow ? 'current' : past ? 'past' : '';
+      const note = isNow ? (ky() ? ', азыр' : ', сейчас') : past ? (ky() ? ', өттү' : ', прошёл') : '';
       return `<span role="listitem" class="prayer-slot ${state}" aria-label="${label(item)}, ${clock(item.time)}${note}"><small>${label(item)}</small><b>${clock(item.time)}</b></span>`;
     }).join('');
     const after = line.slice(index + 1, index + 3);
@@ -3380,14 +3389,17 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     const element = document.querySelector('#prayer-schedule-sheet');
     if (!element || element.hidden) return;
     const now = new Date(), where = place(), day = P.timesFor(now, where);
-    const next = day.find(item => item.prayer && item.time > now);
+    const next = day.find(item => item.prayer && item.time > now), current = currentPrayer(now, day);
+    // The current prayer lasts until the next time in the list (Fajr until sunrise).
+    const ends = current && (day[day.indexOf(day.find(item => item.id === current.id)) + 1] || null);
     element.querySelector('#prayer-schedule-sheet-title').textContent = ky() ? 'Намаз убактылары' : 'Время намазов';
     element.querySelector('.sheet-sub').textContent = `${ky() ? 'Бүгүн' : 'Сегодня'}, ${new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'long' }).format(now)}`;
     const rows = day.map(item => {
-      const isNext = next && item.id === next.id, past = item.time <= now;
-      const sub = item.id === 'sunrise' ? (ky() ? 'Багымдаттын убактысы бүтөт' : 'конец времени Фаджра')
+      const isNow = current && item.id === current.id, isNext = next && item.id === next.id, past = !isNow && item.time <= now;
+      const sub = isNow ? (ky() ? `азыр${ends && ends.time > now ? ` · ${clock(ends.time)} чейин` : ''}` : `сейчас${ends && ends.time > now ? ` · до ${clock(ends.time)}` : ''}`)
+        : item.id === 'sunrise' ? (ky() ? 'Багымдаттын убактысы бүтөт' : 'конец времени Фаджра')
         : isNext ? `${ky() ? 'калды' : 'через'} ${until(item.time - now)}` : past ? (ky() ? 'өттү' : 'прошёл') : '';
-      return `<li class="prayer-row ${isNext ? 'next' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b>${sub ? `<small>${sub}</small>` : ''}</span><time>${clock(item.time)}</time></li>`;
+      return `<li class="prayer-row ${isNow ? 'current' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b>${sub ? `<small>${sub}</small>` : ''}</span><time>${clock(item.time)}</time></li>`;
     }).join('');
     element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Ханафий мазхабы' : 'Ханафитский мазхаб'}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul><p class="prayer-note">${ky() ? `Эсептөө: ${P.METHOD_LABEL}. Мечитиңиз менен салыштырыңыз.` : `Расчёт: ${P.METHOD_LABEL}. Сверяйтесь с вашей мечетью.`}</p>`;
   }
