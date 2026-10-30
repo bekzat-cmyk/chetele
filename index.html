@@ -2699,7 +2699,8 @@ body.app-dark #app .rt-row-copy small.up{color:#7FC8A6}
 body.app-dark #app .rt-row-copy small.down{color:#E09A7E}
 
 /* Motion from the "Анимации и переходы — мягкое стекло" board: one curve, short durations. */
-body #app{--soft-ease:cubic-bezier(.2,.8,.2,1)}
+/* On body, not #app: sheets and dialogs live outside #app and use the same curve. */
+body{--soft-ease:cubic-bezier(.2,.8,.2,1)}
 
 /* 1. Press: buttons and tiles sink to 0.94 for 120 ms. */
 body #app button,body .calendar-sheet button{transition:transform .12s var(--soft-ease,cubic-bezier(.2,.8,.2,1)),background .2s ease,color .2s ease,box-shadow .2s ease}
