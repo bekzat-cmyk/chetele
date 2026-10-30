@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chetele-static-v65';
+const CACHE_NAME = 'chetele-static-v66';
 const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/lottie.min.js', '/assets/deeds.js', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js', '/assets/preloader-animation.json'];
 
 self.addEventListener('install', event => {
