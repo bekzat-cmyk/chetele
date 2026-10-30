@@ -456,7 +456,7 @@ try {
         if (!$subscription) respond(404, ['error' => 'На этом устройстве нет активной подписки.']);
         require_once __DIR__ . '/push.php';
         try {
-            $result = sendWebPush(['endpoint' => $subscription['endpoint'], 'keys' => ['p256dh' => $subscription['p256dh'], 'auth' => $subscription['auth']]], ['title' => 'Chetele', 'body' => 'Тест: напоминания включены ✦', 'url' => '/'], $config);
+            $result = sendWebPush(['endpoint' => $subscription['endpoint'], 'keys' => ['p256dh' => $subscription['p256dh'], 'auth' => $subscription['auth']]], ['title' => 'Напоминания включены', 'body' => 'Так будут приходить напоминания о делах дня ✦', 'url' => '/?open=deeds'], $config);
         } catch (Throwable $error) {
             error_log('Niet Web Push test error: ' . $error->getMessage());
             $reason = 'server_push_error';

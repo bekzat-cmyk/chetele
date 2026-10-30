@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chetele-static-v63';
+const CACHE_NAME = 'chetele-static-v64';
 const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/lottie.min.js', '/assets/deeds.js', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js', '/assets/preloader-animation.json'];
 
 self.addEventListener('install', event => {
@@ -39,11 +39,15 @@ self.addEventListener('fetch', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil((async () => {
-    const target = new URL(event.notification.data?.url || '/', self.location.origin).href;
+    const target = new URL(event.notification.data?.url || '/', self.location.origin);
     const openClients = await clients.matchAll({ type: 'window', includeUncontrolled: true });
     const existing = openClients.find(client => new URL(client.url).origin === self.location.origin);
-    if (existing) return existing.focus();
-    return clients.openWindow(target);
+    /* An open app is told which screen to show; a closed one starts with ?open= in the address. */
+    if (existing) {
+      existing.postMessage({ type: 'open', target: target.searchParams.get('open') || '' });
+      return existing.focus();
+    }
+    return clients.openWindow(target.href);
   })());
 });
 

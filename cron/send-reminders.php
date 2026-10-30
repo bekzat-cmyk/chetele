@@ -48,14 +48,17 @@ try {
             $slotId = $slot['id'] ?? 'start'; $body = $slotMessages[$slotId] ?? $slotMessages['start'];
             if ($slotId === 'continue' && $completed > 0) $body = "Уже {$completed} из 11 дел отмечено. Продолжим?";
             if ($slotId === 'finish' && $completed > 0) $body = "Сегодня отмечено {$completed} из 11 дел. Бережно подведите итог дня.";
+            /* The title says what the reminder is about; a tap opens today's deeds. */
+            $titles = ['start' => 'Дела дня', 'continue' => $completed > 0 ? "Дела дня · {$completed} из 11" : 'Продолжим путь', 'finish' => 'Итог дня'];
+            $title = $titles[$slotId] ?? 'Дела дня';
 
             $result = sendWebPush([
                 'endpoint' => $subscription['endpoint'],
                 'keys' => ['p256dh' => $subscription['p256dh'], 'auth' => $subscription['auth']],
             ], [
-                'title' => 'Chetele',
+                'title' => $title,
                 'body' => $body,
-                'url' => '/',
+                'url' => '/?open=deeds',
                 'tag' => 'niet-daily-reminder',
                 'actions' => [['action' => 'open', 'title' => 'Открыть дела']],
             ], $config);

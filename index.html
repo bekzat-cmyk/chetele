@@ -1271,6 +1271,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     const preloaderStartedAt=Date.now();
     document.addEventListener('DOMContentLoaded',()=>{ const container=document.querySelector('#preloader-lottie'); if(container&&window.lottie) window.lottie.loadAnimation({container,renderer:'svg',loop:true,autoplay:true,path:'assets/preloader-animation.json'}); });
     function dismissPreloader(){ const preloader=document.querySelector('#app-preloader'); if(!preloader||preloader.classList.contains('is-hidden')) return; const wait=Math.max(0,3000-(Date.now()-preloaderStartedAt)); setTimeout(()=>{ requestAnimationFrame(()=>preloader.classList.add('is-hidden')); setTimeout(()=>{ preloader.hidden=true; },450); },wait); }
+    /* Notifications open a screen: ?open=deeds shows today's deeds, other names open that section. */
+    function openTarget(target){
+      const views={deeds:'today-view',zikr:'zikr-view',events:'events-view',stats:'stats-view',rating:'rating-view'}, view=views[target];
+      if(!view||document.querySelector('#app').hidden) return;
+      if(target==='deeds'&&entryDateKey!==todayKey) document.querySelector('[data-back-today]')?.click();
+      showView(view); window.scrollTo(0,0);
+      if(target==='deeds') setTimeout(()=>document.querySelector('#tasks-heading')?.scrollIntoView({behavior:motionOff()?'auto':'smooth',block:'start'}),350);
+    }
+    navigator.serviceWorker?.addEventListener('message',event=>{ if(event.data?.type==='open') openTarget(event.data.target); });
     function showCabinet(){
       const onboarding=document.querySelector('#onboard'), app=document.querySelector('#app');
       onboarding.hidden=true; onboarding.style.display='none'; app.hidden=false; app.style.display='block';
@@ -1462,6 +1471,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     if(state.userId && !state.token) requireRelogin('Мы усилили защиту аккаунтов. Пожалуйста, войдите снова.');
     else if(state.name && (state.userId || !state.login)){
       showCabinet();
+      const opened=new URLSearchParams(location.search).get('open');
+      if(opened){ history.replaceState(null,'',location.pathname); openTarget(opened); }
       if(state.userId){
         refreshVisibleLeaderboards();
         fetchPersonalEntries(true).then(restored=>{ if(!restored){ resetIfNewDay(); queueSync(); } });
