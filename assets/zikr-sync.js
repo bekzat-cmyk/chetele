@@ -38,7 +38,27 @@
     return { salawat: manual.salawat + counted.salawat, tasbihat: manual.tasbihat + counted.tasbihat, zikr };
   }
 
-  const api = { addPending, adoptServer };
+  /* A day total typed lower than what the counter already counted for that field
+     (salawat or tasbihat) takes the difference off the counted zikrs, largest first.
+     Returns the trimmed counts and the negative deltas to send to the server. */
+  function trimToTotal(zikr, field, total) {
+    const counts = { ...(zikr && typeof zikr === 'object' ? zikr : {}) };
+    const ids = Object.keys(counts).filter((id) => (id === 'salawat') === (field === 'salawat'))
+      .sort((a, b) => (Number(counts[b]) || 0) - (Number(counts[a]) || 0));
+    let extra = ids.reduce((sum, id) => sum + (Number(counts[id]) || 0), 0) - Math.max(0, Number(total) || 0);
+    const deltas = {};
+    ids.forEach((id) => {
+      if (extra <= 0) return;
+      const take = Math.min(extra, Number(counts[id]) || 0);
+      extra -= take;
+      const left = (Number(counts[id]) || 0) - take;
+      if (left) counts[id] = left; else delete counts[id];
+      if (take) deltas[id] = -take;
+    });
+    return { zikr: counts, deltas };
+  }
+
+  const api = { addPending, adoptServer, trimToTotal };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ChetZikrSync = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,7 +1,7 @@
 // Run: node --test tests/
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { addPending, adoptServer } = require('../assets/zikr-sync.js');
+const { addPending, adoptServer, trimToTotal } = require('../assets/zikr-sync.js');
 
 test('taps on one day add up per zikr', () => {
   let pending = {};
@@ -41,4 +41,16 @@ test('taps made while the request was in flight stay on top of the server counts
 test('a manual edit not yet synced is not overwritten by the server answer', () => {
   const local = { salawat: '120', tasbihat: '', zikr: { salawat: 5 } };
   assert.deepEqual(adoptServer(local, { salawat: 5 }, {}), { salawat: 120, tasbihat: 0, zikr: { salawat: 5 } });
+});
+
+test('a lower typed total trims the counted zikrs, largest first', () => {
+  const { zikr, deltas } = trimToTotal({ subhanallah: 20, alhamdulillah: 13, salawat: 5 }, 'tasbihat', 10);
+  assert.deepEqual(zikr, { alhamdulillah: 10, salawat: 5 });
+  assert.deepEqual(deltas, { subhanallah: -20, alhamdulillah: -3 });
+});
+
+test('a total at or above the counted zikrs changes nothing', () => {
+  const { zikr, deltas } = trimToTotal({ salawat: 5, subhanallah: 3 }, 'salawat', 8);
+  assert.deepEqual(zikr, { salawat: 5, subhanallah: 3 });
+  assert.deepEqual(deltas, {});
 });

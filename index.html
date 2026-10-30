@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js"></script>
-  <script src="assets/zikr-sync.js"></script>
+  <script src="assets/zikr-sync.js?v=2"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
     :root { --ink:#18222d; --muted:#7d8793; --surface:#fff; --page:#f4f5f8; --line:#e9ebef; --accent:#1cab67; --accent-soft:#e7f8ee; --green:#22a678; --shadow:0 8px 28px rgba(27,39,55,.055); }
@@ -718,11 +718,13 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         root.innerHTML=`<div class="zikr-bar">${back('list','К списку')}<span class="zikr-pos">${index+1} из ${ZIKR.length}</span><span class="zikr-arrows"><button type="button" class="zikr-round" data-zikr-step="-1" aria-label="Предыдущий зикр">${icon('chevronLeft')}</button><button type="button" class="zikr-round" data-zikr-step="1" aria-label="Следующий зикр">${icon('chevronRight')}</button></span></div>${dayNote}<section class="zikr-text"><span class="zikr-label">${item.title}</span><p class="zikr-arabic" lang="ar" dir="rtl">${item.arabic}</p><b>${item.translit}</b><p>${item.meaning}</p></section>${zikrCelebrate?`<div class="zikr-tap celebrate" data-zikr-tap role="status"><span class="zikr-goal"><span class="ev-bar"><i style="width:100%"></i></span><span>${number.format(Math.min(today,item.goal))} / ${item.goal}</span></span><span class="zikr-done-icon"><i class="zikr-done-pulse" aria-hidden="true"></i>${icon('check')}</span><b class="zikr-done-title">Цель выполнена</b><small>Нажмите, чтобы сделать больше</small><span class="zikr-done-actions"><button type="button" class="zikr-done-more" data-zikr-tap>Продолжить счёт</button><button type="button" class="zikr-done-next" data-zikr-step="1">Следующий зикр</button></span></div>`:`<button type="button" class="zikr-tap" data-zikr-tap aria-label="Отметить: ${today+1}"><span class="zikr-goal"><span class="ev-bar"><i style="width:${Math.min(100,Math.round(today/item.goal*100))}%"></i></span><span>${number.format(Math.min(today,item.goal))} / ${item.goal}</span></span><span class="zikr-count">${number.format(today)}</span><small>${today>=item.goal?'сверх цели':`ещё ${item.goal-today} до цели`}</small></button>`}<div class="zikr-tap-footer"><button type="button" class="zikr-round" data-zikr-reset aria-label="Сбросить счёт за день">${icon('rotateCcw')}</button><span>всего ${number.format(zikrAllTime(item.id))}</span><button type="button" class="zikr-round zikr-minus" data-zikr-minus aria-label="Убрать одно">−1</button></div><p class="zikr-note">${item.id==='salawat'?'Засчитывается в «Салават»':'Засчитывается в «Зикр»'} в делах дня и рейтинге.</p>`;
         return;
       }
-      const todayTotal=ZIKR.reduce((sum,item)=>sum+zikrToday(item.id),0), last=state.zikrLast&&ZIKR.find(item=>item.id===state.zikrLast.id);
+      /* Today's total is the same salawat + zikr as in the deeds of the day, typed numbers included. */
+      const daySalawat=Number(state.tasks.salawat)||0, dayZikr=Number(state.tasks.tasbihat)||0, todayTotal=daySalawat+dayZikr;
+      const typed=Math.max(0,todayTotal-ZIKR.reduce((sum,item)=>sum+zikrToday(item.id),0)), last=state.zikrLast&&ZIKR.find(item=>item.id===state.zikrLast.id);
       const event=(state.events||[]).find(item=>item.mode!=='personal_path'&&['salawat','dhikr'].includes(item.metric));
       const eventPercent=event?Math.min(100,Math.round(Number(event.totalProgress||0)/Math.max(1,Number(event.goal||0))*100)):0;
       const quick=ZIKR.filter(item=>favorites.has(item.id));
-      root.innerHTML=`<div class="section-head zikr-head"><h2>Зикр</h2><span>Поминание Аллаха в течение дня</span></div><div class="zikr-tiles"><button type="button" class="zikr-tile" data-zikr-list="all"><i class="zikr-tile-icon tone-green">${icon('repeat')}</i><b>Все зикры</b><small>${ZIKR.length} ${plural(ZIKR.length,'зикр','зикра','зикров')}</small></button><button type="button" class="zikr-tile" data-zikr-list="starred"><i class="zikr-tile-icon tone-amber">${icon('star')}</i><b>Избранное</b><small>${favorites.size} ${plural(favorites.size,'зикр','зикра','зикров')}</small></button></div><section class="zikr-today"><div><span>${entryDateKey===todayKey?'Сегодня':formatDayLabel(entryDateKey)}</span><b>${number.format(todayTotal)}</b><small>${plural(todayTotal,'раз','раза','раз')} · в делах дня и рейтинге</small></div>${last?`<button type="button" class="ev-button zikr-continue" data-zikr-open="${last.id}">Продолжить: ${last.title}</button>`:''}</section>${event?`<button type="button" class="zikr-event" data-view="events-view"><span><small>Общий зикр</small><b>${number.format(Number(event.totalProgress||0))}</b><em>${escapeHtml(event.title)} · цель ${number.format(Number(event.goal||0))}</em></span><span class="zikr-event-ring" style="--p:${eventPercent*3.6}deg">${eventPercent}%</span></button>`:''}${quick.length?`<h3 class="zikr-subhead">Избранное</h3><div class="zikr-quick">${quick.map(item=>{ const today=zikrToday(item.id); return `<button type="button" class="zikr-quick-item ${today>=item.goal?'done':''}" data-zikr-open="${item.id}"><b>${item.title}</b><small>${number.format(today)} / ${item.goal}</small></button>`; }).join('')}</div>`:''}`;
+      root.innerHTML=`<div class="section-head zikr-head"><h2>Зикр</h2><span>Поминание Аллаха в течение дня</span></div><div class="zikr-tiles"><button type="button" class="zikr-tile" data-zikr-list="all"><i class="zikr-tile-icon tone-green">${icon('repeat')}</i><b>Все зикры</b><small>${ZIKR.length} ${plural(ZIKR.length,'зикр','зикра','зикров')}</small></button><button type="button" class="zikr-tile" data-zikr-list="starred"><i class="zikr-tile-icon tone-amber">${icon('star')}</i><b>Избранное</b><small>${favorites.size} ${plural(favorites.size,'зикр','зикра','зикров')}</small></button></div><section class="zikr-today"><div><span>${entryDateKey===todayKey?'Сегодня':formatDayLabel(entryDateKey)}</span><b>${number.format(todayTotal)}</b><small>Салават ${number.format(daySalawat)} · Зикр ${number.format(dayZikr)} — как в делах дня</small>${typed?`<small>из них ${number.format(typed)} введено на главном экране</small>`:''}</div>${last?`<button type="button" class="ev-button zikr-continue" data-zikr-open="${last.id}">Продолжить: ${last.title}</button>`:''}</section>${event?`<button type="button" class="zikr-event" data-view="events-view"><span><small>Общий зикр</small><b>${number.format(Number(event.totalProgress||0))}</b><em>${escapeHtml(event.title)} · цель ${number.format(Number(event.goal||0))}</em></span><span class="zikr-event-ring" style="--p:${eventPercent*3.6}deg">${eventPercent}%</span></button>`:''}${quick.length?`<h3 class="zikr-subhead">Избранное</h3><div class="zikr-quick">${quick.map(item=>{ const today=zikrToday(item.id); return `<button type="button" class="zikr-quick-item ${today>=item.goal?'done':''}" data-zikr-open="${item.id}"><b>${item.title}</b><small>${number.format(today)} / ${item.goal}</small></button>`; }).join('')}</div>`:''}`;
     }
     document.addEventListener('click',event=>{
       const target=event.target;
@@ -1137,7 +1139,20 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; renderStats(true); });
     document.addEventListener('click', e=>{ const before=completed(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before); if(!values[nafil]) document.querySelector(`[data-nafil="${nafil}"]`)?.classList.add('just-checked'); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
     const fieldTimers=new WeakMap(), fieldBaselines=new WeakMap();
-    function storeFieldValue(field){ if(field.dataset.id) state.tasks[field.dataset.id]=field.value; if(field.dataset.qaza) state.qaza[field.dataset.qaza]=field.value; }
+    function storeFieldValue(field){
+      if(field.dataset.id) state.tasks[field.dataset.id]=field.value;
+      if(field.dataset.qaza) state.qaza[field.dataset.qaza]=field.value;
+      /* Lowering salawat or zikr below what the counter counted lowers the counted zikrs
+         too, so the zikr section agrees and the next sync does not bring the number back. */
+      // The check guards against an older zikr-sync.js still held by the browser cache.
+      if((field.dataset.id==='salawat'||field.dataset.id==='tasbihat')&&ChetZikrSync.trimToTotal){
+        const trimmed=ChetZikrSync.trimToTotal(state.tasks.zikr,field.dataset.id,field.value);
+        if(!Object.keys(trimmed.deltas).length) return;
+        state.tasks={...state.tasks,zikr:trimmed.zikr};
+        state.zikrPending=Object.entries(trimmed.deltas).reduce((pending,[id,delta])=>ChetZikrSync.addPending(pending,entryDateKey,id,delta),state.zikrPending);
+        scheduleZikrFlush();
+      }
+    }
     function focusFollowingField(field){
       const fields=[...document.querySelectorAll('[data-id], [data-qaza]')];
       const key=field.dataset.id ? `id:${field.dataset.id}` : `qaza:${field.dataset.qaza}`;
@@ -2702,6 +2717,10 @@ body #app .save-status{transition:opacity .2s ease}
 }
 body.a11y-reduce #app *,body.a11y-reduce #app *:before,body.a11y-reduce #app *:after,body.a11y-reduce .calendar-sheet *,body.a11y-reduce #minimum-celebration *,body.a11y-reduce #minimum-celebration *:before{animation:none!important;transition:none!important}
 body.a11y-reduce #app button:active,body.a11y-reduce .calendar-sheet button:active,body.a11y-reduce #app .prayer-option:active,body.a11y-reduce #app .qaza-tap:active{transform:none}
+
+/* Zikr today: the salawat and zikr split, and typed numbers, each on its own line */
+body #app .zikr-today small{display:block}
+body #app .zikr-today small+small{margin-top:2px;opacity:.85}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
