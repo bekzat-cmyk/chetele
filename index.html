@@ -794,7 +794,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const done=statsPeriod==='all'?[...keys].reduce((sum,key)=>sum+dayCount(key),0):bars.reduce((sum,bar)=>sum+bar.value,0);
       const possible=periodDays*max, top=Math.max(...bars.map(bar=>bar.value)), wide=bars.length>7;
       periodLabel.textContent=label;
-      week.innerHTML=`<section class="stats-chart" aria-label="${title}"><div class="stats-chart-bar"><span>${title}</span><em>${delta}</em></div><article class="stats-chart-card"><div class="stats-sum"><b>${number.format(done)}</b><span>${ky?`/ ${number.format(possible)} иш`:`из ${number.format(possible)} ${plural(possible,'дела','дел','дел')}`}</span><strong>${possible?Math.round(done/possible*100):0}%</strong></div><div class="stats-bars${wide?' is-wide':''}" role="img" aria-label="${bars.map(bar=>`${bar.label}: ${bar.value}`).join(', ')}" style="grid-template-columns:repeat(${bars.length},minmax(0,1fr))">${bars.map((bar,index)=>`<div class="stats-bar${index===bars.length-1?' is-now':bar.value===top&&top?' is-peak':''}"><span>${number.format(bar.value)}</span><i style="height:${Math.max(8,Math.round(bar.value/Math.max(1,bar.max)*104))}px"></i><small>${bar.label}</small></div>`).join('')}</div></article></section>`;
+      week.innerHTML=`<section class="stats-chart" aria-label="${title}"><div class="stats-chart-bar"><span>${title}</span><em>${delta}</em></div><article class="stats-chart-card"><div class="stats-sum"><b>${number.format(done)}</b><span>${ky?`/ ${number.format(possible)} иш`:`из ${number.format(possible)} ${plural(possible,'дела','дел','дел')}`}</span><strong>${possible?Math.round(done/possible*100):0}%</strong></div><div class="stats-bars${wide?' is-wide':''}${animate?' grow':''}" role="img" aria-label="${bars.map(bar=>`${bar.label}: ${bar.value}`).join(', ')}" style="grid-template-columns:repeat(${bars.length},minmax(0,1fr))">${bars.map((bar,index)=>`<div class="stats-bar${index===bars.length-1?' is-now':bar.value===top&&top?' is-peak':''}"><span>${number.format(bar.value)}</span><i style="height:${Math.max(8,Math.round(bar.value/Math.max(1,bar.max)*104))}px;--i:${index}"></i><small>${bar.label}</small></div>`).join('')}</div></article></section>`;
 
       /* Tiles: totals for the period. */
       [['quran',totals.quran,n=>ky?'бет':plural(n,'страница','страницы','страниц')],['salawat',totals.salawat,times],['tahajjud',totals.tahajjud,n=>ky?'түн':plural(n,'ночь','ночи','ночей')],['zikr',totals.tasbihat,times]].forEach(([id,value,unit])=>{
@@ -888,6 +888,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const badges=achievementData(), earned=badges.filter(badge=>badge.earned).length;
       achievements.innerHTML=`<div class="achievements-head"><h2>Достижения</h2><span>${earned} из ${badges.length}</span></div><p class="achievements-help">Выполняйте условия в карточках, чтобы открыть достижения.</p><div class="achievements-grid">${badges.map(badge=>`<article class="achievement ${badge.earned?'earned':''}"><i>${badge.icon}</i><strong>${badge.title}</strong><small>${badge.detail}</small></article>`).join('')}</div>`;
     }
+    let boardShownPeriod=null;
     function ratingPeriod(){ return ['month','all'].includes(state.ratingPeriod)?state.ratingPeriod:'week'; }
     function renderBoard(){
       const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:period==='month'?state.monthLeaderboard:state.remoteLeaderboard, status=boardStatus[period];
@@ -927,9 +928,13 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         }
         const rest=people.filter(person=>person.place>3);
         const total=Number(state.ratingTotal?.[period])||0;
-        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
+        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
+        // Rows that changed place slide to it instead of jumping (same period only).
+        const before=boardShownPeriod===period?new Map([...leaderboard.querySelectorAll('.rt-row[data-name]')].map(row=>[row.dataset.name,row.getBoundingClientRect().top])):new Map();
         leaderboard.innerHTML=podium+meCard+list;
+        if(before.size&&!motionOff()) leaderboard.querySelectorAll('.rt-row[data-name]').forEach(row=>{ const top=before.get(row.dataset.name); const shift=top===undefined?0:top-row.getBoundingClientRect().top; if(Math.abs(shift)>1) row.animate([{transform:`translateY(${shift}px)`},{transform:'translateY(0)'}],{duration:360,easing:'cubic-bezier(.2,.8,.2,1)'}); });
       }
+      boardShownPeriod=period;
       if(status==='online'||(status==='loading'&&people.length)) hint.textContent=ky?'Упайлар белгиленген иштер үчүн эсептелет. Рейтинг белгилегенден кийин дароо жаңыланат.':'Очки считаются за отмеченные дела. Рейтинг обновляется сразу после отметки.';
       else if(status==='offline') hint.textContent=people.length?(ky?'Сервер менен байланыш жок. Интернет пайда болгондо рейтинг жаңыланат.':'Нет связи с сервером. Рейтинг обновится, когда появится интернет.'):'';
       else hint.textContent=ky?'Рейтинг жүктөлүүдө…':'Загрузка рейтинга…';
@@ -1130,7 +1135,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(viewId==='stats-view'){ renderStats(true); fetchPersonalEntries(); }
     }
     document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; renderStats(true); });
-    document.addEventListener('click', e=>{ const before=completed(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
+    document.addEventListener('click', e=>{ const before=completed(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before); if(!values[nafil]) document.querySelector(`[data-nafil="${nafil}"]`)?.classList.add('just-checked'); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
     const fieldTimers=new WeakMap(), fieldBaselines=new WeakMap();
     function storeFieldValue(field){ if(field.dataset.id) state.tasks[field.dataset.id]=field.value; if(field.dataset.qaza) state.qaza[field.dataset.qaza]=field.value; }
     function focusFollowingField(field){
@@ -1155,7 +1160,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     document.addEventListener('pointerdown',e=>{
       const tile=e.target.closest('[data-qaza-inc]'); if(!tile) return;
       qazaHeld=false; clearTimeout(qazaHoldTimer);
-      qazaHoldTimer=setTimeout(()=>{ const name=tile.dataset.qazaInc, value=Number(state.qaza[name])||0; if(!value) return; qazaHeld=true; const before=completed(); state.qaza={...state.qaza,[name]:value>1?String(value-1):''}; navigator.vibrate?.(25); scoreUpdate(before); },550);
+      qazaHoldTimer=setTimeout(()=>{ const name=tile.dataset.qazaInc, value=Number(state.qaza[name])||0; if(!value) return; qazaHeld=true; const before=completed(); state.qaza={...state.qaza,[name]:value>1?String(value-1):''}; navigator.vibrate?.(25); scoreUpdate(before); rollNumber(`[data-qaza-inc="${name}"] b`,'down'); },550);
     });
     ['pointerup','pointercancel','pointerleave'].forEach(type=>document.addEventListener(type,()=>clearTimeout(qazaHoldTimer)));
     document.addEventListener('contextmenu',e=>{ if(e.target.closest('[data-qaza-inc]')) e.preventDefault(); });
@@ -1166,7 +1171,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const before=completed();
       state.qaza=add?{...state.qaza,[add.dataset.qazaInc]:String((Number(state.qaza[add.dataset.qazaInc])||0)+1)}:Object.fromEntries(QAZA.map(name=>[name,'']));
       scoreUpdate(before);
+      if(add) rollNumber(`[data-qaza-inc="${add.dataset.qazaInc}"] b`,'up');
     });
+    /* Counters roll: the new number comes up after +1 and down after −1. */
+    function rollNumber(selector, direction){
+      const element=document.querySelector(selector); if(!element||motionOff()) return;
+      element.classList.remove('roll-up','roll-down'); void element.offsetWidth; element.classList.add(`roll-${direction}`);
+      element.addEventListener('animationend',()=>element.classList.remove(`roll-${direction}`),{once:true});
+    }
+    function motionOff(){ return matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('a11y-reduce'); }
     /* −/+ and quick-add buttons change the neighbouring field and save it like typed input. */
     document.addEventListener('click',e=>{
       const button=e.target.closest('[data-step]'); if(!button) return;
@@ -1178,8 +1191,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       commitField(field,false);
     });
     document.addEventListener('keydown',e=>{ const field=e.target; if(e.key==='Enter' && (field.dataset.id || field.dataset.qaza)){ e.preventDefault(); commitField(field,true); } });
-    function openSheet(id){ document.querySelector('#'+id).hidden=false; document.body.classList.add('sheet-open'); }
-    function closeSheet(id){ document.querySelector('#'+id).hidden=true; if(!document.querySelector('.calendar-sheet:not([hidden])')) document.body.classList.remove('sheet-open'); }
+    function openSheet(id){ const sheet=document.querySelector('#'+id); clearTimeout(sheet.closing); sheet.classList.remove('is-closing'); sheet.hidden=false; document.body.classList.add('sheet-open'); }
+    /* The sheet slides back down before it hides. */
+    function closeSheet(id){
+      const sheet=document.querySelector('#'+id); if(sheet.hidden) return;
+      const hide=()=>{ sheet.classList.remove('is-closing'); sheet.hidden=true; if(!document.querySelector('.calendar-sheet:not([hidden])')) document.body.classList.remove('sheet-open'); };
+      if(motionOff()) return hide();
+      clearTimeout(sheet.closing); sheet.classList.add('is-closing'); sheet.closing=setTimeout(hide,240);
+    }
     document.querySelector('#calendar-open').addEventListener('click',()=>{ const now=new Date(); calendarCursor=new Date(now.getFullYear(),now.getMonth(),1); calendarSelectedDate=todayKey; renderMonthCalendar(); openSheet('calendar-sheet'); });
     document.addEventListener('click',e=>{ if(e.target.closest('[data-close-calendar]')) closeSheet('calendar-sheet'); });
     const calendarPanel=document.querySelector('#calendar-sheet .calendar-sheet-panel');
@@ -2589,6 +2608,101 @@ body.app-dark #app .rt-row.me .rt-row-place{color:var(--ink)}
 body.app-dark #app .rt-row-copy small.up{color:#7FC8A6}
 body.app-dark #app .rt-row-copy small.down{color:#E09A7E}
 
+/* Motion from the "Анимации и переходы — мягкое стекло" board: one curve, short durations. */
+body #app{--soft-ease:cubic-bezier(.2,.8,.2,1)}
+
+/* 1. Press: buttons and tiles sink to 0.94 for 120 ms. */
+body #app button,body .calendar-sheet button{transition:transform .12s var(--soft-ease,cubic-bezier(.2,.8,.2,1)),background .2s ease,color .2s ease,box-shadow .2s ease}
+body #app button:active:not(:disabled),body .calendar-sheet button:active:not(:disabled){transform:scale(.94)}
+body #app .prayer-option:active,body #app .qaza-tap:active,body #app .stats-tile:active{transform:scale(.97)}
+
+/* 2. A deed ticked: the circle fills, the tick draws, the tile gets denser (220 ms). */
+body #app .prayer-option.done .mini-check,body #app .nafil-option.done .mini-check{animation:none}
+body #app .just-checked .mini-check{animation:soft-check .22s var(--soft-ease) both}
+body #app .just-checked .mini-check:after{animation:soft-tick .22s var(--soft-ease) .06s both}
+body #app .prayer-option.just-checked{animation:soft-tile .22s ease both}
+@keyframes soft-check{from{background:transparent;border-color:rgba(16,22,26,.25);transform:scale(.86)}to{transform:scale(1)}}
+@keyframes soft-tick{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes soft-tile{from{background:rgba(255,255,255,.35)}}
+
+/* 3. Counter +1: the new number comes up from below, −1 comes down (260 ms). */
+body #app .roll-up{animation:soft-roll-up .26s var(--soft-ease) both}
+body #app .roll-down{animation:soft-roll-down .26s var(--soft-ease) both}
+@keyframes soft-roll-up{from{transform:translateY(60%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes soft-roll-down{from{transform:translateY(-60%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* 5. Menu: the black capsule slides and stretches to the new item (280 ms). */
+body #app .nav.has-pill{position:fixed}
+body #app .nav-pill{position:absolute;z-index:0;top:6px;left:0;height:48px;width:0;border-radius:24px;background:#0B0F12;pointer-events:none;transition:transform .28s var(--soft-ease),width .28s var(--soft-ease),opacity .2s ease}
+/* Padding changes at once so the capsule can measure the new width; the label fades in. */
+body #app .nav.has-pill button{position:relative;z-index:1;transition:color .2s ease,transform .12s var(--soft-ease)}
+body #app .nav.has-pill button.active{animation:soft-label .28s ease both}
+@keyframes soft-label{from{-webkit-text-fill-color:transparent}}
+body #app .nav.has-pill button.active{background:transparent!important}
+body.app-dark #app .nav.has-pill button.active{background:transparent!important}
+body.app-dark #app .nav-pill{background:#EEF5F2}
+
+/* 6. Period switch: the white capsule slides under the labels (280 ms). */
+body #app .glass-seg{position:relative}
+body #app .glass-seg:before{content:"";position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 16px) / 3);border-radius:20px;background:#fff;box-shadow:0 6px 18px rgba(16,22,26,.12);transition:transform .28s var(--soft-ease)}
+body #app .glass-seg:has(button:nth-child(2).active):before{transform:translateX(calc(100% + 4px))}
+body #app .glass-seg:has(button:nth-child(3).active):before{transform:translateX(calc(200% + 8px))}
+body #app .glass-seg button{position:relative;z-index:1}
+body #app .glass-seg button.active{background:transparent!important;box-shadow:none!important}
+body.app-dark #app .glass-seg:before{background:rgba(255,255,255,.9)}
+
+/* 7. Changing section: the cards rise 12 px one after another, 60 ms apart (240 ms each). */
+body #app .view.active{animation:none}
+body #app .view.active>*{animation:soft-rise .24s var(--soft-ease) both}
+body #app .view.active>:nth-child(1){animation-delay:0s}
+body #app .view.active>:nth-child(2){animation-delay:.06s}
+body #app .view.active>:nth-child(3){animation-delay:.12s}
+body #app .view.active>:nth-child(4){animation-delay:.18s}
+body #app .view.active>:nth-child(5){animation-delay:.24s}
+body #app .view.active>:nth-child(n+6){animation-delay:.3s}
+/* The main screen is reordered with `order`, so its delays follow what is on screen. */
+body #app #today-view.active>.past-day-banner,body #app #today-view.active>.day-hero{animation-delay:0s}
+body #app #today-view.active>.calendar-card{animation-delay:.06s}
+body #app #today-view.active>.hadith-card{animation-delay:.12s}
+body #app #today-view.active>.section-head{animation-delay:.18s}
+body #app #today-view.active>#task-list{animation-delay:.24s}
+body #app #today-view.active>.achievement-teaser,body #app #today-view.active>.autosave{animation-delay:.3s}
+@keyframes soft-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* 8. Bottom sheets rise with the backdrop dimming (340 ms) and go back down on close. */
+body .calendar-sheet .calendar-sheet-panel{animation:soft-sheet-in .34s var(--soft-ease) both}
+body .calendar-sheet .calendar-sheet-backdrop{animation:soft-dim-in .34s ease both}
+body .calendar-sheet.is-closing .calendar-sheet-panel{animation:soft-sheet-out .24s cubic-bezier(.4,0,1,1) both}
+body .calendar-sheet.is-closing .calendar-sheet-backdrop{animation:soft-dim-out .24s ease both}
+@keyframes soft-sheet-in{from{transform:translateY(105%)}to{transform:translateY(0)}}
+@keyframes soft-sheet-out{from{transform:translateY(0)}to{transform:translateY(105%)}}
+@keyframes soft-dim-in{from{opacity:0}to{opacity:1}}
+@keyframes soft-dim-out{from{opacity:1}to{opacity:0}}
+
+/* 9. Statistics bars grow from the bottom, 40 ms apart; today's grows last (400 ms). */
+body #app .stats-bars.grow .stats-bar i{transform-origin:bottom;animation:soft-bar .4s var(--soft-ease) both;animation-delay:calc(var(--i,0) * 40ms)}
+body #app .stats-bars.grow .stats-bar>span{animation:soft-fade .3s ease both;animation-delay:calc(var(--i,0) * 40ms + .2s)}
+@keyframes soft-bar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes soft-fade{from{opacity:0}to{opacity:1}}
+
+/* 10. Minimum of the day: a glass card that drops in with a light bounce and a soft glow (420 ms). */
+body #minimum-celebration .reward-sheet{overflow:visible;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.82);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 20px 50px rgba(16,22,26,.16);animation:soft-drop .42s var(--soft-ease,cubic-bezier(.2,.8,.2,1)) both}
+body #minimum-celebration .reward-sheet:before{content:"";position:absolute;z-index:-1;inset:-30px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,214,140,.55),rgba(255,214,140,0));pointer-events:none;animation:soft-glow 1.2s ease-out .15s both}
+body.app-dark #minimum-celebration .reward-sheet{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.9)}
+@keyframes soft-drop{0%{transform:translateY(-30px) scale(.9);opacity:0}60%{transform:translateY(4px) scale(1.02);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes soft-glow{0%{transform:scale(.6);opacity:0}35%{opacity:.9}100%{transform:scale(1.4);opacity:0}}
+
+/* 12. Saving: the text changes softly. */
+body #app .save-status{transition:opacity .2s ease}
+
+/* Reduced motion: every state changes instantly, no glow. */
+@media (prefers-reduced-motion: reduce){
+  body #app *,body #app *:before,body #app *:after,body .calendar-sheet *,body #minimum-celebration *,body #minimum-celebration *:before{animation:none!important;transition:none!important}
+  body #app button:active,body .calendar-sheet button:active,body #app .prayer-option:active,body #app .qaza-tap:active{transform:none}
+}
+body.a11y-reduce #app *,body.a11y-reduce #app *:before,body.a11y-reduce #app *:after,body.a11y-reduce .calendar-sheet *,body.a11y-reduce #minimum-celebration *,body.a11y-reduce #minimum-celebration *:before{animation:none!important;transition:none!important}
+body.a11y-reduce #app button:active,body.a11y-reduce .calendar-sheet button:active,body.a11y-reduce #app .prayer-option:active,body.a11y-reduce #app .qaza-tap:active{transform:none}
+
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
 body.app-dark #app .day-hero,body.app-dark #app .hadith-card,body.app-dark #app .reading-list,body.app-dark #app .prayer-body,body.app-dark #app .dhikr-row,body.app-dark #app .achievement-teaser,body.app-dark #app .past-day-banner,body.app-dark #app .week-calendar{border-color:rgba(255,255,255,.08)!important;background:rgba(255,255,255,.06)!important;box-shadow:none}
@@ -2617,6 +2731,26 @@ body.app-dark .prayer-sheet .prayer-row.next small{color:rgba(11,17,16,.7)}
 @media (prefers-reduced-motion: reduce){body #app .nav button,body #app .day-hero-ring #day-hero-ring{transition:none}}
 body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero-ring{transition:none}
 </style>
+<script>
+/* Menu capsule from the motion board: one black pill slides and stretches to the
+   active item instead of each button switching its own background. */
+(function(){
+  const nav=document.querySelector('#app .nav'); if(!nav) return;
+  const pill=document.createElement('span'); pill.className='nav-pill'; pill.setAttribute('aria-hidden','true');
+  nav.prepend(pill); nav.classList.add('has-pill');
+  let placed=false;
+  function place(){
+    const active=nav.querySelector('button.active');
+    if(!active||!active.offsetWidth){ pill.style.opacity='0'; return; }
+    if(!placed) pill.style.transition='none';
+    pill.style.opacity='1'; pill.style.width=`${active.offsetWidth}px`; pill.style.transform=`translateX(${active.offsetLeft}px)`;
+    if(!placed){ void pill.offsetWidth; pill.style.transition=''; placed=true; }
+  }
+  new MutationObserver(place).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+  new ResizeObserver(place).observe(nav);
+  place();
+})();
+</script>
 <script src="assets/prayer-times.js"></script>
 <script>
 /* Prayer times on the main screen and in two sheets: the day's schedule and the
