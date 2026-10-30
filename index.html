@@ -267,7 +267,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     <section id="events-view" class="view"><div class="section-head events-head"><h2>События</h2><span>Вместе к общей цели</span></div><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
     <section id="rating-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Каждое дело — 10 очков</span><h2>Рейтинг</h2><span id="rating-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softRating"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div><div id="leaderboard" class="rt-board"></div><p id="rating-hint" class="rt-hint">Загрузка рейтинга…</p></section>
     <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
-    <section id="settings-view" class="view" aria-label="Настройки"></section><section id="profile-view" class="view"><div id="soft-profile" class="soft-profile"></div><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
+    <section id="settings-view" class="view" aria-label="Настройки"></section><section id="profile-sub-view" class="view" aria-label="Профиль"></section><section id="profile-view" class="view"><div id="soft-profile" class="soft-profile"></div><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="stats-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></i>Статистика</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
   </main>
   <section class="desktop-only"><div class="desktop-icon">⌁</div><h1>Chetele — на телефоне</h1><p>Это приложение создано для мобильного ритма дня. Откройте эту страницу со смартфона.</p></section>
@@ -277,7 +277,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="celebration" class="reward reward-done" hidden role="dialog" aria-modal="true" aria-labelledby="reward-done-title"><div class="reward-confetti" aria-hidden="true"></div><section class="reward-card"><svg class="reward-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="reward-ring-track" cx="48" cy="48" r="40"/><circle class="reward-ring-fill" cx="48" cy="48" r="40" transform="rotate(-90 48 48)"/><path class="reward-ring-tick" d="m34 49 9 9 19-20"/></svg><h2 id="reward-done-title">Все 11 дел выполнены</h2><p id="reward-done-text"></p><div class="reward-stats"><div><b id="reward-streak"></b><span>серия подряд</span></div><div><b id="reward-rank"></b><span id="reward-rank-label">место в рейтинге</span></div></div><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
   <div id="minimum-celebration" class="reward reward-minimum" hidden><button type="button" class="reward-dim" data-reward-close aria-label="Закрыть"></button><section class="reward-sheet" role="status" aria-live="polite"><span class="reward-spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><h2>Минимум дня выполнен</h2><p>Вы сделали <b>3 дела</b>. Можно продолжить в своём темпе — или просто порадоваться этому шагу.</p><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
   <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></div>
-  <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Прогресс уже сохранён на сервере. Войти снова можно с именем и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
+  <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span id="personal-goal-event"></span><h2 id="personal-goal-title">Ваша личная цель</h2><p>Выберите спокойный и достижимый ориентир. Его можно не выполнять идеально.</p></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button class="personal-goal-save" type="submit">Участвовать</button></div></form></div>
   <script>
     const APP_VERSION = '1.2.0';
@@ -320,6 +320,12 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softInfo:'<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M12 11v5M12 8v.01"/>',
       softPencil:'<path d="M16.5 3.5l4 4L8 20H4v-4zM14 6l4 4"/>',
       softExit:'<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l4-4-4-4M14 12H4"/>',
+      softMoon:'<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/>',
+      softSend:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>',
+      softPin:'<path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11zM9.7 10a2.3 2.3 0 1 0 4.6 0a2.3 2.3 0 1 0 -4.6 0"/>',
+      softLocate:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M7 12a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"/>',
+      softDeeds:'<path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/>',
+      softShield:'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>',
       softList:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
       softStar:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
       softBack:'<path d="M14.5 6l-6 6 6 6"/>',
@@ -910,10 +916,102 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const row=(attrs,iconName,title,sub,value='',extra='')=>`<li><button type="button" class="sp-row ${extra}" ${attrs}><i class="sp-icon">${icon(iconName)}</i><span class="sp-copy"><b>${title}</b><small>${sub}</small></span>${value?`<em>${value}</em>`:''}${extra.includes('danger')?'':`<span class="sp-arrow">${icon('softChevron')}</span>`}</button></li>`;
       root.innerHTML=`<header class="sp-top"><button type="button" class="zg-round" data-view="today-view" aria-label="Вернуться к делам">${icon('softBack')}</button><h2>Профиль</h2><span aria-hidden="true"></span></header>
 <section class="sp-card" aria-label="Вы"><div class="sp-me"><span class="sp-avatar">${escapeHtml(Array.from(String(state.name||'').trim())[0]||'·')}</span><span><b>${escapeHtml(state.name||'—')}</b><small>${state.login?`@${escapeHtml(state.login)} · `:''}${since}</small></span></div><div class="sp-stats"><button type="button" data-view="rating-view"><b>${number.format(Number(me?.points??state.score??0))}</b><small>очков</small></button><button type="button" data-view="rating-view"><b>${me?`#${me.place}`:'—'}</b><small>в рейтинге</small></button><button type="button" data-view="stats-view"><b>${number.format(Number(state.bestStreak||state.streak||0))}</b><small>лучшая серия</small></button></div></section>
-<ol class="sp-list" aria-label="Меню профиля">${row('data-profile-menu="achievements"','softMedal','Достижения',next?`Следующее: ${next.title}`:'Все получены',`${earned} из ${badges.length}`,'gold')}${row('data-profile-menu="reminders"','softBell','Напоминания',slots.length?slots.join(' · '):'Время не выбрано',state.pushEnabled?'Вкл.':'Выкл.')}${row('data-prayer-city','softClock','Время намазов',`${escapeHtml(prayerPlace)} · ханафитский мазхаб`)}${row('data-profile-menu="settings"','softSettings','Настройки','Тема, язык, крупный текст')}${row('data-profile-menu="about"','softInfo','О приложении','Как считаются дела и очки')}</ol>
+<ol class="sp-list" aria-label="Меню профиля">${row('data-profile-menu="achievements"','softMedal','Достижения',next?`Следующее: ${next.title}`:'Все получены',`${earned} из ${badges.length}`,'gold')}${row('data-profile-menu="reminders"','softBell','Напоминания',slots.length?slots.join(' · '):'Время не выбрано',state.pushEnabled?'Вкл.':'Выкл.')}${row('data-profile-menu="place"','softClock','Время намазов',`${escapeHtml(prayerPlace)} · ханафитский мазхаб`)}${row('data-profile-menu="settings"','softSettings','Настройки','Тема, язык, крупный текст')}${row('data-profile-menu="about"','softInfo','О приложении','Как считаются дела и очки')}</ol>
 <ol class="sp-list" aria-label="Аккаунт">${row('data-profile-menu="rename"','softPencil','Изменить имя','Так вас видят в рейтинге')}${row('data-profile-menu="logout"','softExit','Выйти из аккаунта','Отметки сохранены в кабинете','','danger')}</ol>
 <p class="sp-version">Версия приложения ${APP_VERSION}</p>`;
     }
+    /* Profile screens from the canvas: achievements, reminders, prayer place, about and
+       rename open in one view with a back button to the profile. */
+    let profileScreen='achievements', profileScreenNote='';
+    function openProfileScreen(kind){ profileScreen=kind; profileScreenNote=''; renderProfileScreen(); showView('profile-sub-view'); window.scrollTo(0,0); }
+    function renderProfileScreen(){
+      const root=document.querySelector('#profile-sub-view'); if(!root) return;
+      const number=new Intl.NumberFormat(appLocale());
+      const head=(title,eyebrow='Профиль')=>`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="profile-view" aria-label="Назад в профиль">${icon('softBack')}</button><div><span class="stats-eyebrow">${eyebrow}</span><h2>${title}</h2></div></header>`;
+      const toggle=(attrs,on,label)=>`<span class="st-switch"><input type="checkbox" ${attrs} ${on?'checked':''} aria-label="${label}"><i></i></span>`;
+      if(profileScreen==='achievements'){
+        const badges=achievementData(), earned=badges.filter(badge=>badge.earned).length;
+        root.innerHTML=head('Достижения',`Профиль · ${earned} из ${badges.length} получено`)+softAchievementsHtml();
+        return;
+      }
+      if(profileScreen==='reminders'){
+        const settings=reminderSettings(), on=!!state.pushEnabled;
+        const titles={start:['Дела дня','Начать путь'],continue:['Продолжим путь','Мягко напомнить'],finish:['Итог дня','Подвести итог']};
+        const count=settings.slots.filter(slot=>slot.enabled).length;
+        root.innerHTML=`${head('Напоминания')}<section class="st-card ps-master"><i class="sp-icon ps-bell">${icon('softBell')}</i><span class="ps-copy"><b>Напоминания</b><small>${on?`${count} в день · заголовки по времени дня`:'Выключены'}</small></span>${toggle('data-ps-push',on,'Напоминания')}</section><section class="st-group ${on?'':'is-off'}"><h3>Когда напомнить</h3><ol class="st-list">${settings.slots.map(slot=>`<li><div class="st-row ps-slot"><input class="ps-time" type="time" value="${slot.time}" data-ps-slot-time="${slot.id}" aria-label="Время: ${titles[slot.id][0]}" ${on?'':'disabled'}><span><b>${titles[slot.id][0]}</b><small>${titles[slot.id][1]}</small></span>${toggle(`data-ps-slot="${slot.id}" ${on?'':'disabled'}`,slot.enabled,titles[slot.id][0])}</div></li>`).join('')}</ol></section><section class="st-card ps-quiet ${on?'':'is-off'}"><div class="ps-quiet-top"><i class="sp-icon">${icon('softMoon')}</i><span class="ps-copy"><b>Тихие часы</b><small>Ночью напоминания не приходят</small></span>${toggle(`data-ps-quiet ${on?'':'disabled'}`,settings.quiet.enabled,'Тихие часы')}</div><div class="ps-quiet-times ${settings.quiet.enabled?'':'is-off'}"><label><small>с</small><input class="ps-time" type="time" value="${settings.quiet.start}" data-ps-quiet-time="start" ${on&&settings.quiet.enabled?'':'disabled'}></label><label><small>до</small><input class="ps-time" type="time" value="${settings.quiet.end}" data-ps-quiet-time="end" ${on&&settings.quiet.enabled?'':'disabled'}></label></div></section><button type="button" class="ps-primary" data-ps-test ${on?'':'disabled'}>${icon('softSend')}Отправить тестовое</button><p class="ps-note" role="status">${profileScreenNote||'На iPhone напоминания приходят, когда приложение добавлено на экран «Домой».'}</p>`;
+        return;
+      }
+      if(profileScreen==='place'){
+        const P=window.ChetPrayer; let saved=null; try { saved=JSON.parse(localStorage.getItem('chetele-prayer-place')||'null'); } catch {}
+        const current=saved?.id==='geo'?(saved.name||'Моё место'):(P?.CITIES.find(city=>city.id===saved?.id)||P?.CITIES[0])?.name||'Бишкек';
+        const selected=saved?.id||'bishkek';
+        root.innerHTML=`${head('Время намазов')}<section class="st-card"><div class="ps-quiet-top"><i class="sp-icon">${icon('softPin')}</i><span class="ps-copy"><small>Ваш город</small><b class="ps-city">${escapeHtml(current)}</b></span></div><button type="button" class="ps-secondary" data-ps-geo>${icon('softLocate')}Определить по геопозиции</button><small class="ps-hint">${profileScreenNote||'Геопозиция остаётся только на телефоне'}</small></section><section class="st-group"><h3>Города</h3><ol class="st-list ps-cities">${(P?.CITIES||[]).map(city=>`<li><button type="button" class="ps-city-row ${city.id===selected?'on':''}" data-ps-city="${city.id}" aria-pressed="${city.id===selected}">${city.name}<span>${icon('check')}</span></button></li>`).join('')}</ol></section><p class="ps-note">Расчёт: ${P?.METHOD_LABEL||''}. Сверяйтесь с вашей мечетью.</p>`;
+        return;
+      }
+      if(profileScreen==='about'){
+        const facts=[['softDeeds','Дела дня','11 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
+        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="img/logo.png" alt="" width="64" height="64"><span class="ps-copy"><b>Chetele</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}`;
+        return;
+      }
+      if(profileScreen==='rename'){
+        const people=Array.isArray(state.remoteLeaderboard)?state.remoteLeaderboard:[], me=people.find(person=>person.me);
+        root.innerHTML=`${head('Изменить имя')}<form class="st-card ps-rename" data-ps-rename novalidate><label for="ps-name">Имя</label><input id="ps-name" class="ps-input" maxlength="24" autocomplete="name" value="${escapeHtml(state.name||'')}" aria-describedby="ps-name-hint ps-name-error"><small id="ps-name-hint">Так вас видят в рейтинге и в событиях. От 2 до 24 символов.</small><p id="ps-name-error" class="ps-error" role="alert">${escapeHtml(profileScreenNote)}</p></form><section class="st-card ps-preview"><span class="ps-preview-avatar">${escapeHtml(Array.from(String(state.name||'').trim())[0]||'·')}</span><span class="ps-copy"><b><span data-ps-preview>${escapeHtml(state.name||'—')}</span> · вы</b><small>так будет в рейтинге</small></span><strong>${number.format(Number(me?.points??state.score??0))}</strong></section><button type="button" class="ps-primary" data-ps-save>Сохранить</button>`;
+      }
+    }
+    async function savePushSlots(update){
+      const next=reminderSettings(); update(next); state.reminderSettings=next; save(); renderReminderTimes();
+      try { await savePushSettings(); profileScreenNote='Сохранено.'; } catch { profileScreenNote='Сохранено на телефоне, но не отправлено на сервер.'; }
+      renderProfileScreen(); renderProfile();
+    }
+    document.addEventListener('change',async event=>{
+      const target=event.target; if(!target.closest('#profile-sub-view')) return;
+      if(target.matches('[data-ps-push]')){
+        target.disabled=true;
+        try {
+          if(target.checked){ if(!('Notification' in window)||!('PushManager' in window)) throw new Error('push_unsupported'); const permission=await Notification.requestPermission(); if(permission!=='granted') throw new Error('permission_denied'); const result=await subscribeToPush(); state.pushEnabled=true; save(); setReminderUi(); profileScreenNote=result?.testError?'Подписка включена. Сервер пока не смог отправить тест.':'Напоминания включены.'; }
+          else { await disablePush(); profileScreenNote='Напоминания выключены.'; }
+        } catch(error){ profileScreenNote=String(error.message||'')==='permission_denied'?'Разрешите уведомления в настройках устройства.':'Не удалось изменить настройку. Проверьте подключение.'; }
+        renderProfileScreen(); renderProfile(); return;
+      }
+      if(target.matches('[data-ps-slot]')) return savePushSlots(next=>{ next.slots.find(slot=>slot.id===target.dataset.psSlot).enabled=target.checked; });
+      if(target.matches('[data-ps-slot-time]')&&target.value) return savePushSlots(next=>{ next.slots.find(slot=>slot.id===target.dataset.psSlotTime).time=target.value; });
+      if(target.matches('[data-ps-quiet]')) return savePushSlots(next=>{ next.quiet.enabled=target.checked; });
+      if(target.matches('[data-ps-quiet-time]')&&target.value) return savePushSlots(next=>{ next.quiet[target.dataset.psQuietTime]=target.value; });
+    });
+    document.addEventListener('input',event=>{ if(event.target.id==='ps-name'){ const preview=document.querySelector('[data-ps-preview]'); if(preview) preview.textContent=event.target.value.trim()||'—'; } });
+    document.addEventListener('submit',event=>{ if(event.target.matches('[data-ps-rename]')){ event.preventDefault(); document.querySelector('[data-ps-save]')?.click(); } });
+    document.addEventListener('click',async event=>{
+      const target=event.target; if(!target.closest('#profile-sub-view')) return;
+      if(target.closest('[data-ps-test]')){
+        const button=target.closest('[data-ps-test]'); button.disabled=true; profileScreenNote='Отправляем пример…'; document.querySelector('#profile-sub-view .ps-note').textContent=profileScreenNote;
+        try { const response=await apiFetch(apiUrl('push/test'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,login:state.login})}); if(!response.ok) throw new Error(); profileScreenNote='Тест отправлен ✦'; }
+        catch { profileScreenNote='Не удалось отправить пример. Проверьте подключение.'; }
+        renderProfileScreen(); return;
+      }
+      const city=target.closest('[data-ps-city]');
+      if(city){ try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:city.dataset.psCity})); } catch {} profileScreenNote=''; window.chetelePaintPrayer?.(); renderProfileScreen(); renderSoftProfile(); return; }
+      if(target.closest('[data-ps-geo]')){
+        const P=window.ChetPrayer;
+        if(!navigator.geolocation||!P){ profileScreenNote='Это устройство не умеет определять место. Выберите город из списка.'; renderProfileScreen(); return; }
+        document.querySelector('#profile-sub-view .ps-hint').textContent='Определяем…';
+        navigator.geolocation.getCurrentPosition(position=>{
+          // The nearest listed city names the place; coordinates are rounded to about a kilometre.
+          const lat=Math.round(position.coords.latitude*100)/100, lng=Math.round(position.coords.longitude*100)/100;
+          const distance=item=>Math.hypot(item.lat-lat,(item.lng-lng)*Math.cos(lat*Math.PI/180));
+          const nearest=P.CITIES.reduce((best,item)=>distance(item)<distance(best)?item:best);
+          try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:'geo',lat,lng,name:distance(nearest)<0.35?nearest.name:'Моё место'})); } catch {}
+          profileScreenNote=''; window.chetelePaintPrayer?.(); renderProfileScreen(); renderSoftProfile();
+        },()=>{ profileScreenNote='Не удалось определить место. Выберите город из списка.'; renderProfileScreen(); },{timeout:15000});
+        return;
+      }
+      if(target.closest('[data-ps-save]')){
+        const button=target.closest('[data-ps-save]'), input=document.querySelector('#ps-name'); button.disabled=true; button.textContent='Сохраняем…';
+        const error=await saveName(input.value);
+        // On an error the typed name stays in the field.
+        if(error){ document.querySelector('#ps-name-error').textContent=error; button.disabled=false; button.textContent='Сохранить'; input.focus(); return; }
+        profileScreenNote=''; renderProfile(); showView('profile-view'); window.scrollTo(0,0);
+      }
+    });
     /* Achievements sheet: the summary ring and a card per badge with its progress. */
     function softAchievementsHtml(){
       const number=new Intl.NumberFormat(appLocale()), badges=achievementData(), earned=badges.filter(badge=>badge.earned).length;
@@ -1189,10 +1287,12 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function showView(viewId){
       document.querySelectorAll('.view,.nav button').forEach(element=>element.classList.remove('active'));
       document.querySelector('#'+viewId)?.classList.add('active');
+      // Screens that repaint on every tap animate their cards only right after opening.
+      const opened=document.querySelector('#'+viewId); opened?.classList.add('entering'); clearTimeout(opened?.enteringTimer); if(opened) opened.enteringTimer=setTimeout(()=>opened.classList.remove('entering'),600);
       document.querySelector(`.nav [data-view="${viewId}"]`)?.classList.add('active');
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
-      document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view'].includes(viewId));
+      document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view'].includes(viewId));
       if(viewId==='rating-view') loadLeaderboard(ratingPeriod());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
@@ -1406,18 +1506,23 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function openRenameSheet(){ const input=document.querySelector('#rename-input'); input.value=state.name||''; renameCount(); document.querySelector('#rename-error').textContent=''; openSheet('rename-sheet'); }
     document.querySelector('#profile-edit').addEventListener('click',openRenameSheet);
     document.addEventListener('click',event=>{ if(event.target.closest('[data-close-rename]')) closeSheet('rename-sheet'); });
-    document.querySelector('#rename-form').addEventListener('submit',async event=>{
-      event.preventDefault(); const input=document.querySelector('#rename-input'), error=document.querySelector('#rename-error'), button=document.querySelector('#rename-save');
-      const name=input.value.trim().replace(/\s+/g,' ');
-      if(name.length<2){ error.textContent='Введите имя минимум из 2 символов.'; input.focus(); return; }
-      if(name.length>24){ error.textContent='Имя не должно быть длиннее 24 символов.'; input.focus(); return; }
-      if(!/^[\p{L}\p{M}][\p{L}\p{M}\s'-]*$/u.test(name)){ error.textContent='Используйте только буквы, пробел, дефис или апостроф.'; input.focus(); return; }
-      error.textContent=''; button.disabled=true; button.textContent='Сохраняем…';
+    /* Checks and saves a new name; returns the error text, or an empty string when saved. */
+    async function saveName(value){
+      const name=String(value||'').trim().replace(/\s+/g,' ');
+      if(name.length<2) return 'Введите имя минимум из 2 символов.';
+      if(name.length>24) return 'Имя не должно быть длиннее 24 символов.';
+      if(!/^[\p{L}\p{M}][\p{L}\p{M}\s'-]*$/u.test(name)) return 'Используйте только буквы, пробел, дефис или апостроф.';
       try {
         if(state.userId&&state.login){ const response=await apiFetch(apiUrl(`users/${state.userId}`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({displayName:name,login:state.login})}); if(!response.ok) throw new Error('rename_failed'); }
-        state.name=name; save(); render(); closeSheet('rename-sheet');
-      } catch { error.textContent='Не удалось сохранить имя. Проверьте подключение и попробуйте снова.'; }
-      finally { button.disabled=false; button.textContent='Сохранить'; }
+        state.name=name; save(); render(); return '';
+      } catch { return 'Не удалось сохранить имя. Проверьте подключение и попробуйте снова.'; }
+    }
+    document.querySelector('#rename-form').addEventListener('submit',async event=>{
+      event.preventDefault(); const input=document.querySelector('#rename-input'), error=document.querySelector('#rename-error'), button=document.querySelector('#rename-save');
+      button.disabled=true; button.textContent='Сохраняем…';
+      const message=await saveName(input.value);
+      error.textContent=message; button.disabled=false; button.textContent='Сохранить';
+      if(message) input.focus(); else closeSheet('rename-sheet');
     });
     function pushKeyBytes(value){
       const padded=value.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-value.length%4)%4);
@@ -1573,7 +1678,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const icons={trophy:'<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5v1a4 4 0 0 0 3 3.9M16 6h3v1a4 4 0 0 1-3 3.9M12 13v4M8 21h8M9 17h6"/></svg>',settings:'<svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="11" cy="17" r="2"/></svg>',info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5m0-8v.1"/></svg>',exit:'<svg viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H4"/></svg>'};
       function profileMenu(){const view=document.querySelector('#profile-view'),card=view?.querySelector('.profile-card');if(!view||!card)return;let menu=view.querySelector('#profile-menu');if(!menu){menu=document.createElement('section');menu.id='profile-menu';menu.className='profile-menu';menu.innerHTML=`<button class="profile-menu-item" type="button" data-profile-menu="reminders"><i class="profile-menu-icon tone-amber"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></svg></i><span class="profile-menu-copy"><b>Напоминания</b></span><small class="profile-menu-value">Выключены</small><span class="profile-menu-arrow"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></button><button class="profile-menu-item" type="button" data-profile-menu="settings"><i class="profile-menu-icon tone-indigo"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></i><span class="profile-menu-copy"><b>Настройки</b></span><small class="profile-menu-value">Тема и язык</small><span class="profile-menu-arrow"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></button><button class="profile-menu-item" type="button" data-profile-menu="about"><i class="profile-menu-icon tone-green"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></i><span class="profile-menu-copy"><b>О приложении</b></span><small class="profile-menu-value"></small><span class="profile-menu-arrow"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></button>`;(view.querySelector('#profile-badges')||card).insertAdjacentElement('afterend',menu);}['#profile-achievements','.reminder-card','#app-version','#logout-button'].forEach(selector=>{const element=view.querySelector(selector);if(element)element.hidden=true;});view.querySelectorAll('.section-head').forEach((element,index)=>{if(index>0)element.hidden=true;});const rhythmTitle=[...view.querySelectorAll('.section-head h2')].find(title=>title.textContent.trim()==='Ваш ритм');rhythmTitle?.closest('.section-head')?.classList.add('profile-rhythm-heading');}
       function openProfileSheet(title,content){let sheet=document.querySelector('#profile-menu-sheet');if(!sheet){sheet=document.createElement('div');sheet.id='profile-menu-sheet';sheet.className='calendar-sheet';sheet.innerHTML='<button class="calendar-sheet-backdrop" data-close-profile-menu aria-label="Закрыть"></button><section class="calendar-sheet-panel profile-menu-sheet" role="dialog" aria-modal="true"><div class="sheet-grabber"></div><div class="sheet-header"><h2></h2><button class="sheet-close" data-close-profile-menu aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="profile-menu-sheet-content"></div></section>';document.body.append(sheet);}sheet.querySelector('h2').textContent=title;sheet.querySelector('.profile-menu-sheet-content').innerHTML=content;openSheet('profile-menu-sheet');}
-      document.addEventListener('click',event=>{const button=event.target.closest('[data-profile-menu]');if(button){const action=button.dataset.profileMenu;if(action==='reminders'){document.querySelector('#reminder-settings-button')?.click();return;}if(action==='settings'){document.querySelector('#reminder-settings-button')?.click();return;}if(action==='logout'){document.querySelector('#logout-button')?.click();return;}if(action==='achievements'){openProfileSheet('Достижения',softAchievementsHtml());return;}if(action==='rename'){openRenameSheet();return;}if(action==='about'){openProfileSheet('О приложении',`<p style="margin:0;color:#66758a;line-height:1.55">Chetele — путь к сильному таква. Отмечайте ежедневные дела, берегите постоянство и двигайтесь в своём ритме.</p><p class="app-version" style="text-align:left">Версия приложения ${APP_VERSION}</p>`);return;}}if(event.target.closest('[data-close-profile-menu]'))closeSheet('profile-menu-sheet');});
+      document.addEventListener('click',event=>{const button=event.target.closest('[data-profile-menu]');if(button){const action=button.dataset.profileMenu;if(action==='reminders'){openProfileScreen('reminders');return;}if(action==='place'){openProfileScreen('place');return;}if(action==='settings'){document.querySelector('#reminder-settings-button')?.click();return;}if(action==='logout'){document.querySelector('#logout-button')?.click();return;}if(action==='achievements'){openProfileScreen('achievements');return;}if(action==='rename'){openProfileScreen('rename');return;}if(action==='about'){openProfileScreen('about');return;}}if(event.target.closest('[data-close-profile-menu]'))closeSheet('profile-menu-sheet');});
       new MutationObserver(profileMenu).observe(document.querySelector('#profile-view'),{childList:true,subtree:true});profileMenu();
     })();
   </script>
@@ -2533,8 +2638,8 @@ body .prayer-sheet .prayer-geo{min-height:60px;border-radius:20px}
 /* Statistics in the soft glass style */
 body #app.on-glass{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body #app.on-glass button{font-family:inherit}
-body #app #stats-view.active,body #app #rating-view.active,body #app #zikr-view.active,body #app #settings-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
-body #app #stats-view>*,body #app #rating-view>*,body #app #zikr-view>*,body #app #settings-view>*{margin:0}
+body #app #stats-view.active,body #app #rating-view.active,body #app #zikr-view.active,body #app #settings-view.active,body #app #profile-sub-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
+body #app #stats-view>*,body #app #rating-view>*,body #app #zikr-view>*,body #app #settings-view>*,body #app #profile-sub-view>*{margin:0}
 body #app #stats-view .lucide{stroke-width:1.6}
 body #app .stats-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 4px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 body #app .stats-top>div{display:flex;flex-direction:column}
@@ -2973,9 +3078,9 @@ body .profile-menu-sheet .zg-ring .zg-ring-value{stroke:var(--ink,#10161A);strok
 body .profile-menu-sheet .sp-ach-list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
 body .profile-menu-sheet .sp-ach{padding:16px;border-radius:22px;background:var(--page,#F2F3F4);display:flex;flex-direction:column;gap:12px}
 body .profile-menu-sheet .sp-ach>div{display:flex;align-items:center;gap:12px}
-body .profile-menu-sheet .sp-ach i{width:44px;height:44px;flex:none;border-radius:22px;background:var(--surface,#fff);color:#9AA3A8;display:grid;place-items:center}
-body .profile-menu-sheet .sp-ach i svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-body .profile-menu-sheet .sp-ach.earned i{background:#0B0F12;color:#fff}
+body .profile-menu-sheet .sp-ach>div>i{width:44px;height:44px;flex:none;border-radius:22px;background:var(--surface,#fff);color:#9AA3A8;display:grid;place-items:center}
+body .profile-menu-sheet .sp-ach>div>i svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body .profile-menu-sheet .sp-ach.earned>div>i{background:#0B0F12;color:#fff}
 body .profile-menu-sheet .sp-ach>div>span{flex:1;display:flex;flex-direction:column;gap:2px}
 body .profile-menu-sheet .sp-ach b{font-size:15px;font-weight:600}
 body .profile-menu-sheet .sp-ach small{color:var(--muted);font-size:13px}
@@ -2984,14 +3089,14 @@ body .profile-menu-sheet .sp-ach-progress{display:flex;align-items:center;gap:10
 body .profile-menu-sheet .zg-track{flex:1;height:6px;border-radius:3px;background:rgba(16,22,26,.08);overflow:hidden}
 body .profile-menu-sheet .zg-track i{display:block;height:100%;border-radius:3px;background:var(--ink,#10161A)}
 body .profile-menu-sheet .sp-ach-progress b{min-width:86px;font-size:13px;text-align:right}
-body.app-dark .profile-menu-sheet .sp-ach.earned i{background:#EEF5F2;color:#0B1110}
+body.app-dark .profile-menu-sheet .sp-ach.earned>div>i{background:#EEF5F2;color:#0B1110}
 body.app-dark .profile-menu-sheet .zg-track,body.app-dark .profile-menu-sheet .zg-ring circle{background:rgba(255,255,255,.1);stroke:rgba(255,255,255,.12)}
 body.app-dark .profile-menu-sheet .zg-ring .zg-ring-value{stroke:#EEF5F2}
 body.app-dark .profile-menu-sheet .zg-track i{background:#EEF5F2}
 
 /* Settings screen */
-body #app:has(#settings-view.active){padding-bottom:calc(32px + env(safe-area-inset-bottom))}
-body #app:has(#settings-view.active) .nav{display:none}
+body #app:has(#settings-view.active),body #app:has(#profile-sub-view.active){padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+body #app:has(#settings-view.active) .nav,body #app:has(#profile-sub-view.active) .nav{display:none}
 body #app .st-card{padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;flex-direction:column;gap:12px}
 body #app .st-card>b{font-size:16px;font-weight:600}
 body #app .glass-seg.st-seg{border:0;border-radius:22px;background:rgba(16,22,26,.06);backdrop-filter:none;-webkit-backdrop-filter:none;grid-template-columns:repeat(var(--n),minmax(0,1fr))}
@@ -3022,6 +3127,96 @@ body.app-dark #app .st-list li+li{border-color:rgba(255,255,255,.06)}
 body.app-dark #app .st-switch i{background:rgba(255,255,255,.18)}
 body.app-dark #app .st-switch input:checked+i{background:#EEF5F2}
 body.app-dark #app .st-switch input:checked+i:after{background:#0B1110}
+
+/* Profile screens: achievements, reminders, prayer place, about, rename */
+body #app :is(#settings-view,#profile-sub-view).active>*{animation-name:none}
+body #app :is(#settings-view,#profile-sub-view).active.entering>*{animation-name:soft-rise;animation-duration:.24s;animation-timing-function:var(--soft-ease);animation-fill-mode:both}
+body #app #profile-sub-view{color:#10161A}
+body #app .ps-master,body #app .ps-quiet-top,body #app .ps-app,body #app .ps-fact,body #app .ps-preview{flex-direction:row;align-items:center;gap:12px}
+body #app .ps-fact{align-items:flex-start}
+body #app .ps-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .ps-copy b{font-size:16px;font-weight:600}
+body #app .ps-copy small{color:#7A858B;font-size:13px}
+body #app .ps-copy p{margin:2px 0 0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .ps-bell{color:#C7782A}
+body #app .ps-master .sp-icon{width:44px;height:44px}
+body #app .st-group.is-off,body #app .ps-quiet.is-off,body #app .ps-quiet-times.is-off{opacity:.45}
+body #app .ps-slot{gap:14px}
+body #app .ps-slot>span:not(.st-switch){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .ps-quiet-top{display:flex}
+body #app .ps-time{min-width:78px;height:44px;padding:0 10px;border:1px solid rgba(16,22,26,.08);border-radius:22px;background:rgba(255,255,255,.9);color:#10161A;font:600 17px Inter,-apple-system,sans-serif;font-variant-numeric:tabular-nums;text-align:center;box-sizing:border-box}
+body #app .ps-time::-webkit-calendar-picker-indicator{display:none}
+body #app .ps-quiet{gap:14px}
+body #app .ps-quiet-times{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body #app .ps-quiet-times label{padding:8px 12px;border-radius:18px;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:space-between;gap:8px}
+body #app .ps-quiet-times small{color:#7A858B;font-size:13px}
+body #app .ps-quiet-times .ps-time{min-width:0;width:auto;height:36px;border:0;background:transparent}
+body #app .ps-primary{height:52px;padding:0 20px;border:0;border-radius:26px;background:#0B0F12;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:600}
+body #app .ps-primary .lucide{width:19px;height:19px}
+body #app .ps-primary:disabled{opacity:.45}
+body #app .ps-secondary{height:48px;border:1px solid rgba(16,22,26,.1);border-radius:24px;background:rgba(255,255,255,.8);color:#10161A;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600}
+body #app .ps-secondary .lucide{width:18px;height:18px}
+body #app .ps-hint{color:#7A858B;font-size:12px}
+body #app .ps-note{margin:0;padding:0 12px;color:#7A858B;font-size:12px;line-height:1.45;text-align:center}
+body #app .ps-copy .ps-city{font-size:20px}
+body #app .ps-cities{display:flex;flex-direction:column}
+body #app .ps-cities li+li{border-top:0}
+body #app .ps-city-row{width:100%;min-height:50px;padding:0 12px;border:0;border-radius:18px;background:transparent;color:#10161A;display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:500;text-align:left}
+body #app .ps-city-row.on{background:rgba(255,255,255,.95);font-weight:600}
+body #app .ps-city-row span{display:grid;opacity:0}
+body #app .ps-city-row.on span{opacity:1}
+body #app .ps-city-row .lucide{width:20px;height:20px;stroke-width:2.2}
+body #app .ps-app img{width:64px;height:64px;flex:none;border-radius:18px;border:1px solid rgba(16,22,26,.06);background:#F4F1EA;object-fit:contain}
+body #app .ps-app .ps-copy b{font-size:20px}
+body #app .ps-rename{gap:12px}
+body #app .ps-rename label{color:#5E6A71;font-size:14px}
+body #app .ps-input{height:56px;padding:0 16px;border:1.5px solid #10161A;border-radius:18px;background:#fff;color:#10161A;font:500 18px Inter,-apple-system,sans-serif;outline:0}
+body #app .ps-rename small{color:#7A858B;font-size:13px}
+body #app .ps-error{min-height:0;margin:0;color:#A0563B;font-size:13px}
+body #app .ps-error:empty{display:none}
+body #app .ps-preview-avatar{width:44px;height:44px;flex:none;border-radius:22px;background:#0B0F12;color:#fff;display:grid;place-items:center;font-size:18px;font-weight:600}
+body #app .ps-preview strong{font-size:16px;font-weight:600}
+/* Achievements as a screen: the same cards in glass */
+body :is(.profile-menu-sheet,#profile-sub-view) .sp-ach-sum{padding:16px;border-radius:24px;display:flex;align-items:center;gap:14px}
+body #app #profile-sub-view .sp-ach-sum,body #app #profile-sub-view .sp-ach{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);border-radius:28px;padding:18px}
+body #app #profile-sub-view .sp-ach-sum>span:last-child{display:flex;flex-direction:column;gap:3px}
+body #app #profile-sub-view .sp-ach-sum b{font-size:17px;font-weight:600}
+body #app #profile-sub-view .sp-ach-sum small{color:#7A858B;font-size:13px}
+body #app #profile-sub-view .sp-ach-list{display:flex;flex-direction:column;gap:10px}
+body #app #profile-sub-view .sp-ach{display:flex;flex-direction:column;gap:12px}
+body #app #profile-sub-view .sp-ach>div{display:flex;align-items:center;gap:12px}
+body #app #profile-sub-view .sp-ach>div>i{width:48px;height:48px;flex:none;border-radius:24px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);color:#9AA3A8;display:grid;place-items:center}
+body #app #profile-sub-view .sp-ach>div>i svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+body #app #profile-sub-view .sp-ach.earned>div>i{background:#0B0F12;color:#fff}
+body #app #profile-sub-view .sp-ach>div>span{flex:1;display:flex;flex-direction:column;gap:2px}
+body #app #profile-sub-view .sp-ach b{font-size:16px;font-weight:600}
+body #app #profile-sub-view .sp-ach small{color:#7A858B;font-size:13px}
+body #app #profile-sub-view .sp-ach em{color:#2F7A5F;font-size:12px;font-style:normal;font-weight:600}
+body #app #profile-sub-view .sp-ach-progress{display:flex;align-items:center;gap:10px}
+body #app #profile-sub-view .sp-ach-progress b{min-width:86px;font-size:13px;text-align:right}
+body.app-dark #app #profile-sub-view{color:var(--ink)}
+body.app-dark #app #profile-sub-view .sp-ach-sum,body.app-dark #app #profile-sub-view .sp-ach{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72);box-shadow:none}
+body.app-dark #app #profile-sub-view .sp-ach>div>i{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1)}
+body.app-dark #app #profile-sub-view .sp-ach.earned>div>i,body.app-dark #app .ps-preview-avatar,body.app-dark #app .ps-primary{background:#EEF5F2;color:#0B1110}
+body.app-dark #app .ps-time,body.app-dark #app .ps-secondary,body.app-dark #app .ps-quiet-times label,body.app-dark #app .ps-city-row.on{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.1);color:var(--ink)}
+body.app-dark #app .ps-quiet-times .ps-time{background:transparent}
+body.app-dark #app .ps-input{border-color:#EEF5F2;background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .ps-city-row,body.app-dark #app .ps-copy b,body.app-dark #app .ps-preview strong{color:var(--ink)}
+body.app-dark #app .ps-copy small,body.app-dark #app .ps-copy p,body.app-dark #app .ps-hint,body.app-dark #app .ps-note,body.app-dark #app .ps-rename label,body.app-dark #app .ps-rename small{color:var(--muted)}
+/* Exit dialog as on the canvas: glass card, red «Выйти» above «Остаться» */
+body #exit-confirmation.exit-confirmation{background:rgba(16,22,26,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #exit-confirmation .exit-card{width:min(100%,350px);padding:26px 22px 20px;border-radius:32px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.86);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 24px 60px rgba(16,22,26,.25);color:#10161A;animation:soft-drop .42s var(--soft-ease) both}
+body #exit-confirmation .exit-icon{width:56px;height:56px;margin:0 auto 10px;border-radius:28px;background:rgba(160,86,59,.1);color:#A0563B}
+body #exit-confirmation .exit-card h2{font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #exit-confirmation .exit-card p{max-width:280px;margin:10px auto 18px;color:#5E6A71;font-size:14px}
+body #exit-confirmation .exit-actions{display:flex!important;flex-direction:column-reverse;gap:8px}
+body #exit-confirmation .exit-actions button{min-height:52px;border:0;border-radius:26px;font:600 16px Inter,-apple-system,sans-serif;box-shadow:none}
+body #exit-confirmation .exit-approve{background:#A0563B;color:#fff}
+body #exit-confirmation .exit-cancel{background:rgba(16,22,26,.06);color:#10161A}
+body.app-dark #exit-confirmation .exit-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);color:var(--ink)}
+body.app-dark #exit-confirmation .exit-card p{color:var(--muted)}
+body.app-dark #exit-confirmation .exit-cancel{background:rgba(255,255,255,.1);color:var(--ink)}
+body.app-dark #exit-confirmation .exit-approve{background:#C26B4E}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
