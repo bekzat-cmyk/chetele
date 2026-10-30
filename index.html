@@ -2559,6 +2559,10 @@ body #app .reading-row .stepper{padding:0;gap:0;background:transparent}
 body #app .reading-row .step-btn{width:44px;height:44px;border-radius:22px;background:rgba(16,22,26,.06);color:#10161A;font-size:22px;font-weight:400}
 body #app .reading-row .step-btn.step-plus{background:#0B0F12;color:#fff;box-shadow:none}
 body #app .reading-row .stepper .field{width:38px;color:#10161A;font-size:18px;font-weight:600}
+/* While typing, the page count is highlighted like the zikr count instead of the green focus ring. */
+body #app .reading-row .stepper .field{border:1px solid transparent;border-radius:14px;outline:0!important;transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease}
+body #app .reading-row .stepper .field:focus,body #app .reading-row .stepper .field:focus-visible{border-color:#10161A;background:#fff;outline:0!important;box-shadow:0 0 0 4px rgba(16,22,26,.08)}
+body.app-dark #app .reading-row .stepper .field:focus,body.app-dark #app .reading-row .stepper .field:focus-visible{border-color:var(--ink)!important;background:rgba(255,255,255,.14)!important;box-shadow:0 0 0 4px rgba(255,255,255,.08)!important}
 
 /* Prayer: tahajjud, nafil, missed prayers */
 body #app .prayer-body{padding:16px;gap:14px;border-radius:28px}
