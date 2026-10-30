@@ -252,8 +252,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   </main>
   <main id="app" class="app on-today" hidden>
     <header class="top"><div><div class="eyebrow" id="welcome">Ассаламу алейкум</div><span id="top-day" class="top-day">Сегодня</span><h1>Мой день</h1></div><button class="avatar" id="avatar" aria-label="Открыть профиль"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></button></header>
-    <section id="today-view" class="view active"><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
+    <section id="today-view" class="view active"><section id="offline-banner" class="state-offline" hidden role="status"><i data-icon="softWifiOff"></i><span><b>Нет связи с сервером</b><small>Отмечайте как обычно — всё сохранится на телефоне и отправится, когда появится интернет.</small></span></section><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
     <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><div class="prayer-countdown"><div class="prayer-countdown-row"><span id="prayer-countdown-label">Осталось</span><b id="prayer-timer" aria-hidden="true">—</b></div><div id="prayer-progress" class="prayer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Время до следующего намаза"><i id="prayer-progress-fill"></i><span id="prayer-progress-knob"></span></div><div class="prayer-progress-ends"><span id="prayer-from"></span><span id="prayer-to"></span></div></div><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
+    <section id="empty-day" class="state-empty" hidden><span class="state-empty-icon" data-icon="softSpark"></span><h3>Начните с одного дела</h3><p>Сегодня ещё ничего не отмечено. Три небольших дела — и минимум дня выполнен.</p><div class="state-quick"><button type="button" data-empty-focus="salawat"><i data-icon="softSalawat"></i>Салават</button><button type="button" data-empty-focus="quran"><i data-icon="softQuran"></i>Куран</button><button type="button" data-empty-focus="tasbihat"><i data-icon="softZikr"></i>Зикр</button></div></section>
+    <section id="empty-streak" class="state-streak" hidden><i data-icon="softFlame"></i><span><b id="empty-streak-title"></b><small>Отметьте дело сегодня, чтобы она продолжилась</small></span></section>
     <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Эта неделя</h2><span id="week-streak" class="week-streak"></span></div><div id="week-calendar" class="week-calendar"></div></button>
     <section class="streak-card" aria-label="Серия дней"><div id="streak-ring-big" class="streak-ring-big" role="progressbar" aria-label="Прогресс серии" aria-valuemin="0" aria-valuenow="0" aria-valuemax="3"><div class="streak-ring-core"><b id="streak-detail">0</b><span id="streak-unit">дней</span></div></div><div class="streak-copy"><h3 id="streak-title">Вы держите ритм</h3><p id="streak-detail-text">Добавляйте хотя бы одно дело каждый день.</p><div class="streak-meta"><span class="streak-pill"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b id="streak-best">0</b><em id="streak-best-label">дней подряд</em></span><span id="streak-next">Рекорд: 0</span></div></div></section>
     <section class="achievement-teaser" aria-label="Ближайшее достижение"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2"/></svg></i><div><b id="achievement-teaser-title">Достижения ждут вас</b><span id="achievement-teaser-text">Откройте первое достижение в профиле.</span></div><button id="open-achievements" type="button" aria-label="Смотреть достижения"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></section>
@@ -274,9 +276,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="calendar-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-calendar aria-label="Закрыть календарь"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="month-title"><div class="sheet-grabber" aria-label="Потяните вниз, чтобы закрыть"></div><div class="sheet-header"><h2>Ваш ритм</h2><button class="sheet-close" data-close-calendar aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="sheet-month-control"><button id="month-prev" class="month-arrow" aria-label="Предыдущий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div><h2 id="month-title">Календарь</h2><p id="month-subtitle">Нажмите на дату</p></div><button id="month-next" class="month-arrow" aria-label="Следующий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="month-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="month-grid" class="month-grid"></div><div class="month-legend" aria-hidden="true"><span><i class="lg-full"></i>Все дела дня</span><span><i class="lg-some"></i>Есть дела</span><span><i class="lg-pick"></i>Выбран</span></div><p id="month-summary" class="month-summary"></p><button id="open-selected-day" class="save-progress" hidden>Открыть дела за этот день</button></section></div>
   <div id="hadith-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-hadith aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="hadith-sheet-title"><div class="sheet-grabber"></div><div class="sheet-header"><h2 id="hadith-sheet-title">Хадис дня</h2><button class="sheet-close" data-close-hadith aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><p id="hadith-full-text"></p><p id="hadith-full-source" class="credentials-note"></p><div class="hadith-insight"><b>Смысл хадиса</b><p id="hadith-explanation"></p></div><div class="hadith-practice"><b>Небольшой шаг на сегодня</b><p id="hadith-practice"></p></div></section></div>
   <div id="rename-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-rename aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="rename-title"><div class="sheet-grabber"></div><div class="sheet-header"><h2 id="rename-title">Изменить имя</h2><button class="sheet-close" data-close-rename aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><form id="rename-form"><label class="rename-label" for="rename-input">Как вас показывать в рейтинге</label><input id="rename-input" class="name-input" maxlength="24" autocomplete="name" required placeholder="Ваше имя" aria-describedby="rename-rule rename-error"><span class="rename-meta"><span id="rename-rule">Буквы, пробел, дефис или апостроф</span><span id="rename-count">0 / 24</span></span><p id="rename-error" class="rename-error" role="alert"></p><button id="rename-save" class="continue" type="submit">Сохранить</button><p class="rename-hint"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>После сохранения имя сразу обновится в рейтинге</p></form></section></div>
-  <div id="celebration" class="reward reward-done" hidden role="dialog" aria-modal="true" aria-labelledby="reward-done-title"><div class="reward-confetti" aria-hidden="true"></div><section class="reward-card"><svg class="reward-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="reward-ring-track" cx="48" cy="48" r="40"/><circle class="reward-ring-fill" cx="48" cy="48" r="40" transform="rotate(-90 48 48)"/><path class="reward-ring-tick" d="m34 49 9 9 19-20"/></svg><h2 id="reward-done-title">Все 11 дел выполнены</h2><p id="reward-done-text"></p><div class="reward-stats"><div><b id="reward-streak"></b><span>серия подряд</span></div><div><b id="reward-rank"></b><span id="reward-rank-label">место в рейтинге</span></div></div><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
+  <div id="celebration" class="reward reward-done" hidden role="dialog" aria-modal="true" aria-labelledby="reward-done-title"><div class="reward-confetti" aria-hidden="true"></div><section class="reward-card"><span class="rw-ring" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><circle class="rw-ring-value" cx="60" cy="60" r="52"/></svg><b id="reward-ring-label">11/11</b></span><h2 id="reward-done-title">Все 11 дел выполнены</h2><p id="reward-done-text"></p><div class="reward-stats"><div><b id="reward-points"></b><span>очков</span></div><div><b id="reward-streak"></b><span id="reward-streak-label">дней подряд</span></div><div><b id="reward-rank"></b><span id="reward-rank-label">в рейтинге</span></div></div><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
   <div id="minimum-celebration" class="reward reward-minimum" hidden><button type="button" class="reward-dim" data-reward-close aria-label="Закрыть"></button><section class="reward-sheet" role="status" aria-live="polite"><span class="reward-spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><h2>Минимум дня выполнен</h2><p>Вы сделали <b>3 дела</b>. Можно продолжить в своём темпе — или просто порадоваться этому шагу.</p><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
-  <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></div>
+  <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><section class="reward-badge-card"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></section></div>
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><p class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
@@ -327,6 +329,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softDeeds:'<path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/>',
       softShield:'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>',
       softEvents:'<path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/>',
+      softSpark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+      softWifiOff:'<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01M3 3l18 18"/>',
       softList:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
       softStar:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
       softBack:'<path d="M14.5 6l-6 6 6 6"/>',
@@ -476,8 +480,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         });
         if(response.status===404){ delete state.userId; save(); ensureRemoteUser(); return null; }
         if(!response.ok) throw new Error('Sync failed');
-        document.querySelector('.autosave')?.classList.remove('is-saving'); setSaveStatus('Сохранено в кабинете'); refreshVisibleLeaderboards(1500); return true;
-      } catch { const autosave=document.querySelector('.autosave'); autosave?.classList.remove('is-saving'); autosave?.classList.add('is-offline'); setSaveStatus('Сохранено на телефоне — отправим, когда появится связь'); renderBoard(); return false; }
+        document.querySelector('.autosave')?.classList.remove('is-saving'); setSaveStatus('Сохранено в кабинете'); paintDayStates(); refreshVisibleLeaderboards(1500); return true;
+      } catch { const autosave=document.querySelector('.autosave'); autosave?.classList.remove('is-saving'); autosave?.classList.add('is-offline'); paintDayStates(); setSaveStatus('Сохранено на телефоне — отправим, когда появится связь'); renderBoard(); return false; }
     }
     async function ensureRemoteUser(){
       if(!state.name) return false;
@@ -558,7 +562,23 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     function isDone(task){ const v=state.tasks[task.id]; return task.type==='number' ? Number(v)>0 : task.type==='yesno' ? v==='yes' : task.type==='nafil' ? nafilCompleted()===NAFIL.length : !!v; }
     function completed(){ return ChetDeeds.countDeeds(state.tasks,state.qaza); }
+    /* Day states from the canvas: a nudge when nothing is marked yet today, the streak
+       that is waiting for today, and a banner while the server cannot be reached. */
+    function paintDayStates(){
+      const empty=entryDateKey===todayKey&&completed()===0, streak=Number(state.streak||0);
+      document.querySelectorAll('#today-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
+      const card=document.querySelector('#empty-day'); if(card) card.hidden=!empty;
+      const reminder=document.querySelector('#empty-streak'); if(reminder){ reminder.hidden=!empty||!streak; document.querySelector('#empty-streak-title').textContent=`Серия ${streak} ${streak%10===1&&streak%100!==11?'день':[2,3,4].includes(streak%10)&&![12,13,14].includes(streak%100)?'дня':'дней'}`; }
+      const banner=document.querySelector('#offline-banner'); if(banner) banner.hidden=navigator.onLine&&!document.querySelector('.autosave')?.classList.contains('is-offline');
+    }
+    window.addEventListener('online',()=>paintDayStates()); window.addEventListener('offline',()=>paintDayStates());
+    document.addEventListener('click',event=>{
+      const quick=event.target.closest('[data-empty-focus]'); if(!quick) return;
+      const field=document.querySelector(`#task-list [data-id="${quick.dataset.emptyFocus}"]`); if(!field) return;
+      field.scrollIntoView({behavior:motionOff()?'auto':'smooth',block:'center'}); setTimeout(()=>field.focus({preventScroll:true}),motionOff()?0:400);
+    });
     function render(){
+      paintDayStates();
       document.querySelector('#welcome').textContent = `Ассаламу алейкум, ${state.name}`;
       renderProfile(); renderAchievementsTeaser();
       if(!state.achievementBaselineReady){ state.seenAchievements=Object.fromEntries(achievementData().filter(badge=>badge.earned).map(badge=>[badge.title,true])); state.achievementBaselineReady=true; save(); }
@@ -1167,7 +1187,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const live=events.filter(event=>event.starts_on<=todayKey), soon=events.filter(event=>event.starts_on>todayKey);
       const sub=document.querySelector('#events-sub');
       if(sub) sub.textContent=live.length?`${live.length} ${plural(live.length,'идёт','идут','идут')} сейчас`:soon.length?'Скоро начнутся':'Скоро новое событие';
-      if(!events.length){ root.innerHTML=eventsEmptyCard('Скоро новое событие','Сейчас нет активных событий. Мы сообщим, когда начнётся новое.','<button type="button" class="ps-primary" data-view="today-view">Вернуться к делам</button>')+'<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>'; return; }
+      if(!events.length){ root.innerHTML=eventsEmptyCard('Скоро новое событие','Сейчас нет активных событий. Мы сообщим, когда начнётся новое.','<button type="button" class="ps-primary" data-view="today-view">Вернуться к делам</button>')+'<section class="evs-card evs-about"><h3>Что такое события</h3><p><b>Общая цель</b> — вся община вместе, например 20 000 салаватов за месяц. <b>Личный путь</b> — своя цель в своём темпе, например 40 ночей тахаджуда.</p></section><p class="evs-note">Отметки засчитываются в событие с момента участия.</p>'; return; }
       const pills=event=>{
         const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=dayDiff(todayKey,event.ends_on);
         const status=upcoming?`<span class="evs-pill soon">С ${shortDate(event.starts_on)}</span>`:`<span class="evs-pill live"><i></i>${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
@@ -1303,10 +1323,13 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function fillDoneReward(){
       const max=dailyMax(), streak=Number(state.streak||0), people=Array.isArray(state.remoteLeaderboard)?state.remoteLeaderboard:[], me=people.find(person=>person.me);
       document.querySelector('#reward-done-title').textContent=`Все ${max} дел выполнены`;
-      document.querySelector('#reward-done-text').textContent=`Машаллах! Пусть этот ритм приносит пользу. Сегодня +${max*10} очков в рейтинг.`;
-      document.querySelector('#reward-streak').textContent=`${streak} ${rewardDays(streak)}`;
+      document.querySelector('#reward-done-text').textContent='Машаллах! Сегодняшний путь пройден полностью. Пусть Аллах примет ваши дела.';
+      document.querySelector('#reward-ring-label').textContent=`${max}/${max}`;
+      document.querySelector('#reward-points').textContent=`+${max*10}`;
+      document.querySelector('#reward-streak').textContent=String(streak);
+      document.querySelector('#reward-streak-label').textContent=`${rewardDays(streak)} подряд`;
       document.querySelector('#reward-rank').textContent=me?`#${me.place||people.indexOf(me)+1}`:`${Number(state.score||0)}`;
-      document.querySelector('#reward-rank-label').textContent=me?'место в рейтинге':'очков всего';
+      document.querySelector('#reward-rank-label').textContent=me?'в рейтинге':'очков всего';
       const confetti=document.querySelector('#celebration .reward-confetti');
       if(!confetti.childElementCount){ const colors=['#FFD66B','#FFFFFF','#9FDDBB','#F59E8B','#8FB8FF']; confetti.innerHTML=Array.from({length:24},(_,i)=>`<i style="left:${(i*41)%97}%;background:${colors[i%colors.length]};animation-delay:${((i*.37)%3).toFixed(2)}s;animation-duration:${(2.6+(i%5)*.3).toFixed(1)}s"></i>`).join(''); }
     }
@@ -1332,7 +1355,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     document.addEventListener('click',event=>{
       if(!event.target.closest('.reward')) return;
-      if(event.target.closest('[data-reward-badges]')){ rewardQueue.length=0; closeReward(); showView('profile-view'); requestAnimationFrame(()=>document.querySelector('#profile-badges')?.scrollIntoView({behavior:'smooth',block:'start'})); return; }
+      if(event.target.closest('[data-reward-badges]')){ rewardQueue.length=0; closeReward(); openProfileScreen('achievements'); return; }
       if(event.target.closest('[data-reward-close]')) closeReward();
     });
     document.addEventListener('keydown',event=>{
@@ -3405,6 +3428,89 @@ body.app-dark #personal-goal-modal .personal-goal-stepper>button.plus,body.app-d
 body.app-dark #personal-goal-modal .personal-goal-presets button{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.06)}
 body.app-dark #personal-goal-modal .personal-goal-presets button.active{border-color:#EEF5F2;background:rgba(255,255,255,.14)}
 body.app-dark #personal-goal-modal #personal-goal-event,body.app-dark #personal-goal-modal #personal-goal-unit,body.app-dark #personal-goal-modal .personal-goal-presets small,body.app-dark #personal-goal-modal .personal-goal-note{color:var(--muted)}
+
+/* States in the soft glass style */
+/* Celebrations: a glass card over the dimmed app instead of a coloured full screen. */
+body #celebration.reward,body #achievement-celebration.reward{background:rgba(16,22,26,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#10161A;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #celebration .reward-card,body #achievement-celebration .reward-badge-card{position:relative;z-index:1;width:min(100%,350px);padding:28px 22px 20px;box-sizing:border-box;border-radius:32px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.86);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 24px 60px rgba(16,22,26,.25);color:#10161A;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:soft-drop .42s var(--soft-ease) both}
+body #celebration .reward-card h2,body #achievement-celebration h2{margin:0;color:#10161A;font-size:24px;font-weight:600;letter-spacing:-.02em}
+body #celebration .reward-card p,body #achievement-celebration p,body #minimum-celebration .reward-sheet p{max-width:280px;margin:0;color:#5E6A71;font-size:14px;font-weight:400;line-height:1.45}
+body #celebration .rw-ring{position:relative;width:120px;height:120px;margin-bottom:4px;display:grid;place-items:center}
+body #celebration .rw-ring:before{content:"";position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,214,140,.55),rgba(255,214,140,0))}
+body #celebration .rw-ring svg{position:absolute;inset:0;width:120px;height:120px;transform:rotate(-90deg)}
+body #celebration .rw-ring circle{fill:none;stroke:rgba(16,22,26,.08);stroke-width:10}
+body #celebration .rw-ring .rw-ring-value{stroke:#0B0F12;stroke-linecap:round;stroke-dasharray:327 330;animation:rw-ring .9s var(--soft-ease) .15s both}
+body #celebration .rw-ring b{position:relative;font-size:30px;font-weight:600;letter-spacing:-.03em}
+@keyframes rw-ring{from{stroke-dasharray:0 330}}
+body #celebration .reward-stats{align-self:stretch;margin:8px 0 6px;padding:12px 0;border-radius:20px;background:rgba(16,22,26,.05);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+body #celebration .reward-stats div{padding:0 4px;border-radius:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px}
+body #celebration .reward-stats div+div{border-left:1px solid rgba(16,22,26,.08)}
+body #celebration .reward-stats b{color:#10161A;font-size:20px;font-weight:600}
+body #celebration .reward-stats span{color:#7A858B;font-size:12px;font-weight:400}
+body :is(#celebration,#achievement-celebration,#minimum-celebration) .reward-primary{align-self:stretch;width:100%;height:52px;margin:0;border:0;border-radius:26px;background:#0B0F12;color:#fff;font:600 16px Inter,-apple-system,sans-serif;box-shadow:none}
+body #achievement-celebration .reward-ghost{width:100%;height:52px;border:0;border-radius:26px;background:rgba(16,22,26,.06);color:#10161A;font:600 16px Inter,-apple-system,sans-serif}
+body #achievement-celebration .reward-badge-art{width:120px;height:120px;margin:4px 0}
+body #achievement-celebration .reward-badge-art>svg{display:none}
+body #achievement-celebration .reward-badge-art:before{content:"";position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,214,140,.6),rgba(255,214,140,0))}
+body #achievement-celebration .reward-medal{width:88px;height:88px;background:#0B0F12;color:#fff;box-shadow:0 12px 30px rgba(16,22,26,.25)}
+body #achievement-celebration .reward-medal svg,body #achievement-celebration .reward-medal .lucide{width:40px;height:40px;stroke-width:1.6}
+body #achievement-celebration .reward-badge-text{display:flex;flex-direction:column;align-items:center;gap:6px;animation:none}
+body #achievement-celebration .reward-badge-text>span{order:-1;color:#2F7A5F;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none}
+body #achievement-celebration .reward-badge-card{gap:6px}
+body #achievement-celebration .reward-actions{width:100%;margin-top:10px;display:flex;flex-direction:column;gap:8px;animation:none}
+body #minimum-celebration .reward-spark{width:64px;height:64px;border-radius:32px;background:#0B0F12;color:#fff;display:grid;place-items:center;box-shadow:0 0 0 12px rgba(255,214,140,.35)}
+body #minimum-celebration .reward-spark svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.6}
+body #minimum-celebration .reward-sheet h2{margin:8px 0 0;font-size:22px;font-weight:600;letter-spacing:-.02em;color:#10161A}
+body #minimum-celebration .reward-sheet p{max-width:280px;margin:0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #minimum-celebration .reward-dim{background:rgba(16,22,26,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+body #minimum-celebration .reward-sheet{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:28px 22px 20px;border-radius:32px}
+body.app-dark #celebration .reward-card,body.app-dark #achievement-celebration .reward-badge-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.4)}
+body.app-dark :is(#celebration,#achievement-celebration,#minimum-celebration) h2,body.app-dark #celebration .reward-stats b,body.app-dark #celebration .rw-ring b{color:var(--ink)}
+body.app-dark :is(#celebration,#achievement-celebration,#minimum-celebration) p{color:var(--muted)}
+body.app-dark #celebration .rw-ring circle{stroke:rgba(255,255,255,.1)}
+body.app-dark #celebration .rw-ring .rw-ring-value{stroke:#EEF5F2}
+body.app-dark #celebration .reward-stats{background:rgba(255,255,255,.06)}
+body.app-dark #celebration .reward-stats div+div{border-color:rgba(255,255,255,.08)}
+body.app-dark :is(#celebration,#achievement-celebration,#minimum-celebration) .reward-primary,body.app-dark #achievement-celebration .reward-medal,body.app-dark #minimum-celebration .reward-spark{background:#EEF5F2;color:#0B1110}
+body.app-dark #achievement-celebration .reward-ghost{background:rgba(255,255,255,.1);color:var(--ink)}
+/* Empty day, the waiting streak and the offline banner on the main screen */
+body #app :is(.state-offline,.state-empty,.state-streak)[hidden]{display:none!important}
+body #app #today-view>.state-offline{order:0}
+body #app #today-view>.state-empty,body #app #today-view>.state-streak{order:1}
+body #app .state-offline{padding:16px 18px;border-radius:24px;border:1px solid rgba(255,214,140,.6);background:rgba(255,248,236,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;gap:12px;color:#10161A}
+body #app .state-offline i{width:40px;height:40px;flex:none;border-radius:20px;background:#fff;color:#A0563B;display:grid;place-items:center}
+body #app .state-offline .lucide{width:20px;height:20px}
+body #app .state-offline span,body #app .state-streak span{flex:1;display:flex;flex-direction:column;gap:2px}
+body #app .state-offline b{font-size:15px;font-weight:600}
+body #app .state-offline small{color:#5E6A71;font-size:13px;line-height:1.4}
+body #app .state-empty{padding:24px 22px;border-radius:32px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));box-shadow:0 14px 40px rgba(16,22,26,.12),inset 0 1px 0 #fff;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;color:#10161A}
+body #app .state-empty-icon{width:64px;height:64px;border-radius:32px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.9);box-shadow:0 6px 18px rgba(16,22,26,.08);color:#C7782A;display:grid;place-items:center}
+body #app .state-empty-icon .lucide{width:28px;height:28px}
+body #app .state-empty h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app .state-empty p{max-width:280px;margin:0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .state-quick{align-self:stretch;margin-top:6px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body #app .state-quick button{padding:12px 6px;border:1px solid rgba(16,22,26,.06);border-radius:20px;background:rgba(255,255,255,.9);color:#10161A;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:600}
+body #app .state-quick i{width:36px;height:36px;border-radius:18px;background:#0B0F12;color:#fff;display:grid;place-items:center}
+body #app .state-quick .lucide{width:18px;height:18px}
+body #app .state-streak{padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;align-items:center;gap:12px;color:#10161A}
+body #app .state-streak i{width:44px;height:44px;flex:none;border-radius:22px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);color:#C7782A;display:grid;place-items:center}
+body #app .state-streak .lucide{width:21px;height:21px}
+body #app .state-streak b{font-size:16px;font-weight:600}
+body #app .state-streak small{color:#7A858B;font-size:13px}
+body #app .evs-about h3{margin:0;font-size:15px;font-weight:600}
+body #app .evs-about p{margin:0;color:#5E6A71;font-size:13px;line-height:1.5}
+body.app-dark #app .state-offline{border-color:rgba(224,160,96,.35);background:rgba(60,44,24,.85);color:var(--ink)}
+body.app-dark #app .state-offline i{background:rgba(255,255,255,.1);color:#E09A7E}
+body.app-dark #app .state-offline small,body.app-dark #app .state-empty p,body.app-dark #app .state-streak small,body.app-dark #app .evs-about p{color:var(--muted)}
+body.app-dark #app .state-empty{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none;color:var(--ink)}
+body.app-dark #app .state-empty-icon,body.app-dark #app .state-streak i{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1);box-shadow:none}
+body.app-dark #app .state-quick button{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .state-quick i{background:#EEF5F2;color:#0B1110}
+body.app-dark #app .state-streak{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72);box-shadow:none;color:var(--ink)}
+/* Rating while loading: the placeholders shimmer in glass */
+body #app #rating-view :is(.sk,.sk-light){background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,.8),rgba(255,255,255,.35));background-size:200% 100%;animation:soft-shimmer 1.4s linear infinite}
+@keyframes soft-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+body.app-dark #app #rating-view :is(.sk,.sk-light){background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.14),rgba(255,255,255,.05));background-size:200% 100%}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
