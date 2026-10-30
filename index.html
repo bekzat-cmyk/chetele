@@ -266,7 +266,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     <section id="zikr-view" class="view" aria-label="Зикр"></section>
     <section id="events-view" class="view"><div class="section-head events-head"><h2>События</h2><span>Вместе к общей цели</span></div><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
     <section id="rating-view" class="view"><div class="section-head rating-head"><h2>Рейтинг</h2><div class="rating-period" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div></div><div id="leaderboard" class="leader"></div><p id="rating-hint" class="rating-hint">Загрузка рейтинга…</p></section>
-    <section id="stats-view" class="view"><div class="section-head stats-head"><h2>Статистика</h2><div class="stats-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё</button></div></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><i class="stats-tile-icon tone-green" data-icon="bookOpen"></i><span>Куран</span><b id="stats-quran">0 стр.</b><small id="stats-quran-hint"></small></section><section class="stats-tile"><i class="stats-tile-icon tone-amber" data-icon="sparkles"></i><span>Салават</span><b id="stats-salawat">0</b><small id="stats-salawat-hint"></small></section><section class="stats-tile"><i class="stats-tile-icon tone-indigo" data-icon="moonStar"></i><span>Тахаджуд</span><b id="stats-tahajjud">0</b><small id="stats-tahajjud-hint"></small></section><section class="stats-tile"><i class="stats-tile-icon tone-red" data-icon="flame"></i><span>Лучшая серия</span><b id="stats-best">0</b><small id="stats-best-hint"></small></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note">Считаем все сохранённые отметки…</p></section>
+    <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
     <section id="profile-view" class="view"><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="stats-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></i>Статистика</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
   </main>
@@ -313,6 +313,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softQaza:'<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6M3.5 4v4h4M12 8v4l3 2"/>',
       softMedal:'<path d="M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2"/>',
       softChevron:'<path d="M9.5 6l6 6-6 6"/>',
+      softFlame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.6 2 3 0-3 .5-5.5.5-8z"/>',
+      softStats:'<path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/>',
       bookOpen:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
       scroll:'<path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
       book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>',
@@ -732,77 +734,85 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(target.closest('[data-zikr-minus]')){ zikrCelebrate=false; zikrAdd(zikrCurrent,-1); return; }
       if(target.closest('[data-zikr-reset]')){ if(!zikrToday(zikrCurrent)||!confirm('Сбросить счёт этого зикра за день?')) return; zikrCelebrate=false; zikrAdd(zikrCurrent,-zikrToday(zikrCurrent)); }
     });
-    let statsSelected=null;
     function renderStats(animate=false){
       const totals=emptyTotals(); personalEntries().forEach(entry=>addToTotals(totals,entry));
-      const quran=document.querySelector('#stats-quran'), salawat=document.querySelector('#stats-salawat'), tahajjud=document.querySelector('#stats-tahajjud'), best=document.querySelector('#stats-best'), week=document.querySelector('#stats-week'), content=document.querySelector('#stats-content'), note=document.querySelector('#stats-note');
-      if(!quran||!salawat||!tahajjud||!best||!week||!content||!note) return;
-      document.querySelectorAll('.stats-seg [data-period]').forEach(button=>{ const on=button.dataset.period===statsPeriod; button.classList.toggle('active',on); button.setAttribute('aria-checked',String(on)); });
+      const week=document.querySelector('#stats-week'), content=document.querySelector('#stats-content'), note=document.querySelector('#stats-note'), periodLabel=document.querySelector('#stats-period-label');
+      if(!week||!content||!note||!periodLabel) return;
+      document.querySelectorAll('#stats-view .stats-seg [data-period]').forEach(button=>{ const on=button.dataset.period===statsPeriod; button.classList.toggle('active',on); button.setAttribute('aria-checked',String(on)); });
       document.querySelectorAll('#stats-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
-      const locale=appLocale(), number=new Intl.NumberFormat(locale), decimal=new Intl.NumberFormat(locale,{maximumFractionDigits:1}), ky=locale==='ky-KG';
+      const locale=appLocale(), number=new Intl.NumberFormat(locale), ky=locale==='ky-KG';
       const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
-      const nights=n=>ky?'түн':plural(n,'ночь','ночи','ночей'), days=n=>ky?'күн':plural(n,'день','дня','дней'), deeds=n=>ky?'иш':plural(n,'дело','дела','дел');
-      const keyOf=date=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      const days=n=>ky?'күн':plural(n,'день','дня','дней'), times=n=>ky?'жолу':plural(n,'раз','раза','раз');
+      const pad=n=>String(n).padStart(2,'0');
+      const keyOf=date=>`${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
       const dateOf=key=>new Date(`${key}T12:00:00`);
       const shift=(key,offset)=>{ const date=dateOf(key); date.setDate(date.getDate()+offset); return keyOf(date); };
       const savedEntry=key=>(state.remoteEntries||[]).find(entry=>entry?.date===key)||state.drafts?.[key]||state.history?.[key];
       const dayCount=key=>Math.min(key===entryDateKey?completed():entryCompletedCount(savedEntry(key)),dailyMax());
-      const max=dailyMax(), todayNumber=Number(todayKey.slice(8));
-      const periodDays=statsPeriod==='week'?7:statsPeriod==='month'?todayNumber:Math.max(totals.days,1);
+      const capital=text=>text.charAt(0).toUpperCase()+text.slice(1);
+      const format=(date,options)=>new Intl.DateTimeFormat(locale,options).format(date);
+      const signed=n=>n>0?`+${number.format(n)}`:`−${number.format(-n)}`;
+      const max=dailyMax(), today=dateOf(todayKey), todayNumber=today.getDate();
+      const keys=new Set([todayKey,...(state.remoteEntries||[]).map(entry=>entry?.date).filter(Boolean),...Object.keys(state.history||{}),...Object.keys(state.drafts||{})]);
+      const firstKey=[...keys].filter(key=>key<=todayKey).sort()[0]||todayKey;
+      const spanDays=Math.round((today-dateOf(firstKey))/86400000)+1;
+      const periodDays=statsPeriod==='week'?7:statsPeriod==='month'?todayNumber:spanDays;
 
-      /* Tiles: totals for the period plus a short hint. */
-      const quranFormat={format:value=>`${number.format(value)} ${ky?'бет':'стр.'}`}, nightsFormat={format:value=>`${number.format(value)} ${nights(value)}`}, daysFormat={format:value=>`${number.format(value)} ${days(value)}`};
-      const bestStreak=Number(state.bestStreak||state.streak||0), activeDays=Math.max(totals.days,1);
-      if(animate){ animateStatNumber(quran,totals.quran,quranFormat); animateStatNumber(salawat,totals.salawat,number); animateStatNumber(tahajjud,totals.tahajjud,nightsFormat); animateStatNumber(best,bestStreak,daysFormat); }
-      else { quran.textContent=quranFormat.format(totals.quran); salawat.textContent=number.format(totals.salawat); tahajjud.textContent=nightsFormat.format(totals.tahajjud); best.textContent=daysFormat.format(bestStreak); }
-      const hint=(id,text)=>{ const element=document.querySelector(id); if(element) element.textContent=text; };
-      hint('#stats-quran-hint',totals.quran?`≈ ${decimal.format(totals.quran/activeDays)} ${ky?'бет күнүнө':'стр. в день'}`:(ky?'азырынча жок':'пока нет'));
-      hint('#stats-salawat-hint',totals.salawat?`≈ ${decimal.format(totals.salawat/activeDays)} ${ky?'күнүнө':'в день'}`:(ky?'азырынча жок':'пока нет'));
-      hint('#stats-tahajjud-hint',statsPeriod==='all'?(ky?'бардык убакыт':'за всё время'):`${ky?'ичинен':'из'} ${number.format(periodDays)} ${nights(periodDays)}`);
-      hint('#stats-best-hint',`${ky?'азыр':'сейчас'} ${number.format(Number(state.streak||0))} ${days(Number(state.streak||0))}`);
-
-      /* Chart: days of the week or month, months for all time. */
-      let bars=[], title='', total=0, outOf=null, diffText='', diffDown=false, dense=false;
-      const weekday=key=>new Intl.DateTimeFormat(locale,{weekday:'short'}).format(dateOf(key)).replace('.','');
+      /* Chart: days of the week, weeks of the month, months for all time. */
+      let bars=[], title='', delta='', label='';
       if(statsPeriod==='week'){
-        bars=Array.from({length:7},(_,index)=>{ const key=shift(todayKey,index-6); return {key,label:weekday(key),value:dayCount(key),max}; });
-        const previous=Array.from({length:7},(_,index)=>dayCount(shift(todayKey,index-13))).reduce((sum,value)=>sum+value,0);
-        total=bars.reduce((sum,bar)=>sum+bar.value,0); outOf=max*7; title=ky?'7 күндөгү иштер':'Дел за 7 дней';
-        const diff=total-previous; diffDown=diff<0; diffText=ky?(diff>0?`+${diff} мурдагы аптага`:diff<0?`${diff} мурдагы аптага`:'мурдагы аптадай'):(diff>0?`+${diff} к прошлой неделе`:diff<0?`${diff} к прошлой неделе`:'как на прошлой неделе');
+        const start=shift(todayKey,-6), from=dateOf(start), same=from.getMonth()===today.getMonth();
+        bars=Array.from({length:7},(_,index)=>{ const key=shift(start,index); return {label:capital(format(dateOf(key),{weekday:'short'}).replace('.','')),value:dayCount(key),max}; });
+        const previous=Array.from({length:7},(_,index)=>dayCount(shift(start,index-7))).reduce((sum,value)=>sum+value,0);
+        const diff=bars.reduce((sum,bar)=>sum+bar.value,0)-previous;
+        title=ky?'Аптадагы иштер':'Дел за неделю';
+        delta=diff?`${signed(diff)} ${ky?'мурдагы аптага':'к прошлой'}`:(ky?'мурдагы аптадай':'как на прошлой');
+        const range=new Intl.DateTimeFormat(locale,{day:'numeric',month:same?'long':'short'});
+        label=(range.formatRange?range.formatRange(from,today):`${range.format(from)} – ${range.format(today)}`).replace(/\./g,'');
       } else if(statsPeriod==='month'){
-        dense=true;
-        bars=Array.from({length:todayNumber},(_,index)=>{ const key=`${todayKey.slice(0,8)}${String(index+1).padStart(2,'0')}`, day=index+1; return {key,label:day===1||day%5===0||key===todayKey?String(day):'',value:dayCount(key),max}; });
-        const first=dateOf(`${todayKey.slice(0,8)}01`); first.setMonth(first.getMonth()-1); const previousMonth=keyOf(first).slice(0,8), previousLength=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();
-        const previous=Array.from({length:Math.min(todayNumber,previousLength)},(_,index)=>dayCount(`${previousMonth}${String(index+1).padStart(2,'0')}`)).reduce((sum,value)=>sum+value,0);
-        total=bars.reduce((sum,bar)=>sum+bar.value,0); outOf=max*todayNumber;
-        title=ky?'Ушул айдагы иштер':`Дел в ${new Intl.DateTimeFormat(locale,{month:'long'}).format(dateOf(todayKey)).replace(/ь$/,'е').replace(/й$/,'е').replace(/т$/,'те')}`;
-        const diff=total-previous; diffDown=diff<0; diffText=ky?(diff>0?`+${diff} мурдагы айга`:diff<0?`${diff} мурдагы айга`:'мурдагы айдай'):(diff>0?`+${diff} к прошлому месяцу`:diff<0?`${diff} к прошлому месяцу`:'как в прошлом месяце');
+        const month=todayKey.slice(0,8);
+        bars=Array.from({length:Math.ceil(todayNumber/7)},(_,index)=>{ let value=0; for(let day=index*7+1;day<=Math.min(todayNumber,index*7+7);day++) value+=dayCount(`${month}${pad(day)}`); return {label:ky?`${index+1}-апта`:`${index+1} н`,value,max:max*7}; });
+        const first=dateOf(`${month}01`); first.setMonth(first.getMonth()-1);
+        const previousMonth=keyOf(first).slice(0,8), previousLength=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();
+        const previous=Array.from({length:Math.min(todayNumber,previousLength)},(_,index)=>dayCount(`${previousMonth}${pad(index+1)}`)).reduce((sum,value)=>sum+value,0);
+        const diff=bars.reduce((sum,bar)=>sum+bar.value,0)-previous;
+        // «к сентябрю», «к маю»: the dative of the previous month.
+        const name=format(first,{month:'long'}), dative=/[ьй]$/.test(name)?name.slice(0,-1)+'ю':name+'у';
+        title=ky?'Айдагы иштер':'Дел за месяц';
+        delta=diff?`${signed(diff)} ${ky?'мурдагы айга':`к ${dative}`}`:(ky?'мурдагы айдай':'как в прошлом месяце');
+        label=capital(format(today,{month:'long'}));
       } else {
-        const keys=new Set([todayKey,...(state.remoteEntries||[]).map(entry=>entry?.date).filter(Boolean),...Object.keys(state.history||{}),...Object.keys(state.drafts||{})]);
         const byMonth={}; keys.forEach(key=>{ byMonth[key.slice(0,7)]=(byMonth[key.slice(0,7)]||0)+dayCount(key); });
-        bars=Array.from({length:6},(_,index)=>{ const date=dateOf(`${todayKey.slice(0,8)}01`); date.setMonth(date.getMonth()-(5-index)); const month=keyOf(date).slice(0,7); return {key:month,label:new Intl.DateTimeFormat(locale,{month:'short'}).format(date).replace('.',''),value:byMonth[month]||0}; });
-        const top=Math.max(1,...bars.map(bar=>bar.value)); bars.forEach(bar=>{ bar.max=top; });
-        total=[...keys].reduce((sum,key)=>sum+dayCount(key),0); title=ky?'Бардык иштер':'Всего дел';
-        diffText=ky?`күнүнө ≈ ${decimal.format(total/activeDays)}`:`≈ ${decimal.format(total/activeDays)} в день`;
+        const start=dateOf(`${firstKey.slice(0,8)}01`), months=(today.getFullYear()-start.getFullYear())*12+today.getMonth()-start.getMonth()+1;
+        bars=Array.from({length:Math.min(months,8)},(_,index)=>{ const date=dateOf(`${todayKey.slice(0,8)}01`); date.setMonth(date.getMonth()-(Math.min(months,8)-1-index)); const length=new Date(date.getFullYear(),date.getMonth()+1,0).getDate(); return {label:capital(format(date,{month:'short'}).replace('.','')),value:byMonth[keyOf(date).slice(0,7)]||0,max:max*length}; });
+        title=ky?'Бардык иштер':'Дел за всё время';
+        delta=ky?`${months} ай`:`${months} ${plural(months,'месяц','месяца','месяцев')}`;
+        label=ky?`${start.getFullYear()}-жылдан бери`:`С ${format(start,{day:'numeric',month:'long'}).replace(/^\d+\s*/,'')} ${start.getFullYear()}`;
       }
-      if(!bars.some(bar=>bar.key===statsSelected)) statsSelected=bars[bars.length-1].key;
-      const chosen=bars.find(bar=>bar.key===statsSelected);
-      const chosenLabel=statsPeriod==='all'
-        ?new Intl.DateTimeFormat(locale,{month:'long',year:'numeric'}).format(dateOf(`${chosen.key}-01`))
-        :new Intl.DateTimeFormat(locale,{weekday:'long',day:'numeric',month:'long'}).format(dateOf(chosen.key));
-      const caption=statsPeriod==='all'?`${chosenLabel}: ${number.format(chosen.value)} ${deeds(chosen.value)}`:`${chosenLabel}: ${chosen.value} ${ky?'/':'из'} ${max} ${deeds(max)}`;
-      const empty=!total;
-      week.innerHTML=`<section class="week-chart"><div class="week-chart-head"><div><span>${title}</span><b>${number.format(total)}${outOf?` <small>${ky?'/':'из'} ${number.format(outOf)}</small>`:''}</b></div><em class="week-diff ${diffDown?'down':''}">${diffText}</em></div><div class="week-bars ${dense?'dense':''}" style="grid-template-columns:repeat(${bars.length},minmax(0,1fr))" role="group" aria-label="${title}">${bars.map(bar=>`<button type="button" class="week-bar ${bar.key===todayKey||bar.key===todayKey.slice(0,7)?'today':''} ${bar.key===statsSelected?'selected':''}" data-stat-bar="${bar.key}" aria-pressed="${bar.key===statsSelected}" aria-label="${bar.label||bar.key}: ${bar.value}">${dense?'':`<span class="week-bar-value">${number.format(bar.value)}</span>`}<i style="height:${Math.max(4,Math.round(bar.value/Math.max(1,bar.max)*96))}px"></i><span class="week-bar-label">${bar.label}</span></button>`).join('')}</div><p class="week-caption">${empty?(ky?'Бул мезгилде азырынча белгилер жок — бүгүн баштаңыз.':'За этот период пока нет отметок — начните сегодня.'):caption}</p></section>`;
+      const done=statsPeriod==='all'?[...keys].reduce((sum,key)=>sum+dayCount(key),0):bars.reduce((sum,bar)=>sum+bar.value,0);
+      const possible=periodDays*max, top=Math.max(...bars.map(bar=>bar.value)), wide=bars.length>7;
+      periodLabel.textContent=label;
+      week.innerHTML=`<section class="stats-chart" aria-label="${title}"><div class="stats-chart-bar"><span>${title}</span><em>${delta}</em></div><article class="stats-chart-card"><div class="stats-sum"><b>${number.format(done)}</b><span>${ky?`/ ${number.format(possible)} иш`:`из ${number.format(possible)} ${plural(possible,'дела','дел','дел')}`}</span><strong>${possible?Math.round(done/possible*100):0}%</strong></div><div class="stats-bars${wide?' is-wide':''}" role="img" aria-label="${bars.map(bar=>`${bar.label}: ${bar.value}`).join(', ')}" style="grid-template-columns:repeat(${bars.length},minmax(0,1fr))">${bars.map((bar,index)=>`<div class="stats-bar${index===bars.length-1?' is-now':bar.value===top&&top?' is-peak':''}"><span>${number.format(bar.value)}</span><i style="height:${Math.max(8,Math.round(bar.value/Math.max(1,bar.max)*104))}px"></i><small>${bar.label}</small></div>`).join('')}</div></article></section>`;
 
-      /* Lists for the period. */
-      const nafilIcons={asr:'cloudSun',kuptan:'moon',avvabin:'sunset',duha:'sun'};
-      const qazaIcons={'Багымдат':'sunrise','Пешим':'sun','Аср':'cloudSun','Шам':'sunset','Куптан':'moon'};
-      const nafilBar=item=>{ const value=totals.nafilBy[item.id]; return `<div class="nafil-bar-row"><i class="stat-icon">${icon(nafilIcons[item.id])}</i><span>${item.label}</span><div class="nafil-bar"><i style="width:${Math.min(100,Math.round(value/periodDays*100))}%"></i></div><b>${number.format(value)}/${number.format(periodDays)}</b></div>`; };
-      const plainRow=(name,value,unit,iconName)=>`<div class="plain-stat-row"><i class="stat-icon">${icon(iconName)}</i><span>${name}</span><b>${number.format(value)} ${unit==='раз'&&!ky?plural(value,'раз','раза','раз'):unit}</b></div>`;
-      content.innerHTML=`<section class="stats-group nafil-bars"><h3>Нафиль намаз</h3><div class="nafil-bar-list">${NAFIL.map(nafilBar).join('')}</div></section>${(()=>{ const rows=ZIKR.filter(item=>totals.zikrBy[item.id]).sort((a,b)=>totals.zikrBy[b.id]-totals.zikrBy[a.id]); return `<section class="stats-group plain-stat-group"><h3>Зикры</h3>${rows.length?`<div class="plain-stat-list">${rows.map(item=>plainRow(item.title,totals.zikrBy[item.id],'раз',item.id==='salawat'?'sparkles':'repeat')).join('')}</div>`:'<p class="zikr-stats-empty">Считайте зикры во вкладке «Зикр» — они появятся здесь.</p>'}</section>`; })()}<section class="stats-group plain-stat-group"><h3>Остальные дела</h3><div class="plain-stat-list">${plainRow('Жавшан',totals.jauchan,'стр.','scroll')}${plainRow('Книги',totals.kitap,'стр.','book')}${plainRow('Зикр',totals.tasbihat,'раз','repeat')}</div></section><section class="stats-group plain-stat-group"><h3>Пропущенные намазы</h3><div class="plain-stat-list">${QAZA.map(name=>plainRow(QAZA_LABEL[name],totals.qaza[name],'раз',qazaIcons[name])).join('')}</div></section>`;
-      note.textContent=state.statsOnline===false?'Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Нажмите на столбик, чтобы увидеть день. Сегодняшние отметки уже учтены.';
+      /* Tiles: totals for the period. */
+      [['quran',totals.quran,n=>ky?'бет':plural(n,'страница','страницы','страниц')],['salawat',totals.salawat,times],['tahajjud',totals.tahajjud,n=>ky?'түн':plural(n,'ночь','ночи','ночей')],['zikr',totals.tasbihat,times]].forEach(([id,value,unit])=>{
+        const element=document.querySelector(`#stats-${id}`); if(!element) return;
+        if(animate) animateStatNumber(element,value,number); else element.textContent=number.format(value);
+        document.querySelector(`#stats-${id}-unit`).textContent=unit(value);
+      });
+
+      /* Prayer, streak and the other deeds. */
+      const nafilRow=item=>{ const value=totals.nafilBy[item.id], name=ky&&item.id==='kuptan'?'Куптан':item.label; return `<div class="stats-nafil" aria-label="${ky?'Напил':'Нафиль'} ${name}: ${value} ${ky?'/':'из'} ${periodDays} ${days(periodDays)}"><span class="stats-nafil-name"><b>${name}</b><small>${ky?'напил':'нафиль'}</small></span><span class="stats-track" aria-hidden="true"><i style="width:${Math.min(100,Math.round(value/periodDays*100))}%"></i></span><b class="stats-nafil-value">${number.format(value)}/${number.format(periodDays)}</b></div>`; };
+      const line=(iconName,name,sub,value)=>`<div class="stats-line"><i class="stats-circle">${icon(iconName)}</i><span><b>${name}</b><small>${sub}</small></span><strong>${value}</strong></div>`;
+      const qaza=Object.values(totals.qaza).reduce((sum,value)=>sum+value,0);
+      const streak=Number(state.streak||0), best=Math.max(Number(state.bestStreak||0),streak);
+      const heat=Array.from({length:28},(_,index)=>{ const key=shift(todayKey,index-27), share=dayCount(key)/max; return {key,level:share<=0?0:share<1/3?1:share<2/3?2:3}; });
+      const marked=heat.filter(day=>day.level).length;
+      const pages=ky?'бет':'стр.';
+      content.innerHTML=`<section class="stats-prayer"><div class="stats-section-head"><h3>Намаз</h3><span>${ky?`${periodDays} күндөгү напил`:`нафиль за ${number.format(periodDays)} ${days(periodDays)}`}</span></div><div class="stats-card">${NAFIL.map(nafilRow).join('')}<hr>${line('softQaza',ky?'Каза намаздар':'Пропущенные намазы',ky?'мезгил ичинде толукталды':'восполнено за период',number.format(qaza))}</div></section><section class="stats-card stats-streak" aria-label="${ky?'Катар':'Серия'}"><div class="stats-line"><i class="stats-circle is-flame">${icon('softFlame')}</i><span><b>${streak?(ky?`${streak} күн катары менен`:`${streak} ${days(streak)} подряд`):(ky?'Катарды бүгүн баштаңыз':'Начните серию сегодня')}</b><small>${ky?`Эң узун катар — ${best} күн`:`Лучшая серия — ${best} ${days(best)}`}</small></span></div><div class="stats-heat" role="img" aria-label="${ky?`Акыркы 28 күн: ${marked} күн белгиленди`:`Последние 28 дней: отмечено ${marked} ${days(marked)}`}">${heat.map(day=>`<span class="heat-${day.level}${day.key===todayKey?' is-today':''}"></span>`).join('')}</div><span class="stats-legend">${ky?'Аз':'Меньше'}<span class="heat-0"></span><span class="heat-1"></span><span class="heat-2"></span><span class="heat-3"></span>${ky?'Көп':'Больше'}</span></section><section class="stats-card"><div class="stats-section-sub">${ky?'Башка иштер':'Другие дела'}</div>${line('softJauchan',ky?'Жавшан':'Жавшан',ky?'мезгил ичинде':'за период',`${number.format(totals.jauchan)} ${pages}`)}${line('softKitap',ky?'Китеп':'Книги',ky?'мезгил ичинде':'за период',`${number.format(totals.kitap)} ${pages}`)}</section>`;
+      note.hidden=state.statsOnline!==false;
+      note.textContent=ky?'Ушул түзмөктө сакталган маалымат көрсөтүлдү. Бардык тарыхты көрүү үчүн интернетке кошулуңуз.':'Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.';
     }
-    document.addEventListener('click',event=>{ const bar=event.target.closest('[data-stat-bar]'); if(!bar) return; statsSelected=bar.dataset.statBar; renderStats(false); });
     function escapeHtml(value){ return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
     function achievementEntries(){
       const entries=new Map();
@@ -1094,13 +1104,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector(`.nav [data-view="${viewId}"]`)?.classList.add('active');
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
+      document.querySelector('#app').classList.toggle('on-stats',viewId==='stats-view');
       if(viewId==='rating-view') loadLeaderboard(ratingPeriod());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
       if(viewId==='zikr-view'){ renderZikr(); if(!state.events) fetchEvents(); }
       if(viewId==='stats-view'){ renderStats(true); fetchPersonalEntries(); }
     }
-    document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; statsSelected=null; renderStats(true); });
+    document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; renderStats(true); });
     document.addEventListener('click', e=>{ const before=completed(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
     const fieldTimers=new WeakMap(), fieldBaselines=new WeakMap();
     function storeFieldValue(field){ if(field.dataset.id) state.tasks[field.dataset.id]=field.value; if(field.dataset.qaza) state.qaza[field.dataset.qaza]=field.value; }
@@ -1459,7 +1470,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         'Профиль':'Профиль','очков':'упай','в рейтинге':'рейтингде','лучшая серия':'эң узун серия','Достижения':'Жетишкендиктер','Напоминания':'Эскертмелер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Выйти из аккаунта':'Аккаунттан чыгуу','Включены':'Күйгүзүлгөн','Выключены':'Өчүрүлгөн','Тема и язык':'Тема жана тил',
         'Вместе к общей цели':'Жалпы максатка бирге','Скоро новое событие':'Жакында жаңы иш-чара','Общая цель':'Жалпы максат','Личный путь':'Жеке жол','Вы участвуете':'Сиз катышып жатасыз','Мой вклад':'Менин салымым','Моё место':'Менин ордум','Участники':'Катышуучулар','Лидеры':'Лидерлер','Участвовать':'Катышуу','Осталось':'Калды','Вернуться к делам':'Иштерге кайтуу','Повторить':'Кайталоо',
         'Месяц':'Ай','Всё':'Баары','Тахаджуд':'Тахажжуд','Лучшая серия':'Эң узун серия','Остальные дела':'Башка иштер',
-        'Неделя':'Апта','Всё время':'Бардык убакыт','Рейтинг недоступен':'Рейтинг жеткиликсиз','Рейтинг пока пуст':'Рейтинг азырынча бош',
+        'Неделя':'Апта','Всё время':'Бардык убакыт','Ваш путь в цифрах':'Сиздин жолуңуз сандарда','Рейтинг недоступен':'Рейтинг жеткиликсиз','Рейтинг пока пуст':'Рейтинг азырынча бош',
         'Отмечено':'Белгиленди','Ещё не начато':'Азырынча баштала элек','страниц за сегодня':'бүгүнкү беттер','раз за сегодня':'бүгүн, жолу','Намаз':'Намаз','Сбросить':'Тазалоо','Сохраняем…':'Сакталууда…','Сохранено в кабинете':'Кабинетке сакталды','Изменения сохраняются автоматически':'Өзгөрүүлөр автоматтык түрдө сакталат','Сохранено на телефоне — отправим, когда появится связь':'Телефонго сакталды — байланыш болгондо жөнөтөбүз',
         'Добро пожаловать':'Кош келиңиз','На пути к сильному таква':'Бекем такыбалык жолунда','Путь к сильному таква':'Бекем такыбалык жолунда','Отмечайте свой путь, сохраняйте постоянство и растите вместе с другими.':'Жолуңузду белгилеп, туруктуулукту сактап, башкалар менен бирге өсүңүз.','Как вас зовут?':'Атыңыз ким?','Придумайте пароль':'Сырсөз ойлоп табыңыз','Показать пароль':'Сырсөздү көрсөтүү','Запомнить меня':'Мени эстеп кал','Создать кабинет':'Кабинет ачуу','У меня уже есть аккаунт':'Менде аккаунт бар','С возвращением':'Кайра кош келдиңиз','Введите имя и пароль, чтобы продолжить свой путь.':'Жолуңузду улантуу үчүн атыңызды жана сырсөзүңүздү жазыңыз.','Ваше имя':'Сиздин атыңыз','Ваш пароль':'Сиздин сырсөзүңүз','Войти в кабинет':'Кабинетке кирүү','Создать аккаунт':'Аккаунт ачуу','Открыть профиль':'Профилди ачуу','Ваш ритм':'Сиздин ыргагыңыз','последние 7 дней':'акыркы 7 күн','дней':'күн','Вы держите ритм':'Ыргакты сактап жатасыз','Добавляйте хотя бы одно дело каждый день.':'Күн сайын жок дегенде бир ишти белгилеңиз.','🔥 Серия продолжается':'🔥 Серия уланууда','Достижения ждут вас':'Жетишкендиктер күтөт','Откройте первое достижение в профиле.':'Профилден биринчи жетишкендикти ачыңыз.','Смотреть':'Көрүү','Хадис дня':'Күндүн хадиси','Подробнее':'Кененирээк','Профиль':'Профиль','В главное':'Башкы бетке','Ваш ежедневный путь в Chetele':'Cheteleдеги күнүмдүк жолуӊуз','Всего баллов':'Жалпы упай','Место в рейтинге':'Рейтингдеги орун','мягкие напоминания':'жумшак эскертмелер','Будьте в своём ритме':'Өз ыргагыңызда болуңуз','Три бережных сигнала в течение дня':'Күндүз үч жумшак белги','начать путь':'жолду баштоо','мягко продолжить':'жай улантуу','подвести итог':'жыйынтык чыгаруу','Включите — и мы деликатно напомним о ваших делах.':'Күйгүзүңүз — иштериңизди сылык эскертебиз.','Закрыть':'Жабуу','Календарь':'Календарь','Нажмите на дату':'Күндү тандаңыз','Открыть дела за этот день':'Бул күндүн иштерин ачуу','Смысл хадиса':'Хадистин мааниси','Небольшой шаг на сегодня':'Бүгүнкү кичинекей кадам','Изменить имя':'Атын өзгөртүү','Сохранить':'Сактоо','Цель выполнена':'Максат аткарылды','Вы завершили все дела на сегодня. Пусть этот ритм приносит вам пользу.':'Бүгүнкү бардык иштерди аткардыңыз. Бул ыргак сизге пайда алып келсин.','Нажмите, чтобы продолжить':'Улантуу үчүн басыңыз','Минимум дня выполнен':'Күндүн минимуму аткарылды','Ваша личная цель':'Жеке максатыңыз','Выберите спокойный и достижимый ориентир для этого события.':'Бул окуя үчүн жетүүгө боло турган максатты тандаңыз.','Личная цель':'Жеке максат','Отмена':'Жокко чыгаруу','Участвовать':'Катышуу','Чтение':'Окуу','Сколько страниц прочитали?':'Канча бет окудуңуз?','стр.':'бет','Нафиль намаз':'Напил намаз','Отмечайте каждый совершённый намаз':'Ар бир окулган намазды белгилеңиз','Прочитали сегодня?':'Бүгүн окудуңузбу?','Совершили сегодня?':'Бүгүн окудуңузбу?','Да':'Ооба','Нет':'Жок','Каза намаз':'Каза намаз','Пропущенные намазы':'Каза намаздар','Книги':'Китеп','Ночной намаз':'Түнкү намаз','нафиль':'напил','раз сегодня':'бүгүн, жолу','Нажмите, чтобы прибавить':'Кошуу үчүн басыңыз','Счётчик':'Эсептегич','Фаджр':'Багымдат','Восход':'Күн чыгыш','Зухр':'Бешим','Магриб':'Шам','Иша':'Куптан','Эта неделя':'Ушул апта','Следующий намаз':'Кийинки намаз','Расписание на день':'Күндүн тартиби','Дальше':'Андан кийин','Время намазов':'Намаз убактылары','Ваш город':'Сиздин шаар','Определить автоматически':'Автоматтык аныктоо','Зикр и салават':'Зикир жана салават','Количество прочитанных':'Окулган саны','раз':'жолу','Сегодняшние дела':'Бүгүнкү иштер','Дела за выбранный день':'Тандалган күндүн иштери','Остальные дела':'Башка иштер','Выполняйте условия в карточках, чтобы открыть достижения.':'Жетишкендиктерди ачуу үчүн карточкадагы шарттарды аткарыңыз.','Рейтинг пока пуст.':'Рейтинг азырынча бош.','Не удалось получить рейтинг.':'Рейтингди алуу мүмкүн болгон жок.','Рейтинг обновляется после каждого выполненного дела.':'Рейтинг ар бир аткарылган иштен кийин жаңыланат.','Загрузка рейтинга…':'Рейтинг жүктөлүүдө…','Сейчас нет активных событий. Скоро здесь появится новая общая цель.':'Азыр активдүү окуялар жок. Жакында жаңы жалпы максат чыгат.','Лидеры события':'Окуянын лидерлери','Пока нет участников':'Катышуучулар азырынча жок','Личный путь':'Жеке жол','Общая цель сообщества.':'Коомчулуктун жалпы максаты.','Личный путь в своём темпе.':'Өз ыргагыңыздагы жеке жол.','Вы участвуете':'Сиз катышып жатасыз','Ваш путь':'Сиздин жолуңуз','Присоединяем…':'Кошулуп жатабыз…','Не удалось вступить':'Кошулуу мүмкүн болгон жок.','Укажите цель больше нуля.':'Нөлдөн чоң максатты жазыңыз.','Новое достижение!':'Жаңы жетишкендик!','Открыто достижение':'Жетишкендик ачылды','Все достижения уже открыты. Ма ша Аллах!':'Бардык жетишкендиктер ачылды. Ма шаа Аллах!','Версия приложения':'Тиркеменин нускасы','Выйти из аккаунта':'Аккаунттан чыгуу','Достижения':'Жетишкендиктер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Уведомления':'Эскертмелер','Время уведомления':'Эскертменин убактысы','Ежедневно':'Күн сайын','Ежедневное напоминание':'Күнүмдүк эскертме','Мягкий сигнал в удобное для вас время':'Ыңгайлуу убакыттагы жумшак белги','Пример уведомления':'Эскертменин мисалы','Утро':'Эртең менен','День':'Күндүз','Вечер':'Кечинде','салаватов':'салават','зикров':'зикир','страниц':'бет','тахаджудов':'тахажуд','участников':'катышуучу','Не удалось загрузить события. Проверьте подключение.':'Окуяларды жүктөө мүмкүн болгон жок. Байланышты текшериңиз.','Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Бул түзмөктө сакталган маалыматтар көрсөтүлдү. Толук тарых үчүн интернетке кошулуңуз.','Включая сегодняшний прогресс и все сохранённые дни.':'Бүгүнкү прогресс жана бардык сакталган күндөр кошо эсептелди.','Не удалось изменить настройку. Проверьте подключение.':'Жөндөөнү өзгөртүү мүмкүн болгон жок. Байланышты текшериңиз.','Напоминания включены.':'Эскертмелер күйгүзүлдү.','Напоминания выключены.':'Эскертмелер өчүрүлдү.','Время сохранено.':'Убакыт сакталды.','Пока нет активных событий':'Активдүү окуялар азырынча жок','Скоро здесь появится новая общая цель. Вы сможете присоединиться и идти к ней вместе.':'Жакында бул жерде жаңы жалпы максат пайда болот. Ага кошулуп, бирге бара аласыз.','Следите за обновлениями':'Жаңылыктарды байкаңыз','События пока недоступны':'Окуялар азырынча жеткиликсиз','Проверьте подключение к интернету и попробуйте снова.':'Интернет байланышын текшерип, кайра аракет кылыңыз.','Обновите страницу':'Баракты жаңыртыңыз'
       };
@@ -2388,6 +2399,112 @@ body .prayer-sheet .prayer-geo b,body .prayer-sheet .prayer-cities button{font-w
 body .prayer-sheet .prayer-cities button[aria-pressed="true"]{font-weight:700}
 body .prayer-sheet .prayer-geo small{font-weight:400}
 body .prayer-sheet .prayer-geo{min-height:60px;border-radius:20px}
+
+/* Statistics in the soft glass style */
+body #app.on-stats{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #app.on-stats button{font-family:inherit}
+body #app #stats-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
+body #app #stats-view>*{margin:0}
+body #app #stats-view .lucide{stroke-width:1.6}
+body #app .stats-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 4px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+body #app .stats-top>div{display:flex;flex-direction:column}
+body #app .stats-eyebrow{margin-bottom:6px;color:rgba(255,255,255,.75);font-size:14px;font-weight:500}
+body #app .stats-top h2{margin:0;color:#fff;font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+body #app .stats-period-label{color:rgba(255,255,255,.72);font-size:30px;font-weight:400;letter-spacing:-.02em;line-height:1.15}
+body #app .stats-badge{width:48px;height:48px;flex:none;border-radius:24px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;display:grid;place-items:center}
+body #app .stats-badge .lucide{width:22px;height:22px}
+body #app #stats-view .stats-seg{padding:4px;border-radius:24px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.26);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+body #app #stats-view .stats-seg button{height:40px;padding:0;border:0;border-radius:20px;background:transparent;color:#fff;font-size:14px;font-weight:600;box-shadow:none;transition:transform .12s cubic-bezier(.2,.8,.2,1),background .2s ease,color .2s ease,box-shadow .2s ease}
+body #app #stats-view .stats-seg button.active{background:#fff;color:#10161A;font-weight:600;box-shadow:0 6px 18px rgba(16,22,26,.12)}
+body #app #stats-view .stats-seg button:active{transform:scale(.94)}
+
+body #app .stats-chart{border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10);display:flex;flex-direction:column}
+body #app .stats-chart-bar{height:52px;padding:0 22px;display:flex;align-items:center;gap:10px;color:#1D2A30;font-size:14px;font-weight:500}
+body #app .stats-chart-bar span{flex:1}
+body #app .stats-chart-bar em{height:28px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.7);display:inline-flex;align-items:center;font-size:13px;font-style:normal;font-weight:600;white-space:nowrap}
+body #app .stats-chart-card{margin:-1px;padding:22px 20px 18px;border-radius:32px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));box-shadow:0 14px 40px rgba(16,22,26,.12),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:18px}
+body #app .stats-sum{display:flex;align-items:baseline;gap:8px}
+body #app .stats-sum b{font-size:44px;font-weight:600;letter-spacing:-.03em;line-height:1}
+body #app .stats-sum span{color:#7A858B;font-size:17px}
+body #app .stats-sum strong{margin-left:auto;font-size:15px;font-weight:600}
+body #app .stats-bars{height:150px;display:grid;gap:10px;align-items:end}
+body #app .stats-bars.is-wide{gap:6px}
+body #app .stats-bar{height:100%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;color:#7A858B;font-size:11px}
+body #app .stats-bar span{font-weight:600}
+body #app .stats-bar small{max-width:100%;overflow:hidden;font-size:11px;white-space:nowrap}
+body #app .stats-bar i{width:100%;border-radius:12px;background:rgba(16,22,26,.14);transition:height .5s cubic-bezier(.2,.8,.2,1)}
+body #app .stats-bars.is-wide .stats-bar i{border-radius:10px}
+body #app .stats-bar.is-peak i{background:rgba(16,22,26,.45)}
+body #app .stats-bar.is-now{color:#10161A}
+body #app .stats-bar.is-now i{background:#0B0F12}
+
+body #app #stats-view .stats-tiles{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body #app #stats-view .stats-tile,body #app .stats-card{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06)}
+body #app #stats-view .stats-tile{padding:16px;border-radius:28px;display:flex;flex-direction:column;gap:12px}
+body #app .stats-tile-top{display:flex;align-items:center;justify-content:space-between;color:#5E6A71;font-size:14px;font-weight:500}
+body #app #stats-view .stats-tile-top span{color:#5E6A71;font-size:14px;font-weight:500}
+body #app .stats-tile-top i,body #app .stats-circle{border-radius:50%;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(16,22,26,.06);color:#10161A;display:grid;place-items:center;flex:none}
+body #app .stats-tile-top i{width:36px;height:36px}
+body #app .stats-tile-top .lucide{width:18px;height:18px}
+body #app .stats-tile-value{display:flex;flex-direction:column}
+body #app #stats-view .stats-tile-value b{color:#10161A;font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+body #app #stats-view .stats-tile-value small{color:#7A858B;font-size:12px;font-weight:400}
+
+body #app .stats-prayer{display:flex;flex-direction:column;gap:12px}
+body #app .stats-section-head{padding:0 4px;display:flex;justify-content:space-between;gap:12px}
+body #app .stats-section-head h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app .stats-section-head span{align-self:flex-end;color:#5E6A71;font-size:14px}
+body #app .stats-card{padding:16px;border-radius:28px;display:flex;flex-direction:column;gap:14px}
+body #app .stats-card hr{width:100%;height:1px;margin:0;border:0;background:rgba(16,22,26,.08)}
+body #app .stats-nafil{display:flex;align-items:center;gap:12px}
+body #app .stats-nafil-name{width:80px;flex:none;display:flex;flex-direction:column}
+body #app .stats-nafil-name b{font-size:15px;font-weight:600}
+body #app .stats-nafil-name small,body #app .stats-line small{color:#7A858B;font-size:12px}
+body #app .stats-track{flex:1;height:10px;border-radius:5px;background:rgba(16,22,26,.07);overflow:hidden}
+body #app .stats-track i{display:block;height:100%;border-radius:5px;background:#10161A;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+body #app .stats-nafil-value{width:48px;flex:none;text-align:right;font-size:14px;font-weight:600}
+body #app .stats-line{display:flex;align-items:center;gap:12px}
+body #app .stats-circle{width:44px;height:44px}
+body #app .stats-circle .lucide{width:21px;height:21px}
+body #app .stats-circle.is-flame{color:#C7782A}
+body #app .stats-line>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .stats-line b{font-size:16px;font-weight:600}
+body #app .stats-line small{font-size:13px}
+body #app .stats-line strong{font-size:24px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+body #app .stats-streak{padding:18px}
+body #app .stats-heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+body #app .stats-heat span{aspect-ratio:1;border-radius:10px;box-sizing:border-box}
+body #app .stats-heat span.is-today{border:2px solid #fff}
+body #app .stats-legend{display:flex;align-items:center;gap:6px;color:#7A858B;font-size:12px}
+body #app .stats-legend span{width:12px;height:12px;border-radius:4px}
+body #app .stats-streak .heat-0{background:rgba(16,22,26,.06)}
+body #app .stats-streak .heat-1{background:rgba(16,22,26,.22)}
+body #app .stats-streak .heat-2{background:rgba(16,22,26,.5)}
+body #app .stats-streak .heat-3{background:#10161A}
+body #app .stats-section-sub{color:#5E6A71;font-size:14px;font-weight:500}
+body #app #stats-view .stats-note{margin:0 8px;color:#7A858B;font-size:12px;font-weight:400;text-align:center}
+body #app #stats-content{display:flex;flex-direction:column;gap:22px}
+@media (prefers-reduced-motion: reduce){body #app .stats-bar i,body #app .stats-track i,body #app #stats-view .stats-seg button{transition:none}}
+body.a11y-reduce #app .stats-bar i,body.a11y-reduce #app .stats-track i,body.a11y-reduce #app #stats-view .stats-seg button{transition:none}
+body.app-dark #app.on-stats{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
+body.app-dark #app #stats-view.active{color:var(--ink)}
+body.app-dark #app .stats-chart,body.app-dark #app #stats-view .stats-tile,body.app-dark #app .stats-card{border-color:rgba(255,255,255,.08)!important;background:rgba(23,32,30,.72)!important;box-shadow:none}
+body.app-dark #app .stats-chart-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none}
+body.app-dark #app .stats-chart-bar{color:var(--ink)}
+body.app-dark #app .stats-chart-bar em{background:rgba(255,255,255,.1)}
+body.app-dark #app #stats-view .stats-tile-value b{color:var(--ink)}
+body.app-dark #app .stats-tile-top i,body.app-dark #app .stats-circle{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none}
+body.app-dark #app .stats-circle.is-flame{color:#E0A060}
+body.app-dark #app .stats-bar i{background:rgba(255,255,255,.14)}
+body.app-dark #app .stats-bar.is-peak i{background:rgba(255,255,255,.4)}
+body.app-dark #app .stats-bar.is-now{color:var(--ink)}
+body.app-dark #app .stats-bar.is-now i,body.app-dark #app .stats-track i,body.app-dark #app .stats-streak .heat-3{background:#EEF5F2}
+body.app-dark #app .stats-track,body.app-dark #app .stats-streak .heat-0{background:rgba(255,255,255,.07)}
+body.app-dark #app .stats-streak .heat-1{background:rgba(255,255,255,.22)}
+body.app-dark #app .stats-streak .heat-2{background:rgba(255,255,255,.5)}
+body.app-dark #app .stats-heat span.is-today{border-color:#0B1110}
+body.app-dark #app .stats-card hr{background:rgba(255,255,255,.08)}
+body.app-dark #app .stats-section-head span,body.app-dark #app .stats-tile-top,body.app-dark #app #stats-view .stats-tile-top span,body.app-dark #app .stats-section-sub{color:var(--muted)}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
