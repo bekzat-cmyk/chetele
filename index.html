@@ -264,7 +264,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       <div class="autosave" aria-live="polite"><span class="autosave-dot"></span><p id="save-status" class="save-status">Изменения сохраняются автоматически</p></div>
     </section>
     <section id="zikr-view" class="view" aria-label="Зикр"></section>
-    <section id="events-view" class="view"><div class="section-head events-head"><h2>События</h2><span>Вместе к общей цели</span></div><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
+    <section id="events-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Вместе с общиной</span><h2>События</h2><span id="events-sub" class="stats-period-label">Загрузка…</span></div><i class="stats-badge" data-icon="softEvents"></i></header><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
     <section id="rating-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Каждое дело — 10 очков</span><h2>Рейтинг</h2><span id="rating-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softRating"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div><div id="rating-metrics" class="rt-metrics" role="radiogroup" aria-label="Что считать"></div><div id="leaderboard" class="rt-board"></div><p id="rating-hint" class="rt-hint">Загрузка рейтинга…</p></section>
     <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
     <section id="settings-view" class="view" aria-label="Настройки"></section><section id="profile-sub-view" class="view" aria-label="Профиль"></section><section id="profile-view" class="view"><div id="soft-profile" class="soft-profile"></div><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
@@ -278,7 +278,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="minimum-celebration" class="reward reward-minimum" hidden><button type="button" class="reward-dim" data-reward-close aria-label="Закрыть"></button><section class="reward-sheet" role="status" aria-live="polite"><span class="reward-spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><h2>Минимум дня выполнен</h2><p>Вы сделали <b>3 дела</b>. Можно продолжить в своём темпе — или просто порадоваться этому шагу.</p><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
   <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></div>
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
-  <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span id="personal-goal-event"></span><h2 id="personal-goal-title">Ваша личная цель</h2><p>Выберите спокойный и достижимый ориентир. Его можно не выполнять идеально.</p></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button class="personal-goal-save" type="submit">Участвовать</button></div></form></div>
+  <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><p class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
     const APP_VERSION = '1.2.0';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
@@ -326,6 +326,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softLocate:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M7 12a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"/>',
       softDeeds:'<path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/>',
       softShield:'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>',
+      softEvents:'<path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/>',
       softList:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
       softStar:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
       softBack:'<path d="M14.5 6l-6 6 6 6"/>',
@@ -1148,35 +1149,49 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const button=event.target.closest('[data-rating-period]'); if(!button||button.dataset.ratingPeriod===ratingPeriod()) return;
       state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod(),ratingMetric());
     });
-    /* Events page: status and mode pills, progress, my numbers, leaders and the join button. */
+    /* Events page in the soft glass style: the first running common goal as a hero card
+       with progress, my numbers and leaders; personal paths and the rest as glass cards;
+       upcoming events under «Скоро». Joining keeps data-event-join for the handlers below. */
     function eventsEmptyCard(title,text,action){
-      return `<section class="ev-empty"><span class="ev-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></span><h3>${title}</h3><p>${text}</p>${action}</section>`;
+      return `<section class="evs-card evs-empty"><i class="evs-icon">${icon('softEvents')}</i><h3>${title}</h3><p>${text}</p>${action}</section>`;
     }
     function renderEvents(events=[]){
       const root=document.querySelector('#events-list'); if(!root) return;
       root.removeAttribute('aria-busy');
-      if(!events.length){ root.innerHTML=eventsEmptyCard('Скоро новое событие','Сейчас нет активных событий. Мы сообщим, когда начнётся новое.','<button type="button" class="ev-button" data-view="today-view">Вернуться к делам</button>')+'<p class="ev-note">Отметки засчитываются в событие с момента участия.</p>'; return; }
+      document.querySelectorAll('#events-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
       const number=new Intl.NumberFormat(appLocale()), units={salawat:'салаватов',dhikr:'зикров',quran_pages:'стр.',tahajjud_count:'ночей'};
       const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
       const shortDate=key=>new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`));
       const dayDiff=(from,to)=>Math.round((new Date(`${to}T12:00:00`)-new Date(`${from}T12:00:00`))/86400000);
-      root.innerHTML=events.map(event=>{
-        const personal=event.mode==='personal_path', unit=units[event.metric]||'раз', upcoming=event.starts_on>todayKey;
-        const left=dayDiff(todayKey,event.ends_on);
-        const status=upcoming?`<span class="ev-pill ev-pill-soon">С ${shortDate(event.starts_on)}</span>`:`<span class="ev-pill ev-pill-live">${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
-        const pills=`<div class="ev-pills">${status}<span class="ev-pill">${personal?'Личный путь':'Общая цель'}</span>${event.joined?'<span class="ev-pill ev-pill-joined">Вы участвуете</span>':''}</div>`;
-        const head=`<div class="ev-copy"><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.description||(personal?'Личный путь в своём темпе.':'Общая цель сообщества.'))}</p></div>`;
-        const target=personal?Number(event.personalTarget||0):Number(event.goal||0), value=personal?Number(event.myProgress||0):Number(event.totalProgress||0);
-        const percent=Math.min(100,Math.round(value/Math.max(1,target)*100));
-        const progress=(!personal||event.joined)?`<div class="ev-progress"><div class="ev-progress-top"><b>${number.format(value)}</b><span>из ${number.format(target)} ${unit} · ${percent}%</span></div><div class="ev-bar"><i style="width:${percent}%"></i></div></div>`:'';
-        const stat=(label,val,accent=false)=>`<div class="ev-stat"><span>${label}</span><b class="${accent?'accent':''}">${val}</b></div>`;
-        const stats=personal
-          ?(event.joined?`<div class="ev-stats ev-stats-2">${stat('Осталось',upcoming?`с ${shortDate(event.starts_on)}`:`${Math.max(left,0)} ${plural(Math.max(left,0),'день','дня','дней')}`)}${stat('Участники',number.format(event.participants||0))}</div>`:'')
-          :`<div class="ev-stats">${stat('Мой вклад',event.joined?number.format(event.myProgress||0):'—',event.joined)}${stat('Моё место',event.joined&&event.myRank?`#${event.myRank}`:'—')}${stat('Участники',number.format(event.participants||0))}</div>`;
-        const leaders=!personal&&Array.isArray(event.leaders)&&event.leaders.length?`<div class="ev-leaders"><h4>Лидеры</h4>${event.leaders.map((leader,index)=>`<div class="ev-leader"><span>${index+1}. ${escapeHtml(leader.name)}</span><b>${number.format(leader.progress)}</b></div>`).join('')}</div>`:'';
-        const join=event.joined?'':`<button type="button" class="ev-button" data-event-join="${event.id}" data-event-mode="${personal?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
-        return `<article class="ev-card">${pills}${head}${progress}${stats}${leaders}${join}</article>`;
-      }).join('');
+      const metricIcon={salawat:'softSalawat',dhikr:'softZikr',quran_pages:'softQuran',tahajjud_count:'softTahajjud'};
+      const live=events.filter(event=>event.starts_on<=todayKey), soon=events.filter(event=>event.starts_on>todayKey);
+      const sub=document.querySelector('#events-sub');
+      if(sub) sub.textContent=live.length?`${live.length} ${plural(live.length,'идёт','идут','идут')} сейчас`:soon.length?'Скоро начнутся':'Скоро новое событие';
+      if(!events.length){ root.innerHTML=eventsEmptyCard('Скоро новое событие','Сейчас нет активных событий. Мы сообщим, когда начнётся новое.','<button type="button" class="ps-primary" data-view="today-view">Вернуться к делам</button>')+'<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>'; return; }
+      const pills=event=>{
+        const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=dayDiff(todayKey,event.ends_on);
+        const status=upcoming?`<span class="evs-pill soon">С ${shortDate(event.starts_on)}</span>`:`<span class="evs-pill live"><i></i>${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
+        return `<div class="evs-pills">${status}<span class="evs-pill">${personal?'Личный путь':'Общая цель'}</span>${event.joined?'<span class="evs-pill joined">Вы участвуете</span>':''}</div>`;
+      };
+      const join=event=>event.joined?'':`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
+      const copy=(event,big)=>`<div class="evs-copy">${big?'':`<i class="evs-icon">${icon(metricIcon[event.metric]||'softEvents')}</i>`}<span><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.description||(event.mode==='personal_path'?'Личный путь в своём темпе.':'Общая цель сообщества.'))}</p></span></div>`;
+      const progress=(value,target,unit)=>{ const percent=Math.min(100,Math.round(value/Math.max(1,target)*100)); return `<div class="evs-progress"><div><b>${number.format(value)}</b><span>из ${number.format(target)} ${unit}</span><strong>${percent}%</strong></div><span class="zg-track" aria-hidden="true"><i style="width:${percent}%"></i></span></div>`; };
+      const participants=n=>`${number.format(n)} ${plural(n,'участник','участника','участников')}`;
+      const hero=live.find(event=>event.mode!=='personal_path');
+      const heroCard=event=>{
+        const unit=units[event.metric]||'раз', stat=(value,label)=>`<span><b>${value}</b><small>${label}</small></span>`;
+        const leaders=Array.isArray(event.leaders)&&event.leaders.length?`<div class="evs-leaders"><h4>Лидеры</h4>${event.leaders.map((leader,index)=>`<div class="evs-leader"><span class="evs-place">${index+1}</span><span class="rt-row-avatar">${escapeHtml(Array.from(String(leader.name||'').trim())[0]||'·')}</span><b>${escapeHtml(leader.name)}</b><strong>${number.format(leader.progress)}</strong></div>`).join('')}</div>`:'';
+        return `<section class="evs-hero" aria-label="${escapeHtml(event.title)}"><div class="evs-hero-bar">${pills(event)}</div><article class="evs-hero-card">${copy(event,true)}${progress(Number(event.totalProgress||0),Number(event.goal||0),unit)}<div class="evs-stats">${stat(event.joined?number.format(event.myProgress||0):'—','мой вклад')}${stat(event.joined&&event.myRank?`#${event.myRank}`:'—','моё место')}${stat(number.format(event.participants||0),plural(Number(event.participants||0),'участник','участника','участников'))}</div>${leaders}${join(event)}</article></section>`;
+      };
+      const card=event=>{
+        const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=Math.max(0,dayDiff(todayKey,event.ends_on)), unit=units[event.metric]||'раз';
+        let body='';
+        if(personal&&event.joined) body=`${progress(Number(event.myProgress||0),Number(event.personalTarget||0),unit)}<p class="evs-meta">${upcoming?`Старт ${shortDate(event.starts_on)}`:`Осталось ${left} ${plural(left,'день','дня','дней')}`} · ${participants(Number(event.participants||0))}</p>`;
+        else if(!personal&&!upcoming) body=progress(Number(event.totalProgress||0),Number(event.goal||0),unit);
+        return `<article class="evs-card">${pills(event)}${copy(event,false)}${body}${event.joined?'':`<div class="evs-foot"><span>${participants(Number(event.participants||0))}</span>${join(event)}</div>`}</article>`;
+      };
+      const others=live.filter(event=>event!==hero);
+      root.innerHTML=`${hero?heroCard(hero):''}${others.map(card).join('')}${soon.length?`<section class="evs-soon"><h3 class="evs-heading">Скоро</h3>${soon.map(card).join('')}</section>`:''}<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>`;
     }
     async function fetchEvents(){
       const root=document.querySelector('#events-list'); if(!root) return;
@@ -1195,13 +1210,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       salawat:{unit:n=>goalPlural(n,'салават','салавата','салаватов'),step:100,presets:[1000,5000,10000]},
       dhikr:{unit:n=>goalPlural(n,'зикр','зикра','зикров'),step:100,presets:[1000,5000,10000]}
     };
-    let goalKind=null;
+    let goalKind=null, goalLabels=[];
     function setupPersonalGoal(button){
       const metric=button.dataset.eventMetric, days=Math.max(1,Number(button.dataset.eventDays)||30);
       const kind=GOAL_KINDS[metric]||{unit:n=>goalPlural(n,'раз','раза','раз'),step:1,presets:[10,50,100]};
       const presets=kind.presets||[...new Set([Math.max(1,Math.round(days/3)),Math.max(1,Math.round(days*2/3)),days])];
       goalKind={...kind,presets,max:metric==='tahajjud_count'?days:999999};
-      document.querySelector('#personal-goal-event').textContent=button.dataset.eventTitle||'';
+      document.querySelector('#personal-goal-event').textContent=`${button.dataset.eventTitle||''} · событие длится ${days} ${goalPlural(days,'день','дня','дней')}`;
+      goalLabels=metric==='tahajjud_count'?['для начала','через ночь','каждую ночь']:['для начала','хороший темп','большая цель'];
       document.querySelector('#personal-goal-input').value=presets[Math.min(1,presets.length-1)];
       paintPersonalGoal();
     }
@@ -1209,12 +1225,13 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(!goalKind) return;
       const value=Number(document.querySelector('#personal-goal-input').value)||0, format=n=>n.toLocaleString('ru-RU');
       document.querySelector('#personal-goal-unit').textContent=goalKind.unit(value);
-      document.querySelector('#personal-goal-presets').innerHTML=goalKind.presets.map(n=>`<button type="button" class="${n===value?'active':''}" data-goal-preset="${n}" aria-pressed="${n===value}">${format(n)} ${goalKind.unit(n)}</button>`).join('');
+      document.querySelector('#personal-goal-presets').innerHTML=goalKind.presets.map((n,index)=>`<button type="button" class="${n===value?'active':''}" data-goal-preset="${n}" aria-pressed="${n===value}"><b>${format(n)}</b><small>${goalLabels[index]||goalKind.unit(n)}</small></button>`).join('');
+      document.querySelector('#personal-goal-save').textContent=value?`Участвовать · ${format(value)} ${goalKind.unit(value)}`:'Участвовать';
     }
     document.querySelector('#personal-goal-input').addEventListener('input',paintPersonalGoal);
     document.querySelector('#personal-goal-modal').addEventListener('click',event=>{
       const input=document.querySelector('#personal-goal-input');
-      if(event.target.id==='personal-goal-modal'){ closePersonalGoalModal(); return; }
+      if(event.target.id==='personal-goal-modal'||event.target.closest('[data-goal-close]')){ closePersonalGoalModal(); return; }
       const step=event.target.closest('[data-goal-step]');
       if(step&&goalKind){ const next=(Number(input.value)||0)+Number(step.dataset.goalStep)*goalKind.step; input.value=Math.min(goalKind.max,Math.max(1,next)); paintPersonalGoal(); return; }
       const preset=event.target.closest('[data-goal-preset]');
@@ -1334,7 +1351,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector(`.nav [data-view="${viewId}"]`)?.classList.add('active');
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
-      document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view'].includes(viewId));
+      document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view','events-view'].includes(viewId));
       if(viewId==='rating-view') loadLeaderboard(ratingPeriod(),ratingMetric());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
@@ -2680,8 +2697,8 @@ body .prayer-sheet .prayer-geo{min-height:60px;border-radius:20px}
 /* Statistics in the soft glass style */
 body #app.on-glass{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body #app.on-glass button{font-family:inherit}
-body #app #stats-view.active,body #app #rating-view.active,body #app #zikr-view.active,body #app #settings-view.active,body #app #profile-sub-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
-body #app #stats-view>*,body #app #rating-view>*,body #app #zikr-view>*,body #app #settings-view>*,body #app #profile-sub-view>*{margin:0}
+body #app #stats-view.active,body #app #rating-view.active,body #app #zikr-view.active,body #app #settings-view.active,body #app #profile-sub-view.active,body #app #events-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
+body #app #stats-view>*,body #app #rating-view>*,body #app #zikr-view>*,body #app #settings-view>*,body #app #profile-sub-view>*,body #app #events-view>*{margin:0}
 body #app #stats-view .lucide{stroke-width:1.6}
 body #app .stats-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 4px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 body #app .stats-top>div{display:flex;flex-direction:column}
@@ -3295,6 +3312,99 @@ body.app-dark #app .ps-person-stats span+span{border-color:rgba(255,255,255,.08)
 body.app-dark #app .ps-badge{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72)}
 body.app-dark #app .ps-badge i{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1)}
 body.app-dark #app .ps-badge.earned i{background:#EEF5F2;color:#0B1110}
+
+/* Events in the soft glass style */
+body #app #events-list{display:flex;flex-direction:column;gap:22px}
+body #app .evs-hero{border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10);display:flex;flex-direction:column}
+body #app .evs-hero-bar{min-height:52px;padding:10px 18px;box-sizing:border-box;display:flex;align-items:center}
+body #app .evs-hero-card{margin:-1px;padding:22px 20px 20px;border-radius:32px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));box-shadow:0 14px 40px rgba(16,22,26,.12),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:16px}
+body #app .evs-card,body #app .evs-empty{padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;flex-direction:column;gap:14px;color:#10161A}
+body #app .evs-pills{display:flex;flex-wrap:wrap;gap:8px}
+body #app .evs-pill{height:28px;padding:0 12px;border-radius:14px;background:rgba(16,22,26,.06);color:#10161A;display:inline-flex;align-items:center;font-size:12px;font-weight:600;white-space:nowrap}
+body #app .evs-hero-bar .evs-pill{background:rgba(255,255,255,.7)}
+body #app .evs-pill.live{background:#0B0F12!important;color:#fff}
+body #app .evs-pill.live i{width:6px;height:6px;margin-right:6px;border-radius:3px;background:#7FD3A8}
+body #app .evs-pill.soon{background:rgba(255,200,110,.25)!important;color:#8A5A1C}
+body #app .evs-pill.joined{color:#2F7A5F}
+body #app .evs-copy{display:flex;align-items:flex-start;gap:12px}
+body #app .evs-copy>span{display:flex;flex-direction:column;gap:4px}
+body #app .evs-copy h3{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+body #app .evs-hero-card .evs-copy h3{font-size:22px;letter-spacing:-.02em}
+body #app .evs-copy p{margin:0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .evs-icon{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(16,22,26,.06);color:#10161A;display:grid;place-items:center}
+body #app .evs-icon .lucide{width:21px;height:21px}
+body #app .evs-progress{display:flex;flex-direction:column;gap:8px}
+body #app .evs-progress>div{display:flex;align-items:baseline;gap:8px}
+body #app .evs-progress b{font-size:28px;font-weight:600;letter-spacing:-.03em;line-height:1}
+body #app .evs-hero-card .evs-progress b{font-size:40px}
+body #app .evs-progress span{color:#7A858B;font-size:14px}
+body #app .evs-progress strong{margin-left:auto;font-size:15px;font-weight:600}
+body #app .evs-progress .zg-track{flex:none;height:10px;border-radius:5px}
+body #app .evs-stats{padding:12px 0;border-radius:20px;background:rgba(255,255,255,.8);display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+body #app .evs-stats span{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+body #app .evs-stats span+span{border-left:1px solid rgba(16,22,26,.08)}
+body #app .evs-stats b{font-size:20px;font-weight:600;letter-spacing:-.02em}
+body #app .evs-stats small{color:#7A858B;font-size:12px}
+body #app .evs-leaders{display:flex;flex-direction:column;gap:4px}
+body #app .evs-leaders h4{margin:0 0 4px;color:#5E6A71;font-size:14px;font-weight:600}
+body #app .evs-leader{min-height:48px;padding:0 10px;border-radius:16px;display:flex;align-items:center;gap:12px}
+body #app .evs-leader .rt-row-avatar{width:32px;height:32px;font-size:13px}
+body #app .evs-place{width:18px;color:#7A858B;font-size:14px;font-weight:600;text-align:center}
+body #app .evs-leader b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;font-weight:600}
+body #app .evs-leader strong{font-size:15px;font-weight:600}
+body #app .evs-meta{margin:0;color:#7A858B;font-size:13px}
+body #app .evs-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#7A858B;font-size:13px}
+body #app .evs-join{height:48px;padding:0 22px;font-size:15px}
+body #app .evs-hero-card .evs-join{align-self:stretch}
+body #app .evs-soon{display:flex;flex-direction:column;gap:12px}
+body #app .evs-heading{margin:0;padding:0 4px;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app .evs-empty{align-items:center;text-align:center}
+body #app .evs-empty h3{margin:0;font-size:18px;font-weight:600}
+body #app .evs-empty p{margin:0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .evs-empty .ps-primary{align-self:stretch}
+body #app .evs-note{margin:0 auto;max-width:300px;color:#7A858B;font-size:13px;line-height:1.45;text-align:center}
+body.app-dark #app .evs-hero,body.app-dark #app .evs-card,body.app-dark #app .evs-empty{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72);box-shadow:none;color:var(--ink)}
+body.app-dark #app .evs-hero-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none;color:var(--ink)}
+body.app-dark #app .evs-pill,body.app-dark #app .evs-hero-bar .evs-pill,body.app-dark #app .evs-stats{background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .evs-pill.live{background:#EEF5F2!important;color:#0B1110}
+body.app-dark #app .evs-pill.joined{color:#7FC8A6}
+body.app-dark #app .evs-copy p,body.app-dark #app .evs-stats small,body.app-dark #app .evs-progress span,body.app-dark #app .evs-meta,body.app-dark #app .evs-foot,body.app-dark #app .evs-note,body.app-dark #app .evs-leaders h4,body.app-dark #app .evs-empty p{color:var(--muted)}
+body.app-dark #app .evs-icon{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none}
+body.app-dark #app .evs-stats span+span{border-color:rgba(255,255,255,.08)}
+/* Personal goal: a glass sheet from the bottom, as on the canvas */
+body #personal-goal-modal.personal-goal-modal{place-items:end center;padding:0;background:rgba(16,22,26,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #personal-goal-modal .personal-goal-card{width:min(100%,540px);max-height:92vh;margin:0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));border:0;border-top:1px solid rgba(255,255,255,.95);border-radius:32px 32px 0 0;background:rgba(246,249,248,.96);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 -20px 50px rgba(16,22,26,.18);display:flex;flex-direction:column;gap:18px;animation:soft-sheet-in .34s var(--soft-ease) both;color:#10161A}
+body #personal-goal-modal .sheet-grabber{align-self:center;width:40px;height:5px;margin:0;border-radius:3px;background:rgba(16,22,26,.18)}
+body #personal-goal-modal .personal-goal-head{display:flex!important;flex-direction:row!important;align-items:flex-start;justify-content:space-between;gap:12px;margin:0;text-align:left}
+body #personal-goal-modal .personal-goal-titles{display:flex;flex-direction:column;gap:4px}
+body #personal-goal-modal h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #personal-goal-modal #personal-goal-event{color:#5E6A71;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0}
+body #personal-goal-modal .personal-goal-close{width:40px;height:40px;flex:none;padding:0;border:0;border-radius:20px;background:rgba(16,22,26,.06);color:#10161A;display:grid;place-items:center}
+body #personal-goal-modal .personal-goal-close .lucide{width:18px;height:18px}
+body #personal-goal-modal .personal-goal-stepper{margin:0;padding:18px;border:1px solid rgba(16,22,26,.06);border-radius:28px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px}
+body #personal-goal-modal .personal-goal-stepper>button{width:52px;height:52px;flex:none;padding:0;border:0;border-radius:26px;background:rgba(16,22,26,.06);color:#10161A;font-size:24px;font-weight:500;box-shadow:none}
+body #personal-goal-modal .personal-goal-stepper>button.plus{background:#0B0F12;color:#fff}
+body #personal-goal-modal .personal-goal-stepper label{min-width:0;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+body #personal-goal-modal .personal-goal-field{width:100%;height:auto;padding:0;border:0;background:transparent;color:#10161A;font:600 44px Inter,-apple-system,sans-serif;letter-spacing:-.03em;text-align:center;box-shadow:none;outline:0}
+body #personal-goal-modal #personal-goal-unit{color:#7A858B;font-size:14px}
+body #personal-goal-modal .personal-goal-presets{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body #personal-goal-modal .personal-goal-presets button{height:56px;padding:0 4px;border:1px solid rgba(16,22,26,.08);border-radius:20px;background:rgba(255,255,255,.55);color:#10161A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:none}
+body #personal-goal-modal .personal-goal-presets button.active{border-color:#10161A;background:#fff}
+body #personal-goal-modal .personal-goal-presets b{font-size:17px;font-weight:600}
+body #personal-goal-modal .personal-goal-presets small{color:#7A858B;font-size:11px}
+body #personal-goal-modal .personal-goal-error:empty{display:none}
+body #personal-goal-modal .personal-goal-actions{display:block;margin:0}
+body #personal-goal-modal .personal-goal-cancel{display:none}
+body #personal-goal-modal .personal-goal-save{width:100%;height:54px;border:0;border-radius:27px;background:#0B0F12;color:#fff;font:600 15px Inter,-apple-system,sans-serif;box-shadow:none}
+body #personal-goal-modal .personal-goal-note{margin:-6px 0 0;color:#7A858B;font-size:12px;text-align:center}
+body.app-dark #personal-goal-modal .personal-goal-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.96);color:var(--ink)}
+body.app-dark #personal-goal-modal .personal-goal-stepper{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.06)}
+body.app-dark #personal-goal-modal .personal-goal-field,body.app-dark #personal-goal-modal .personal-goal-presets button,body.app-dark #personal-goal-modal .personal-goal-close,body.app-dark #personal-goal-modal .personal-goal-stepper>button{color:var(--ink)}
+body.app-dark #personal-goal-modal .personal-goal-stepper>button,body.app-dark #personal-goal-modal .personal-goal-close{background:rgba(255,255,255,.1)}
+body.app-dark #personal-goal-modal .personal-goal-stepper>button.plus,body.app-dark #personal-goal-modal .personal-goal-save{background:#EEF5F2;color:#0B1110}
+body.app-dark #personal-goal-modal .personal-goal-presets button{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.06)}
+body.app-dark #personal-goal-modal .personal-goal-presets button.active{border-color:#EEF5F2;background:rgba(255,255,255,.14)}
+body.app-dark #personal-goal-modal #personal-goal-event,body.app-dark #personal-goal-modal #personal-goal-unit,body.app-dark #personal-goal-modal .personal-goal-presets small,body.app-dark #personal-goal-modal .personal-goal-note{color:var(--muted)}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
