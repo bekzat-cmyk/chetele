@@ -720,50 +720,89 @@ try {
         respond(200,['deleted'=>true]);
     }
 
-    if ($method === 'GET' && $parts === ['leaderboard']) {
-        $limit = min(max((int)($_GET['limit'] ?? 50), 1), 100);
-        /* User ids are never exposed publicly; the caller's own row is marked with "me". */
+    if ($method === 'GET' && ($parts === ['leaderboard'] || (count($parts) === 3 && $parts[0] === 'leaderboard' && $parts[1] === 'profile'))) {
+        require_once __DIR__ . '/leaderboard.php';
+        /* User ids are never exposed publicly: rows carry an opaque key for the participant
+           card, and the caller's own row is marked with "me". */
         $sessionUser = sessionUserId($db);
-        /* period=week counts the last 7 days including today, period=month the calendar
-           month so far; anything else is all time. Each row's "move" compares the place with
-           the previous period (the 7 days before, last month, or all time up to a week ago). */
-        $period = $_GET['period'] ?? '';
-        if ($period === 'week') {
-            $joinPeriod = ' AND e.entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)';
-            $joinBefore = ' AND e.entry_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 13 DAY) AND DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
-        } elseif ($period === 'month') {
-            $joinPeriod = " AND e.entry_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01')";
-            $joinBefore = " AND e.entry_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND e.entry_date < DATE_FORMAT(CURDATE(), '%Y-%m-01')";
-        } else {
-            $joinPeriod = '';
-            $joinBefore = ' AND e.entry_date < DATE_SUB(CURDATE(), INTERVAL 6 DAY)';
+        $secret = 'chetele-leaderboard|' . (string)($config['password'] ?? '');
+        $today = (string)$db->query('SELECT CURDATE()')->fetchColumn();
+        $people = [];
+        foreach ($db->query('SELECT id, display_name, created_at FROM users')->fetchAll() as $user) {
+            $people[(string)$user['id']] = ['name' => $user['display_name'], 'created' => (string)$user['created_at']];
         }
-        $placesBefore = [];
-        foreach ($db->query("SELECT u.id FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinBefore} GROUP BY u.id, u.created_at ORDER BY COALESCE(SUM(e.points), 0) DESC, u.created_at ASC")->fetchAll() as $index => $row) {
-            $placesBefore[(string)$row['id']] = $index + 1;
-        }
-        $move = function (string $id, int $place) use ($placesBefore): int { return isset($placesBefore[$id]) ? $placesBefore[$id] - $place : 0; };
-        header('X-Total-Count: ' . count($placesBefore));
-        $statement = $db->query("SELECT u.id, u.display_name AS name, COALESCE(SUM(e.points), 0) AS points FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinPeriod} GROUP BY u.id, u.display_name, u.created_at ORDER BY points DESC, u.created_at ASC LIMIT {$limit}");
-        $rows = [];
-        $meListed = false;
-        foreach ($statement->fetchAll() as $index => $row) {
-            $isMe = $sessionUser !== null && hash_equals($sessionUser, (string)$row['id']);
-            $meListed = $meListed || $isMe;
-            $rows[] = ['name' => $row['name'], 'points' => (int)$row['points'], 'me' => $isMe, 'place' => $index + 1, 'move' => $move((string)$row['id'], $index + 1)];
-        }
-        /* The caller outside the top list still gets their own place, appended last. */
-        if ($sessionUser !== null && !$meListed) {
-            $mine = $db->prepare("SELECT u.display_name AS name, COALESCE(SUM(e.points), 0) AS points FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinPeriod} WHERE u.id = ? GROUP BY u.id, u.display_name");
-            $mine->execute([$sessionUser]);
-            $me = $mine->fetch();
-            if ($me) {
-                $ahead = $db->prepare("SELECT COUNT(*) FROM (SELECT u.id, COALESCE(SUM(e.points), 0) AS points FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinPeriod} GROUP BY u.id) ranked WHERE points > ?");
-                $ahead->execute([(int)$me['points']]);
-                $place = (int)$ahead->fetchColumn() + 1;
-                $rows[] = ['name' => $me['name'], 'points' => (int)$me['points'], 'me' => true, 'place' => $place, 'move' => $move($sessionUser, $place)];
+        /* Each person's total for a metric between two dates (null = from the start). */
+        $scores = function (string $metric, ?string $from, string $to) use ($db, $people): array {
+            $totals = array_fill_keys(array_keys($people), 0);
+            $where = 'entry_date <= ?' . ($from ? ' AND entry_date >= ?' : '');
+            $args = $from ? [$to, $from] : [$to];
+            if ($metric === 'points') {
+                $statement = $db->prepare("SELECT user_id, SUM(points) AS total FROM daily_entries WHERE {$where} GROUP BY user_id");
+                $statement->execute($args);
+                foreach ($statement->fetchAll() as $row) if (isset($totals[$row['user_id']])) $totals[$row['user_id']] = (int)$row['total'];
+                return $totals;
             }
+            $statement = $db->prepare("SELECT user_id, tasks FROM daily_entries WHERE {$where}");
+            $statement->execute($args);
+            foreach ($statement->fetchAll() as $row) {
+                $tasks = json_decode((string)$row['tasks'], true);
+                if (isset($totals[$row['user_id']]) && is_array($tasks)) $totals[$row['user_id']] += leaderboardDayScore($metric, $tasks, 0);
+            }
+            return $totals;
+        };
+        $rank = function (array $totals) use ($people): array {
+            $list = [];
+            foreach ($totals as $id => $score) $list[$id] = ['score' => $score, 'created' => $people[$id]['created']];
+            return leaderboardRank($list);
+        };
+        header('X-Total-Count: ' . count($people));
+
+        if ($parts[0] === 'leaderboard' && count($parts) === 3) {
+            /* A participant's card: points, place, streaks and badges, never their deeds. */
+            $userId = null;
+            foreach (array_keys($people) as $id) if (hash_equals(leaderboardKey((string)$id, $secret), (string)$parts[2])) { $userId = (string)$id; break; }
+            if ($userId === null) respond(404, ['error' => 'Участник не найден.']);
+            $entriesStatement = $db->prepare('SELECT entry_date, tasks, completed_count FROM daily_entries WHERE user_id = ?');
+            $entriesStatement->execute([$userId]);
+            $entries = []; $days = [];
+            foreach ($entriesStatement->fetchAll() as $row) {
+                $tasks = json_decode((string)$row['tasks'], true);
+                $entries[] = ['date' => (string)$row['entry_date'], 'tasks' => is_array($tasks) ? $tasks : [], 'completed' => (int)$row['completed_count']];
+                $days[(string)$row['entry_date']] = (int)$row['completed_count'];
+            }
+            $points = [];
+            foreach (['week', 'month', 'all'] as $period) {
+                $window = leaderboardWindow($period, $today);
+                $points[$period] = $scores('points', $window['from'], $window['to'])[$userId];
+            }
+            $allTime = $rank($scores('points', null, $today));
+            $since = $entries ? min(array_column($entries, 'date')) : substr($people[$userId]['created'], 0, 10);
+            respond(200, [
+                'key' => $parts[2], 'name' => $people[$userId]['name'], 'me' => $sessionUser !== null && hash_equals($sessionUser, $userId),
+                'since' => $since, 'points' => $points, 'place' => $allTime['places'][$userId],
+                'streak' => leaderboardStreaks($days, $today), 'badges' => leaderboardBadges($entries),
+            ]);
         }
+
+        $limit = min(max((int)($_GET['limit'] ?? 50), 1), 100);
+        $metric = in_array($_GET['metric'] ?? 'points', LEADERBOARD_METRICS, true) ? ($_GET['metric'] ?? 'points') : 'points';
+        $window = leaderboardWindow((string)($_GET['period'] ?? ''), $today);
+        $now = $scores($metric, $window['from'], $window['to']);
+        $ranked = $rank($now);
+        $before = $rank($scores($metric, $window['beforeFrom'], $window['beforeTo']))['places'];
+        $row = function (string $id) use ($people, $now, $ranked, $before, $sessionUser, $secret): array {
+            $place = $ranked['places'][$id];
+            return [
+                'name' => $people[$id]['name'], 'points' => $now[$id], 'place' => $place,
+                'me' => $sessionUser !== null && hash_equals($sessionUser, $id),
+                'move' => leaderboardMove($before[$id] ?? null, $place, $now[$id]),
+                'key' => leaderboardKey($id, $secret),
+            ];
+        };
+        $top = array_slice($ranked['order'], 0, $limit);
+        $rows = array_map(fn($id) => $row((string)$id), $top);
+        /* The caller outside the top list still gets their own row, appended last. */
+        if ($sessionUser !== null && isset($people[$sessionUser]) && !in_array($sessionUser, array_map('strval', $top), true)) $rows[] = $row($sessionUser);
         respond(200, $rows);
     }
 

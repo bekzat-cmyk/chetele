@@ -265,7 +265,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     </section>
     <section id="zikr-view" class="view" aria-label="Зикр"></section>
     <section id="events-view" class="view"><div class="section-head events-head"><h2>События</h2><span>Вместе к общей цели</span></div><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
-    <section id="rating-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Каждое дело — 10 очков</span><h2>Рейтинг</h2><span id="rating-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softRating"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div><div id="leaderboard" class="rt-board"></div><p id="rating-hint" class="rt-hint">Загрузка рейтинга…</p></section>
+    <section id="rating-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Каждое дело — 10 очков</span><h2>Рейтинг</h2><span id="rating-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softRating"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div><div id="rating-metrics" class="rt-metrics" role="radiogroup" aria-label="Что считать"></div><div id="leaderboard" class="rt-board"></div><p id="rating-hint" class="rt-hint">Загрузка рейтинга…</p></section>
     <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
     <section id="settings-view" class="view" aria-label="Настройки"></section><section id="profile-sub-view" class="view" aria-label="Профиль"></section><section id="profile-view" class="view"><div id="soft-profile" class="soft-profile"></div><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="stats-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></i>Статистика</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
@@ -499,33 +499,42 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     /* Leaderboard: week and all time are loaded separately, each with its own status,
        and only for what is on screen. Saving a day refreshes the visible rating once,
        a moment later, instead of fetching both periods after every save. */
-    const boardStatus={week:'idle',month:'idle',all:'idle'}, boardLoading={};
-    function loadLeaderboard(period){
-      if(boardLoading[period]) return boardLoading[period];
-      if(boardStatus[period]!=='online') boardStatus[period]='loading';
+    /* A board is a period and what it counts: points, or one deed (salawat, quran, …). */
+    const boardStatus={}, boardLoading={};
+    const boardKey=(period,metric='points')=>`${period}:${metric}`;
+    // Points boards keep their old places in state; boards for one deed live in state.metricBoards.
+    function boardRows(period,metric='points'){
+      if(metric!=='points') return state.metricBoards?.[boardKey(period,metric)];
+      return period==='week'?state.weekLeaderboard:period==='month'?state.monthLeaderboard:state.remoteLeaderboard;
+    }
+    function loadLeaderboard(period,metric='points'){
+      const key=boardKey(period,metric);
+      if(boardLoading[key]) return boardLoading[key];
+      if(boardStatus[key]!=='online') boardStatus[key]='loading';
       renderBoard();
-      boardLoading[period]=(async()=>{
+      boardLoading[key]=(async()=>{
         try {
-          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='all'?'':`&period=${period}`}`);
+          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='all'?'':`&period=${period}`}${metric==='points'?'':`&metric=${metric}`}`);
           if(!response.ok) throw new Error('leaderboard_failed');
           const rows=await response.json();
           if(!Array.isArray(rows)) throw new Error('leaderboard_failed');
-          if(period==='week') state.weekLeaderboard=rows; else if(period==='month') state.monthLeaderboard=rows; else state.remoteLeaderboard=rows;
-          state.ratingTotal={...state.ratingTotal,[period]:Number(response.headers.get('X-Total-Count'))||0};
-          boardStatus[period]='online';
-        } catch { boardStatus[period]='offline'; }
-        finally { delete boardLoading[period]; renderBoard(); if(period==='all') renderProfile(); }
+          if(metric!=='points') state.metricBoards={...state.metricBoards,[key]:rows};
+          else if(period==='week') state.weekLeaderboard=rows; else if(period==='month') state.monthLeaderboard=rows; else state.remoteLeaderboard=rows;
+          state.ratingTotal={...state.ratingTotal,[key]:Number(response.headers.get('X-Total-Count'))||0};
+          boardStatus[key]='online';
+        } catch { boardStatus[key]='offline'; }
+        finally { delete boardLoading[key]; renderBoard(); if(key==='all:points') renderProfile(); }
       })();
-      return boardLoading[period];
+      return boardLoading[key];
     }
-    function visibleBoardPeriods(){
+    function visibleBoards(){
       const view=document.querySelector('.view.active')?.id;
-      return view==='rating-view'?[ratingPeriod()]:view==='profile-view'?['all']:[];
+      return view==='rating-view'?[[ratingPeriod(),ratingMetric()]]:view==='profile-view'?[['all','points']]:[];
     }
     let boardRefreshTimer=null;
     function refreshVisibleLeaderboards(delay=0){
       clearTimeout(boardRefreshTimer);
-      boardRefreshTimer=setTimeout(()=>visibleBoardPeriods().forEach(loadLeaderboard),delay);
+      boardRefreshTimer=setTimeout(()=>visibleBoards().forEach(([period,metric])=>loadLeaderboard(period,metric)),delay);
     }
     async function fetchPersonalEntries(restoreCurrent=false){
       if(!state.userId) return;
@@ -922,13 +931,35 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     /* Profile screens from the canvas: achievements, reminders, prayer place, about and
        rename open in one view with a back button to the profile. */
-    let profileScreen='achievements', profileScreenNote='';
+    let profileScreen='achievements', profileScreenNote='', personCard=null;
+    /* A participant's card from the rating: points, place, streaks and badges, never their deeds. */
+    async function openPersonCard(key){
+      personCard={key,status:'loading'}; openProfileScreen('person');
+      try {
+        const response=await apiFetch(apiUrl(`leaderboard/profile/${key}`)); if(!response.ok) throw new Error('person_failed');
+        const data=await response.json(); if(personCard?.key!==key) return; personCard={key,status:'online',data};
+      } catch { if(personCard?.key===key) personCard={key,status:'offline'}; }
+      if(profileScreen==='person') renderProfileScreen();
+    }
+    document.addEventListener('keydown',event=>{ if((event.key==='Enter'||event.key===' ')&&event.target.matches?.('[data-person]')){ event.preventDefault(); openPersonCard(event.target.dataset.person); } });
     function openProfileScreen(kind){ profileScreen=kind; profileScreenNote=''; renderProfileScreen(); showView('profile-sub-view'); window.scrollTo(0,0); }
     function renderProfileScreen(){
       const root=document.querySelector('#profile-sub-view'); if(!root) return;
       const number=new Intl.NumberFormat(appLocale());
-      const head=(title,eyebrow='Профиль')=>`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="profile-view" aria-label="Назад в профиль">${icon('softBack')}</button><div><span class="stats-eyebrow">${eyebrow}</span><h2>${title}</h2></div></header>`;
+      const head=(title,eyebrow='Профиль',back='profile-view')=>`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="${back}" aria-label="${back==='rating-view'?'Назад в рейтинг':'Назад в профиль'}">${icon('softBack')}</button><div><span class="stats-eyebrow">${eyebrow}</span><h2>${title}</h2></div></header>`;
       const toggle=(attrs,on,label)=>`<span class="st-switch"><input type="checkbox" ${attrs} ${on?'checked':''} aria-label="${label}"><i></i></span>`;
+      if(profileScreen==='person'){
+        const card=personCard||{}, data=card.data;
+        if(card.status!=='online'||!data){ root.innerHTML=`${head(card.status==='offline'?'Не удалось загрузить':'Загрузка…','Рейтинг','rating-view')}<section class="st-card ps-person-empty"><p>${card.status==='offline'?'Проверьте подключение и откройте карточку снова.':'Получаем данные участника…'}</p></section>`; return; }
+        const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
+        const days=n=>plural(n,'день','дня','дней'), points=n=>plural(n,'очко','очка','очков');
+        const since=data.since?new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long',year:'numeric'}).format(new Date(`${data.since}T12:00:00`)).replace(/^\d+\s*/,'').replace(/\s*г\.?$/,''):'';
+        const icons=Object.fromEntries(achievementData().map(badge=>[badge.title,badge.icon]));
+        const earned=(data.badges||[]).filter(badge=>badge.earned).length;
+        const stat=(value,label)=>`<span><b>${value}</b><small>${label}</small></span>`;
+        root.innerHTML=`${head(escapeHtml(data.name)+(data.me?' · вы':''),'Рейтинг','rating-view')}<section class="sp-card ps-person"><div class="sp-me"><span class="sp-avatar">${escapeHtml(Array.from(String(data.name||'').trim())[0]||'·')}</span><span><b>${escapeHtml(data.name)}</b><small>${since?`в пути с ${since}`:'путь только начинается'}</small></span></div><div class="sp-stats ps-person-stats">${stat(number.format(data.points?.all||0),points(data.points?.all||0))}${stat(`#${data.place}`,'в рейтинге')}${stat(number.format(data.streak?.best||0),'лучшая серия')}</div></section><section class="st-card ps-person-grid">${stat(number.format(data.points?.week||0),'очков за неделю')}${stat(number.format(data.points?.month||0),'очков за месяц')}${stat(`${number.format(data.streak?.current||0)} ${days(data.streak?.current||0)}`,'подряд сейчас')}${stat(`${number.format(data.streak?.days||0)} ${days(data.streak?.days||0)}`,'в пути')}</section><section class="st-group"><h3>Достижения · ${earned} из ${(data.badges||[]).length}</h3><div class="ps-badges">${(data.badges||[]).map(badge=>`<span class="ps-badge ${badge.earned?'earned':''}"><i>${icons[badge.title]||''}</i><b>${escapeHtml(badge.title)}</b></span>`).join('')}</div></section><p class="ps-note">Личные отметки участника не показываются — только очки, серии и достижения.</p>`;
+        return;
+      }
       if(profileScreen==='achievements'){
         const badges=achievementData(), earned=badges.filter(badge=>badge.earned).length;
         root.innerHTML=head('Достижения',`Профиль · ${earned} из ${badges.length} получено`)+softAchievementsHtml();
@@ -1053,14 +1084,20 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     let boardShownPeriod=null;
     function ratingPeriod(){ return ['month','all'].includes(state.ratingPeriod)?state.ratingPeriod:'week'; }
+    /* What the board counts: points, or one deed with its own unit. */
+    const RATING_METRICS={points:{label:'Очки',ky:'Упай',unit:['очко','очка','очков'],short:'очк.'},salawat:{label:'Салават',ky:'Салават',unit:['раз','раза','раз'],short:'раз'},zikr:{label:'Зикр',ky:'Зикир',unit:['раз','раза','раз'],short:'раз'},quran:{label:'Куран',ky:'Куран',unit:['страница','страницы','страниц'],short:'стр.'},tahajjud:{label:'Тахаджуд',ky:'Тахажжуд',unit:['ночь','ночи','ночей'],short:'ноч.'},nafil:{label:'Нафиль',ky:'Напил',unit:['намаз','намаза','намазов'],short:'нам.'}};
+    function ratingMetric(){ return RATING_METRICS[state.ratingMetric]?state.ratingMetric:'points'; }
     function renderBoard(){
-      const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:period==='month'?state.monthLeaderboard:state.remoteLeaderboard, status=boardStatus[period];
+      const period=ratingPeriod(), metric=ratingMetric(), key=boardKey(period,metric), source=boardRows(period,metric), status=boardStatus[key], spec=RATING_METRICS[metric];
       document.querySelectorAll('[data-rating-period]').forEach(button=>{ const on=button.dataset.ratingPeriod===period; button.classList.toggle('active',on); button.setAttribute('aria-checked',String(on)); });
       document.querySelectorAll('#rating-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
       const locale=appLocale(), ky=locale==='ky-KG', number=new Intl.NumberFormat(locale);
       const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
-      const points=n=>ky?'упай':plural(n,'очко','очка','очков');
-      const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1,move:Number(person.move)||0})) : [];
+      const points=n=>metric==='points'&&ky?'упай':plural(n,...spec.unit), short=metric==='points'&&ky?'уп.':spec.short;
+      const chips=document.querySelector('#rating-metrics');
+      if(chips) chips.innerHTML=Object.entries(RATING_METRICS).map(([id,item])=>`<button type="button" role="radio" aria-checked="${id===metric}" class="${id===metric?'active':''}" data-rating-metric="${id}">${ky?item.ky:item.label}</button>`).join('');
+      const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1,move:Number(person.move)||0,key:/^[0-9a-f]{16}$/.test(person.key||'')?person.key:''})) : [];
+      const open=p=>p.key?` data-person="${p.key}" role="button" tabindex="0"`:'';
       const leaderboard=document.querySelector('#leaderboard'), hint=document.querySelector('#rating-hint'), label=document.querySelector('#rating-period-label');
       const initial=name=>escapeHtml(Array.from(String(name).trim())[0]||'·');
       const today=new Date(`${todayKey}T12:00:00`), from=new Date(today); from.setDate(from.getDate()-6);
@@ -1079,32 +1116,37 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         leaderboard.innerHTML=`<div class="rt-empty"><b>${ky?'Рейтинг азырынча бош':'Рейтинг пока пуст'}</b><span>${ky?'Биринчи ишти белгилеңиз — ушул жерде пайда болосуз.':'Отметьте первое дело — и вы появитесь здесь.'}</span></div>`;
       } else {
         const top=people.filter(person=>person.place<=3).sort((a,b)=>a.place-b.place), max=Math.max(1,top[0]?.points||0);
-        const podiumSlot=p=>{ const first=p.place===1; return `<div class="rt-slot${first?' first':''}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}"><span class="rt-crown">${first?crown:''}</span><span class="rt-avatar">${initial(p.name)}</span><span class="rt-name"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small>${number.format(p.points)} ${ky?'уп.':'очк.'}</small></span><div class="rt-step" style="height:${Math.round(60+70*p.points/max)+(first?20:0)}px"><span>${p.place}</span></div></div>`; };
+        const podiumSlot=p=>{ const first=p.place===1; return `<div class="rt-slot${first?' first':''}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}"><span class="rt-crown">${first?crown:''}</span><span class="rt-avatar">${initial(p.name)}</span><span class="rt-name"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small>${number.format(p.points)} ${short}</small></span><div class="rt-step" style="height:${Math.round(60+70*p.points/max)+(first?20:0)}px"><span>${p.place}</span></div></div>`; };
         const podium=`<section class="rt-podium" aria-label="${ky?'Алдыңкы үчөө':'Тройка лидеров'}">${[top[1],top[0],top[2]].filter(Boolean).map(podiumSlot).join('')}</section>`;
-        const me=people.find(person=>person.me), above=me?people.find(person=>person.place===me.place-1):null;
+        // With shared places the one to catch is the nearest person with more.
+        const me=people.find(person=>person.me), above=me?[...people].reverse().find(person=>person.points>me.points):null;
         let meCard='';
         if(me){
-          const gap=above?Math.max(10,above.points-me.points+10):0;
-          const goal=me.place===1?(ky?'Сиз биринчи орундасыз — ушундай уланта бериңиз!':'Вы на первом месте — так держать!'):!me.points&&period==='week'?(ky?'Рейтингге кирүү үчүн ишти белгилеңиз':'Отметьте дело, чтобы попасть в рейтинг недели'):above?`${ky?`${me.place-1}-орунга чейин`:`До ${me.place-1} места`} — ${number.format(gap)} ${points(gap)}`:'';
+          const gap=above?(metric==='points'?Math.max(10,above.points-me.points+10):above.points-me.points+1):0;
+          const goal=me.place===1?(ky?'Сиз биринчи орундасыз — ушундай уланта бериңиз!':'Вы на первом месте — так держать!'):!me.points&&period==='week'?(ky?'Рейтингге кирүү үчүн ишти белгилеңиз':'Отметьте дело, чтобы попасть в рейтинг недели'):above?`${ky?`${above.place}-орунга чейин`:`До ${above.place} места`} — ${number.format(gap)} ${points(gap)}`:'';
           const pct=me.place===1?100:above&&above.points?Math.min(100,Math.round(me.points/above.points*100)):0;
-          meCard=`<section class="rt-me" aria-label="${ky?'Сиздин ордуңуз':'Ваше место'}"><div class="rt-me-top"><span class="rt-me-place">#${me.place}</span><span class="rt-me-copy"><b>${escapeHtml(me.name)} · ${ky?'сиз':'вы'}</b><small>${moveText(me.move)}${period==='week'?(ky?' аптада':' за неделю'):period==='month'?(ky?' айда':' за месяц'):''}</small></span><span class="rt-me-points"><b>${number.format(me.points)}</b><small>${points(me.points)}</small></span></div><div class="rt-me-goal"><span class="rt-track" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="rt-me-foot"><span>${goal}</span>${above&&me.place>1?`<b>≈ ${number.format(Math.ceil(gap/10))} ${ky?'иш':plural(Math.ceil(gap/10),'дело','дела','дел')}</b>`:''}</span></div></section>`;
+          meCard=`<section class="rt-me" aria-label="${ky?'Сиздин ордуңуз':'Ваше место'}"><div class="rt-me-top"><span class="rt-me-place">#${me.place}</span><span class="rt-me-copy"><b>${escapeHtml(me.name)} · ${ky?'сиз':'вы'}</b><small>${moveText(me.move)}${period==='week'?(ky?' аптада':' за неделю'):period==='month'?(ky?' айда':' за месяц'):''}</small></span><span class="rt-me-points"><b>${number.format(me.points)}</b><small>${points(me.points)}</small></span></div><div class="rt-me-goal"><span class="rt-track" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="rt-me-foot"><span>${goal}</span>${above&&me.place>1&&metric==='points'?`<b>≈ ${number.format(Math.ceil(gap/10))} ${ky?'иш':plural(Math.ceil(gap/10),'дело','дела','дел')}</b>`:''}</span></div></section>`;
         }
         const rest=people.filter(person=>person.place>3);
-        const total=Number(state.ratingTotal?.[period])||0;
-        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
+        const total=Number(state.ratingTotal?.[key]??state.ratingTotal?.[period])||0;
+        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
         // Rows that changed place slide to it instead of jumping (same period only).
-        const before=boardShownPeriod===period?new Map([...leaderboard.querySelectorAll('.rt-row[data-name]')].map(row=>[row.dataset.name,row.getBoundingClientRect().top])):new Map();
+        const before=boardShownPeriod===key?new Map([...leaderboard.querySelectorAll('.rt-row[data-name]')].map(row=>[row.dataset.name,row.getBoundingClientRect().top])):new Map();
         leaderboard.innerHTML=podium+meCard+list;
         if(before.size&&!motionOff()) leaderboard.querySelectorAll('.rt-row[data-name]').forEach(row=>{ const top=before.get(row.dataset.name); const shift=top===undefined?0:top-row.getBoundingClientRect().top; if(Math.abs(shift)>1) row.animate([{transform:`translateY(${shift}px)`},{transform:'translateY(0)'}],{duration:360,easing:'cubic-bezier(.2,.8,.2,1)'}); });
       }
-      boardShownPeriod=period;
-      if(status==='online'||(status==='loading'&&people.length)) hint.textContent=ky?'Упайлар белгиленген иштер үчүн эсептелет. Рейтинг белгилегенден кийин дароо жаңыланат.':'Очки считаются за отмеченные дела. Рейтинг обновляется сразу после отметки.';
+      boardShownPeriod=key;
+      if(status==='online'||(status==='loading'&&people.length)) hint.textContent=metric!=='points'?(ky?'Күндүн иштериндеги белгилер боюнча эсептелет. Катышуучуну басып, анын карточкасын ачыңыз.':'Считается по отметкам в делах дня. Нажмите на участника, чтобы открыть его карточку.'):(ky?'Упайлар белгиленген иштер үчүн эсептелет. Катышуучуну басып, анын карточкасын ачыңыз.':'Очки считаются за отмеченные дела. Нажмите на участника, чтобы открыть его карточку.');
       else if(status==='offline') hint.textContent=people.length?(ky?'Сервер менен байланыш жок. Интернет пайда болгондо рейтинг жаңыланат.':'Нет связи с сервером. Рейтинг обновится, когда появится интернет.'):'';
       else hint.textContent=ky?'Рейтинг жүктөлүүдө…':'Загрузка рейтинга…';
     }
     document.addEventListener('click',event=>{
+      const chip=event.target.closest('[data-rating-metric]');
+      if(chip){ if(chip.dataset.ratingMetric!==ratingMetric()){ state.ratingMetric=chip.dataset.ratingMetric; save(); renderBoard(); loadLeaderboard(ratingPeriod(),ratingMetric()); } return; }
+      const person=event.target.closest('[data-person]');
+      if(person){ openPersonCard(person.dataset.person); return; }
       const button=event.target.closest('[data-rating-period]'); if(!button||button.dataset.ratingPeriod===ratingPeriod()) return;
-      state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod());
+      state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod(),ratingMetric());
     });
     /* Events page: status and mode pills, progress, my numbers, leaders and the join button. */
     function eventsEmptyCard(title,text,action){
@@ -1293,7 +1335,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
       document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view'].includes(viewId));
-      if(viewId==='rating-view') loadLeaderboard(ratingPeriod());
+      if(viewId==='rating-view') loadLeaderboard(ratingPeriod(),ratingMetric());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
       if(viewId==='zikr-view'){ renderZikr(); if(!state.events) fetchEvents(); }
@@ -3222,6 +3264,37 @@ body.app-dark #exit-confirmation .exit-approve{background:#C26B4E}
 body.app-dark #app .prayer-slot.current,body.app-dark #app .prayer-slot.current *,body.app-dark .prayer-sheet .prayer-row.current,body.app-dark .prayer-sheet .prayer-row.current b,body.app-dark .prayer-sheet .prayer-row.current time{color:#0B1110!important}
 body.app-dark #app .prayer-slot.current small,body.app-dark .prayer-sheet .prayer-row.current small{color:rgba(11,17,16,.7)!important}
 body.app-dark .prayer-sheet .prayer-row.current i{background:rgba(11,17,16,.08);color:#0B1110}
+
+/* Rating by deed and participant cards */
+body #app .rt-metrics{margin:-8px -16px 0;padding:2px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+body #app .rt-metrics::-webkit-scrollbar{display:none}
+body #app .rt-metrics button{flex:none;height:38px;padding:0 16px;border:1px solid rgba(255,255,255,.55);border-radius:19px;background:rgba(255,255,255,.3);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#10161A;font-size:14px;font-weight:600}
+body #app .rt-metrics button.active{border-color:#0B0F12;background:#0B0F12;color:#fff}
+body #app [data-person]{cursor:pointer}
+body #app .rt-row[data-person]:active,body #app .rt-slot[data-person]:active{transform:scale(.98)}
+body #app .ps-person .sp-me small{color:#3E4A50}
+body #app .ps-person-stats span,body #app .ps-person-grid span{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+body #app .ps-person-stats span+span{border-left:1px solid rgba(16,22,26,.08)}
+body #app .ps-person-stats b{font-size:24px;font-weight:600;letter-spacing:-.02em}
+body #app .ps-person-stats small,body #app .ps-person-grid small{color:#7A858B;font-size:12px}
+body #app .ps-person-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px}
+body #app .ps-person-grid b{font-size:20px;font-weight:600}
+body #app .ps-badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+body #app .ps-badge{padding:14px 8px;border-radius:22px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+body #app .ps-badge i{width:44px;height:44px;border-radius:22px;background:rgba(255,255,255,.85);border:1px solid rgba(16,22,26,.06);color:#9AA3A8;display:grid;place-items:center}
+body #app .ps-badge i svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+body #app .ps-badge.earned i{background:#0B0F12;color:#fff}
+body #app .ps-badge b{font-size:12px;font-weight:600;line-height:1.25}
+body #app .ps-badge:not(.earned) b{color:#7A858B}
+body #app .ps-person-empty p{margin:0;color:#5E6A71;font-size:14px;text-align:center}
+body.app-dark #app .rt-metrics button{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .rt-metrics button.active{border-color:#EEF5F2;background:#EEF5F2;color:#0B1110}
+body.app-dark #app .ps-person .sp-me small,body.app-dark #app .ps-person-stats small,body.app-dark #app .ps-person-grid small,body.app-dark #app .ps-badge:not(.earned) b{color:var(--muted)}
+body.app-dark #app .ps-person-stats b,body.app-dark #app .ps-person-grid b,body.app-dark #app .ps-badge b{color:var(--ink)}
+body.app-dark #app .ps-person-stats span+span{border-color:rgba(255,255,255,.08)}
+body.app-dark #app .ps-badge{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72)}
+body.app-dark #app .ps-badge i{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1)}
+body.app-dark #app .ps-badge.earned i{background:#EEF5F2;color:#0B1110}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
