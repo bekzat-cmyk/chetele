@@ -265,8 +265,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     </section>
     <section id="zikr-view" class="view" aria-label="Зикр"></section>
     <section id="events-view" class="view"><div class="section-head events-head"><h2>События</h2><span>Вместе к общей цели</span></div><div id="events-list" aria-busy="true"><article class="ev-card ev-skeleton"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:70%;height:18px"></span><span class="sk-line" style="width:100%;height:12px"></span><span class="sk-line" style="width:100%;height:44px"></span></article></div></section>
-    <section id="rating-view" class="view"><div class="section-head rating-head"><h2>Рейтинг</h2><div class="rating-period" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div></div><div id="leaderboard" class="leader"></div><p id="rating-hint" class="rating-hint">Загрузка рейтинга…</p></section>
-    <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
+    <section id="rating-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Каждое дело — 10 очков</span><h2>Рейтинг</h2><span id="rating-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softRating"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период рейтинга"><button type="button" role="radio" data-rating-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-rating-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-rating-period="all" aria-checked="false">Всё время</button></div><div id="leaderboard" class="rt-board"></div><p id="rating-hint" class="rt-hint">Загрузка рейтинга…</p></section>
+    <section id="stats-view" class="view"><header class="stats-top"><div><span class="stats-eyebrow">Ваш путь в цифрах</span><h2>Статистика</h2><span id="stats-period-label" class="stats-period-label"></span></div><i class="stats-badge" data-icon="softStats"></i></header><div class="stats-seg glass-seg" role="radiogroup" aria-label="Период статистики"><button type="button" role="radio" data-period="week" aria-checked="true" class="active">Неделя</button><button type="button" role="radio" data-period="month" aria-checked="false">Месяц</button><button type="button" role="radio" data-period="all" aria-checked="false">Всё время</button></div><div id="stats-week"></div><div class="stats-tiles"><section class="stats-tile"><span class="stats-tile-top"><span>Куран</span><i data-icon="softQuran"></i></span><span class="stats-tile-value"><b id="stats-quran">0</b><small id="stats-quran-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Салават</span><i data-icon="softSalawat"></i></span><span class="stats-tile-value"><b id="stats-salawat">0</b><small id="stats-salawat-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Тахаджуд</span><i data-icon="softTahajjud"></i></span><span class="stats-tile-value"><b id="stats-tahajjud">0</b><small id="stats-tahajjud-unit"></small></span></section><section class="stats-tile"><span class="stats-tile-top"><span>Зикр</span><i data-icon="softZikr"></i></span><span class="stats-tile-value"><b id="stats-zikr">0</b><small id="stats-zikr-unit"></small></span></section></div><div id="stats-content"></div><p id="stats-note" class="stats-note" hidden></p></section>
     <section id="profile-view" class="view"><div class="section-head profile-head"><button id="profile-close" class="profile-icon-button" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><h2>Профиль</h2><button id="profile-edit" class="profile-icon-button" aria-label="Изменить имя"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg></button></div><section class="profile-card"><div class="avatar" id="profile-avatar">Б</div><h3 id="profile-name">—</h3><div class="profile-stats"><div class="profile-stat"><b id="profile-score">0</b><span>очков</span></div><div class="profile-stat"><b id="profile-rank">—</b><span>в рейтинге</span></div><div class="profile-stat"><b id="profile-best">0</b><span>лучшая серия</span></div></div></section><section id="profile-badges" class="profile-badges" aria-label="Достижения"></section><button type="button" class="profile-logout" data-profile-menu="logout"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>Выйти из аккаунта</button><p id="profile-version" class="profile-version"></p><div class="section-head"><h2>Ваш ритм</h2><span class="date">мягкие напоминания</span></div><section class="reminder-card" aria-label="Ежедневные напоминания"><div class="reminder-hero"><div class="reminder-icon">♧</div><div class="reminder-copy"><h3>Будьте в своём ритме</h3><p id="reminder-state">Три бережных сигнала в течение дня</p></div><button id="reminder-button" class="reminder-toggle" aria-label="Включить напоминания" aria-pressed="false"><i></i></button></div><div class="reminder-times"><div class="reminder-time"><span>12:00</span><small>начать путь</small></div><div class="reminder-time"><span>16:30</span><small>мягко продолжить</small></div><div class="reminder-time"><span>20:00</span><small>подвести итог</small></div></div><p id="reminder-detail" class="reminder-detail">Включите — и мы деликатно напомним о ваших делах.</p></section></section>
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="stats-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></i>Статистика</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
   </main>
@@ -315,6 +315,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softChevron:'<path d="M9.5 6l6 6-6 6"/>',
       softFlame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.6 2 3 0-3 .5-5.5.5-8z"/>',
       softStats:'<path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/>',
+      softRating:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/>',
       bookOpen:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
       scroll:'<path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
       book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>',
@@ -481,18 +482,19 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     /* Leaderboard: week and all time are loaded separately, each with its own status,
        and only for what is on screen. Saving a day refreshes the visible rating once,
        a moment later, instead of fetching both periods after every save. */
-    const boardStatus={week:'idle',all:'idle'}, boardLoading={};
+    const boardStatus={week:'idle',month:'idle',all:'idle'}, boardLoading={};
     function loadLeaderboard(period){
       if(boardLoading[period]) return boardLoading[period];
       if(boardStatus[period]!=='online') boardStatus[period]='loading';
       renderBoard();
       boardLoading[period]=(async()=>{
         try {
-          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='week'?'&period=week':''}`);
+          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='all'?'':`&period=${period}`}`);
           if(!response.ok) throw new Error('leaderboard_failed');
           const rows=await response.json();
           if(!Array.isArray(rows)) throw new Error('leaderboard_failed');
-          if(period==='week') state.weekLeaderboard=rows; else state.remoteLeaderboard=rows;
+          if(period==='week') state.weekLeaderboard=rows; else if(period==='month') state.monthLeaderboard=rows; else state.remoteLeaderboard=rows;
+          state.ratingTotal={...state.ratingTotal,[period]:Number(response.headers.get('X-Total-Count'))||0};
           boardStatus[period]='online';
         } catch { boardStatus[period]='offline'; }
         finally { delete boardLoading[period]; renderBoard(); if(period==='all') renderProfile(); }
@@ -886,35 +888,51 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const badges=achievementData(), earned=badges.filter(badge=>badge.earned).length;
       achievements.innerHTML=`<div class="achievements-head"><h2>Достижения</h2><span>${earned} из ${badges.length}</span></div><p class="achievements-help">Выполняйте условия в карточках, чтобы открыть достижения.</p><div class="achievements-grid">${badges.map(badge=>`<article class="achievement ${badge.earned?'earned':''}"><i>${badge.icon}</i><strong>${badge.title}</strong><small>${badge.detail}</small></article>`).join('')}</div>`;
     }
-    function ratingPeriod(){ return state.ratingPeriod==='all'?'all':'week'; }
+    function ratingPeriod(){ return ['month','all'].includes(state.ratingPeriod)?state.ratingPeriod:'week'; }
     function renderBoard(){
-      const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:state.remoteLeaderboard, status=boardStatus[period];
+      const period=ratingPeriod(), source=period==='week'?state.weekLeaderboard:period==='month'?state.monthLeaderboard:state.remoteLeaderboard, status=boardStatus[period];
       document.querySelectorAll('[data-rating-period]').forEach(button=>{ const on=button.dataset.ratingPeriod===period; button.classList.toggle('active',on); button.setAttribute('aria-checked',String(on)); });
-      const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1})) : [];
-      const leaderboard=document.querySelector('#leaderboard'), hint=document.querySelector('#rating-hint');
+      document.querySelectorAll('#rating-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
+      const locale=appLocale(), ky=locale==='ky-KG', number=new Intl.NumberFormat(locale);
+      const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
+      const points=n=>ky?'упай':plural(n,'очко','очка','очков');
+      const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1,move:Number(person.move)||0})) : [];
+      const leaderboard=document.querySelector('#leaderboard'), hint=document.querySelector('#rating-hint'), label=document.querySelector('#rating-period-label');
       const initial=name=>escapeHtml(Array.from(String(name).trim())[0]||'·');
-      const crown='<svg class="podium-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
+      const today=new Date(`${todayKey}T12:00:00`), from=new Date(today); from.setDate(from.getDate()-6);
+      if(period==='week'){ const range=new Intl.DateTimeFormat(locale,{day:'numeric',month:from.getMonth()===today.getMonth()?'long':'short'}); label.textContent=(range.formatRange?range.formatRange(from,today):`${range.format(from)} – ${range.format(today)}`).replace(/\./g,''); }
+      else if(period==='month'){ const month=new Intl.DateTimeFormat(locale,{month:'long'}).format(today); label.textContent=month.charAt(0).toUpperCase()+month.slice(1); }
+      else label.textContent=ky?'Бардык убакыт':'За всё время';
+      const moveText=move=>{ const n=Math.abs(move); return !move?(ky?'өзгөргөн жок':'без изменений'):`${move>0?'↑':'↓'} ${n} ${ky?'орун':plural(n,'позиция','позиции','позиций')}`; };
+      const moveClass=move=>move>0?' up':move<0?' down':'';
+      const crown='<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5 8 12l4-6.5 4 6.5 4.5-3.5L19 18H5zM5 21h14"/></svg>';
       if(status==='offline' && !people.length){
-        leaderboard.innerHTML='<div class="rating-empty"><b>Рейтинг недоступен</b><span>Ваши очки не потеряются — рейтинг обновится, когда появится интернет.</span></div>';
+        leaderboard.innerHTML=`<div class="rt-empty"><b>${ky?'Рейтинг жеткиликсиз':'Рейтинг недоступен'}</b><span>${ky?'Упайларыңыз жоголбойт — интернет пайда болгондо рейтинг жаңыланат.':'Ваши очки не потеряются — рейтинг обновится, когда появится интернет.'}</span></div>`;
       } else if(!Array.isArray(source)){
-        const slot=height=>`<div class="podium-slot"><span class="podium-avatar sk-light"></span><span class="sk-line sk-light"></span><div class="podium-step sk-light" style="height:${height}px"></div></div>`;
-        leaderboard.innerHTML=`<div class="podium" aria-busy="true">${slot(74)}${slot(100)}${slot(58)}</div><div class="rank-list">${[120,90,140].map(width=>`<div class="rank"><span class="sk-line" style="width:22px"></span><span class="rank-avatar sk"></span><span class="sk-line" style="width:${width}px"></span></div>`).join('')}</div>`;
+        const slot=height=>`<div class="rt-slot"><span class="rt-avatar sk-light"></span><span class="sk-line sk-light"></span><div class="rt-step sk-light" style="height:${height}px"></div></div>`;
+        leaderboard.innerHTML=`<section class="rt-podium" aria-busy="true">${slot(110)}${slot(150)}${slot(90)}</section><ol class="rt-list">${[120,90,140].map(width=>`<li class="rt-row"><span class="sk-line" style="width:22px"></span><span class="rt-row-avatar sk"></span><span class="sk-line" style="width:${width}px"></span></li>`).join('')}</ol>`;
       } else if(!people.length){
-        leaderboard.innerHTML='<div class="rating-empty"><b>Рейтинг пока пуст</b><span>Отметьте первое дело — и вы появитесь здесь.</span></div>';
+        leaderboard.innerHTML=`<div class="rt-empty"><b>${ky?'Рейтинг азырынча бош':'Рейтинг пока пуст'}</b><span>${ky?'Биринчи ишти белгилеңиз — ушул жерде пайда болосуз.':'Отметьте первое дело — и вы появитесь здесь.'}</span></div>`;
       } else {
-        const listed=people.filter(person=>person.place<=people.length||!person.me);
-        const top=listed.filter(person=>person.place<=3);
-        const podiumSlot=(p,place)=>p?`<div class="podium-slot place-${place} ${p.me?'me':''}">${place===1?crown:''}<span class="podium-avatar">${initial(p.name)}</span><span class="podium-name">${escapeHtml(p.name)}${p.me?' · вы':''}</span><div class="podium-step"><b>${place}</b><small>${p.points} очк.</small></div></div>`:'<div class="podium-slot"></div>';
-        const podium=top.length>=3?`<div class="podium">${podiumSlot(top[1],2)}${podiumSlot(top[0],1)}${podiumSlot(top[2],3)}</div>`:'';
+        const top=people.filter(person=>person.place<=3).sort((a,b)=>a.place-b.place), max=Math.max(1,top[0]?.points||0);
+        const podiumSlot=p=>{ const first=p.place===1; return `<div class="rt-slot${first?' first':''}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}"><span class="rt-crown">${first?crown:''}</span><span class="rt-avatar">${initial(p.name)}</span><span class="rt-name"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small>${number.format(p.points)} ${ky?'уп.':'очк.'}</small></span><div class="rt-step" style="height:${Math.round(60+70*p.points/max)+(first?20:0)}px"><span>${p.place}</span></div></div>`; };
+        const podium=`<section class="rt-podium" aria-label="${ky?'Алдыңкы үчөө':'Тройка лидеров'}">${[top[1],top[0],top[2]].filter(Boolean).map(podiumSlot).join('')}</section>`;
         const me=people.find(person=>person.me), above=me?people.find(person=>person.place===me.place-1):null;
-        const meHint=!me?'':me.place===1?'Вы на первом месте — так держать!':period==='week'&&!me.points?'Отметьте дело, чтобы попасть в рейтинг недели':above?`До ${me.place-1} места — ${Math.max(10,above.points-me.points+10)} очк.`:'Каждое дело — плюс 10 очков';
-        const meCard=me?`<div class="rank-me"><span class="rank-num">${me.place}</span><span class="rank-avatar">${initial(me.name)}</span><div class="rank-me-copy"><b>${escapeHtml(me.name)} · вы</b><span>${meHint}</span></div><span class="rank-points">${me.points}</span></div>`:'';
-        const rest=listed.filter(person=>(top.length>=3?person.place>3:true)&&!person.me);
-        leaderboard.innerHTML=podium+meCard+(rest.length?`<div class="rank-list">${rest.map(p=>`<div class="rank"><span class="rank-num">${p.place}</span><span class="rank-avatar">${initial(p.name)}</span><span class="rank-name">${escapeHtml(p.name)}</span><span class="rank-points">${p.points}</span></div>`).join('')}</div>`:'');
+        let meCard='';
+        if(me){
+          const gap=above?Math.max(10,above.points-me.points+10):0;
+          const goal=me.place===1?(ky?'Сиз биринчи орундасыз — ушундай уланта бериңиз!':'Вы на первом месте — так держать!'):!me.points&&period==='week'?(ky?'Рейтингге кирүү үчүн ишти белгилеңиз':'Отметьте дело, чтобы попасть в рейтинг недели'):above?`${ky?`${me.place-1}-орунга чейин`:`До ${me.place-1} места`} — ${number.format(gap)} ${points(gap)}`:'';
+          const pct=me.place===1?100:above&&above.points?Math.min(100,Math.round(me.points/above.points*100)):0;
+          meCard=`<section class="rt-me" aria-label="${ky?'Сиздин ордуңуз':'Ваше место'}"><div class="rt-me-top"><span class="rt-me-place">#${me.place}</span><span class="rt-me-copy"><b>${escapeHtml(me.name)} · ${ky?'сиз':'вы'}</b><small>${moveText(me.move)}${period==='week'?(ky?' аптада':' за неделю'):period==='month'?(ky?' айда':' за месяц'):''}</small></span><span class="rt-me-points"><b>${number.format(me.points)}</b><small>${points(me.points)}</small></span></div><div class="rt-me-goal"><span class="rt-track" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="rt-me-foot"><span>${goal}</span>${above&&me.place>1?`<b>≈ ${number.format(Math.ceil(gap/10))} ${ky?'иш':plural(Math.ceil(gap/10),'дело','дела','дел')}</b>`:''}</span></div></section>`;
+        }
+        const rest=people.filter(person=>person.place>3);
+        const total=Number(state.ratingTotal?.[period])||0;
+        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
+        leaderboard.innerHTML=podium+meCard+list;
       }
-      if(status==='online'||(status==='loading'&&people.length)) hint.textContent=period==='week'?'Очки за последние 7 дней. Каждое дело — 10 очков.':'Очки за всё время. Каждое дело — 10 очков.';
-      else if(status==='offline') hint.textContent=people.length?'Нет связи с сервером. Рейтинг обновится, когда появится интернет.':'';
-      else hint.textContent='Загрузка рейтинга…';
+      if(status==='online'||(status==='loading'&&people.length)) hint.textContent=ky?'Упайлар белгиленген иштер үчүн эсептелет. Рейтинг белгилегенден кийин дароо жаңыланат.':'Очки считаются за отмеченные дела. Рейтинг обновляется сразу после отметки.';
+      else if(status==='offline') hint.textContent=people.length?(ky?'Сервер менен байланыш жок. Интернет пайда болгондо рейтинг жаңыланат.':'Нет связи с сервером. Рейтинг обновится, когда появится интернет.'):'';
+      else hint.textContent=ky?'Рейтинг жүктөлүүдө…':'Загрузка рейтинга…';
     }
     document.addEventListener('click',event=>{
       const button=event.target.closest('[data-rating-period]'); if(!button||button.dataset.ratingPeriod===ratingPeriod()) return;
@@ -1104,7 +1122,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector(`.nav [data-view="${viewId}"]`)?.classList.add('active');
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
-      document.querySelector('#app').classList.toggle('on-stats',viewId==='stats-view');
+      document.querySelector('#app').classList.toggle('on-glass',viewId==='stats-view'||viewId==='rating-view');
       if(viewId==='rating-view') loadLeaderboard(ratingPeriod());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
@@ -1470,7 +1488,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         'Профиль':'Профиль','очков':'упай','в рейтинге':'рейтингде','лучшая серия':'эң узун серия','Достижения':'Жетишкендиктер','Напоминания':'Эскертмелер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Выйти из аккаунта':'Аккаунттан чыгуу','Включены':'Күйгүзүлгөн','Выключены':'Өчүрүлгөн','Тема и язык':'Тема жана тил',
         'Вместе к общей цели':'Жалпы максатка бирге','Скоро новое событие':'Жакында жаңы иш-чара','Общая цель':'Жалпы максат','Личный путь':'Жеке жол','Вы участвуете':'Сиз катышып жатасыз','Мой вклад':'Менин салымым','Моё место':'Менин ордум','Участники':'Катышуучулар','Лидеры':'Лидерлер','Участвовать':'Катышуу','Осталось':'Калды','Вернуться к делам':'Иштерге кайтуу','Повторить':'Кайталоо',
         'Месяц':'Ай','Всё':'Баары','Тахаджуд':'Тахажжуд','Лучшая серия':'Эң узун серия','Остальные дела':'Башка иштер',
-        'Неделя':'Апта','Всё время':'Бардык убакыт','Ваш путь в цифрах':'Сиздин жолуңуз сандарда','Рейтинг недоступен':'Рейтинг жеткиликсиз','Рейтинг пока пуст':'Рейтинг азырынча бош',
+        'Неделя':'Апта','Всё время':'Бардык убакыт','Ваш путь в цифрах':'Сиздин жолуңуз сандарда','Каждое дело — 10 очков':'Ар бир иш — 10 упай','Рейтинг недоступен':'Рейтинг жеткиликсиз','Рейтинг пока пуст':'Рейтинг азырынча бош',
         'Отмечено':'Белгиленди','Ещё не начато':'Азырынча баштала элек','страниц за сегодня':'бүгүнкү беттер','раз за сегодня':'бүгүн, жолу','Намаз':'Намаз','Сбросить':'Тазалоо','Сохраняем…':'Сакталууда…','Сохранено в кабинете':'Кабинетке сакталды','Изменения сохраняются автоматически':'Өзгөрүүлөр автоматтык түрдө сакталат','Сохранено на телефоне — отправим, когда появится связь':'Телефонго сакталды — байланыш болгондо жөнөтөбүз',
         'Добро пожаловать':'Кош келиңиз','На пути к сильному таква':'Бекем такыбалык жолунда','Путь к сильному таква':'Бекем такыбалык жолунда','Отмечайте свой путь, сохраняйте постоянство и растите вместе с другими.':'Жолуңузду белгилеп, туруктуулукту сактап, башкалар менен бирге өсүңүз.','Как вас зовут?':'Атыңыз ким?','Придумайте пароль':'Сырсөз ойлоп табыңыз','Показать пароль':'Сырсөздү көрсөтүү','Запомнить меня':'Мени эстеп кал','Создать кабинет':'Кабинет ачуу','У меня уже есть аккаунт':'Менде аккаунт бар','С возвращением':'Кайра кош келдиңиз','Введите имя и пароль, чтобы продолжить свой путь.':'Жолуңузду улантуу үчүн атыңызды жана сырсөзүңүздү жазыңыз.','Ваше имя':'Сиздин атыңыз','Ваш пароль':'Сиздин сырсөзүңүз','Войти в кабинет':'Кабинетке кирүү','Создать аккаунт':'Аккаунт ачуу','Открыть профиль':'Профилди ачуу','Ваш ритм':'Сиздин ыргагыңыз','последние 7 дней':'акыркы 7 күн','дней':'күн','Вы держите ритм':'Ыргакты сактап жатасыз','Добавляйте хотя бы одно дело каждый день.':'Күн сайын жок дегенде бир ишти белгилеңиз.','🔥 Серия продолжается':'🔥 Серия уланууда','Достижения ждут вас':'Жетишкендиктер күтөт','Откройте первое достижение в профиле.':'Профилден биринчи жетишкендикти ачыңыз.','Смотреть':'Көрүү','Хадис дня':'Күндүн хадиси','Подробнее':'Кененирээк','Профиль':'Профиль','В главное':'Башкы бетке','Ваш ежедневный путь в Chetele':'Cheteleдеги күнүмдүк жолуӊуз','Всего баллов':'Жалпы упай','Место в рейтинге':'Рейтингдеги орун','мягкие напоминания':'жумшак эскертмелер','Будьте в своём ритме':'Өз ыргагыңызда болуңуз','Три бережных сигнала в течение дня':'Күндүз үч жумшак белги','начать путь':'жолду баштоо','мягко продолжить':'жай улантуу','подвести итог':'жыйынтык чыгаруу','Включите — и мы деликатно напомним о ваших делах.':'Күйгүзүңүз — иштериңизди сылык эскертебиз.','Закрыть':'Жабуу','Календарь':'Календарь','Нажмите на дату':'Күндү тандаңыз','Открыть дела за этот день':'Бул күндүн иштерин ачуу','Смысл хадиса':'Хадистин мааниси','Небольшой шаг на сегодня':'Бүгүнкү кичинекей кадам','Изменить имя':'Атын өзгөртүү','Сохранить':'Сактоо','Цель выполнена':'Максат аткарылды','Вы завершили все дела на сегодня. Пусть этот ритм приносит вам пользу.':'Бүгүнкү бардык иштерди аткардыңыз. Бул ыргак сизге пайда алып келсин.','Нажмите, чтобы продолжить':'Улантуу үчүн басыңыз','Минимум дня выполнен':'Күндүн минимуму аткарылды','Ваша личная цель':'Жеке максатыңыз','Выберите спокойный и достижимый ориентир для этого события.':'Бул окуя үчүн жетүүгө боло турган максатты тандаңыз.','Личная цель':'Жеке максат','Отмена':'Жокко чыгаруу','Участвовать':'Катышуу','Чтение':'Окуу','Сколько страниц прочитали?':'Канча бет окудуңуз?','стр.':'бет','Нафиль намаз':'Напил намаз','Отмечайте каждый совершённый намаз':'Ар бир окулган намазды белгилеңиз','Прочитали сегодня?':'Бүгүн окудуңузбу?','Совершили сегодня?':'Бүгүн окудуңузбу?','Да':'Ооба','Нет':'Жок','Каза намаз':'Каза намаз','Пропущенные намазы':'Каза намаздар','Книги':'Китеп','Ночной намаз':'Түнкү намаз','нафиль':'напил','раз сегодня':'бүгүн, жолу','Нажмите, чтобы прибавить':'Кошуу үчүн басыңыз','Счётчик':'Эсептегич','Фаджр':'Багымдат','Восход':'Күн чыгыш','Зухр':'Бешим','Магриб':'Шам','Иша':'Куптан','Эта неделя':'Ушул апта','Следующий намаз':'Кийинки намаз','Расписание на день':'Күндүн тартиби','Дальше':'Андан кийин','Время намазов':'Намаз убактылары','Ваш город':'Сиздин шаар','Определить автоматически':'Автоматтык аныктоо','Зикр и салават':'Зикир жана салават','Количество прочитанных':'Окулган саны','раз':'жолу','Сегодняшние дела':'Бүгүнкү иштер','Дела за выбранный день':'Тандалган күндүн иштери','Остальные дела':'Башка иштер','Выполняйте условия в карточках, чтобы открыть достижения.':'Жетишкендиктерди ачуу үчүн карточкадагы шарттарды аткарыңыз.','Рейтинг пока пуст.':'Рейтинг азырынча бош.','Не удалось получить рейтинг.':'Рейтингди алуу мүмкүн болгон жок.','Рейтинг обновляется после каждого выполненного дела.':'Рейтинг ар бир аткарылган иштен кийин жаңыланат.','Загрузка рейтинга…':'Рейтинг жүктөлүүдө…','Сейчас нет активных событий. Скоро здесь появится новая общая цель.':'Азыр активдүү окуялар жок. Жакында жаңы жалпы максат чыгат.','Лидеры события':'Окуянын лидерлери','Пока нет участников':'Катышуучулар азырынча жок','Личный путь':'Жеке жол','Общая цель сообщества.':'Коомчулуктун жалпы максаты.','Личный путь в своём темпе.':'Өз ыргагыңыздагы жеке жол.','Вы участвуете':'Сиз катышып жатасыз','Ваш путь':'Сиздин жолуңуз','Присоединяем…':'Кошулуп жатабыз…','Не удалось вступить':'Кошулуу мүмкүн болгон жок.','Укажите цель больше нуля.':'Нөлдөн чоң максатты жазыңыз.','Новое достижение!':'Жаңы жетишкендик!','Открыто достижение':'Жетишкендик ачылды','Все достижения уже открыты. Ма ша Аллах!':'Бардык жетишкендиктер ачылды. Ма шаа Аллах!','Версия приложения':'Тиркеменин нускасы','Выйти из аккаунта':'Аккаунттан чыгуу','Достижения':'Жетишкендиктер','Настройки':'Жөндөөлөр','О приложении':'Тиркеме жөнүндө','Уведомления':'Эскертмелер','Время уведомления':'Эскертменин убактысы','Ежедневно':'Күн сайын','Ежедневное напоминание':'Күнүмдүк эскертме','Мягкий сигнал в удобное для вас время':'Ыңгайлуу убакыттагы жумшак белги','Пример уведомления':'Эскертменин мисалы','Утро':'Эртең менен','День':'Күндүз','Вечер':'Кечинде','салаватов':'салават','зикров':'зикир','страниц':'бет','тахаджудов':'тахажуд','участников':'катышуучу','Не удалось загрузить события. Проверьте подключение.':'Окуяларды жүктөө мүмкүн болгон жок. Байланышты текшериңиз.','Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.':'Бул түзмөктө сакталган маалыматтар көрсөтүлдү. Толук тарых үчүн интернетке кошулуңуз.','Включая сегодняшний прогресс и все сохранённые дни.':'Бүгүнкү прогресс жана бардык сакталган күндөр кошо эсептелди.','Не удалось изменить настройку. Проверьте подключение.':'Жөндөөнү өзгөртүү мүмкүн болгон жок. Байланышты текшериңиз.','Напоминания включены.':'Эскертмелер күйгүзүлдү.','Напоминания выключены.':'Эскертмелер өчүрүлдү.','Время сохранено.':'Убакыт сакталды.','Пока нет активных событий':'Активдүү окуялар азырынча жок','Скоро здесь появится новая общая цель. Вы сможете присоединиться и идти к ней вместе.':'Жакында бул жерде жаңы жалпы максат пайда болот. Ага кошулуп, бирге бара аласыз.','Следите за обновлениями':'Жаңылыктарды байкаңыз','События пока недоступны':'Окуялар азырынча жеткиликсиз','Проверьте подключение к интернету и попробуйте снова.':'Интернет байланышын текшерип, кайра аракет кылыңыз.','Обновите страницу':'Баракты жаңыртыңыз'
       };
@@ -2401,10 +2419,10 @@ body .prayer-sheet .prayer-geo small{font-weight:400}
 body .prayer-sheet .prayer-geo{min-height:60px;border-radius:20px}
 
 /* Statistics in the soft glass style */
-body #app.on-stats{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body #app.on-stats button{font-family:inherit}
-body #app #stats-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
-body #app #stats-view>*{margin:0}
+body #app.on-glass{background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px,#F2F3F4 100%)!important;padding-left:16px;padding-right:16px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body #app.on-glass button{font-family:inherit}
+body #app #stats-view.active,body #app #rating-view.active{display:flex;flex-direction:column;gap:22px;color:#10161A}
+body #app #stats-view>*,body #app #rating-view>*{margin:0}
 body #app #stats-view .lucide{stroke-width:1.6}
 body #app .stats-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 4px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 body #app .stats-top>div{display:flex;flex-direction:column}
@@ -2413,10 +2431,10 @@ body #app .stats-top h2{margin:0;color:#fff;font-size:30px;font-weight:600;lette
 body #app .stats-period-label{color:rgba(255,255,255,.72);font-size:30px;font-weight:400;letter-spacing:-.02em;line-height:1.15}
 body #app .stats-badge{width:48px;height:48px;flex:none;border-radius:24px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;display:grid;place-items:center}
 body #app .stats-badge .lucide{width:22px;height:22px}
-body #app #stats-view .stats-seg{padding:4px;border-radius:24px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.26);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
-body #app #stats-view .stats-seg button{height:40px;padding:0;border:0;border-radius:20px;background:transparent;color:#fff;font-size:14px;font-weight:600;box-shadow:none;transition:transform .12s cubic-bezier(.2,.8,.2,1),background .2s ease,color .2s ease,box-shadow .2s ease}
-body #app #stats-view .stats-seg button.active{background:#fff;color:#10161A;font-weight:600;box-shadow:0 6px 18px rgba(16,22,26,.12)}
-body #app #stats-view .stats-seg button:active{transform:scale(.94)}
+body #app .glass-seg{padding:4px;border-radius:24px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.26);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+body #app .glass-seg button{height:40px;padding:0;border:0;border-radius:20px;background:transparent;color:#fff;font-size:14px;font-weight:600;box-shadow:none;transition:transform .12s cubic-bezier(.2,.8,.2,1),background .2s ease,color .2s ease,box-shadow .2s ease}
+body #app .glass-seg button.active{background:#fff;color:#10161A;font-weight:600;box-shadow:0 6px 18px rgba(16,22,26,.12)}
+body #app .glass-seg button:active{transform:scale(.94)}
 
 body #app .stats-chart{border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10);display:flex;flex-direction:column}
 body #app .stats-chart-bar{height:52px;padding:0 22px;display:flex;align-items:center;gap:10px;color:#1D2A30;font-size:14px;font-weight:500}
@@ -2484,10 +2502,10 @@ body #app .stats-streak .heat-3{background:#10161A}
 body #app .stats-section-sub{color:#5E6A71;font-size:14px;font-weight:500}
 body #app #stats-view .stats-note{margin:0 8px;color:#7A858B;font-size:12px;font-weight:400;text-align:center}
 body #app #stats-content{display:flex;flex-direction:column;gap:22px}
-@media (prefers-reduced-motion: reduce){body #app .stats-bar i,body #app .stats-track i,body #app #stats-view .stats-seg button{transition:none}}
-body.a11y-reduce #app .stats-bar i,body.a11y-reduce #app .stats-track i,body.a11y-reduce #app #stats-view .stats-seg button{transition:none}
-body.app-dark #app.on-stats{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
-body.app-dark #app #stats-view.active{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){body #app .stats-bar i,body #app .stats-track i,body #app .glass-seg button{transition:none}}
+body.a11y-reduce #app .stats-bar i,body.a11y-reduce #app .stats-track i,body.a11y-reduce #app .glass-seg button{transition:none}
+body.app-dark #app.on-glass{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}
+body.app-dark #app #stats-view.active,body.app-dark #app #rating-view.active{color:var(--ink)}
 body.app-dark #app .stats-chart,body.app-dark #app #stats-view .stats-tile,body.app-dark #app .stats-card{border-color:rgba(255,255,255,.08)!important;background:rgba(23,32,30,.72)!important;box-shadow:none}
 body.app-dark #app .stats-chart-card{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none}
 body.app-dark #app .stats-chart-bar{color:var(--ink)}
@@ -2505,6 +2523,71 @@ body.app-dark #app .stats-streak .heat-2{background:rgba(255,255,255,.5)}
 body.app-dark #app .stats-heat span.is-today{border-color:#0B1110}
 body.app-dark #app .stats-card hr{background:rgba(255,255,255,.08)}
 body.app-dark #app .stats-section-head span,body.app-dark #app .stats-tile-top,body.app-dark #app #stats-view .stats-tile-top span,body.app-dark #app .stats-section-sub{color:var(--muted)}
+
+/* Rating in the soft glass style */
+body #app .rt-board{display:flex;flex-direction:column;gap:22px}
+body #app .rt-podium{padding:22px 14px 0;border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end;overflow:hidden}
+body #app .rt-slot{min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+body #app .rt-crown{height:20px;color:#fff}
+body #app .rt-crown .lucide{width:20px;height:20px;stroke-width:1.6}
+body #app .rt-avatar{width:52px;height:52px;border-radius:50%;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);box-shadow:0 6px 18px rgba(16,22,26,.10);display:grid;place-items:center;font-size:19px;font-weight:600;color:#10161A}
+body #app .rt-slot.first .rt-avatar{width:64px;height:64px;font-size:24px}
+body #app .rt-name{max-width:100%;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+body #app .rt-name b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:600}
+body #app .rt-name small{color:#5E6A71;font-size:12px}
+body #app .rt-step{width:100%;box-sizing:border-box;padding-top:12px;border-radius:22px 22px 0 0;border:1px solid rgba(255,255,255,.9);border-bottom:0;background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.45));box-shadow:inset 0 1px 0 #fff;display:grid;place-items:start center;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+body #app .rt-slot.first .rt-step{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.7))}
+body #app .rt-step span{color:#5E6A71;font-size:26px;font-weight:600;letter-spacing:-.02em}
+body #app .rt-slot.first .rt-step span{color:#10161A}
+body #app .rt-me,body #app .rt-list,body #app .rt-empty{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06)}
+body #app .rt-me{padding:16px;border-radius:28px;display:flex;flex-direction:column;gap:14px}
+body #app .rt-me-top{display:flex;align-items:center;gap:12px}
+body #app .rt-me-place{min-width:44px;height:44px;padding:0 10px;box-sizing:border-box;border-radius:22px;background:#0B0F12;color:#fff;display:grid;place-items:center;font-size:16px;font-weight:600}
+body #app .rt-me-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .rt-me-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:600}
+body #app .rt-me-copy small{color:#7A858B;font-size:13px}
+body #app .rt-me-points{display:flex;flex-direction:column;align-items:flex-end}
+body #app .rt-me-points b{font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app .rt-me-points small{color:#7A858B;font-size:12px}
+body #app .rt-me-goal{display:flex;flex-direction:column;gap:8px}
+body #app .rt-track{height:8px;border-radius:4px;background:rgba(16,22,26,.08);overflow:hidden}
+body #app .rt-track i{display:block;height:100%;border-radius:4px;background:#10161A;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+body #app .rt-me-foot{display:flex;justify-content:space-between;gap:12px;color:#5E6A71;font-size:13px}
+body #app .rt-me-foot b{color:#10161A;font-weight:600;white-space:nowrap}
+body #app .rt-all{display:flex;flex-direction:column;gap:12px}
+body #app .rt-list{margin:0;padding:6px;list-style:none;border-radius:28px;display:flex;flex-direction:column}
+body #app .rt-row{min-height:60px;padding:0 12px;border-radius:22px;display:flex;align-items:center;gap:12px}
+body #app .rt-row.me{background:rgba(255,255,255,.95);box-shadow:0 6px 18px rgba(16,22,26,.08)}
+body #app .rt-row-place{width:22px;flex:none;text-align:center;color:#7A858B;font-size:15px;font-weight:600}
+body #app .rt-row.me .rt-row-place{color:#10161A}
+body #app .rt-row-avatar{width:40px;height:40px;flex:none;border-radius:20px;border:1px solid rgba(16,22,26,.06);background:rgba(255,255,255,.85);color:#10161A;display:grid;place-items:center;font-size:15px;font-weight:600}
+body #app .rt-row.me .rt-row-avatar{background:#0B0F12;color:#fff}
+body #app .rt-row-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+body #app .rt-row-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;font-weight:600}
+body #app .rt-row-copy small{color:#7A858B;font-size:12px}
+body #app .rt-row-copy small.up{color:#2F7A5F}
+body #app .rt-row-copy small.down{color:#A0563B}
+body #app .rt-row-points{font-size:16px;font-weight:600}
+body #app .rt-empty{padding:28px 22px;border-radius:28px;display:flex;flex-direction:column;gap:6px;text-align:center}
+body #app .rt-empty b{font-size:17px;font-weight:600}
+body #app .rt-empty span{color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .rt-hint{align-self:center;max-width:300px;margin:0 auto;color:#7A858B;font-size:13px;line-height:1.45;text-align:center}
+body #app .rt-hint:empty{display:none}
+@media (prefers-reduced-motion: reduce){body #app .rt-step,body #app .rt-track i{transition:none}}
+body.a11y-reduce #app .rt-step,body.a11y-reduce #app .rt-track i{transition:none}
+body.app-dark #app .rt-podium,body.app-dark #app .rt-me,body.app-dark #app .rt-list,body.app-dark #app .rt-empty{border-color:rgba(255,255,255,.08)!important;background:rgba(23,32,30,.72)!important;box-shadow:none}
+body.app-dark #app .rt-avatar,body.app-dark #app .rt-row-avatar{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none}
+body.app-dark #app .rt-step{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.06);box-shadow:none}
+body.app-dark #app .rt-slot.first .rt-step{background:rgba(255,255,255,.14)}
+body.app-dark #app .rt-step span,body.app-dark #app .rt-name small,body.app-dark #app .rt-me-foot,body.app-dark #app .rt-empty span{color:var(--muted)}
+body.app-dark #app .rt-slot.first .rt-step span,body.app-dark #app .rt-me-foot b{color:var(--ink)}
+body.app-dark #app .rt-me-place,body.app-dark #app .rt-row.me .rt-row-avatar{background:#EEF5F2;color:#0B1110}
+body.app-dark #app .rt-track{background:rgba(255,255,255,.1)}
+body.app-dark #app .rt-track i{background:#EEF5F2}
+body.app-dark #app .rt-row.me{background:rgba(255,255,255,.12);box-shadow:none}
+body.app-dark #app .rt-row.me .rt-row-place{color:var(--ink)}
+body.app-dark #app .rt-row-copy small.up{color:#7FC8A6}
+body.app-dark #app .rt-row-copy small.down{color:#E09A7E}
 
 /* Dark theme */
 body.app-dark #app.on-today{background:linear-gradient(180deg,#1E3B36 0,#183330 260px,#101D1B 640px,#0B1110 900px,#0B1110 100%)!important}

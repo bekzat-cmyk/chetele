@@ -724,16 +724,33 @@ try {
         $limit = min(max((int)($_GET['limit'] ?? 50), 1), 100);
         /* User ids are never exposed publicly; the caller's own row is marked with "me". */
         $sessionUser = sessionUserId($db);
-        /* period=week counts the last 7 days including today; anything else is all time. */
-        $weekly = ($_GET['period'] ?? '') === 'week';
-        $joinPeriod = $weekly ? ' AND e.entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)' : '';
+        /* period=week counts the last 7 days including today, period=month the calendar
+           month so far; anything else is all time. Each row's "move" compares the place with
+           the previous period (the 7 days before, last month, or all time up to a week ago). */
+        $period = $_GET['period'] ?? '';
+        if ($period === 'week') {
+            $joinPeriod = ' AND e.entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)';
+            $joinBefore = ' AND e.entry_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 13 DAY) AND DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
+        } elseif ($period === 'month') {
+            $joinPeriod = " AND e.entry_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01')";
+            $joinBefore = " AND e.entry_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND e.entry_date < DATE_FORMAT(CURDATE(), '%Y-%m-01')";
+        } else {
+            $joinPeriod = '';
+            $joinBefore = ' AND e.entry_date < DATE_SUB(CURDATE(), INTERVAL 6 DAY)';
+        }
+        $placesBefore = [];
+        foreach ($db->query("SELECT u.id FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinBefore} GROUP BY u.id, u.created_at ORDER BY COALESCE(SUM(e.points), 0) DESC, u.created_at ASC")->fetchAll() as $index => $row) {
+            $placesBefore[(string)$row['id']] = $index + 1;
+        }
+        $move = function (string $id, int $place) use ($placesBefore): int { return isset($placesBefore[$id]) ? $placesBefore[$id] - $place : 0; };
+        header('X-Total-Count: ' . count($placesBefore));
         $statement = $db->query("SELECT u.id, u.display_name AS name, COALESCE(SUM(e.points), 0) AS points FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinPeriod} GROUP BY u.id, u.display_name, u.created_at ORDER BY points DESC, u.created_at ASC LIMIT {$limit}");
         $rows = [];
         $meListed = false;
         foreach ($statement->fetchAll() as $index => $row) {
             $isMe = $sessionUser !== null && hash_equals($sessionUser, (string)$row['id']);
             $meListed = $meListed || $isMe;
-            $rows[] = ['name' => $row['name'], 'points' => (int)$row['points'], 'me' => $isMe, 'place' => $index + 1];
+            $rows[] = ['name' => $row['name'], 'points' => (int)$row['points'], 'me' => $isMe, 'place' => $index + 1, 'move' => $move((string)$row['id'], $index + 1)];
         }
         /* The caller outside the top list still gets their own place, appended last. */
         if ($sessionUser !== null && !$meListed) {
@@ -743,7 +760,8 @@ try {
             if ($me) {
                 $ahead = $db->prepare("SELECT COUNT(*) FROM (SELECT u.id, COALESCE(SUM(e.points), 0) AS points FROM users u LEFT JOIN daily_entries e ON e.user_id = u.id{$joinPeriod} GROUP BY u.id) ranked WHERE points > ?");
                 $ahead->execute([(int)$me['points']]);
-                $rows[] = ['name' => $me['name'], 'points' => (int)$me['points'], 'me' => true, 'place' => (int)$ahead->fetchColumn() + 1];
+                $place = (int)$ahead->fetchColumn() + 1;
+                $rows[] = ['name' => $me['name'], 'points' => (int)$me['points'], 'me' => true, 'place' => $place, 'move' => $move($sessionUser, $place)];
             }
         }
         respond(200, $rows);
