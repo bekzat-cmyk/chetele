@@ -2862,18 +2862,20 @@ body.app-dark #app .zg-track{background:rgba(255,255,255,.1)}
 body.app-dark #app .zg-track i,body.app-dark #app .zg-ring .zg-ring-value{background:#EEF5F2;stroke:#EEF5F2}
 body.app-dark #app .zg-ring circle{stroke:rgba(255,255,255,.12)}
 body.app-dark #app .zg-row{border-color:rgba(255,255,255,.06)}
-/* The counter fits one screen without scrolling: the text gets 70% of the free height, the tap area 30%. */
+/* The counter fits one screen without scrolling: the text gets 60% of the free height, the tap area 40%. */
 body #app #zikr-view.active.is-counter{height:calc(100dvh - 100px - env(safe-area-inset-bottom));gap:12px;overflow:hidden}
-body #app #zikr-view.is-counter .zg-text{flex:7 1 0;height:auto;min-height:0;padding:16px 18px}
-body #app #zikr-view.is-counter .zg-counter{flex:3 1 0;height:auto;min-height:150px}
+body #app #zikr-view.is-counter .zg-text{flex:6 1 0;height:auto;min-height:0;padding:16px 18px}
+body #app #zikr-view.is-counter .zg-counter{flex:4 1 0;height:auto;min-height:170px}
 body #app #zikr-view.is-counter .zg-goal{height:40px}
 body #app #zikr-view.is-counter .zg-tap{gap:4px}
 body #app #zikr-view.is-counter .zg-tap small{display:none}
-body #app #zikr-view.is-counter .zg-count{font-size:clamp(44px,8vh,72px)}
+body #app #zikr-view.is-counter .zg-count{font-size:clamp(52px,10vh,84px)}
 body #app #zikr-view.is-counter .zg-hint{font-size:14px}
 body #app #zikr-view.is-counter .zg-done-icon{width:48px;height:48px;border-radius:24px;box-shadow:0 0 0 8px rgba(255,214,140,.35)}
 body #app #zikr-view.is-counter .zg-done-icon .lucide{width:24px;height:24px}
 body #app #zikr-view.is-counter .zg-done-title{font-size:18px}
+/* The counter screen is flat: no shadows on the cards or the round buttons. */
+body #app #zikr-view.is-counter .zg-text,body #app #zikr-view.is-counter .zg-counter,body #app #zikr-view.is-counter .zg-tap,body #app #zikr-view.is-counter .zg-circle{box-shadow:none}
 /* Older dark rules mute text inside buttons; the zikr numbers and titles stay bright. */
 body #app .zg-count,body #app .zg-done-title{color:#10161A}
 body.app-dark #app .zg-count,body.app-dark #app .zg-done-title,body.app-dark #app .zg-entry b,body.app-dark #app .zg-row-copy b,body.app-dark #app .zg-event b,body.app-dark #app .zg-sum b,body.app-dark #app .zg-split b{color:var(--ink)}
