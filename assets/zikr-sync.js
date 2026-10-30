@@ -58,7 +58,16 @@
     return { zikr: counts, deltas };
   }
 
-  const api = { addPending, adoptServer, trimToTotal };
+  /* Salawat is one zikr, so the day's salawat and its counter are the same number.
+     Returns the counts with salawat set to the day total and the delta for the server. */
+  function matchSalawat(zikr, total) {
+    const counts = { ...(zikr && typeof zikr === 'object' ? zikr : {}) };
+    const want = Math.max(0, Number(total) || 0), delta = want - (Number(counts.salawat) || 0);
+    if (want) counts.salawat = want; else delete counts.salawat;
+    return { zikr: counts, delta };
+  }
+
+  const api = { addPending, adoptServer, trimToTotal, matchSalawat };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ChetZikrSync = api;
 })(typeof window !== 'undefined' ? window : globalThis);

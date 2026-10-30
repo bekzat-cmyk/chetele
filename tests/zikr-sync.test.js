@@ -1,7 +1,7 @@
 // Run: node --test tests/
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { addPending, adoptServer, trimToTotal } = require('../assets/zikr-sync.js');
+const { addPending, adoptServer, trimToTotal, matchSalawat } = require('../assets/zikr-sync.js');
 
 test('taps on one day add up per zikr', () => {
   let pending = {};
@@ -53,4 +53,10 @@ test('a total at or above the counted zikrs changes nothing', () => {
   const { zikr, deltas } = trimToTotal({ salawat: 5, subhanallah: 3 }, 'salawat', 8);
   assert.deepEqual(zikr, { salawat: 5, subhanallah: 3 });
   assert.deepEqual(deltas, {});
+});
+
+test('salawat on the main screen becomes the salawat counter, up or down', () => {
+  assert.deepEqual(matchSalawat({ salawat: 3, subhanallah: 2 }, '36'), { zikr: { salawat: 36, subhanallah: 2 }, delta: 33 });
+  assert.deepEqual(matchSalawat({ salawat: 36 }, '10'), { zikr: { salawat: 10 }, delta: -26 });
+  assert.deepEqual(matchSalawat({ salawat: 5 }, ''), { zikr: {}, delta: -5 });
 });

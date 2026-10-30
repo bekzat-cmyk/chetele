@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js"></script>
-  <script src="assets/zikr-sync.js?v=2"></script>
+  <script src="assets/zikr-sync.js?v=3"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
     :root { --ink:#18222d; --muted:#7d8793; --surface:#fff; --page:#f4f5f8; --line:#e9ebef; --accent:#1cab67; --accent-soft:#e7f8ee; --green:#22a678; --shadow:0 8px 28px rgba(27,39,55,.055); }
@@ -641,6 +641,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     ];
     const ZIKR_DEFAULT_FAVORITES=['subhanallah','alhamdulillah','allahuakbar','salawat'];
     let zikrScreen='hub', zikrCurrent=ZIKR[0].id, zikrFilter='all', zikrCelebrate=false;
+    /* Salawat typed or added on the main screen is the salawat counter itself: both
+       always show one number, and the difference goes to the server like taps do. */
+    function matchSalawatCounter(){
+      if(!ChetZikrSync.matchSalawat) return;
+      const matched=ChetZikrSync.matchSalawat(state.tasks.zikr,state.tasks.salawat); if(!matched.delta) return;
+      state.tasks={...state.tasks,zikr:matched.zikr};
+      state.zikrPending=ChetZikrSync.addPending(state.zikrPending,entryDateKey,'salawat',matched.delta);
+      save(); scheduleZikrFlush();
+    }
     function zikrToday(id){ return Number(state.tasks?.zikr?.[id])||0; }
     function zikrAllTime(id){
       const seen=new Set([entryDateKey]); let sum=zikrToday(id);
@@ -650,6 +659,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     function zikrAdd(id,delta){
       const item=ZIKR.find(zikr=>zikr.id===id); if(!item) return;
+      if(id==='salawat') matchSalawatCounter();
       const before=completed(), current=zikrToday(id), next=Math.min(99999,Math.max(0,current+delta)), change=next-current; if(!change) return;
       const field=id==='salawat'?'salawat':'tasbihat', total=Math.max(0,(Number(state.tasks[field])||0)+change);
       const breakdown={...(state.tasks.zikr&&typeof state.tasks.zikr==='object'?state.tasks.zikr:{}),[id]:next}; if(!next) delete breakdown[id];
@@ -689,6 +699,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     window.addEventListener('online',()=>scheduleZikrFlush(0));
     function renderZikr(){
       const root=document.querySelector('#zikr-view'); if(!root) return;
+      matchSalawatCounter();
       const number=new Intl.NumberFormat(appLocale());
       const favorites=new Set(state.zikrFavorites||ZIKR_DEFAULT_FAVORITES);
       const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
@@ -1144,8 +1155,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(field.dataset.qaza) state.qaza[field.dataset.qaza]=field.value;
       /* Lowering salawat or zikr below what the counter counted lowers the counted zikrs
          too, so the zikr section agrees and the next sync does not bring the number back. */
+      if(field.dataset.id==='salawat') return matchSalawatCounter();
       // The check guards against an older zikr-sync.js still held by the browser cache.
-      if((field.dataset.id==='salawat'||field.dataset.id==='tasbihat')&&ChetZikrSync.trimToTotal){
+      if(field.dataset.id==='tasbihat'&&ChetZikrSync.trimToTotal){
         const trimmed=ChetZikrSync.trimToTotal(state.tasks.zikr,field.dataset.id,field.value);
         if(!Object.keys(trimmed.deltas).length) return;
         state.tasks={...state.tasks,zikr:trimmed.zikr};
