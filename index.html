@@ -803,10 +803,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     document.addEventListener('click',event=>{
       const target=event.target;
-      const go=target.closest('[data-zikr-go]'); if(go){ zikrScreen=go.dataset.zikrGo; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); return; }
-      const list=target.closest('[data-zikr-list]'); if(list){ zikrFilter=list.dataset.zikrList; zikrScreen='list'; renderZikr(); window.scrollTo(0,0); return; }
+      const go=target.closest('[data-zikr-go]'); if(go){ zikrScreen=go.dataset.zikrGo; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
+      const list=target.closest('[data-zikr-list]'); if(list){ zikrFilter=list.dataset.zikrList; zikrScreen='list'; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
       const filter=target.closest('[data-zikr-filter]'); if(filter){ zikrFilter=filter.dataset.zikrFilter; renderZikr(); return; }
-      const open=target.closest('[data-zikr-open]'); if(open){ zikrCurrent=open.dataset.zikrOpen; zikrScreen='counter'; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); return; }
+      const open=target.closest('[data-zikr-open]'); if(open){ zikrCurrent=open.dataset.zikrOpen; zikrScreen='counter'; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
       const star=target.closest('[data-zikr-star]'); if(star){ const set=new Set(state.zikrFavorites||ZIKR_DEFAULT_FAVORITES), id=star.dataset.zikrStar; if(set.has(id)) set.delete(id); else set.add(id); state.zikrFavorites=[...set]; save(); renderZikr(); return; }
       const step=target.closest('[data-zikr-step]'); if(step){ const index=(ZIKR.findIndex(item=>item.id===zikrCurrent)+Number(step.dataset.zikrStep)+ZIKR.length)%ZIKR.length; zikrCurrent=ZIKR[index].id; zikrCelebrate=false; renderZikr(); return; }
       if(target.closest('[data-zikr-tap]')){ if(zikrCelebrate){ zikrCelebrate=false; renderZikr(); return; } zikrAdd(zikrCurrent,1); return; }
@@ -1261,8 +1261,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const preset=event.target.closest('[data-goal-preset]');
       if(preset){ input.value=preset.dataset.goalPreset; paintPersonalGoal(); }
     });
-    function closePersonalGoalModal(){ document.querySelector('#personal-goal-modal').hidden=true; personalGoalButton=null; }
-    document.addEventListener('click',event=>{ const button=event.target.closest('[data-event-join]'); if(!button||!state.userId||!state.login) return; if(button.dataset.eventMode!=='personal_path'){ joinEvent(button); return; } personalGoalButton=button; setupPersonalGoal(button); document.querySelector('#personal-goal-error').textContent=''; document.querySelector('#personal-goal-modal').hidden=false; requestAnimationFrame(()=>document.querySelector('.personal-goal-save').focus({preventScroll:true})); });
+    function closePersonalGoalModal(){ closeLayer(document.querySelector('#personal-goal-modal')); personalGoalButton=null; }
+    document.addEventListener('click',event=>{ const button=event.target.closest('[data-event-join]'); if(!button||!state.userId||!state.login) return; if(button.dataset.eventMode!=='personal_path'){ joinEvent(button); return; } personalGoalButton=button; setupPersonalGoal(button); document.querySelector('#personal-goal-error').textContent=''; openLayer(document.querySelector('#personal-goal-modal')); requestAnimationFrame(()=>document.querySelector('.personal-goal-save').focus({preventScroll:true})); });
     document.querySelector('#personal-goal-cancel').addEventListener('click',closePersonalGoalModal);
     document.querySelector('#personal-goal-form').addEventListener('submit',event=>{ event.preventDefault(); const target=Number(document.querySelector('#personal-goal-input').value); if(!Number.isInteger(target)||target<1){ document.querySelector('#personal-goal-error').textContent='Укажите цель больше нуля.'; return; } const button=personalGoalButton; closePersonalGoalModal(); if(button) joinEvent(button,target); });
     function renderCalendar(){
@@ -1351,14 +1351,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(rewardOpen||!rewardQueue.length) return;
       const {kind,badge}=rewardQueue.shift(), element=document.querySelector(rewardScreens[kind]);
       if(kind==='done') fillDoneReward(); if(kind==='badge') fillBadgeReward(badge);
-      rewardReturnFocus=document.activeElement; rewardOpen=element; element.hidden=false;
+      rewardReturnFocus=document.activeElement; rewardOpen=element; openLayer(element);
       navigator.vibrate?.(kind==='minimum'?[12,30,12]:[20,40,20,40,30]);
       requestAnimationFrame(()=>element.querySelector('.reward-primary')?.focus({preventScroll:true}));
     }
     function showReward(kind,badge=null){ rewardQueue.push({kind,badge}); openNextReward(); }
     function closeReward(){
       if(!rewardOpen) return;
-      rewardOpen.hidden=true; rewardOpen=null;
+      closeLayer(rewardOpen); rewardOpen=null;
       if(rewardQueue.length) setTimeout(openNextReward,260); else rewardReturnFocus?.focus?.({preventScroll:true});
     }
     document.addEventListener('click',event=>{
@@ -1375,6 +1375,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     });
     function scoreUpdate(before){ const after=completed(); if(after>before) state.score=(state.score||0)+(after-before)*10; if(after<before) state.score=Math.max(0,(state.score||0)-(before-after)*10); recordDay(); refreshStreak(); const completedToday=entryDateKey===todayKey&&after===dailyMax()&&before<dailyMax(), minimumReached=entryDateKey===todayKey&&after>=3&&before<3&&!state.minimumCelebratedDays?.[todayKey], shouldCelebrate=completedToday&&!state.celebratedDays?.[todayKey], unlocked=state.achievementBaselineReady?achievementData().find(badge=>badge.earned&&!state.seenAchievements?.[badge.title]):null; if(shouldCelebrate) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; if(minimumReached) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(unlocked) state.seenAchievements={...(state.seenAchievements||{}),[unlocked.title]:true}; save(); render(); requestAnimationFrame(()=>{ if(shouldCelebrate) showReward('done'); else if(minimumReached) showReward('minimum'); if(unlocked) showReward('badge',unlocked); }); }
     function showView(viewId){
+      // A new section starts at the top, so its cards rise where they can be seen.
+      if(!document.querySelector('#'+viewId)?.classList.contains('active')) window.scrollTo(0,0);
       document.querySelectorAll('.view,.nav button').forEach(element=>element.classList.remove('active'));
       document.querySelector('#'+viewId)?.classList.add('active');
       // Screens that repaint on every tap animate their cards only right after opening.
@@ -1386,7 +1388,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(viewId==='rating-view') loadLeaderboard(ratingPeriod(),ratingMetric());
       if(viewId==='profile-view') loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
-      if(viewId==='zikr-view'){ renderZikr(); if(!state.events) fetchEvents(); }
+      if(viewId==='zikr-view'){ renderZikr(); riseIn(document.querySelector('#zikr-view')); if(!state.events) fetchEvents(); }
       if(viewId==='stats-view'){ renderStats(true); fetchPersonalEntries(); }
     }
     document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; renderStats(true); });
@@ -1449,6 +1451,20 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       element.addEventListener('animationend',()=>element.classList.remove(`roll-${direction}`),{once:true});
     }
     function motionOff(){ return matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('a11y-reduce'); }
+    /* Zikr repaints on every tap, so its cards rise once by script when a screen opens
+       instead of by CSS, which would replay on every repaint. */
+    function riseIn(container){
+      if(!container?.animate||motionOff()) return;
+      [...container.children].forEach((child,index)=>child.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:240,delay:Math.min(index,5)*60,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
+    }
+    /* Dialogs and rewards fade out before they hide, the way sheets slide down. */
+    function openLayer(element){ clearTimeout(element.closing); element.classList.remove('is-closing'); element.hidden=false; }
+    function closeLayer(element){
+      if(element.hidden) return;
+      const hide=()=>{ element.classList.remove('is-closing'); element.hidden=true; };
+      if(motionOff()) return hide();
+      clearTimeout(element.closing); element.classList.add('is-closing'); element.closing=setTimeout(hide,220);
+    }
     /* −/+ and quick-add buttons change the neighbouring field and save it like typed input. */
     document.addEventListener('click',e=>{
       const button=e.target.closest('[data-step]'); if(!button) return;
@@ -1548,8 +1564,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     document.querySelector('#start-button').addEventListener('click',e=>{ e.preventDefault(); startApp(); });
     document.querySelector('#avatar').addEventListener('click',()=>showView('profile-view'));
     document.querySelector('#profile-close').addEventListener('click',()=>showView('today-view'));
-    function openExitConfirmation(){ document.querySelector('#exit-confirmation').hidden=false; }
-    function closeExitConfirmation(){ document.querySelector('#exit-confirmation').hidden=true; }
+    function openExitConfirmation(){ openLayer(document.querySelector('#exit-confirmation')); }
+    function closeExitConfirmation(){ closeLayer(document.querySelector('#exit-confirmation')); }
     async function logout(){
       clearTimeout(syncTimer);
       if(state.userId && await syncCurrentEntry()===false){ alert('Не удалось сохранить прогресс. Проверьте подключение и попробуйте выйти ещё раз.'); return; }
@@ -2971,6 +2987,11 @@ body .calendar-sheet.is-closing .calendar-sheet-backdrop{animation:soft-dim-out 
 @keyframes soft-sheet-out{from{transform:translateY(0)}to{transform:translateY(105%)}}
 @keyframes soft-dim-in{from{opacity:0}to{opacity:1}}
 @keyframes soft-dim-out{from{opacity:1}to{opacity:0}}
+/* Dialogs, the event goal sheet and rewards leave the same way (220 ms). */
+body :is(#exit-confirmation,#personal-goal-modal,#celebration,#minimum-celebration,#achievement-celebration).is-closing{animation:soft-dim-out .22s ease both;pointer-events:none}
+body #exit-confirmation.is-closing .exit-card,body :is(#celebration,#minimum-celebration,#achievement-celebration).is-closing :is(.reward-card,.reward-sheet,.reward-badge-card){animation:soft-pop-out .22s cubic-bezier(.4,0,1,1) both}
+body #personal-goal-modal.is-closing .personal-goal-card{animation:soft-sheet-out .22s cubic-bezier(.4,0,1,1) both}
+@keyframes soft-pop-out{from{transform:scale(1);opacity:1}to{transform:scale(.94);opacity:0}}
 
 /* 9. Statistics bars grow from the bottom, 40 ms apart; today's grows last (400 ms). */
 body #app .stats-bars.grow .stats-bar i{transform-origin:bottom;animation:soft-bar .4s var(--soft-ease) both;animation-delay:calc(var(--i,0) * 40ms)}
@@ -3526,6 +3547,9 @@ body.app-dark #app #rating-view :is(.sk,.sk-light){background:linear-gradient(90
 
 /* Calendar sheet in the soft glass style */
 body #calendar-sheet .calendar-sheet-panel{gap:16px;border-radius:32px 32px 0 0;background:rgba(246,249,248,.96);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#10161A}
+/* These panels are nearly opaque, so a blur under them is not seen but is redrawn on every
+   frame while they slide; without it the sheets move smoothly on phones. */
+body #calendar-sheet .calendar-sheet-panel,body #personal-goal-modal .personal-goal-card{backdrop-filter:none;-webkit-backdrop-filter:none}
 body #calendar-sheet .sheet-header h2{font-size:22px;font-weight:600;letter-spacing:-.02em}
 body #calendar-sheet .sheet-close{width:40px;height:40px;border-radius:20px;background:rgba(16,22,26,.06)}
 body #calendar-sheet .sheet-month-control{margin:0;padding:8px;border:1px solid rgba(16,22,26,.06);border-radius:24px;background:#fff;display:flex;align-items:center;gap:8px}
