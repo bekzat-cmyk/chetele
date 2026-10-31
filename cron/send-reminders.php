@@ -3,7 +3,31 @@ declare(strict_types=1);
 
 /* Run this file once per minute from the hosting control-panel Cron scheduler. */
 
+/* Each run leaves a short report beside this file (the folder is closed to the web), so a
+   silent cron can be checked over FTP: when it last ran, on which PHP, what it sent. */
+function cronReport(array $report): void {
+    $report = ['at' => gmdate('c'), 'php' => PHP_VERSION, 'sapi' => PHP_SAPI] + $report;
+    @file_put_contents(__DIR__ . '/last-run.json', json_encode($report, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+}
+
+/* Web Push encryption needs openssl_pkey_derive (PHP 7.3+). The cron command can run an
+   older PHP than the site does, so say so instead of failing on the first subscription. */
+if (!function_exists('openssl_pkey_derive') || !function_exists('curl_init')) {
+    cronReport(['error' => 'Cron runs PHP ' . PHP_VERSION . ' without openssl_pkey_derive or curl: point the cron command at the PHP the site uses (8.x).']);
+    echo "Niet reminders: PHP " . PHP_VERSION . " cannot send Web Push\n";
+    exit(1);
+}
+
 require_once __DIR__ . '/../api/push.php';
+
+/* A slot is due from its time until this many minutes later, so a cron that runs a little
+   late or skips a minute still sends it; the marker keeps it to once a day. */
+const REMINDER_WINDOW_MINUTES = 15;
+
+function minutesOfDay(string $time): int {
+    [$hours, $minutes] = array_map('intval', explode(':', $time) + [0, 0]);
+    return $hours * 60 + $minutes;
+}
 
 function cronConnect(array $config): PDO {
     $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $config['host'], $config['port'], $config['database']);
@@ -39,7 +63,12 @@ try {
             $quiet = $settings['quiet'] ?? $defaults['quiet'];
             $isQuiet = !empty($quiet['enabled']) && (($quiet['start'] <= $quiet['end'] && $time >= $quiet['start'] && $time < $quiet['end']) || ($quiet['start'] > $quiet['end'] && ($time >= $quiet['start'] || $time < $quiet['end'])));
             if ($isQuiet) continue;
-            $slot = null; foreach (($settings['slots'] ?? $defaults['slots']) as $candidate) if (($candidate['enabled'] ?? true) && ($candidate['time'] ?? '') === $time) { $slot = $candidate; break; }
+            $slot = null;
+            foreach (($settings['slots'] ?? $defaults['slots']) as $candidate) {
+                if (!($candidate['enabled'] ?? true) || !preg_match('/^\d{1,2}:\d{2}$/', (string)($candidate['time'] ?? ''))) continue;
+                $late = minutesOfDay($time) - minutesOfDay($candidate['time']);
+                if ($late >= 0 && $late < REMINDER_WINDOW_MINUTES) { $slot = $candidate; break; }
+            }
             if (!$slot) continue;
             $marker = $today . '-' . substr((string)($slot['id'] ?? str_replace(':', '', $time)), 0, 4);
             if ($subscription['last_sent_marker'] === $marker) continue;
@@ -72,16 +101,20 @@ try {
                 $disable->execute([$subscription['id']]);
             } else {
                 $failed++;
-                error_log('Niet Web Push delivery failed: HTTP ' . $result['status'] . ' ' . $result['error']);
+                $lastError = 'HTTP ' . $result['status'] . ' ' . $result['error'];
+                error_log('Niet Web Push delivery failed: ' . $lastError);
             }
         } catch (Throwable $error) {
             $failed++;
-            error_log('Niet Web Push reminder error: ' . $error->getMessage());
+            $lastError = $error->getMessage();
+            error_log('Niet Web Push reminder error: ' . $lastError);
         }
     }
 
+    cronReport(['subscriptions' => count($subscriptions), 'sent' => $sent, 'failed' => $failed, 'lastError' => $lastError ?? null]);
     echo 'Niet reminders: sent=' . $sent . '; failed=' . $failed . PHP_EOL;
 } catch (Throwable $error) {
+    cronReport(['error' => $error->getMessage()]);
     error_log('Niet reminder cron failed: ' . $error->getMessage());
     http_response_code(500);
     echo "Niet reminders: configuration error\n";
