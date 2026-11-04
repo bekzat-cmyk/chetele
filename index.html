@@ -403,7 +403,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     let todayKey = localDateKey();
     let entryDateKey = state.activeDate || todayKey;
     if(entryDateKey!==todayKey){
-      state.drafts={...(state.drafts||{}),[entryDateKey]:{tasks:state.tasks||{},qaza:state.qaza||{},completed:0,max:11}};
+      state.drafts={...(state.drafts||{}),[entryDateKey]:{tasks:state.tasks||{},qaza:state.qaza||{},completed:ChetDeeds.countDeeds(state.tasks||{},state.qaza||{}),max:ChetDeeds.DAILY_MAX}};
       const todayDraft=state.drafts[todayKey];
       state.tasks=todayDraft?.tasks||{}; state.qaza=todayDraft?.qaza||{};
       entryDateKey=todayKey; state.activeDate=todayKey;
@@ -448,6 +448,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     function refreshStreak(){
       const history={...(state.history||{})};
+      Object.entries(state.drafts||{}).forEach(([date,draft])=>{ if(draft?.tasks) history[date]={...(history[date]||{}),...draft}; });
       (state.remoteEntries||[]).forEach(entry=>{ if(entry?.date) history[entry.date]={...(history[entry.date]||{}),...entry}; });
       if(entryDateKey===todayKey) history[todayKey]={...(history[todayKey]||{}),completed:completed(),tasks:copyEntry(state.tasks),qaza:copyEntry(state.qaza)};
       let cursor=entryHasProgress(history[todayKey])?todayKey:dateBefore(todayKey),count=0;
@@ -1292,9 +1293,11 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     let calendarCursor=null, calendarSelectedDate='';
     function entryForCalendarDate(key){
       if(key===entryDateKey) return {completed:completed(),max:dailyMax()};
-      const draft=state.drafts?.[key];
-      if(draft) return draft;
-      return state.history?.[key];
+      /* The count comes from the day's marks, not a stored number that can be stale, and
+         a day saved on the server (another phone, a new login) shows too. */
+      const local=state.drafts?.[key]||state.history?.[key], remote=(state.remoteEntries||[]).find(entry=>entry?.date===key);
+      if(!local&&!remote) return undefined;
+      return {...(remote||{}),...(local||{}),completed:Math.max(entryCompletedCount(local),entryCompletedCount(remote)),max:dailyMax()};
     }
     function formatDayLabel(key){ return new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`)); }
     function renderMonthCalendar(){
