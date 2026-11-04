@@ -17,6 +17,7 @@
   <script src="assets/deeds.js?v=2"></script>
   <script src="assets/hadiths.js?v=1"></script>
   <script src="assets/fasting.js?v=1"></script>
+  <script src="assets/onboarding.js?v=1"></script>
   <script src="assets/zikr-sync.js?v=3"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
@@ -1946,6 +1947,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       showCabinet();
       const opened=new URLSearchParams(location.search).get('open');
       if(opened){ history.replaceState(null,'',location.pathname); openTarget(opened); }
+      /* A brand-new guest sees the short introduction once; anyone with a profile or marks skips it. */
+      if(window.ChetOnboarding&&!window.ChetOnboarding.seen()){ if(!opened&&isGuest()&&!Object.keys(state.history||{}).length&&!completed()) window.ChetOnboarding.show({onLogin:()=>openAuth('login')}); else window.ChetOnboarding.done(); }
       if(state.userId){
         refreshVisibleLeaderboards();
         fetchPersonalEntries(true).then(restored=>{ if(!restored){ resetIfNewDay(); queueSync(); } });
