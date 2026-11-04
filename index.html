@@ -697,11 +697,12 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector('#hadith-source').textContent=hadith.source;
     }
     function amount(value){ const number=Number(value); return Number.isFinite(number)&&number>0?Math.floor(number):0; }
-    function emptyTotals(){ return {quran:0,jauchan:0,kitap:0,nafil:0,nafilBy:Object.fromEntries(NAFIL.map(item=>[item.id,0])),tahajjud:0,salawat:0,tasbihat:0,qaza:Object.fromEntries(QAZA.map(name=>[name,0])),zikrBy:{},days:0}; }
+    function emptyTotals(){ return {quran:0,jauchan:0,kitap:0,nafil:0,nafilBy:Object.fromEntries(NAFIL.map(item=>[item.id,0])),tahajjud:0,fast:0,salawat:0,tasbihat:0,qaza:Object.fromEntries(QAZA.map(name=>[name,0])),zikrBy:{},days:0}; }
     function addToTotals(totals, entry){
       const tasks=entry?.tasks&&typeof entry.tasks==='object'?entry.tasks:{}, qaza=entry?.qaza&&typeof entry.qaza==='object'?entry.qaza:{};
       totals.quran+=amount(tasks.quran); totals.jauchan+=amount(tasks.jauchan); totals.kitap+=amount(tasks.kitap); totals.salawat+=amount(tasks.salawat); totals.tasbihat+=amount(tasks.tasbihat);
       totals.tahajjud+=tasks.tahajjud==='yes'?1:0;
+      totals.fast+=tasks.fast==='yes'?1:0;
       const nafil=tasks.nafil&&typeof tasks.nafil==='object'?tasks.nafil:(tasks.nafil?Object.fromEntries(NAFIL.map(item=>[item.id,true])):{});
       NAFIL.forEach(item=>{ if(nafil[item.id]){ totals.nafil++; totals.nafilBy[item.id]++; } });
       QAZA.forEach(name=>{ totals.qaza[name]+=amount(qaza[name]); });
@@ -941,7 +942,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const heat=Array.from({length:28},(_,index)=>{ const key=shift(todayKey,index-27), share=dayCount(key)/max; return {key,level:share<=0?0:share<1/3?1:share<2/3?2:3}; });
       const marked=heat.filter(day=>day.level).length;
       const pages=ky?'бет':'стр.';
-      content.innerHTML=`<section class="stats-prayer"><div class="stats-section-head"><h3>Намаз</h3><span>${ky?`${periodDays} күндөгү напил`:`нафиль за ${number.format(periodDays)} ${days(periodDays)}`}</span></div><div class="stats-card">${NAFIL.map(nafilRow).join('')}<hr>${line('softQaza',ky?'Каза намаздар':'Пропущенные намазы',ky?'мезгил ичинде толукталды':'восполнено за период',number.format(qaza))}</div></section><section class="stats-card stats-streak" aria-label="${ky?'Катар':'Серия'}"><div class="stats-line"><i class="stats-circle is-flame">${icon('softFlame')}</i><span><b>${streak?(ky?`${streak} күн катары менен`:`${streak} ${days(streak)} подряд`):(ky?'Катарды бүгүн баштаңыз':'Начните серию сегодня')}</b><small>${ky?`Эң узун катар — ${best} күн`:`Лучшая серия — ${best} ${days(best)}`}</small></span></div><div class="stats-heat" role="img" aria-label="${ky?`Акыркы 28 күн: ${marked} күн белгиленди`:`Последние 28 дней: отмечено ${marked} ${days(marked)}`}">${heat.map(day=>`<span class="heat-${day.level}${day.key===todayKey?' is-today':''}"></span>`).join('')}</div><span class="stats-legend">${ky?'Аз':'Меньше'}<span class="heat-0"></span><span class="heat-1"></span><span class="heat-2"></span><span class="heat-3"></span>${ky?'Көп':'Больше'}</span></section><section class="stats-card"><div class="stats-section-sub">${ky?'Башка иштер':'Другие дела'}</div>${line('softJauchan',ky?'Жавшан':'Жавшан',ky?'мезгил ичинде':'за период',`${number.format(totals.jauchan)} ${pages}`)}${line('softKitap',ky?'Китеп':'Книги',ky?'мезгил ичинде':'за период',`${number.format(totals.kitap)} ${pages}`)}</section>`;
+      content.innerHTML=`<section class="stats-prayer"><div class="stats-section-head"><h3>Намаз</h3><span>${ky?`${periodDays} күндөгү напил`:`нафиль за ${number.format(periodDays)} ${days(periodDays)}`}</span></div><div class="stats-card">${NAFIL.map(nafilRow).join('')}<hr>${line('softQaza',ky?'Каза намаздар':'Пропущенные намазы',ky?'мезгил ичинде толукталды':'восполнено за период',number.format(qaza))}</div></section><section class="stats-fast"><div class="stats-section-head"><h3>${ky?'Орозо':'Пост'}</h3><span>${ky?'ыктыярдуу':'добровольный'}</span></div><div class="stats-card">${line('softFast',ky?'Орозо кармаган күндөр':'Дней в посту',ky?`${periodDays} күндөн`:`из ${number.format(periodDays)} ${days(periodDays)} периода`,number.format(totals.fast))}<div class="stats-track stats-fast-track" aria-hidden="true"><i style="width:${periodDays?Math.min(100,Math.round(totals.fast/periodDays*100)):0}%"></i></div></div></section><section class="stats-card stats-streak" aria-label="${ky?'Катар':'Серия'}"><div class="stats-line"><i class="stats-circle is-flame">${icon('softFlame')}</i><span><b>${streak?(ky?`${streak} күн катары менен`:`${streak} ${days(streak)} подряд`):(ky?'Катарды бүгүн баштаңыз':'Начните серию сегодня')}</b><small>${ky?`Эң узун катар — ${best} күн`:`Лучшая серия — ${best} ${days(best)}`}</small></span></div><div class="stats-heat" role="img" aria-label="${ky?`Акыркы 28 күн: ${marked} күн белгиленди`:`Последние 28 дней: отмечено ${marked} ${days(marked)}`}">${heat.map(day=>`<span class="heat-${day.level}${day.key===todayKey?' is-today':''}"></span>`).join('')}</div><span class="stats-legend">${ky?'Аз':'Меньше'}<span class="heat-0"></span><span class="heat-1"></span><span class="heat-2"></span><span class="heat-3"></span>${ky?'Көп':'Больше'}</span></section><section class="stats-card"><div class="stats-section-sub">${ky?'Башка иштер':'Другие дела'}</div>${line('softJauchan',ky?'Жавшан':'Жавшан',ky?'мезгил ичинде':'за период',`${number.format(totals.jauchan)} ${pages}`)}${line('softKitap',ky?'Китеп':'Книги',ky?'мезгил ичинде':'за период',`${number.format(totals.kitap)} ${pages}`)}</section>`;
       note.hidden=state.statsOnline!==false;
       note.textContent=ky?'Ушул түзмөктө сакталган маалымат көрсөтүлдү. Бардык тарыхты көрүү үчүн интернетке кошулуңуз.':'Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.';
     }
@@ -956,7 +957,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function achievementProgress(entry){
       const tasks=entry?.tasks&&typeof entry.tasks==='object'?entry.tasks:{}, qaza=entry?.qaza&&typeof entry.qaza==='object'?entry.qaza:{};
       const nafil=tasks.nafil&&typeof tasks.nafil==='object'?tasks.nafil:(tasks.nafil?Object.fromEntries(NAFIL.map(item=>[item.id,true])):{});
-      const basics=['quran','jauchan','kitap','tahajjud','salawat','tasbihat'].reduce((count,id)=>count+(id==='tahajjud'?tasks[id]==='yes':amount(tasks[id])>0),0);
+      const basics=['quran','jauchan','kitap','tahajjud','fast','salawat','tasbihat'].reduce((count,id)=>count+(id==='tahajjud'||id==='fast'?tasks[id]==='yes':amount(tasks[id])>0),0);
       return basics+NAFIL.filter(item=>nafil[item.id]).length+(Object.values(qaza).some(value=>amount(value)>0)?1:0);
     }
     function achievementData(){
@@ -1166,7 +1167,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     let boardShownPeriod=null;
     function ratingPeriod(){ return ['month','all'].includes(state.ratingPeriod)?state.ratingPeriod:'week'; }
     /* What the board counts: points, or one deed with its own unit. */
-    const RATING_METRICS={points:{label:'Очки',ky:'Упай',unit:['очко','очка','очков'],short:'очк.'},salawat:{label:'Салават',ky:'Салават',unit:['раз','раза','раз'],short:'раз'},zikr:{label:'Зикр',ky:'Зикир',unit:['раз','раза','раз'],short:'раз'},quran:{label:'Куран',ky:'Куран',unit:['страница','страницы','страниц'],short:'стр.'},tahajjud:{label:'Тахаджуд',ky:'Тахажжуд',unit:['ночь','ночи','ночей'],short:'ноч.'},nafil:{label:'Нафиль',ky:'Напил',unit:['намаз','намаза','намазов'],short:'нам.'}};
+    const RATING_METRICS={points:{label:'Очки',ky:'Упай',unit:['очко','очка','очков'],short:'очк.'},salawat:{label:'Салават',ky:'Салават',unit:['раз','раза','раз'],short:'раз'},zikr:{label:'Зикр',ky:'Зикир',unit:['раз','раза','раз'],short:'раз'},quran:{label:'Куран',ky:'Куран',unit:['страница','страницы','страниц'],short:'стр.'},tahajjud:{label:'Тахаджуд',ky:'Тахажжуд',unit:['ночь','ночи','ночей'],short:'ноч.'},fast:{label:'Пост',ky:'Орозо',unit:['день','дня','дней'],short:'дн.'},nafil:{label:'Нафиль',ky:'Напил',unit:['намаз','намаза','намазов'],short:'нам.'}};
     function ratingMetric(){ return RATING_METRICS[state.ratingMetric]?state.ratingMetric:'points'; }
     function renderBoard(){
       const period=ratingPeriod(), metric=ratingMetric(), key=boardKey(period,metric), source=boardRows(period,metric), status=boardStatus[key], spec=RATING_METRICS[metric];
@@ -4380,6 +4381,15 @@ body.app-dark #app .prayer-card.is-fajr .prayer-card-top>span,body.app-dark #app
 body.app-dark #app .prayer-card.is-fajr #prayer-progress-knob{border-color:#E9A85C}
 body.app-dark #app .prayer-card.is-tahajjud #prayer-progress-fill{background:linear-gradient(90deg,#6C7BD0,#A3AEEA)}
 body.app-dark #app .prayer-card.is-tahajjud #prayer-progress-knob{border-color:#A3AEEA}
+</style>
+<style>
+/* Fasting days in the stats. */
+body #app .stats-fast{display:flex;flex-direction:column;gap:12px}
+body #app .stats-fast .stats-card{gap:12px}
+body #app .stats-fast-track{flex:none;display:block;height:8px;border-radius:4px;background:rgba(16,22,26,.07);overflow:hidden}
+body #app .stats-fast-track i{display:block;height:100%;border-radius:4px;background:#10161A;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+body.app-dark #app .stats-fast-track{background:rgba(255,255,255,.1)}
+body.app-dark #app .stats-fast-track i{background:#EEF5F2}
 </style>
 </body>
 </html>

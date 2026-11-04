@@ -11,7 +11,7 @@ function check(string $name, $actual, $expected): void {
 }
 
 $tasks = ['salawat' => 100, 'tasbihat' => 33, 'quran' => 5, 'tahajjud' => 'yes', 'nafil' => ['asr' => true, 'kuptan' => true, 'avvabin' => false, 'duha' => false]];
-check('a day counts for each metric', array_map(fn($m) => leaderboardDayScore($m, $tasks, 70), LEADERBOARD_METRICS), [70, 100, 33, 5, 1, 2]);
+check('a day counts for each metric', array_map(fn($m) => leaderboardDayScore($m, $tasks, 70), LEADERBOARD_METRICS), [70, 100, 33, 5, 1, 0, 2]);
 check('an unknown metric counts points', leaderboardDayScore('nonsense', $tasks, 70), 70);
 
 $ranked = leaderboardRank([
@@ -41,6 +41,12 @@ check('all time window', leaderboardWindow('', '2026-10-30'), ['from' => null, '
 
 check('key is stable and hides the id', leaderboardKey('user-1', 'secret'), leaderboardKey('user-1', 'secret'));
 check('key is 16 characters', strlen(leaderboardKey('user-1', 'secret')), 16);
+
+check('a fasting day counts for the fast metric', leaderboardDayScore('fast', ['fast' => 'yes'], 0), 1);
+$fullOld = []; for ($i = 0; $i < 7; $i++) $fullOld[] = ['date' => date('Y-m-d', strtotime("2026-10-20 +$i day")), 'tasks' => [], 'completed' => 11];
+check('a week of eleven deeds before the fast was a full week', array_column(leaderboardBadges($fullOld), 'earned', 'title')['Полная неделя'], true);
+$fullNew = []; for ($i = 0; $i < 7; $i++) $fullNew[] = ['date' => date('Y-m-d', strtotime("2026-11-10 +$i day")), 'tasks' => [], 'completed' => 11];
+check('after the fast a full day needs twelve deeds', array_column(leaderboardBadges($fullNew), 'earned', 'title')['Полная неделя'], false);
 
 echo $failed ? "\n$failed failed\n" : "\nall passed\n";
 exit($failed ? 1 : 0);

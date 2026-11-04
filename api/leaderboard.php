@@ -3,7 +3,9 @@
    with ties, streaks and badges for a participant's card. Used by api/index.php and
    tests/leaderboard.php. */
 
-const LEADERBOARD_METRICS = ['points', 'salawat', 'zikr', 'quran', 'tahajjud', 'nafil'];
+const LEADERBOARD_METRICS = ['points', 'salawat', 'zikr', 'quran', 'tahajjud', 'fast', 'nafil'];
+/* The voluntary fast became a deed on this day; earlier days were complete with eleven. */
+const LEADERBOARD_FAST_FROM = '2026-11-04';
 
 /* What one saved day adds to a metric. $tasks is the stored tasks JSON, $points the
    stored points of the day. */
@@ -14,6 +16,7 @@ function leaderboardDayScore(string $metric, array $tasks, int $points): int {
         'zikr' => $amount($tasks['tasbihat'] ?? 0),
         'quran' => $amount($tasks['quran'] ?? 0),
         'tahajjud' => ($tasks['tahajjud'] ?? '') === 'yes' ? 1 : 0,
+        'fast' => ($tasks['fast'] ?? '') === 'yes' ? 1 : 0,
         'nafil' => count(array_filter(is_array($tasks['nafil'] ?? null) ? $tasks['nafil'] : [])),
         default => max(0, $points),
     };
@@ -57,7 +60,7 @@ function leaderboardStreaks(array $days, string $today): array {
 
 /* The same six badges as the app's profile, from a person's saved days.
    $entries: list of ['date' => Y-m-d, 'tasks' => array, 'completed' => int], any order. */
-function leaderboardBadges(array $entries, int $dailyMax = 11): array {
+function leaderboardBadges(array $entries, int $dailyMax = 12): array {
     usort($entries, static fn($a, $b) => strcmp($a['date'], $b['date']));
     $longest = 0; $run = 0; $fullRun = 0; $longestFull = 0; $nightRun = 0; $longestNights = 0;
     $quran = 0; $salawat = 0; $days = 0; $previous = null;
@@ -65,7 +68,7 @@ function leaderboardBadges(array $entries, int $dailyMax = 11): array {
         $next = $previous !== null && date('Y-m-d', strtotime($previous . ' +1 day')) === $entry['date'];
         $done = (int)$entry['completed'];
         $run = $done > 0 ? ($next ? $run + 1 : 1) : 0; $longest = max($longest, $run);
-        $fullRun = $done >= $dailyMax ? ($next ? $fullRun + 1 : 1) : 0; $longestFull = max($longestFull, $fullRun);
+        $fullRun = $done >= ($entry['date'] < LEADERBOARD_FAST_FROM ? $dailyMax - 1 : $dailyMax) ? ($next ? $fullRun + 1 : 1) : 0; $longestFull = max($longestFull, $fullRun);
         $night = ($entry['tasks']['tahajjud'] ?? '') === 'yes';
         $nightRun = $night ? ($next ? $nightRun + 1 : 1) : 0; $longestNights = max($longestNights, $nightRun);
         $quran += leaderboardDayScore('quran', $entry['tasks'], 0);
