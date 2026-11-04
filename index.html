@@ -3838,9 +3838,9 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
   const P = window.ChetPrayer;
   if (!P) return;
   const placeKey = 'chetele-prayer-place';
-  const KY_NAMES = { fajr: 'Багымдат', sunrise: 'Күн чыгыш', dhuhr: 'Бешим', asr: 'Аср', maghrib: 'Шам', isha: 'Куптан' };
+  const KY_NAMES = { fajr: 'Багымдат', sunrise: 'Күн чыгыш', dhuhr: 'Бешим', asr: 'Аср', maghrib: 'Шам', isha: 'Куптан', tahajjud: 'Тахажжуд' };
   const NAFIL_AFTER = ['asr', 'isha'];
-  const ICONS = { fajr: 'moon', sunrise: 'sunrise', dhuhr: 'sun', asr: 'cloudSun', maghrib: 'sunset', isha: 'moon' };
+  const ICONS = { fajr: 'moon', sunrise: 'sunrise', dhuhr: 'sun', asr: 'cloudSun', maghrib: 'sunset', isha: 'moon', tahajjud: 'softTahajjud' };
   const pin = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>';
   const locate = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>';
   const close = '<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
@@ -3886,6 +3886,24 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     return last.prayer ? last : null;
   }
 
+  /* Tahajjud: the last third of the night between Maghrib and the next Fajr. Before
+     today's Fajr it is last night's; after it, tonight's. */
+  function tahajjudFor(now, where) {
+    const at = (date, id) => P.timesFor(date, where).find(item => item.id === id).time;
+    const shift = days => { const date = new Date(now); date.setDate(now.getDate() + days); return date; };
+    const fajrToday = at(now, 'fajr');
+    const maghrib = now < fajrToday ? at(shift(-1), 'maghrib') : at(now, 'maghrib');
+    const fajr = now < fajrToday ? fajrToday : at(shift(1), 'fajr');
+    return { id: 'tahajjud', name: 'Тахаджуд', time: new Date(maghrib.getTime() + (fajr - maghrib) * 2 / 3), end: fajr };
+  }
+  /* Two times get their own countdown: from Fajr to sunrise, and Tahajjud until Fajr. */
+  function specialPhase(now, day, night) {
+    const fajr = day.find(item => item.id === 'fajr'), sunrise = day.find(item => item.id === 'sunrise');
+    if (now >= fajr.time && now < sunrise.time) return { kind: 'fajr', from: fajr, to: sunrise };
+    if (now >= night.time && now < night.end) return { kind: 'tahajjud', from: night, to: { id: 'fajr', name: 'Фаджр', time: night.end } };
+    return null;
+  }
+
   // The seconds tick on their own; the rest of the card repaints every 30 seconds.
   let countdown = null;
   function tick() {
@@ -3904,22 +3922,44 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     if (!document.querySelector('#day-hero')) return;
     const now = new Date(), where = place(), day = P.timesFor(now, where);
     const line = sequence(now, where), index = line.findIndex(item => item.time > now), next = line[index];
+    const night = tahajjudFor(now, where), phase = specialPhase(now, day, night);
+    const card = document.querySelector('#day-hero .prayer-card');
+    card?.classList.toggle('is-fajr', phase?.kind === 'fajr');
+    card?.classList.toggle('is-tahajjud', phase?.kind === 'tahajjud');
     document.querySelector('#prayer-city-name').textContent = where.name;
-    document.querySelector('#prayer-next').textContent = ky() ? `${label(next)} — ${clock(next.time)}` : `${label(next)} в ${clock(next.time)}`;
-    const previous = line[index - 1];
-    countdown = { from: previous.time, to: next.time };
-    document.querySelector('#prayer-countdown-label').textContent = ky() ? 'Калды' : next.tomorrow ? 'Завтра, осталось' : 'Осталось';
-    document.querySelector('#prayer-from').textContent = `${label(previous)} ${clock(previous.time)}`;
-    document.querySelector('#prayer-to').textContent = `${label(next)} ${clock(next.time)}`;
-    document.querySelector('#prayer-progress').setAttribute('aria-valuetext', ky() ? `${until(next.time - now)} калды` : `Осталось ${until(next.time - now)}`);
+    const top = document.querySelector('#day-hero .prayer-card-top > span');
+    if (top) top.textContent = phase ? (ky() ? 'Азыр' : 'Сейчас') : (ky() ? 'Кийинки намаз' : 'Следующий намаз');
+    if (phase) {
+      const to = phase.to;
+      document.querySelector('#prayer-next').textContent = phase.kind === 'fajr'
+        ? (ky() ? `Багымдат — ${clock(to.time)} чейин` : `Фаджр до ${clock(to.time)}`)
+        : (ky() ? `Тахажжуд — ${clock(to.time)} чейин` : `Тахаджуд до ${clock(to.time)}`);
+      countdown = { from: phase.from.time, to: to.time };
+      document.querySelector('#prayer-countdown-label').textContent = phase.kind === 'fajr' ? (ky() ? 'Күн чыкканга чейин' : 'До восхода осталось') : (ky() ? 'Багымдатка чейин' : 'До Фаджра осталось');
+      document.querySelector('#prayer-from').textContent = `${label(phase.from)} ${clock(phase.from.time)}`;
+      document.querySelector('#prayer-to').textContent = `${label(to)} ${clock(to.time)}`;
+      document.querySelector('#prayer-progress').setAttribute('aria-valuetext', `${phase.kind === 'fajr' ? 'До восхода' : 'До Фаджра'} ${until(to.time - now)}`);
+    } else {
+      document.querySelector('#prayer-next').textContent = ky() ? `${label(next)} — ${clock(next.time)}` : `${label(next)} в ${clock(next.time)}`;
+      const previous = line[index - 1];
+      countdown = { from: previous.time, to: next.time };
+      document.querySelector('#prayer-countdown-label').textContent = ky() ? 'Калды' : next.tomorrow ? 'Завтра, осталось' : 'Осталось';
+      document.querySelector('#prayer-from').textContent = `${label(previous)} ${clock(previous.time)}`;
+      document.querySelector('#prayer-to').textContent = `${label(next)} ${clock(next.time)}`;
+      document.querySelector('#prayer-progress').setAttribute('aria-valuetext', ky() ? `${until(next.time - now)} калды` : `Осталось ${until(next.time - now)}`);
+    }
     tick();
     // As on the canvas: before Asr and Isha, a reminder of the nafil that follows them.
-    document.querySelector('#prayer-left').textContent = NAFIL_AFTER.includes(next.id)
+    document.querySelector('#prayer-left').textContent = phase?.kind === 'fajr'
+      ? (ky() ? 'Багымдатты күн чыкканга чейин окуп алыңыз.' : 'Успейте совершить Фаджр до восхода солнца.')
+      : phase?.kind === 'tahajjud'
+      ? (ky() ? 'Түндүн акыркы үчтөн бири — дуба кабыл болчу убакыт.' : 'Последняя треть ночи — время, когда мольба принимается.')
+      : NAFIL_AFTER.includes(next.id)
       ? (ky() ? `${label(next)} намазынан кийинки напилди төмөндө белгилесеңиз болот.` : `Нафиль после ${label(next)} можно отметить ниже, в разделе «Намаз».`)
       : '';
-    const current = currentPrayer(now, day);
-    document.querySelector('#prayer-strip').innerHTML = day.map(item => {
-      const isNow = current && item.id === current.id, past = !isNow && item.time <= now;
+    const current = phase?.kind === 'tahajjud' ? night : currentPrayer(now, day);
+    document.querySelector('#prayer-strip').innerHTML = [...day, night].map(item => {
+      const isNow = current && item.id === current.id, past = !isNow && item.id !== 'tahajjud' && item.time <= now;
       const state = isNow ? 'current' : past ? 'past' : '';
       const note = isNow ? (ky() ? ', азыр' : ', сейчас') : past ? (ky() ? ', өттү' : ', прошёл') : '';
       return `<span role="listitem" class="prayer-slot ${state}" aria-label="${label(item)}, ${clock(item.time)}${note}"><small>${label(item)}</small><b>${clock(item.time)}</b></span>`;
@@ -3947,15 +3987,17 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
   function paintSchedule() {
     const element = document.querySelector('#prayer-schedule-sheet');
     if (!element || element.hidden) return;
-    const now = new Date(), where = place(), day = P.timesFor(now, where);
-    const next = day.find(item => item.prayer && item.time > now), current = currentPrayer(now, day);
+    const now = new Date(), where = place(), day = P.timesFor(now, where), night = tahajjudFor(now, where);
+    const inNight = now >= night.time && now < night.end;
+    const next = day.find(item => item.prayer && item.time > now), current = inNight ? night : currentPrayer(now, day);
     // The current prayer lasts until the next time in the list (Fajr until sunrise).
     const ends = current && (day[day.indexOf(day.find(item => item.id === current.id)) + 1] || null);
     element.querySelector('#prayer-schedule-sheet-title').textContent = ky() ? 'Намаз убактылары' : 'Время намазов';
     element.querySelector('.sheet-sub').textContent = `${ky() ? 'Бүгүн' : 'Сегодня'}, ${new Intl.DateTimeFormat(appLocale(), { day: 'numeric', month: 'long' }).format(now)}`;
-    const rows = day.map(item => {
-      const isNow = current && item.id === current.id, isNext = next && item.id === next.id, past = !isNow && item.time <= now;
-      const sub = isNow ? (ky() ? `азыр${ends && ends.time > now ? ` · ${clock(ends.time)} чейин` : ''}` : `сейчас${ends && ends.time > now ? ` · до ${clock(ends.time)}` : ''}`)
+    const rows = [...day, night].map(item => {
+      const isNow = current && item.id === current.id, isNext = next && item.id === next.id, past = !isNow && item.id !== 'tahajjud' && item.time <= now;
+      const sub = item.id === 'tahajjud' ? (isNow ? (ky() ? `азыр · ${clock(night.end)} чейин` : `сейчас · до Фаджра ${clock(night.end)}`) : (ky() ? 'түндүн акыркы үчтөн бири' : 'последняя треть ночи'))
+        : isNow ? (ky() ? `азыр${ends && ends.time > now ? ` · ${clock(ends.time)} чейин` : ''}` : `сейчас${ends && ends.time > now ? ` · до ${clock(ends.time)}` : ''}`)
         : item.id === 'sunrise' ? (ky() ? 'Багымдаттын убактысы бүтөт' : 'конец времени Фаджра')
         : isNext ? `${ky() ? 'калды' : 'через'} ${until(item.time - now)}` : past ? (ky() ? 'өттү' : 'прошёл') : '';
       return `<li class="prayer-row ${isNow ? 'current' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b>${sub ? `<small>${sub}</small>` : ''}</span><time>${clock(item.time)}</time></li>`;
@@ -4318,6 +4360,26 @@ body.app-dark #app .fast-note{background:rgba(127,211,168,.12);color:#9FE0BE}
 body.app-dark #app .fast-note i{background:rgba(255,255,255,.1);color:#9FE0BE}
 body.app-dark #app .fast-hint{border-color:rgba(255,255,255,.08);color:var(--muted)}
 body.app-dark #app .fast-hint b{color:var(--ink)}
+</style>
+<style>
+/* Prayer card: seven times with Tahajjud, and its own look from Fajr to sunrise and at night. */
+body #app .prayer-strip{grid-template-columns:repeat(6,minmax(0,1fr)) minmax(0,1.3fr)}
+body #app .prayer-slot small{font-size:9.5px;letter-spacing:-.02em}
+body #app .prayer-slot b{font-size:13.5px}
+body #app .prayer-card.is-fajr #prayer-timer{color:#A0563B}
+body #app .prayer-card.is-fajr #prayer-progress-fill{background:linear-gradient(90deg,#C7782A,#E9A85C)}
+body #app .prayer-card.is-fajr #prayer-progress-knob{border-color:#C7782A}
+body #app .prayer-card.is-fajr .prayer-card-top>span,body #app .prayer-card.is-tahajjud .prayer-card-top>span{display:inline-flex;align-items:center;gap:6px;color:#10161A;font-weight:600}
+body #app .prayer-card.is-fajr .prayer-card-top>span:before,body #app .prayer-card.is-tahajjud .prayer-card-top>span:before{content:"";width:7px;height:7px;border-radius:4px;background:#E9A85C;box-shadow:0 0 0 4px rgba(233,168,92,.22)}
+body #app .prayer-card.is-tahajjud .prayer-card-top>span:before{background:#6C7BD0;box-shadow:0 0 0 4px rgba(108,123,208,.2)}
+body #app .prayer-card.is-tahajjud #prayer-progress-fill{background:linear-gradient(90deg,#3E4A8A,#6C7BD0)}
+body #app .prayer-card.is-tahajjud #prayer-progress-knob{border-color:#3E4A8A}
+body #app .prayer-card.is-fajr .prayer-left,body #app .prayer-card.is-tahajjud .prayer-left{color:#5E6A71}
+body.app-dark #app .prayer-card.is-fajr #prayer-timer{color:#E9A85C}
+body.app-dark #app .prayer-card.is-fajr .prayer-card-top>span,body.app-dark #app .prayer-card.is-tahajjud .prayer-card-top>span{color:var(--ink)}
+body.app-dark #app .prayer-card.is-fajr #prayer-progress-knob{border-color:#E9A85C}
+body.app-dark #app .prayer-card.is-tahajjud #prayer-progress-fill{background:linear-gradient(90deg,#6C7BD0,#A3AEEA)}
+body.app-dark #app .prayer-card.is-tahajjud #prayer-progress-knob{border-color:#A3AEEA}
 </style>
 </body>
 </html>
