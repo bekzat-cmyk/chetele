@@ -75,10 +75,10 @@ try {
             $progress->execute([$subscription['user_id'], $today]);
             $completed = (int)($progress->fetchColumn() ?: 0);
             $slotId = $slot['id'] ?? 'start'; $body = $slotMessages[$slotId] ?? $slotMessages['start'];
-            if ($slotId === 'continue' && $completed > 0) $body = "Уже {$completed} из 11 дел отмечено. Продолжим?";
-            if ($slotId === 'finish' && $completed > 0) $body = "Сегодня отмечено {$completed} из 11 дел. Бережно подведите итог дня.";
+            if ($slotId === 'continue' && $completed > 0) $body = "Уже {$completed} из 12 дел отмечено. Продолжим?";
+            if ($slotId === 'finish' && $completed > 0) $body = "Сегодня отмечено {$completed} из 12 дел. Бережно подведите итог дня.";
             /* The title says what the reminder is about; a tap opens today's deeds. */
-            $titles = ['start' => 'Дела дня', 'continue' => $completed > 0 ? "Дела дня · {$completed} из 11" : 'Продолжим путь', 'finish' => 'Итог дня'];
+            $titles = ['start' => 'Дела дня', 'continue' => $completed > 0 ? "Дела дня · {$completed} из 12" : 'Продолжим путь', 'finish' => 'Итог дня'];
             $title = $titles[$slotId] ?? 'Дела дня';
 
             $result = sendWebPush([

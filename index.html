@@ -14,8 +14,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
-  <script src="assets/deeds.js"></script>
+  <script src="assets/deeds.js?v=2"></script>
   <script src="assets/hadiths.js"></script>
+  <script src="assets/fasting.js"></script>
   <script src="assets/zikr-sync.js?v=3"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
@@ -297,6 +298,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       { id:'kitap', title:'Книги', sub:'Сколько страниц прочитали?', type:'number', suffix:'стр.' },
       { id:'nafil', title:'Нафил намаз', sub:'Отмечайте каждый совершённый намаз', type:'nafil' },
       { id:'tahajjud', title:'Тахаджуд', sub:'Ночной намаз', type:'yesno' },
+      { id:'fast', title:'Пост', sub:'Добровольный пост', type:'yesno' },
       { id:'salawat', title:'Салават', sub:'Количество прочитанных', type:'number', suffix:'раз' },
       { id:'tasbihat', title:'Зикр', sub:'Количество прочитанных', type:'number', suffix:'раз' }
     ];
@@ -309,6 +311,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       softQuran:'<path d="M12 6.5C10 5 7.3 4.6 4.5 5.2v9.6c2.8-.6 5.5-.2 7.5 1.3 2-1.5 4.7-1.9 7.5-1.3V5.2C16.7 4.6 14 5 12 6.5zM12 6.5v9.6M6 20.5l12-4M18 20.5l-12-4"/>',
       softJauchan:'<path d="M8 4h9a3 3 0 0 1 3 3v1h-3M8 4a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3M8 4a3 3 0 0 0-3 3v1h3M8 20h8a3 3 0 0 0 3-3v-1h-5M11 10h4M11 13.5h3"/>',
       softKitap:'<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M10 3v6.5l2-1.5 2 1.5V3"/>',
+      softFast:'<path d="M13.9 3.1a5.27 5.27 0 1 0 3.41 9.3 4.34 4.34 0 0 1-3.41-9.3z"/><path d="M3.5 17.5h17M7.5 20.5h9"/>',
       softTahajjud:'<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5zM16.5 3.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"/>',
       softNafil:'<path d="M6 3h12v18H6zM9 18h6M12 7.5l2.5 3-2.5 3-2.5-3z"/>',
       softSalawat:'<path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/>',
@@ -449,7 +452,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function recordDay(date=entryDateKey){
       const count=completed();
       if(!count && !state.history?.[date]) return;
-      state.history={...(state.history||{}),[date]:{completed:count,max:dailyMax(),tasks:JSON.parse(JSON.stringify(state.tasks||{})),qaza:{...(state.qaza||{})}}};
+      state.history={...(state.history||{}),[date]:{completed:count,max:ChetDeeds.maxFor(date),tasks:JSON.parse(JSON.stringify(state.tasks||{})),qaza:{...(state.qaza||{})}}};
       const keys=Object.keys(state.history).sort();
       if(keys.length>60) keys.slice(0,keys.length-60).forEach(key=>delete state.history[key]);
     }
@@ -597,6 +600,27 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const field=document.querySelector(`#task-list [data-id="${quick.dataset.emptyFocus}"]`); if(!field) return;
       field.scrollIntoView({behavior:motionOff()?'auto':'smooth',block:'center'}); setTimeout(()=>field.focus({preventScroll:true}),motionOff()?0:400);
     });
+    /* Voluntary fast: one question, suhur and iftar from the prayer times, and the next Sunnah day. */
+    function fastTimes(date){
+      const P=window.ChetPrayer; if(!P) return null;
+      let where=P.CITIES[0];
+      try { const saved=JSON.parse(localStorage.getItem('chetele-prayer-place')||'null'); where=saved?.id==='geo'&&Number.isFinite(saved.lat)?{lat:saved.lat,lng:saved.lng}:(P.CITIES.find(city=>city.id===saved?.id)||where); } catch {}
+      const day=P.timesFor(date,where), pick=id=>day.find(item=>item.id===id)?.time;
+      return {suhur:pick('fajr'),iftar:pick('maghrib')};
+    }
+    function fastGroup(){
+      const answer=state.tasks.fast, date=new Date(`${entryDateKey}T12:00:00`), isToday=entryDateKey===todayKey;
+      const clock=time=>time?`${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`:'—';
+      const times=fastTimes(date), hint=window.ChetFasting?.hint(date,appLocale());
+      let note='';
+      if(answer==='yes'){
+        const left=isToday&&times?.iftar?Math.round((times.iftar-new Date())/60000):0;
+        note=`<p class="fast-note"><i>${icon('check')}</i>${left>0?`Пусть Аллах примет ваш пост. Ифтар через ${left>=60?`${Math.floor(left/60)} ч `:''}${left%60} мин`:'Пусть Аллах примет ваш пост.'}</p>`;
+      }
+      const group=document.createElement('section'); group.className='prayer-group fast-group';
+      group.innerHTML=`<div class="group-head"><h3>Пост</h3><span>добровольный</span></div><div class="prayer-body fast-body"><div class="fast-top"><span class="task-icon${answer==='yes'?' on':''}">${icon('softFast')}</span><div class="task-copy"><div class="task-title">${isToday?'Вы сегодня постились?':'Вы постились в этот день?'}</div><div class="task-sub">${times?`Сухур до ${clock(times.suhur)} · ифтар в ${clock(times.iftar)}`:'Добровольный пост'}</div></div></div><div class="fast-choice" role="radiogroup" aria-label="Пост"><button type="button" role="radio" data-choice="no" data-id="fast" aria-checked="${answer==='no'}" class="${answer==='no'?'active':''}">Не постился</button><button type="button" role="radio" data-choice="yes" data-id="fast" aria-checked="${answer==='yes'}" class="${answer==='yes'?'active':''}">Да, пощусь</button></div>${note}${hint?`<p class="fast-hint${hint.forbidden?' warn':''}"><i>${icon('softStar')}</i><span>${escapeHtml(hint.text)}${hint.next?` Ближайший: <b>${escapeHtml(hint.next)}</b>`:''}</span></p>`:''}</div>`;
+      return group;
+    }
     function render(){
       paintDayStates();
       if(typeof paintHadithRead==='function') paintHadithRead();
@@ -630,6 +654,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
           list.append(group); return;
         }
         if(task.id==='tahajjud') return;
+        if(task.id==='fast'){ list.append(fastGroup()); return; }
         const dhikrIds=['salawat','tasbihat'];
         if(task.id==='salawat'){
           const group=document.createElement('section'); group.className='dhikr-group';
@@ -928,7 +953,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       let streak=0, longest=0, fullRun=0, longestFull=0, tahajjudRun=0, longestTahajjud=0, previous='';
       entries.forEach(entry=>{
         const date=new Date(`${entry.date}T12:00:00`), yesterday=new Date(date); yesterday.setDate(date.getDate()-1); const expected=`${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
-        const consecutive=previous===expected, progress=achievementProgress(entry), active=progress>0, full=progress>=dailyMax();
+        const consecutive=previous===expected, progress=achievementProgress(entry), active=progress>0, full=progress>=ChetDeeds.maxFor(entry.date);
         streak=active?(consecutive?streak+1:1):0; longest=Math.max(longest,streak);
         fullRun=full?(consecutive?fullRun+1:1):0; longestFull=Math.max(longestFull,fullRun);
         tahajjudRun=entry?.tasks?.tahajjud==='yes'?(consecutive?tahajjudRun+1:1):0; longestTahajjud=Math.max(longestTahajjud,tahajjudRun);
@@ -936,7 +961,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       });
       const list=[
         {title:'Ваш ритм', value:longest, goal:3, rule:'Отмечать дела 3 дня подряд', detail:longest>=3?`${longest} дня подряд`:'3 дня подряд', earned:longest>=3, icon:'<svg viewBox="0 0 24 24"><path d="M12 3c1.8 3 5.7 4.9 5.7 9.2A5.7 5.7 0 0 1 6.3 12.2C6.3 8.5 9 6.1 12 3Z"/></svg>'},
-        {title:'Полная неделя', value:longestFull, goal:7, rule:'Все 11 дел 7 дней подряд', detail:longestFull>=7?'7 полных дней':'7 полных дней подряд', earned:longestFull>=7, icon:'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4m8-4v4m-8 7 2.5 2.5L16 11"/></svg>'},
+        {title:'Полная неделя', value:longestFull, goal:7, rule:'Все дела дня 7 дней подряд', detail:longestFull>=7?'7 полных дней':'7 полных дней подряд', earned:longestFull>=7, icon:'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4m8-4v4m-8 7 2.5 2.5L16 11"/></svg>'},
         {title:'Путь Корана', value:totals.quran, goal:604, rule:'Прочитать 604 страницы', detail:totals.quran>=604?`${totals.quran} страниц прочитано`:'604 страницы прочитано', earned:totals.quran>=604, icon:'<svg viewBox="0 0 24 24"><path d="M4 5.5c2.7-.8 5.1-.4 8 1.4v12c-2.9-1.8-5.3-2.2-8-1.4zM20 5.5c-2.7-.8-5.1-.4-8 1.4v12c2.9-1.8 5.3-2.2 8-1.4zM12 7v12"/></svg>'},
         {title:'Тахажуд', value:longestTahajjud, goal:40, rule:'Тахаджуд 40 ночей подряд', detail:longestTahajjud>=40?`${longestTahajjud} дней подряд`:'40 дней подряд', earned:longestTahajjud>=40, icon:'<svg viewBox="0 0 24 24"><path d="M19 15.5A7.5 7.5 0 0 1 8.5 5 7.5 7.5 0 1 0 19 15.5Z"/><path d="m17 4 .4 1.1L18.5 5.5l-1.1.4L17 7l-.4-1.1-1.1-.4 1.1-.4z"/></svg>'},
         {title:'Салават', value:totals.salawat, goal:100000, rule:'100 000 салаватов', detail:totals.salawat>=100000?`${new Intl.NumberFormat(appLocale()).format(totals.salawat)} раз`:'100 000 салаватов', earned:totals.salawat>=100000, icon:'<svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="m8.5 8.5 2 2m3 0 2-2m-7 7 2-2m3 0 2 2"/></svg>'},
@@ -1025,7 +1050,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         return;
       }
       if(profileScreen==='about'){
-        const facts=[['softDeeds','Дела дня','11 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
+        const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
         root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="img/logo.png" alt="" width="64" height="64"><span class="ps-copy"><b>Chetele</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}`;
         return;
       }
@@ -1312,12 +1337,12 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     let calendarCursor=null, calendarSelectedDate='';
     function entryForCalendarDate(key){
-      if(key===entryDateKey) return {completed:completed(),max:dailyMax()};
+      if(key===entryDateKey) return {completed:completed(),max:ChetDeeds.maxFor(key)};
       /* The count comes from the day's marks, not a stored number that can be stale, and
          a day saved on the server (another phone, a new login) shows too. */
       const local=state.drafts?.[key]||state.history?.[key], remote=(state.remoteEntries||[]).find(entry=>entry?.date===key);
       if(!local&&!remote) return undefined;
-      return {...(remote||{}),...(local||{}),completed:Math.max(entryCompletedCount(local),entryCompletedCount(remote)),max:dailyMax()};
+      return {...(remote||{}),...(local||{}),completed:Math.max(entryCompletedCount(local),entryCompletedCount(remote)),max:ChetDeeds.maxFor(key)};
     }
     function formatDayLabel(key){ return new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`)); }
     function renderMonthCalendar(){
@@ -4239,6 +4264,33 @@ body.app-dark #hadith-sheet .hadith-insight>i{background:rgba(255,255,255,.08);c
 body.app-dark #hadith-sheet .hadith-practice>i{background:rgba(255,255,255,.1);color:#E0A060}
 body.app-dark #hadith-sheet .hadith-insight p,body.app-dark #hadith-sheet .hadith-practice p{color:#c3d1cc}
 body.app-dark #hadith-sheet .hs-done{background:#EEF5F2;color:#0B1110}
+</style>
+<style>
+/* Voluntary fast on the main screen. */
+body #app .fast-body{display:flex;flex-direction:column;gap:14px}
+body #app .fast-top{display:flex;align-items:center;gap:12px}
+body #app .fast-top .task-copy{flex:1;min-width:0}
+body #app #today-view .fast-top .task-icon.on{background:#0B0F12!important;color:#fff!important;border-color:#0B0F12!important}
+body #app .fast-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:22px;background:rgba(16,22,26,.06)}
+body #app .fast-choice button{height:44px;min-height:44px;padding:0;border:0;border-radius:18px;background:transparent;color:#5E6A71;font:inherit;font-size:15px;font-weight:600;box-shadow:none}
+body #app .fast-choice button.active[data-choice="no"]{background:#fff;color:#10161A;box-shadow:0 2px 8px rgba(16,22,26,.10)}
+body #app .fast-choice button.active[data-choice="yes"]{background:#0B0F12;color:#fff}
+body #app .fast-note{margin:0;padding:12px 14px;border-radius:18px;background:rgba(47,122,95,.10);color:#1F5B45;display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4}
+body #app .fast-note i{width:28px;height:28px;flex:none;border-radius:14px;background:#fff;color:#2F7A5F;display:grid;place-items:center}
+body #app .fast-note .lucide{width:15px;height:15px;stroke-width:2.2}
+body #app .fast-hint{margin:0;padding-top:14px;border-top:1px solid rgba(16,22,26,.08);display:flex;align-items:flex-start;gap:10px;color:#5E6A71;font-size:13px;line-height:1.45}
+body #app .fast-hint i{flex:none;margin-top:1px;color:#C7782A}
+body #app .fast-hint .lucide{width:16px;height:16px}
+body #app .fast-hint b{color:#10161A;font-weight:600}
+body #app .fast-hint.warn i{color:#A0563B}
+body.app-dark #app .fast-choice{background:rgba(255,255,255,.08)}
+body.app-dark #app .fast-choice button{color:var(--muted)}
+body.app-dark #app .fast-choice button.active[data-choice="no"]{background:rgba(255,255,255,.14);color:var(--ink)}
+body.app-dark #app .fast-choice button.active[data-choice="yes"],body.app-dark #app #today-view .fast-top .task-icon.on{background:#EEF5F2!important;color:#0B1110!important}
+body.app-dark #app .fast-note{background:rgba(127,211,168,.12);color:#9FE0BE}
+body.app-dark #app .fast-note i{background:rgba(255,255,255,.1);color:#9FE0BE}
+body.app-dark #app .fast-hint{border-color:rgba(255,255,255,.08);color:var(--muted)}
+body.app-dark #app .fast-hint b{color:var(--ink)}
 </style>
 </body>
 </html>

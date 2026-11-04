@@ -259,6 +259,7 @@ function normalizeEntry(array $input): array {
         'kitap' => amount($tasks['kitap'] ?? 0),
         'nafil' => $nafil,
         'tahajjud' => ($tasks['tahajjud'] ?? '') === 'yes' ? 'yes' : 'no',
+        'fast' => ($tasks['fast'] ?? '') === 'yes' ? 'yes' : (($tasks['fast'] ?? '') === 'no' ? 'no' : ''),
         'salawat' => amount($tasks['salawat'] ?? 0),
         'tasbihat' => amount($tasks['tasbihat'] ?? 0),
         'zikr' => (object)$zikr,
@@ -272,6 +273,7 @@ function normalizeEntry(array $input): array {
         $completed += $normalizedTasks[$name] > 0 ? 1 : 0;
     }
     $completed += $normalizedTasks['tahajjud'] === 'yes' ? 1 : 0;
+    $completed += $normalizedTasks['fast'] === 'yes' ? 1 : 0;
     $completed += count(array_filter($nafil));
     $completed += count(array_filter($normalizedQaza)) > 0 ? 1 : 0;
     return ['tasks' => $normalizedTasks, 'qaza' => $normalizedQaza, 'completed' => $completed, 'points' => $completed * 10];

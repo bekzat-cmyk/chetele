@@ -1,15 +1,25 @@
 // Run: node --test tests/
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { countDeeds, DAILY_MAX } = require('../assets/deeds.js');
+const { countDeeds, DAILY_MAX, maxFor } = require('../assets/deeds.js');
 
 const fullDay = {
-  tasks: { quran: '5', jauchan: '2', kitap: '1', salawat: '100', tasbihat: '33', tahajjud: 'yes', nafil: { asr: true, kuptan: true, avvabin: true, duha: true } },
+  tasks: { quran: '5', jauchan: '2', kitap: '1', salawat: '100', tasbihat: '33', tahajjud: 'yes', fast: 'yes', nafil: { asr: true, kuptan: true, avvabin: true, duha: true } },
   qaza: { 'Аср': '1' }
 };
 
-test('a day has eleven possible deeds', () => {
-  assert.equal(DAILY_MAX, 11);
+test('a day has twelve possible deeds', () => {
+  assert.equal(DAILY_MAX, 12);
+});
+
+test('days before the fast became a deed were complete with eleven', () => {
+  assert.equal(maxFor('2026-11-03'), 11);
+  assert.equal(maxFor('2026-11-04'), 12);
+});
+
+test('the voluntary fast counts only when answered yes', () => {
+  assert.equal(countDeeds({ fast: 'no' }, {}), 0);
+  assert.equal(countDeeds({ fast: 'yes' }, {}), 1);
 });
 
 test('an empty day counts nothing', () => {
@@ -18,7 +28,7 @@ test('an empty day counts nothing', () => {
 });
 
 test('a fully marked day counts every deed', () => {
-  assert.equal(countDeeds(fullDay.tasks, fullDay.qaza), 11);
+  assert.equal(countDeeds(fullDay.tasks, fullDay.qaza), 12);
 });
 
 test('number deeds count only when above zero', () => {
