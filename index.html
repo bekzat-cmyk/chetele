@@ -1145,7 +1145,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const podium=`<section class="rt-podium" aria-label="${ky?'Алдыңкы үчөө':'Тройка лидеров'}">${[top[1],top[0],top[2]].filter(Boolean).map(podiumSlot).join('')}</section>`;
         // With shared places the one to catch is the nearest person with more.
         const me=people.find(person=>person.me), above=me?[...people].reverse().find(person=>person.points>me.points):null;
-        let meCard='';
+        let meCard=isGuest()?`<section class="rt-me guest-seat" aria-label="Ваше место"><div class="rt-me-top"><span class="rt-me-place">#?</span><span class="rt-me-copy"><b>Здесь будет ваше место</b><small>Каждое дело — 10 очков. Гостя в рейтинге не видно.</small></span><span class="rt-me-points"><b>0</b><small>очков</small></span></div><div class="guest-cta-actions"><button type="button" class="guest-primary" data-auth="signup">Занять место</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section>`:'';
         if(me){
           const gap=above?(metric==='points'?Math.max(10,above.points-me.points+10):above.points-me.points+1):0;
           const goal=me.place===1?(ky?'Сиз биринчи орундасыз — ушундай уланта бериңиз!':'Вы на первом месте — так держать!'):!me.points&&period==='week'?(ky?'Рейтингге кирүү үчүн ишти белгилеңиз':'Отметьте дело, чтобы попасть в рейтинг недели'):above?`${ky?`${above.place}-орунга чейин`:`До ${above.place} места`} — ${number.format(gap)} ${points(gap)}`:'';
@@ -1197,7 +1197,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const status=upcoming?`<span class="evs-pill soon">С ${shortDate(event.starts_on)}</span>`:`<span class="evs-pill live"><i></i>${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
         return `<div class="evs-pills">${status}<span class="evs-pill">${personal?'Личный путь':'Общая цель'}</span>${event.joined?'<span class="evs-pill joined">Вы участвуете</span>':''}</div>`;
       };
-      const join=event=>event.joined?'':`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
+      const join=event=>event.joined?'':isGuest()?`<button type="button" class="ps-primary evs-join" data-auth="signup">${guestSvg('lock')}Участвовать</button>`:`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
       const copy=(event,big)=>`<div class="evs-copy">${big?'':`<i class="evs-icon">${icon(metricIcon[event.metric]||'softEvents')}</i>`}<span><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.description||(event.mode==='personal_path'?'Личный путь в своём темпе.':'Общая цель сообщества.'))}</p></span></div>`;
       const progress=(value,target,unit)=>{ const percent=Math.min(100,Math.round(value/Math.max(1,target)*100)); return `<div class="evs-progress"><div><b>${number.format(value)}</b><span>из ${number.format(target)} ${unit}</span><strong>${percent}%</strong></div><span class="zg-track" aria-hidden="true"><i style="width:${percent}%"></i></span></div>`; };
       const participants=n=>`${number.format(n)} ${plural(n,'участник','участника','участников')}`;
@@ -1215,7 +1215,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         return `<article class="evs-card">${pills(event)}${copy(event,false)}${body}${event.joined?'':`<div class="evs-foot"><span>${participants(Number(event.participants||0))}</span>${join(event)}</div>`}</article>`;
       };
       const others=live.filter(event=>event!==hero);
-      root.innerHTML=`${hero?heroCard(hero):''}${others.map(card).join('')}${soon.length?`<section class="evs-soon"><h3 class="evs-heading">Скоро</h3>${soon.map(card).join('')}</section>`:''}<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>`;
+      root.innerHTML=`${isGuest()?guestCta('Смотреть можно, участвовать — с профилем','Ваши салаваты и дела будут засчитываться в события автоматически.'):''}${hero?heroCard(hero):''}${others.map(card).join('')}${soon.length?`<section class="evs-soon"><h3 class="evs-heading">Скоро</h3>${soon.map(card).join('')}</section>`:''}<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>`;
     }
     async function fetchEvents(){
       const root=document.querySelector('#events-list'); if(!root) return;
@@ -1387,7 +1387,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector('#app').classList.toggle('profile-mode',viewId==='profile-view');
       document.querySelector('#app').classList.toggle('on-today',viewId==='today-view');
       document.querySelector('#app').classList.toggle('on-glass',['stats-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view','events-view'].includes(viewId));
-      if(viewId==='rating-view'&&!isGuest()) loadLeaderboard(ratingPeriod(),ratingMetric());
+      if(viewId==='rating-view') loadLeaderboard(ratingPeriod(),ratingMetric());
       if(viewId==='profile-view'&&!isGuest()) loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
       if(viewId==='zikr-view'){ renderZikr(); riseIn(document.querySelector('#zikr-view')); if(!state.events) fetchEvents(); }
@@ -1571,27 +1571,44 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
        profile is created. Stats, rating, events and the profile show a gate instead. */
     const GUEST_ICON='<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M4.5 20.5c1.2-3.6 4.1-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></svg>';
     const GUEST_CHECK='<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-    const GUEST_GATES={
-      'stats-view':{icon:'softStats',title:'Статистика сохраняется в профиле',text:'Отмечайте дела на главном — а здесь появятся серии, итоги недели и месяца.',perks:['Серия дней и лучший результат','Итоги по каждому делу','Отметки не потеряются при смене телефона'],ghost:[200,96]},
-      'rating-view':{icon:'softRating',title:'Займите место в рейтинге',text:'Рейтинг сравнивает очки участников. Для этого нужно имя — его увидят другие.',perks:['Только имя и очки, без личных данных','Рейтинг за неделю, месяц и всё время','Можно смотреть по каждому делу'],ghost:[64,64,64,64]},
-      'events-view':{icon:'softEvents',title:'Участвуйте в событиях',text:'Общие цели общины и личный путь — например, 20 000 салаватов за месяц вместе со всеми.',perks:['Ваш вклад засчитывается автоматически','Личная цель в своём темпе','Напоминание о старте'],ghost:[180,150]},
-      'profile-view':{icon:'',title:'Создайте профиль',text:'Сейчас отметки хранятся только на этом телефоне. Профиль сохранит их и откроет весь Chetele.',perks:['Статистика, рейтинг и события','Достижения и серии','Вход с любого телефона'],ghost:[130,260]}
-    };
+    /* A guest sees each section as it will look: rating and events are the real ones,
+       stats and the profile are empty pages. A card on each asks for a profile. */
+    const GUEST_ICONS={lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',phone:'M7 2.5h10a1.5 1.5 0 0 1 1.5 1.5v16a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 20V4A1.5 1.5 0 0 1 7 2.5zM11 18.5h2',star:'M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z',qaza:'M3.5 12a8.5 8.5 0 1 0 2.5-6M3.5 4v4h4M12 8v4l3 2',medal:'M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2',bell:'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0',clock:'M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M12 7.5V12l3 2',settings:'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4',chevron:'m9 18 6-6-6-6',back:'m15 18-6-6 6-6'};
     function isGuest(){ return !state.userId; }
+    const guestSvg=name=>`<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="${GUEST_ICONS[name]}"/></svg>`;
+    function guestCta(title,text,iconName='lock',primary='Создать профиль'){
+      return `<section class="guest-cta" aria-label="${title}"><div class="guest-cta-row"><i>${guestSvg(iconName)}</i><span><b>${title}</b><small>${text}</small></span></div><div class="guest-cta-actions"><button type="button" class="guest-primary" data-auth="signup">${primary}</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section>`;
+    }
+    function guestStatsPage(){
+      const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], today=(new Date().getDay()+6)%7;
+      const tile=(label,iconName,value,unit,cls='')=>`<div class="gs-tile"><span class="gs-tile-top"><span>${label}</span><i class="${cls}">${iconName.startsWith('soft')?icon(iconName):guestSvg(iconName)}</i></span><b>${value}</b><small>${unit}</small></div>`;
+      const nafil=[['Аср','нафил'],['Иша','нафил'],['Аввабин','нафил'],['Духа','нафил'],['Тахаджуд','ночной']].map(([title,kind])=>`<div class="gs-bar-row"><span><b>${title}</b><small>${kind}</small></span><i></i><em>0</em></div>`).join('');
+      return guestCta('Здесь будет ваша статистика','Пока пусто: отметки гостя не попадают в итоги. С профилем сюда сразу перейдут дела с главного.')
+        +`<section class="gs-hero" aria-label="Дела за неделю"><div class="gs-hero-bar"><span>Дела за неделю</span><em>пока пусто</em></div><article class="gs-hero-card"><div class="gs-total"><b>0</b><span>из ${dailyMax()*7} дел</span><em>0%</em></div><div class="gs-chart" role="img" aria-label="График пока пуст">${days.map((day,index)=>`<div class="${index===today?'today':''}"><small>0</small><i></i><span>${day}</span></div>`).join('')}</div></article></section>`
+        +`<div class="gs-tiles">${tile('Серия','softFlame','—','дней подряд','warm')}${tile('Лучший день','star','—','дел за день')}${tile('Салават','softSalawat','0','раз за неделю')}${tile('Куран','softQuran','0','страниц')}</div>`
+        +`<section class="gs-group"><div class="gs-group-head"><h3>Намаз</h3><span>0 из 35</span></div><div class="gs-card">${nafil}<hr><div class="gs-qaza"><i>${guestSvg('qaza')}</i><span><b>Пропущенные намазы</b><small>восполнено за период</small></span><em>0</em></div></div></section>`
+        +`<section class="gs-card gs-streak" aria-label="Серия"><div class="gs-qaza"><i class="warm">${icon('softFlame')}</i><span><b>Серия начнётся с первого дня</b><small>Каждый день с делом закрасит клетку</small></span></div><div class="gs-grid" role="img" aria-label="Последние 28 дней пока пусты">${'<span></span>'.repeat(28)}</div></section>`;
+    }
+    function guestProfilePage(){
+      const row=(title,sub,iconName,attrs,locked=false)=>`<li><button type="button" class="gp-row${locked?' locked':''}" ${attrs}><i>${guestSvg(iconName)}</i><span><b>${title}</b><small>${sub}</small></span>${locked?`<em>${guestSvg('lock')}с профилем</em>`:guestSvg('chevron')}</button></li>`;
+      let place='Бишкек'; try { const saved=JSON.parse(localStorage.getItem('chetele-prayer-place')||'null'); place=saved?.id==='geo'?(saved.name||'Моё место'):(window.ChetPrayer?.CITIES.find(city=>city.id===saved?.id)||window.ChetPrayer?.CITIES[0])?.name||place; } catch {}
+      return `<header class="gp-top"><button type="button" data-view="today-view" aria-label="Вернуться к делам">${guestSvg('back')}</button><span>Профиль</span><i aria-hidden="true"></i></header>`
+        +`<section class="gs-hero gp-hero" aria-label="Гость"><div class="gp-me"><span class="gp-avatar">${GUEST_ICON}</span><span><b>Гость</b><small>Отметки только на этом телефоне</small></span></div><article class="gs-hero-card gp-stats"><span><b class="muted">0</b><small>очков</small></span><span><b class="muted">—</b><small>в рейтинге</small></span><span><b id="gp-today">${entryDateKey===todayKey?completed():0}</b><small>сегодня дел</small></span></article></section>`
+        +guestCta('Сохраните свой путь','Профиль сохранит отметки, откроет статистику, рейтинг и события и вход с любого телефона.','phone')
+        +`<ol class="gs-card gp-menu" aria-label="Меню профиля">${row('Достижения','Серии и награды','medal','data-auth="signup"',true)}${row('Напоминания','Утро, день и вечер','bell','data-auth="signup"',true)}${row('Время намазов',`${escapeHtml(place)} · ханафитский мазхаб`,'clock','data-profile-menu="place"')}${row('Настройки','Тема, язык, крупный текст','settings','data-profile-menu="settings"')}</ol>`;
+    }
     function renderGuestGates(){
-      Object.entries(GUEST_GATES).forEach(([viewId,gate])=>{
-        const view=document.querySelector('#'+viewId); if(!view||view.querySelector(':scope>.guest-gate-wrap')) return;
-        const element=document.createElement('div'); element.className='guest-gate-wrap';
-        const ghost=gate.ghost.map(height=>`<span style="height:${height}px"></span>`).join('');
-        const top=viewId==='profile-view'?`<header class="guest-profile-top"><button type="button" data-view="today-view" aria-label="Вернуться к делам"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span>Гость<b>Профиль</b></span></header>`:'';
-        const more=viewId==='profile-view'?`<div class="guest-gate-more"><button type="button" data-profile-menu="place">Город для намазов<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button><button type="button" data-profile-menu="settings">Настройки<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>`:'';
-        element.innerHTML=`${top}<div class="guest-gate"><div class="guest-gate-ghost" aria-hidden="true">${ghost}</div><section class="guest-gate-card" aria-label="${gate.title}"><span class="guest-gate-icon">${gate.icon?icon(gate.icon):GUEST_ICON}</span><h3>${gate.title}</h3><p>${gate.text}</p><ul>${gate.perks.map(perk=>`<li><i>${GUEST_CHECK}</i>${perk}</li>`).join('')}</ul><button type="button" class="guest-primary" data-auth="signup">Создать профиль</button><button type="button" class="guest-secondary" data-auth="login">У меня уже есть профиль</button></section></div>${more}`;
-        const header=view.querySelector(':scope>.stats-top');
-        if(header) header.after(element); else view.prepend(element);
+      if(!isGuest()) return;
+      [['stats-view',guestStatsPage],['profile-view',guestProfilePage]].forEach(([viewId,build])=>{
+        const view=document.querySelector('#'+viewId); if(!view) return;
+        let element=view.querySelector(':scope>.guest-gate-wrap');
+        if(!element){ element=document.createElement('div'); element.className='guest-gate-wrap'; const header=view.querySelector(':scope>.stats-top'); if(header) header.after(element); else view.prepend(element); }
+        element.innerHTML=build();
       });
     }
     function paintGuest(){
       const guest=isGuest();
+      if(guest) renderGuestGates();
       document.querySelector('#app').classList.toggle('is-guest',guest);
       const banner=document.querySelector('#guest-banner'); if(banner) banner.hidden=!guest;
       if(guest) setSaveStatus('Сохранено только на этом телефоне');
@@ -3938,8 +3955,108 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
 /* Guest mode: the main screen works without a profile; stats, rating, events and the
    profile show a gate, and the welcome forms live in a sheet. */
 #app:not(.is-guest) .guest-gate-wrap{display:none!important}
-body #app.is-guest #profile-view>.guest-gate-wrap:not(#soft-profile){display:block!important}
-#app.is-guest :is(#stats-view,#rating-view,#events-view)>:not(.stats-top):not(.guest-gate-wrap),#app.is-guest #profile-view>:not(.guest-gate-wrap){display:none!important}
+body #app.is-guest #profile-view>.guest-gate-wrap:not(#soft-profile){display:flex!important}
+#app.is-guest #stats-view>:not(.stats-top):not(.guest-gate-wrap),#app.is-guest #profile-view>:not(.guest-gate-wrap){display:none!important}
+body #app .guest-gate-wrap{display:flex;flex-direction:column;gap:22px;margin-top:22px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#10161A}
+body #app #profile-view>.guest-gate-wrap{margin-top:0}
+body #app .guest-cta,body #app .gs-card,body #app .gs-tile{border-radius:28px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06)}
+body #app .guest-cta{padding:16px;display:flex;flex-direction:column;gap:14px}
+body #app .guest-cta-row,body #app .gs-qaza{display:flex;align-items:center;gap:12px}
+body #app .guest-cta-row i,body #app .gs-qaza i,body #app .gs-tile-top i,body #app .gp-row i{width:44px;height:44px;flex:none;border-radius:50%;background:rgba(255,255,255,.85);border:1px solid rgba(16,22,26,.06);box-shadow:0 2px 8px rgba(16,22,26,.06);color:#10161A;display:grid;place-items:center}
+body #app .guest-cta-row .lucide,body #app .gs-qaza .lucide{width:20px;height:20px}
+body #app .guest-cta-row span,body #app .gs-qaza span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .guest-cta-row b,body #app .gs-qaza b{font-size:16px;font-weight:600}
+body #app .guest-cta-row small{color:#5E6A71;font-size:13px;line-height:1.4}
+body #app .gs-qaza small{color:#7A858B;font-size:13px}
+body #app .gs-qaza em{color:#9AA3A8;font-size:24px;font-weight:600;font-style:normal}
+body #app .guest-cta-actions{display:flex;gap:8px}
+body #app .guest-cta-actions button{flex:1;height:46px;border:0;border-radius:23px;font:inherit;font-size:15px;font-weight:600;transition:transform .15s ease}
+body #app .guest-cta-actions button:active{transform:scale(.97)}
+body #app .guest-cta-actions .guest-secondary{background:rgba(255,255,255,.9);border:1px solid rgba(16,22,26,.06);color:#10161A}
+body #app .rt-me.guest-seat{border:1.5px dashed rgba(16,22,26,.22);background:rgba(255,255,255,.55);box-shadow:none}
+body #app .guest-seat .rt-me-place{background:transparent;border:1.5px dashed rgba(16,22,26,.3);color:#7A858B}
+body #app .guest-seat .rt-me-copy b{white-space:normal}
+body #app .guest-seat .rt-me-copy small{color:#5E6A71;line-height:1.4}
+body #app .guest-seat .rt-me-points b{color:#9AA3A8}
+body #app .evs-join .lucide{width:18px;height:18px}
+body #app #events-list>.guest-cta{margin-bottom:14px}
+body #app .gs-hero{border-radius:32px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.55);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.1);display:flex;flex-direction:column}
+body #app .gs-hero-bar{height:52px;padding:0 22px;display:flex;align-items:center;gap:10px;color:#1D2A30;font-size:14px;font-weight:500}
+body #app .gs-hero-bar span{flex:1}
+body #app .gs-hero-bar em{height:28px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.7);display:inline-flex;align-items:center;font-size:13px;font-weight:600;font-style:normal}
+body #app .gs-hero-card{margin:-1px;padding:22px 20px 18px;border-radius:32px;background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));border:1px solid rgba(255,255,255,.9);box-shadow:0 14px 40px rgba(16,22,26,.12),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:18px}
+body #app .gs-total{display:flex;align-items:baseline;gap:8px}
+body #app .gs-total b{color:#9AA3A8;font-size:44px;font-weight:600;letter-spacing:-.03em;line-height:1}
+body #app .gs-total span{color:#7A858B;font-size:17px}
+body #app .gs-total em{margin-left:auto;color:#9AA3A8;font-size:15px;font-weight:600;font-style:normal}
+body #app .gs-chart{height:110px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end}
+body #app .gs-chart div{display:flex;flex-direction:column;align-items:center;gap:6px}
+body #app .gs-chart small{color:#9AA3A8;font-size:11px;font-weight:600}
+body #app .gs-chart i{width:100%;height:6px;border-radius:3px;background:rgba(16,22,26,.08)}
+body #app .gs-chart span{color:#7A858B;font-size:11px}
+body #app .gs-chart .today i{background:rgba(16,22,26,.18)}
+body #app .gs-chart .today span{color:#10161A;font-weight:600}
+body #app .gs-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body #app .gs-tile{padding:16px;display:flex;flex-direction:column;gap:2px}
+body #app .gs-tile-top{margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;color:#5E6A71;font-size:14px;font-weight:500}
+body #app .gs-tile-top i{width:36px;height:36px}
+body #app .gs-tile-top .lucide{width:18px;height:18px}
+body #app .warm{color:#C7782A!important}
+body #app .gs-tile b{color:#9AA3A8;font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+body #app .gs-tile small{color:#7A858B;font-size:12px}
+body #app .gs-group{display:flex;flex-direction:column;gap:12px}
+body #app .gs-group-head{padding:0 4px;display:flex;justify-content:space-between;align-items:flex-end}
+body #app .gs-group-head h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+body #app .gs-group-head span{color:#5E6A71;font-size:14px}
+body #app .gs-card{padding:16px;display:flex;flex-direction:column;gap:14px}
+body #app .gs-card hr{width:100%;height:1px;margin:0;border:0;background:rgba(16,22,26,.08)}
+body #app .gs-bar-row{display:flex;align-items:center;gap:12px}
+body #app .gs-bar-row span{width:80px;display:flex;flex-direction:column}
+body #app .gs-bar-row b{font-size:15px;font-weight:600}
+body #app .gs-bar-row small{color:#7A858B;font-size:12px}
+body #app .gs-bar-row i{flex:1;height:10px;border-radius:5px;background:rgba(16,22,26,.07)}
+body #app .gs-bar-row em{width:48px;text-align:right;color:#9AA3A8;font-size:14px;font-weight:600;font-style:normal}
+body #app .gs-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+body #app .gs-grid span{aspect-ratio:1;border-radius:10px;border:1.5px dashed rgba(16,22,26,.14)}
+body #app .gp-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 0 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+body #app .gp-top button{width:48px;height:48px;padding:0;border-radius:24px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;display:grid;place-items:center}
+body #app .gp-top .lucide{width:22px;height:22px}
+body #app .gp-top span{color:#fff;font-size:17px;font-weight:600}
+body #app .gp-top i{width:48px}
+body #app .gp-me{padding:22px 22px 18px;display:flex;align-items:center;gap:16px}
+body #app .gp-avatar{width:72px;height:72px;flex:none;border-radius:50%;border:1.5px dashed rgba(255,255,255,.95);background:rgba(255,255,255,.4);color:#10161A;display:grid;place-items:center}
+body #app .gp-avatar .lucide{width:30px;height:30px}
+body #app .gp-me>span:last-child{display:flex;flex-direction:column;gap:3px}
+body #app .gp-me b{font-size:24px;font-weight:600;letter-spacing:-.02em}
+body #app .gp-me small{color:#3E4A50;font-size:14px}
+body #app .gp-stats{padding:18px 12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+body #app .gp-stats span{padding:4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px}
+body #app .gp-stats span+span{border-left:1px solid rgba(16,22,26,.08)}
+body #app .gp-stats b{font-size:24px;font-weight:600;letter-spacing:-.02em}
+body #app .gp-stats b.muted{color:#9AA3A8}
+body #app .gp-stats small{color:#7A858B;font-size:12px}
+body #app .gp-menu{margin:0;padding:6px;list-style:none;gap:0}
+body #app .gp-row{width:100%;min-height:64px;padding:0 12px;border:0;border-radius:22px;background:none;display:flex;align-items:center;gap:12px;color:#10161A;font:inherit;text-align:left}
+body #app .gp-row i{width:40px;height:40px}
+body #app .gp-row i .lucide{width:19px;height:19px}
+body #app .gp-row span{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+body #app .gp-row b{font-size:16px;font-weight:600}
+body #app .gp-row small{color:#7A858B;font-size:13px}
+body #app .gp-row>.lucide{width:18px;height:18px;color:#9AA3A8}
+body #app .gp-row.locked i,body #app .gp-row.locked span{opacity:.62}
+body #app .gp-row em{height:28px;padding:0 10px;border-radius:14px;background:rgba(16,22,26,.06);color:#5E6A71;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;font-style:normal;white-space:nowrap}
+body #app .gp-row em .lucide{width:13px;height:13px}
+body.app-dark #app :is(.guest-cta,.gs-card,.gs-tile){background:rgba(23,32,30,.9);border-color:rgba(255,255,255,.08)}
+body.app-dark #app .gs-hero{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+body.app-dark #app .gs-hero-card{background:#17201e;border-color:rgba(255,255,255,.08);box-shadow:none}
+body.app-dark #app .gs-hero-bar,body.app-dark #app .guest-gate-wrap,body.app-dark #app .gp-row{color:var(--ink)}
+body.app-dark #app .gs-hero-bar em,body.app-dark #app .gp-row em{background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app :is(.guest-cta-row i,.gs-qaza i,.gs-tile-top i,.gp-row i){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .guest-cta-actions .guest-secondary{background:rgba(255,255,255,.1);color:var(--ink)}
+body.app-dark #app :is(.gs-chart i,.gs-bar-row i){background:rgba(255,255,255,.08)}
+body.app-dark #app .gs-grid span{border-color:rgba(255,255,255,.14)}
+body.app-dark #app .gp-avatar{color:var(--ink);background:rgba(255,255,255,.08)}
+body.app-dark #app .rt-me.guest-seat{background:rgba(23,32,30,.7);border-color:rgba(255,255,255,.2)}
 body #app #guest-banner{flex-direction:column;align-items:stretch;gap:14px}
 body #app .guest-banner-row{display:flex;align-items:center;gap:12px}
 body #app .guest-banner-actions{display:flex;gap:8px}
