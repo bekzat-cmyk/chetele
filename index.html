@@ -257,8 +257,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     <section id="empty-streak" class="state-streak" hidden><i data-icon="softFlame"></i><span><b id="empty-streak-title"></b><small>Отметьте дело сегодня, чтобы она продолжилась</small></span></section>
     <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Эта неделя</h2><span id="week-streak" class="week-streak"></span></div><div id="week-calendar" class="week-calendar"></div></button>
     <section class="streak-card" aria-label="Серия дней"><div id="streak-ring-big" class="streak-ring-big" role="progressbar" aria-label="Прогресс серии" aria-valuemin="0" aria-valuenow="0" aria-valuemax="3"><div class="streak-ring-core"><b id="streak-detail">0</b><span id="streak-unit">дней</span></div></div><div class="streak-copy"><h3 id="streak-title">Вы держите ритм</h3><p id="streak-detail-text">Добавляйте хотя бы одно дело каждый день.</p><div class="streak-meta"><span class="streak-pill"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b id="streak-best">0</b><em id="streak-best-label">дней подряд</em></span><span id="streak-next">Рекорд: 0</span></div></div></section>
-    <section class="achievement-teaser" aria-label="Ближайшее достижение"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2"/></svg></i><div><b id="achievement-teaser-title">Достижения ждут вас</b><span id="achievement-teaser-text">Откройте первое достижение в профиле.</span></div><button id="open-achievements" type="button" aria-label="Смотреть достижения"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></section>
-    <section class="hadith-card" aria-label="Хадис дня"><div class="hadith-top"><div class="hadith-icon"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17c2-1 3-3 3-6V7H5v4h4M15 17c2-1 3-3 3-6V7h-4v4h4"/></svg></div><strong class="hadith-title">Хадис дня</strong><span id="hadith-source" class="hadith-source"></span></div><p id="hadith-text" class="hadith-text"></p><button id="hadith-more" class="hadith-more">Подробнее</button></section>
+    <section class="achievement-teaser at-strip" aria-label="Ближайшее достижение" role="button" tabindex="0"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M8.5 13.8 7 21l5-2.5 5 2.5-1.5-7.2"/></svg></i><b id="achievement-teaser-title">Достижения</b><span class="at-track" aria-hidden="true"><em id="achievement-teaser-fill"></em></span><span id="achievement-teaser-text"></span><button id="open-achievements" type="button" aria-label="Смотреть достижения"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></section>
+    <section class="hadith-card" aria-label="Хадис дня"><div class="hadith-top"><div class="hadith-icon"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17c2-1 3-3 3-6V7H5v4h4M15 17c2-1 3-3 3-6V7h-4v4h4"/></svg></div><strong class="hadith-title">Хадис дня</strong><span id="hadith-source" class="hadith-source"></span></div><p id="hadith-text" class="hadith-text"></p><button id="hadith-more" class="hadith-more" aria-label="Открыть хадис полностью"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button><button type="button" class="hadith-done" data-hadith-open aria-label="Хадис дня прочитан, открыть снова"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></i><b>Хадис дня прочитан</b><span>Открыть</span></button></section>
       <div class="section-head"><h2 id="tasks-heading">Сегодняшние дела</h2><span id="today-date" class="date"></span></div>
       <div id="task-list" class="list"></div>
       <div class="qaza-card"><div class="qaza-heading"><strong>Пропущенные намазы</strong><span>Количество</span></div><div class="qaza-grid" id="qaza-grid"></div></div>
@@ -299,9 +299,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       { id:'salawat', title:'Салават', sub:'Количество прочитанных', type:'number', suffix:'раз' },
       { id:'tasbihat', title:'Зикр', sub:'Количество прочитанных', type:'number', suffix:'раз' }
     ];
-    const QAZA = ['Багымдат','Пешим','Аср','Шам','Куптан'];
+    const QAZA = ['Багымдат','Пешим','Аср','Шам','Куптан','Витр'];
     /* Saved qaza keys stay as they are; the screen shows the common Russian prayer names. */
-    const QAZA_LABEL = {'Багымдат':'Фаджр','Пешим':'Зухр','Аср':'Аср','Шам':'Магриб','Куптан':'Иша'};
+    const QAZA_LABEL = {'Багымдат':'Фаджр','Пешим':'Зухр','Аср':'Аср','Шам':'Магриб','Куптан':'Иша','Витр':'Витр'};
     /* Lucide icons (ISC licence). Rendered as stroke SVG in the current text colour. */
     const ICON_PATHS = {
       /* Soft glass icons drawn for the design canvas: 24 grid, 1.6 stroke. */
@@ -580,6 +580,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     });
     function render(){
       paintDayStates();
+      if(typeof paintHadithRead==='function') paintHadithRead();
       document.querySelector('#welcome').textContent = state.name?`Ассаламу алейкум, ${state.name}`:'Ассаламу алейкум';
       paintGuest();
       renderProfile(); renderAchievementsTeaser();
@@ -932,7 +933,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const target=document.querySelector('#achievement-teaser-text'); if(!target) return;
       const next=achievementData().find(badge=>!badge.earned);
       const title=document.querySelector('#achievement-teaser-title'); if(title) title.textContent=next?next.title:(appLocale()==='ky-KG'?'Бардык жетишкендиктер':'Все достижения');
-      target.textContent=next?next.detail:'Все достижения уже открыты. Ма ша Аллах!';
+      const number=new Intl.NumberFormat(appLocale()), value=next?Math.min(Number(next.value)||0,next.goal):1, goal=next?next.goal:1;
+      target.textContent=next?`${number.format(value)} из ${number.format(goal)}`:'все открыты';
+      const fill=document.querySelector('#achievement-teaser-fill'); if(fill) fill.style.width=`${Math.round(value/goal*100)}%`;
+      target.closest('.achievement-teaser')?.setAttribute('aria-label',next?`Ближайшее достижение: ${next.title}, ${value} из ${goal}`:'Все достижения открыты');
     }
     /* Profile in the soft glass style: the card with name and numbers, then everything
        else as menu rows. Rows reuse the existing actions through data-profile-menu. */
@@ -1526,6 +1530,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     calendarGrabber.addEventListener('pointermove',event=>{ if(!calendarDrag) return; calendarDrag.delta=Math.max(0,event.clientY-calendarDrag.startY); if(calendarDrag.delta>4) clearTimeout(calendarDrag.hold); calendarPanel.style.transition='none'; calendarPanel.style.transform=`translateY(${calendarDrag.delta}px)`; });
     calendarGrabber.addEventListener('pointerup',()=>finishCalendarDrag((calendarDrag?.delta||0)>76));
     calendarGrabber.addEventListener('pointercancel',()=>finishCalendarDrag(false));
+    /* The card is one tap target; once read today it folds into a single line. */
+    document.querySelector('.hadith-card').addEventListener('click',event=>{ if(event.target.closest('#hadith-more')) return; document.querySelector('#hadith-more').click(); });
+    function paintHadithRead(){ document.querySelector('.hadith-card')?.classList.toggle('is-read',state.hadithReadOn===todayKey); }
+    document.querySelector('#hadith-more').addEventListener('click',()=>{ if(state.hadithReadOn!==todayKey){ state.hadithReadOn=todayKey; save(); setTimeout(paintHadithRead,300); } });
     document.querySelector('#hadith-more').addEventListener('click',()=>{ const hadith=hadithOfTheDay(); document.querySelector('#hadith-full-text').textContent=hadith.text; document.querySelector('#hadith-full-source').textContent=hadith.source; document.querySelector('#hadith-explanation').textContent=hadith.explanation; document.querySelector('#hadith-practice').textContent=hadith.practice; openSheet('hadith-sheet'); });
     document.addEventListener('click',e=>{ if(e.target.closest('[data-close-hadith]')) closeSheet('hadith-sheet'); });
     const preloaderStartedAt=Date.now();
@@ -1693,6 +1701,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     document.addEventListener('click',event=>{ if(event.target.closest('#logout-button')) openExitConfirmation(); });
     document.querySelector('#exit-cancel').addEventListener('click',closeExitConfirmation);
     document.querySelector('#exit-approve').addEventListener('click',async()=>{ closeExitConfirmation(); await logout(); });
+    /* The whole row under the calendar opens the achievements; a guest gets the profile page. */
+    document.querySelector('.at-strip').addEventListener('click',event=>{ if(event.target.closest('#open-achievements')) return; document.querySelector('#open-achievements').click(); });
+    document.querySelector('.at-strip').addEventListener('keydown',event=>{ if(event.key==='Enter'||event.key===' '){ event.preventDefault(); document.querySelector('#open-achievements').click(); } });
+    document.querySelector('#open-achievements').addEventListener('click',event=>{ event.stopImmediatePropagation(); if(isGuest()){ showView('profile-view'); return; } openProfileScreen('achievements'); });
     document.querySelector('#open-achievements').addEventListener('click',()=>{ showView('profile-view'); setTimeout(()=>document.querySelector('#profile-achievements')?.scrollIntoView({behavior:'smooth',block:'start'}),40); });
     document.querySelector('#show-login').addEventListener('click',()=>{ setAuthMode('login'); document.querySelector('#login-input').focus(); });
     document.querySelector('#show-register').addEventListener('click',()=>{ setAuthMode('signup'); document.querySelector('#name-input').focus(); });
@@ -4122,6 +4134,48 @@ body.app-dark #app .guest-gate-card li i,body.app-dark #auth-sheet .auth-carry{b
 body.app-dark #app .guest-gate-icon{background:#EEF5F2;color:#0B1110;box-shadow:0 0 0 10px rgba(255,255,255,.06)}
 body.app-dark #auth-sheet .calendar-sheet-panel,body.app-dark #auth-sheet .sheet-header h2,body.app-dark #auth-sheet .remember-choice,body.app-dark #auth-sheet .switch-auth,body.app-dark #auth-sheet .auth-carry{color:var(--ink)}
 body.app-dark #auth-sheet .auth-carry i{background:rgba(255,255,255,.1)}
+</style>
+<style>
+/* Missed prayers: six tiles in two rows of three. */
+body #app .prayer-qaza .qaza-grid,#app .prayer-qaza .qaza-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+body #app .qaza-tap{height:64px}
+/* Next achievement as a row joined under the week calendar. */
+body #app #today-view>.achievement-teaser.at-strip{order:2;margin-top:-24px;padding:12px 14px 14px;border:1px solid rgba(255,255,255,.85);border-top:0;border-radius:0 0 26px 26px;background:linear-gradient(rgba(16,22,26,.08),rgba(16,22,26,.08)) no-repeat 14px 0/calc(100% - 28px) 1px,rgba(255,255,255,.5);box-shadow:none;display:flex;align-items:center;gap:10px;cursor:pointer}
+body #app #today-view.active>.achievement-teaser.at-strip{animation-delay:.06s}
+body #app #today-view>.calendar-card .week-calendar{border-bottom:0;border-radius:26px 26px 0 0}
+body #app .at-strip>i{width:auto;height:auto;border:0;background:none;box-shadow:none;color:#C7782A}
+body #app .at-strip>i .lucide{width:18px;height:18px;stroke:#C7782A}
+body #app .at-strip>b{flex:none;color:#10161A;font-size:13px;font-weight:600;white-space:nowrap}
+body #app .at-strip .at-track{flex:1;min-width:30px;height:6px;border-radius:3px;background:rgba(16,22,26,.1);overflow:hidden}
+body #app .at-strip .at-track em{display:block;height:100%;border-radius:3px;background:#10161A;transition:width .4s cubic-bezier(.2,.8,.2,1)}
+body #app .at-strip>#achievement-teaser-text{flex:none;color:#5E6A71;font-size:12px;white-space:nowrap}
+body #app .at-strip>button{width:24px;height:24px;min-height:0;padding:0;border:0;background:none}
+body #app .at-strip>button .lucide{width:14px;height:14px;stroke:#9AA3A8}
+/* Hadith of the day: a short card, one line once read. */
+body #app .hadith-card{padding:16px 14px 16px 18px;grid-template-columns:minmax(0,1fr) auto;row-gap:6px;cursor:pointer}
+body #app .hadith-card .hadith-top{grid-column:1;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0}
+body #app .hadith-card .hadith-icon{width:auto;height:auto;border:0;background:none;box-shadow:none;color:#5E6A71}
+body #app .hadith-card .hadith-icon svg{width:14px;height:14px;stroke-width:1.8}
+body #app .hadith-card .hadith-title{font-size:13px;font-weight:500;white-space:nowrap}
+body #app .hadith-card .hadith-source{overflow:hidden;color:#5E6A71;font-size:13px;white-space:nowrap;text-overflow:ellipsis}
+body #app .hadith-card .hadith-source:not(:empty):before{content:"· "}
+body #app .hadith-card .hadith-text{grid-column:1;grid-row:2;margin:0;font-size:16px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body #app .hadith-card .hadith-more{grid-column:2;grid-row:1/3;align-self:center;width:36px;height:36px;min-height:36px;padding:0;border-radius:18px;display:grid;place-items:center}
+body #app .hadith-card .hadith-more .lucide{width:16px;height:16px;stroke:#fff;stroke-width:2}
+body #app .hadith-card .hadith-done{display:none}
+body #app .hadith-card.is-read{padding:0;background:rgba(255,255,255,.45);border-color:rgba(255,255,255,.8);box-shadow:none;display:block}
+body #app .hadith-card.is-read>:not(.hadith-done){display:none}
+body #app .hadith-card.is-read .hadith-done{width:100%;height:56px;padding:0 16px 0 12px;border:0;background:none;display:flex;align-items:center;gap:10px;color:#10161A;font:inherit}
+body #app .hadith-done i{width:32px;height:32px;flex:none;border-radius:16px;background:#0B0F12;display:grid;place-items:center}
+body #app .hadith-done i .lucide{width:16px;height:16px;stroke:#fff;stroke-width:2.2}
+body #app .hadith-done b{flex:1;text-align:left;font-size:15px;font-weight:600}
+body #app .hadith-done span{color:#5E6A71;font-size:13px}
+body.app-dark #app #today-view>.achievement-teaser.at-strip{border-color:rgba(255,255,255,.08)!important;background:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)) no-repeat 14px 0/calc(100% - 28px) 1px,rgba(255,255,255,.06)!important}
+body.app-dark #app .at-strip>b,body.app-dark #app .hadith-done{color:var(--ink)!important}
+body.app-dark #app .at-strip .at-track{background:rgba(255,255,255,.12)}
+body.app-dark #app .at-strip .at-track em,body.app-dark #app .hadith-done i{background:#EEF5F2}
+body.app-dark #app .hadith-done i .lucide{stroke:#0B1110}
+body.app-dark #app .hadith-card.is-read{background:rgba(255,255,255,.06)!important}
 </style>
 </body>
 </html>

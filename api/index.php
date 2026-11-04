@@ -264,7 +264,7 @@ function normalizeEntry(array $input): array {
         'zikr' => (object)$zikr,
     ];
     $normalizedQaza = [];
-    foreach (['Багымдат', 'Пешим', 'Аср', 'Шам', 'Куптан'] as $name) {
+    foreach (['Багымдат', 'Пешим', 'Аср', 'Шам', 'Куптан', 'Витр'] as $name) {
         $normalizedQaza[$name] = amount($qaza[$name] ?? 0);
     }
     $completed = 0;
