@@ -15,8 +15,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js?v=2"></script>
-  <script src="assets/hadiths.js"></script>
-  <script src="assets/fasting.js"></script>
+  <script src="assets/hadiths.js?v=1"></script>
+  <script src="assets/fasting.js?v=1"></script>
   <script src="assets/zikr-sync.js?v=3"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
@@ -239,6 +239,12 @@ body.app-dark .reward-sheet,body.app-dark .reward-card{box-shadow:0 0 0 1px var(
 body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
 @media (prefers-reduced-motion: reduce){.reward-confetti,.reward-shine{display:none}.reward,.reward *{animation:none!important}}
 </style>
+<style>html:not(.css-ready) #app{visibility:hidden}</style>
+<script>
+  /* Most soft glass styles sit at the end of the page; the app stays invisible until
+     the whole page is read, so it never paints for a moment in the older look. */
+  document.addEventListener('DOMContentLoaded',()=>document.documentElement.classList.add('css-ready'));
+</script>
 </head>
 <body>
   <div id="app-preloader" class="app-preloader" hidden role="status" aria-label="Добро пожаловать в Chetele"><div class="app-preloader-inner"><img class="app-preloader-logo" src="img/logo.png" alt="Chetele" /><p class="app-preloader-welcome">Добро пожаловать</p><p class="app-preloader-tagline">На пути к сильному таква</p><div id="preloader-lottie" class="preloader-lottie" aria-hidden="true"></div></div></div>
@@ -1921,7 +1927,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
        itself, so a deploy reaches the phone without closing the app by hand. */
     if('serviceWorker' in navigator){
       const hadController=!!navigator.serviceWorker.controller; let reloading=false;
-      navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!hadController||reloading) return; reloading=true; if(state.userId) syncCurrentEntry().finally(()=>location.reload()); else location.reload(); });
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!hadController||reloading) return; reloading=true; const cover=document.querySelector('#app-preloader'); if(cover){ cover.hidden=false; cover.classList.remove('is-hidden'); } if(state.userId) syncCurrentEntry().finally(()=>location.reload()); else location.reload(); });
       document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') navigator.serviceWorker.getRegistration().then(registration=>registration?.update()).catch(()=>{}); });
     }
   </script><script>
