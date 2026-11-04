@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
   <script src="assets/deeds.js"></script>
+  <script src="assets/hadiths.js"></script>
   <script src="assets/zikr-sync.js?v=3"></script>
   <title>Chetele — путь к сильному таква</title>
   <style>
@@ -361,13 +362,6 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       sunset:'<path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/>'
     };
     const icon = name => `<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true">${ICON_PATHS[name]||''}</svg>`;
-    const HADITHS = [
-      { text:'Поистине, дела — по намерениям, и каждому человеку — по его намерению.', source:'Сахих аль-Бухари · №1', explanation:'Хадис напоминает: ценность дела начинается с того, ради чего оно совершается. Одно и то же внешнее действие может иметь разный смысл в зависимости от искреннего намерения.', practice:'Перед одним привычным делом на минуту остановитесь и обновите намерение: сделать его ради пользы, благодарности и довольства Аллаха.' },
-      { text:'Лучший из вас — тот, кто лучше всех относится к своей семье.', source:'Сахих аль-Бухари · №6039', explanation:'Доброта проявляется прежде всего там, где нас знают близко: в терпении, уважительной речи, помощи и внимании к тем, кто рядом каждый день.', practice:'Сделайте для близкого человека небольшой добрый жест: помогите без просьбы, поблагодарите или спокойно выслушайте.' },
-      { text:'Любите людям то, что любите для себя.', source:'Сахих аль-Бухари · №13', explanation:'Этот хадис учит смотреть на интересы других с той же заботой, с которой мы смотрим на свои. Он помогает выбирать справедливость, щедрость и доброе отношение.', practice:'Поделитесь чем-то полезным: знанием, временем, поддержкой или добрым словом — так, как хотели бы получить это сами.' },
-      { text:'Аллах любит те дела, которые совершаются постоянно, даже если их мало.', source:'Сахих аль-Бухари · №6464', explanation:'Постоянство формирует путь. Маленькое доброе дело, которое повторяется без перегрузки, со временем становится устойчивой привычкой и укрепляет сердце.', practice:'Выберите один посильный минимум на сегодня: несколько салаватов, страницу чтения или доброе дело — и повторите его завтра.' },
-      { text:'Мусульманин — это тот, от чьего языка и рук в безопасности другие мусульмане.', source:'Сахих аль-Бухари · №10', explanation:'Безопасность окружающих начинается с наших слов и поступков. Хадис призывает беречь людей от обиды, резкости, несправедливости и причинения вреда.', practice:'Сегодня особенно следите за речью: прежде чем ответить резко, сделайте паузу и выберите спокойные, уважительные слова.' }
-    ];
     const storeKey = 'niet-app-data-v1';
     const cacheVersionKey = 'niet-cache-version';
     const cacheVersion = '2026-09-14-preserve-account-1';
@@ -659,11 +653,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       renderZikr();
       window.cheteleTranslateUi?.();
     }
-    function hadithOfTheDay(){
-      const start=new Date(new Date().getFullYear(),0,0), today=new Date();
-      const day=Math.floor((today-start)/86400000);
-      return HADITHS[day%HADITHS.length];
-    }
+    /* A new hadith every day from assets/hadiths.js; the list repeats only after it ends. */
+    function hadithOfTheDay(){ return window.ChetHadiths.hadithForDate(new Date()); }
     function renderHadith(){
       const hadith=hadithOfTheDay();
       document.querySelector('#hadith-text').textContent=hadith.text;
