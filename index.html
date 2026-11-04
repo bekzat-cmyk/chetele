@@ -502,6 +502,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function setSaveStatus(text){ const status=document.querySelector('#save-status'); if(status) status.textContent=text; }
     async function syncCurrentEntry(){
       if(!state.userId) return false;
+      /* The server keeps the typed part of salawat and zikr apart from the counter. The
+         counter goes first, or the server would take the new total as counted and keep 0. */
+      await settleZikr(entryDateKey);
       try {
         const response=await apiFetch(apiUrl(`users/${state.userId}/entries/${entryDateKey}`), {
           method:'PUT', headers:{'Content-Type':'application/json'},
@@ -580,7 +583,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
           let restored=false;
           state.remoteEntries=entries; state.statsOnline=true; settleAchievementBaseline();
           if(restoreCurrent){
-            const current=entries.find(entry=>entry.date===todayKey);
+            let current=entries.find(entry=>entry.date===todayKey);
+            const waiting={...(state.zikrPending?.[todayKey]||{})};
+            if(current&&(Object.keys(waiting).length||zikrFlushing)){ const merged=ChetZikrSync.adoptServer(current.tasks||{},current.tasks?.zikr,waiting); current.tasks={...(current.tasks||{}),zikr:merged.zikr,salawat:merged.salawat?String(merged.salawat):'',tasbihat:merged.tasbihat?String(merged.tasbihat):''}; }
+            if(current&&zikrFlushing){ restored=true; current=null; }
             if(current){ const done=entryCompletedCount(current); if(done>=3) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(done>=dailyMax()) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; state.tasks={...(current.tasks||{})}; state.qaza={...(current.qaza||{})}; state.activeDate=todayKey; state.lastDate=todayKey; state.history={...(state.history||{}),[todayKey]:{tasks:{...(current.tasks||{})},qaza:{...(current.qaza||{})},completed:0,max:dailyMax()}}; save(); render(); restored=true; }
           }
           refreshStreak(); save(); renderCalendar(); renderAchievementsTeaser(); renderStats(document.querySelector('#stats-view').classList.contains('active')); renderProfile();
@@ -776,11 +782,21 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     /* Waiting taps go to the server, the only writer of per-zikr counts, so two
        phones counting on the same day add up instead of overwriting each other. */
-    let zikrFlushTimer=null, zikrFlushing=false;
+    let zikrFlushTimer=null, zikrFlushing=false, zikrFlushRun=null;
     function scheduleZikrFlush(delay=500){ clearTimeout(zikrFlushTimer); zikrFlushTimer=setTimeout(flushZikr,delay); }
-    async function flushZikr(){
+    /* Sends every waiting tap for the day before anything else about that day, and
+       waits for a send already on its way. */
+    async function settleZikr(date){
+      clearTimeout(zikrFlushTimer);
+      for(let round=0; round<4 && (zikrFlushing||state.zikrPending?.[date]); round++){
+        if(zikrFlushing) await zikrFlushRun; else await flushZikr(date);
+        if(state.zikrPending?.[date]&&!navigator.onLine) break;
+      }
+    }
+    function flushZikr(only){ if(zikrFlushing) return zikrFlushRun; zikrFlushRun=flushZikrOnce(only); return zikrFlushRun; }
+    async function flushZikrOnce(only){
       if(zikrFlushing||!state.userId||!state.token) return;
-      const date=Object.keys(state.zikrPending||{})[0]; if(!date) return;
+      const date=typeof only==='string'&&state.zikrPending?.[only]?only:Object.keys(state.zikrPending||{})[0]; if(!date) return;
       const deltas=state.zikrPending[date];
       state.zikrPending=Object.entries(deltas).reduce((pending,[id,delta])=>ChetZikrSync.addPending(pending,date,id,-delta),state.zikrPending);
       zikrFlushing=true;
