@@ -779,6 +779,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(change>0) state.zikrLast={id,at:Date.now()};
       if(change>0&&next%item.goal===0){ zikrCelebrate=true; navigator.vibrate?.([20,40,20]); } else navigator.vibrate?.(8);
       scoreUpdate(before);
+      if(!zikrCelebrate&&Math.abs(change)===1) rollNumber('#zikr-view .zg-count',change>0?'up':'down');
     }
     /* Waiting taps go to the server, the only writer of per-zikr counts, so two
        phones counting on the same day add up instead of overwriting each other. */
@@ -840,21 +841,26 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       }
       if(zikrScreen==='counter'){
         const item=ZIKR.find(zikr=>zikr.id===zikrCurrent)||ZIKR[0], index=ZIKR.indexOf(item), today=zikrToday(item.id);
-        const hint=today>=item.goal?'сверх цели':`ещё ${item.goal-today} до цели`;
+        /* The bar counts rounds of the goal (33): 33 fills it, 34 starts round two at 1 / 33. */
+        const inRound=today?((today-1)%item.goal)+1:0, lap=today?Math.floor((today-1)/item.goal)+1:1;
+        const hint=today<item.goal?`ещё ${item.goal-today} до цели`:inRound===item.goal?(lap===1?'цель выполнена':`${lap}-й круг пройден`):`${lap}-й круг · ещё ${item.goal-inRound}`;
+        const roundPercent=Math.round(inRound/item.goal*100), roundLabel=`${number.format(inRound)} / ${item.goal}`;
         /* A tap only changes numbers: patch them in place so the screen does not rebuild and flash. */
         const key=`counter|${item.id}|${zikrCelebrate}|${entryDateKey}`;
         if(root.dataset.key===key&&root.querySelector('.zg-count')){
           root.querySelector('.zg-count').textContent=number.format(today);
           root.querySelector('.zg-hint').textContent=hint;
-          root.querySelector('.zg-goal i').style.width=`${percent(today,item.goal)}%`;
-          root.querySelector('.zg-goal b').textContent=`${number.format(Math.min(today,item.goal))} / ${item.goal}`;
+          const bar=root.querySelector('.zg-goal i'), was=parseFloat(bar.style.width)||0;
+          if(roundPercent<was&&lap>1&&inRound===1){ bar.style.transition='none'; bar.style.width=`${roundPercent}%`; void bar.offsetWidth; bar.style.transition=''; }
+          else bar.style.width=`${roundPercent}%`;
+          root.querySelector('.zg-goal b').textContent=roundLabel;
           root.querySelector('.zg-total b').textContent=number.format(zikrAllTime(item.id));
           root.querySelector('.zg-tap').setAttribute('aria-label',`Отметить: ${today+1}`);
           return;
         }
         root.dataset.key=key;
         const dayNote=entryDateKey===todayKey?'':`<p class="zg-day-note">Счёт идёт в открытый день — ${formatDayLabel(entryDateKey)}</p>`;
-        const goal=`<div class="zg-goal"><span class="zg-track" aria-hidden="true"><i style="width:${zikrCelebrate?100:percent(today,item.goal)}%"></i></span><b>${number.format(Math.min(today,item.goal))} / ${item.goal}</b></div>`;
+        const goal=`<div class="zg-goal"><span class="zg-track" aria-hidden="true"><i style="width:${zikrCelebrate?100:roundPercent}%"></i></span><b>${roundLabel}</b></div>`;
         const tap=zikrCelebrate
           ?`<button type="button" class="zg-tap celebrate" data-zikr-tap aria-label="Цель выполнена, продолжить счёт"><span class="zg-done-icon">${icon('check')}</span><b class="zg-done-title">Цель выполнена</b><span class="zg-hint">Нажмите, чтобы продолжить счёт</span></button>`
           :`<button type="button" class="zg-tap" data-zikr-tap aria-label="Отметить: ${today+1}"><span class="zg-count">${number.format(today)}</span><span class="zg-hint">${hint}</span><small>Нажмите в любом месте карточки</small></button>`;
