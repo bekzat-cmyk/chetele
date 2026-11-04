@@ -778,11 +778,13 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       state.zikrPending=ChetZikrSync.addPending(state.zikrPending,entryDateKey,id,change); scheduleZikrFlush();
       if(change>0) state.zikrLast={id,at:Date.now()};
       if(change>0&&next%item.goal===0){ zikrCelebrate=true; navigator.vibrate?.([20,40,20]); } else navigator.vibrate?.(8);
+      zikrRoll=change>0?'up':'down';
       scoreUpdate(before);
-      if(!zikrCelebrate&&Math.abs(change)===1) rollNumber('#zikr-view .zg-count',change>0?'up':'down');
+      zikrRoll='';
     }
     /* Waiting taps go to the server, the only writer of per-zikr counts, so two
        phones counting on the same day add up instead of overwriting each other. */
+    let zikrRoll='';
     let zikrFlushTimer=null, zikrFlushing=false, zikrFlushRun=null;
     function scheduleZikrFlush(delay=500){ clearTimeout(zikrFlushTimer); zikrFlushTimer=setTimeout(flushZikr,delay); }
     /* Sends every waiting tap for the day before anything else about that day, and
@@ -848,7 +850,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         /* A tap only changes numbers: patch them in place so the screen does not rebuild and flash. */
         const key=`counter|${item.id}|${zikrCelebrate}|${entryDateKey}`;
         if(root.dataset.key===key&&root.querySelector('.zg-count')){
-          root.querySelector('.zg-count').textContent=number.format(today);
+          rollDigits(root.querySelector('.zg-count'),number.format(today),zikrRoll);
           root.querySelector('.zg-hint').textContent=hint;
           const bar=root.querySelector('.zg-goal i'), was=parseFloat(bar.style.width)||0;
           if(roundPercent<was&&lap>1&&inRound===1){ bar.style.transition='none'; bar.style.width=`${roundPercent}%`; void bar.offsetWidth; bar.style.transition=''; }
@@ -1526,6 +1528,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(add) rollNumber(`[data-qaza-inc="${add.dataset.qazaInc}"] b`,'up');
     });
     /* Counters roll: the new number comes up after +1 and down after −1. */
+    /* Writes a number digit by digit; only the digits that changed roll in, like an odometer
+       (34 → 35 rolls the 5, 39 → 40 rolls both). Digits are matched from the right. */
+    function rollDigits(element, text, direction){
+      if(!element) return;
+      const before=[...(element.dataset.value??element.textContent)], after=[...text], shift=after.length-before.length;
+      element.dataset.value=text;
+      element.innerHTML=after.map((char,index)=>{ const changed=direction&&!motionOff()&&before[index-shift]!==char; return `<span class="rd${changed?` roll-${direction}`:''}">${char}</span>`; }).join('');
+      element.setAttribute('aria-label',text);
+    }
     function rollNumber(selector, direction){
       const element=document.querySelector(selector); if(!element||motionOff()) return;
       element.classList.remove('roll-up','roll-down'); void element.offsetWidth; element.classList.add(`roll-${direction}`);
@@ -4412,6 +4423,10 @@ body #app .stats-fast-track{flex:none;display:block;height:8px;border-radius:4px
 body #app .stats-fast-track i{display:block;height:100%;border-radius:4px;background:#10161A;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 body.app-dark #app .stats-fast-track{background:rgba(255,255,255,.1)}
 body.app-dark #app .stats-fast-track i{background:#EEF5F2}
+</style>
+<style>
+/* Odometer digits: each digit is its own box so only the changed ones roll. */
+body #app .zg-count .rd{display:inline-block}
 </style>
 </body>
 </html>
