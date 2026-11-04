@@ -1658,6 +1658,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function clearSession(){
       clearTimeout(syncTimer);
       try { localStorage.removeItem(storeKey); sessionStorage.removeItem(storeKey); } catch {}
+      document.querySelector('.autosave')?.classList.remove('is-saving','is-offline');
       state=blankState(); entryDateKey=localDateKey();
       document.querySelector('#name-form').reset(); document.querySelector('#login-form').reset();
       showView('today-view'); showCabinet();
@@ -1836,6 +1837,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     scheduleMidnightReset();
     scheduleZikrFlush(1500);
     if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(()=>getVapidPublicKey().catch(()=>{})).catch(()=>{}));
+    /* A Home Screen app can stay open for days with the old page in memory. Returning to it
+       checks for a new version, and once the new service worker takes over the page reloads
+       itself, so a deploy reaches the phone without closing the app by hand. */
+    if('serviceWorker' in navigator){
+      const hadController=!!navigator.serviceWorker.controller; let reloading=false;
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!hadController||reloading) return; reloading=true; if(state.userId) syncCurrentEntry().finally(()=>location.reload()); else location.reload(); });
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') navigator.serviceWorker.getRegistration().then(registration=>registration?.update()).catch(()=>{}); });
+    }
   </script><script>
     (()=>{
       const originalRenderEvents=window.renderEvents;
