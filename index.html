@@ -608,17 +608,22 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const day=P.timesFor(date,where), pick=id=>day.find(item=>item.id===id)?.time;
       return {suhur:pick('fajr'),iftar:pick('maghrib')};
     }
+    let shownFast;
     function fastGroup(){
-      const answer=state.tasks.fast, date=new Date(`${entryDateKey}T12:00:00`), isToday=entryDateKey===todayKey;
+      const answer=state.tasks.fast||'', from=shownFast===undefined?answer:shownFast, changed=from!==answer&&!motionOff(); shownFast=answer;
+      const date=new Date(`${entryDateKey}T12:00:00`), isToday=entryDateKey===todayKey;
       const clock=time=>time?`${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`:'—';
       const times=fastTimes(date), hint=window.ChetFasting?.hint(date,appLocale());
       let note='';
       if(answer==='yes'){
         const left=isToday&&times?.iftar?Math.round((times.iftar-new Date())/60000):0;
-        note=`<p class="fast-note"><i>${icon('check')}</i>${left>0?`Пусть Аллах примет ваш пост. Ифтар через ${left>=60?`${Math.floor(left/60)} ч `:''}${left%60} мин`:'Пусть Аллах примет ваш пост.'}</p>`;
+        note=`<p class="fast-note${changed?' entering':''}"><i>${icon('check')}</i>${left>0?`Пусть Аллах примет ваш пост. Ифтар через ${left>=60?`${Math.floor(left/60)} ч `:''}${left%60} мин`:'Пусть Аллах примет ваш пост.'}</p>`;
       }
       const group=document.createElement('section'); group.className='prayer-group fast-group';
-      group.innerHTML=`<div class="group-head"><h3>Пост</h3><span>добровольный</span></div><div class="prayer-body fast-body"><div class="fast-top"><span class="task-icon${answer==='yes'?' on':''}">${icon('softFast')}</span><div class="task-copy"><div class="task-title">${isToday?'Вы сегодня постились?':'Вы постились в этот день?'}</div><div class="task-sub">${times?`Сухур до ${clock(times.suhur)} · ифтар в ${clock(times.iftar)}`:'Добровольный пост'}</div></div></div><div class="fast-choice" role="radiogroup" aria-label="Пост"><button type="button" role="radio" data-choice="no" data-id="fast" aria-checked="${answer==='no'}" class="${answer==='no'?'active':''}">Не постился</button><button type="button" role="radio" data-choice="yes" data-id="fast" aria-checked="${answer==='yes'}" class="${answer==='yes'?'active':''}">Да, пощусь</button></div>${note}${hint?`<p class="fast-hint${hint.forbidden?' warn':''}"><i>${icon('softStar')}</i><span>${escapeHtml(hint.text)}${hint.next?` Ближайший: <b>${escapeHtml(hint.next)}</b>`:''}</span></p>`:''}</div>`;
+      group.innerHTML=`<div class="group-head"><h3>Пост</h3><span>добровольный</span></div><div class="prayer-body fast-body"><div class="fast-top"><span class="task-icon${answer==='yes'?' on':''}${changed?' pop':''}">${icon('softFast')}</span><div class="task-copy"><div class="task-title">${isToday?'Вы сегодня постились?':'Вы постились в этот день?'}</div><div class="task-sub">${times?`Сухур до ${clock(times.suhur)} · ифтар в ${clock(times.iftar)}`:'Добровольный пост'}</div></div></div><div class="fast-choice" role="radiogroup" aria-label="Пост"><span class="fast-thumb" data-pos="${from||''}" aria-hidden="true"></span><button type="button" role="radio" data-choice="no" data-id="fast" aria-checked="${answer==='no'}" class="${answer==='no'?'active':''}">Не постился</button><button type="button" role="radio" data-choice="yes" data-id="fast" aria-checked="${answer==='yes'}" class="${answer==='yes'?'active':''}">Да, пощусь</button></div>${note}${hint?`<p class="fast-hint${hint.forbidden?' warn':''}"><i>${icon('softStar')}</i><span>${escapeHtml(hint.text)}${hint.next?` Ближайший: <b>${escapeHtml(hint.next)}</b>`:''}</span></p>`:''}</div>`;
+      /* The thumb starts where the last answer was and slides to the new one. */
+      if(changed) requestAnimationFrame(()=>requestAnimationFrame(()=>{ const thumb=group.querySelector('.fast-thumb'); if(thumb) thumb.dataset.pos=answer||''; }));
+      else group.querySelector('.fast-thumb').dataset.pos=answer||'';
       return group;
     }
     function render(){
@@ -4275,10 +4280,19 @@ body #app .fast-body{display:flex;flex-direction:column;gap:14px}
 body #app .fast-top{display:flex;align-items:center;gap:12px}
 body #app .fast-top .task-copy{flex:1;min-width:0}
 body #app #today-view .fast-top .task-icon.on{background:#0B0F12!important;color:#fff!important;border-color:#0B0F12!important}
-body #app .fast-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:22px;background:rgba(16,22,26,.06)}
-body #app .fast-choice button{height:44px;min-height:44px;padding:0;border:0;border-radius:18px;background:transparent;color:#5E6A71;font:inherit;font-size:15px;font-weight:600;box-shadow:none}
-body #app .fast-choice button.active[data-choice="no"]{background:#fff;color:#10161A;box-shadow:0 2px 8px rgba(16,22,26,.10)}
-body #app .fast-choice button.active[data-choice="yes"]{background:#0B0F12;color:#fff}
+body #app .fast-choice{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:22px;background:rgba(16,22,26,.06)}
+body #app .fast-choice button{position:relative;z-index:1;height:44px;min-height:44px;padding:0;border:0;border-radius:18px;background:transparent!important;color:#5E6A71;font:inherit;font-size:15px;font-weight:600;box-shadow:none!important;transition:color .3s ease}
+body #app .fast-choice button.active[data-choice="no"]{color:#10161A}
+body #app .fast-choice button.active[data-choice="yes"]{color:#fff}
+body #app .fast-thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:18px;opacity:0;pointer-events:none;transform:translateX(0) scale(.92);transition:transform .38s cubic-bezier(.2,.8,.2,1),background-color .3s ease,box-shadow .3s ease,opacity .25s ease}
+body #app .fast-thumb[data-pos="no"]{opacity:1;transform:translateX(0);background:#fff;box-shadow:0 2px 8px rgba(16,22,26,.10)}
+body #app .fast-thumb[data-pos="yes"]{opacity:1;transform:translateX(calc(100% + 4px));background:#0B0F12}
+body #app .fast-note.entering{animation:fast-note-in .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fast-note-in{from{opacity:0;max-height:0;margin-top:-14px;padding-top:0;padding-bottom:0;transform:translateY(-6px)}to{opacity:1;max-height:90px;margin-top:0;transform:none}}
+body #app #today-view .fast-top .task-icon{transition:background-color .3s ease,color .3s ease}
+body #app #today-view .fast-top .task-icon.pop{animation:fast-icon-pop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes fast-icon-pop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){body #app .fast-thumb{transition:none}body #app .fast-note.entering,body #app #today-view .fast-top .task-icon.pop{animation:none}}
 body #app .fast-note{margin:0;padding:12px 14px;border-radius:18px;background:rgba(47,122,95,.10);color:#1F5B45;display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4}
 body #app .fast-note i{width:28px;height:28px;flex:none;border-radius:14px;background:#fff;color:#2F7A5F;display:grid;place-items:center}
 body #app .fast-note .lucide{width:15px;height:15px;stroke-width:2.2}
@@ -4289,8 +4303,11 @@ body #app .fast-hint b{color:#10161A;font-weight:600}
 body #app .fast-hint.warn i{color:#A0563B}
 body.app-dark #app .fast-choice{background:rgba(255,255,255,.08)}
 body.app-dark #app .fast-choice button{color:var(--muted)}
-body.app-dark #app .fast-choice button.active[data-choice="no"]{background:rgba(255,255,255,.14);color:var(--ink)}
-body.app-dark #app .fast-choice button.active[data-choice="yes"],body.app-dark #app #today-view .fast-top .task-icon.on{background:#EEF5F2!important;color:#0B1110!important}
+body.app-dark #app .fast-choice button.active[data-choice="no"]{color:var(--ink)}
+body.app-dark #app .fast-choice button.active[data-choice="yes"]{color:#0B1110}
+body.app-dark #app .fast-thumb[data-pos="no"]{background:rgba(255,255,255,.14);box-shadow:none}
+body.app-dark #app .fast-thumb[data-pos="yes"]{background:#EEF5F2}
+body.app-dark #app #today-view .fast-top .task-icon.on{background:#EEF5F2!important;color:#0B1110!important}
 body.app-dark #app .fast-note{background:rgba(127,211,168,.12);color:#9FE0BE}
 body.app-dark #app .fast-note i{background:rgba(255,255,255,.1);color:#9FE0BE}
 body.app-dark #app .fast-hint{border-color:rgba(255,255,255,.08);color:var(--muted)}
