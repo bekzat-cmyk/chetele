@@ -1534,7 +1534,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(!element) return;
       const before=[...(element.dataset.value??element.textContent)], after=[...text], shift=after.length-before.length;
       element.dataset.value=text;
-      element.innerHTML=after.map((char,index)=>{ const changed=direction&&!motionOff()&&before[index-shift]!==char; return `<span class="rd${changed?` roll-${direction}`:''}">${char}</span>`; }).join('');
+      /* A changed digit keeps the old one in the same window: the old slides out as the new slides in. */
+      element.innerHTML=after.map((char,index)=>{ const old=before[index-shift], changed=direction&&!motionOff()&&old!==char; return changed?`<span class="rd rd-${direction}"><span class="rd-new">${char}</span>${old!==undefined?`<span class="rd-old" aria-hidden="true">${old}</span>`:''}</span>`:`<span class="rd">${char}</span>`; }).join('');
       element.setAttribute('aria-label',text);
     }
     function rollNumber(selector, direction){
@@ -4426,7 +4427,18 @@ body.app-dark #app .stats-fast-track i{background:#EEF5F2}
 </style>
 <style>
 /* Odometer digits: each digit is its own box so only the changed ones roll. */
-body #app .zg-count .rd{display:inline-block}
+body #app .zg-count .rd{position:relative;display:inline-block;overflow:hidden;vertical-align:top;line-height:1.08;padding:0 .01em}
+body #app .zg-count .rd-new{display:inline-block}
+body #app .zg-count .rd-old{position:absolute;left:0;right:0;top:0;text-align:center}
+body #app .zg-count .rd-up .rd-new{animation:rd-in-up .5s cubic-bezier(.22,1,.36,1) both}
+body #app .zg-count .rd-up .rd-old{animation:rd-out-up .5s cubic-bezier(.22,1,.36,1) both}
+body #app .zg-count .rd-down .rd-new{animation:rd-in-down .5s cubic-bezier(.22,1,.36,1) both}
+body #app .zg-count .rd-down .rd-old{animation:rd-out-down .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes rd-in-up{from{transform:translateY(105%);opacity:.2}to{transform:translateY(0);opacity:1}}
+@keyframes rd-out-up{from{transform:translateY(0);opacity:1}to{transform:translateY(-105%);opacity:0}}
+@keyframes rd-in-down{from{transform:translateY(-105%);opacity:.2}to{transform:translateY(0);opacity:1}}
+@keyframes rd-out-down{from{transform:translateY(0);opacity:1}to{transform:translateY(105%);opacity:0}}
+@media (prefers-reduced-motion:reduce){body #app .zg-count .rd-new,body #app .zg-count .rd-old{animation:none}body #app .zg-count .rd-old{display:none}}
 </style>
 </body>
 </html>
