@@ -409,7 +409,32 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       entryDateKey=todayKey; state.activeDate=todayKey;
     }
     let syncTimer;
-    function save(){ try { const value=JSON.stringify(state); if(state.rememberMe!==false){ localStorage.setItem(storeKey,value); sessionStorage.removeItem(storeKey); } else { sessionStorage.setItem(storeKey,value); localStorage.removeItem(storeKey); } } catch { /* Работает и в режиме без сохранения данных. */ } queueSync(); }
+    /* Rewards already shown (minimum, all deeds, badges) are kept per account apart from the
+       account data, so signing out and back in does not show them again. */
+    const celebrationsKey='chetele-celebrations';
+    function rememberCelebrations(){
+      if(!state.userId) return;
+      try {
+        const all=JSON.parse(localStorage.getItem(celebrationsKey)||'{}'), recent=days=>Object.fromEntries(Object.entries(days||{}).sort().slice(-60));
+        all[state.userId]={celebratedDays:recent(state.celebratedDays),minimumCelebratedDays:recent(state.minimumCelebratedDays),seenAchievements:state.seenAchievements||{}};
+        localStorage.setItem(celebrationsKey,JSON.stringify(all));
+      } catch {}
+    }
+    function restoreCelebrations(){
+      try {
+        const saved=JSON.parse(localStorage.getItem(celebrationsKey)||'{}')[state.userId]; if(!saved) return;
+        state.celebratedDays={...(saved.celebratedDays||{}),...(state.celebratedDays||{})};
+        state.minimumCelebratedDays={...(saved.minimumCelebratedDays||{}),...(state.minimumCelebratedDays||{})};
+        state.seenAchievements={...(saved.seenAchievements||{}),...(state.seenAchievements||{})};
+      } catch {}
+    }
+    /* Badges the account already has count as seen once its days are known. */
+    function settleAchievementBaseline(){
+      if(state.achievementBaselineReady) return;
+      state.seenAchievements={...(state.seenAchievements||{}),...Object.fromEntries(achievementData().filter(badge=>badge.earned).map(badge=>[badge.title,true]))};
+      state.achievementBaselineReady=true;
+    }
+    function save(){ rememberCelebrations(); try { const value=JSON.stringify(state); if(state.rememberMe!==false){ localStorage.setItem(storeKey,value); sessionStorage.removeItem(storeKey); } else { sessionStorage.setItem(storeKey,value); localStorage.removeItem(storeKey); } } catch { /* Работает и в режиме без сохранения данных. */ } queueSync(); }
     function resetIfNewDay(){
       todayKey=localDateKey();
       if(state.lastDate && state.lastDate !== todayKey){
@@ -550,10 +575,10 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const entries=await response.json();
         if(Array.isArray(entries)){
           let restored=false;
-          state.remoteEntries=entries; state.statsOnline=true;
+          state.remoteEntries=entries; state.statsOnline=true; settleAchievementBaseline();
           if(restoreCurrent){
             const current=entries.find(entry=>entry.date===todayKey);
-            if(current){ state.tasks={...(current.tasks||{})}; state.qaza={...(current.qaza||{})}; state.activeDate=todayKey; state.lastDate=todayKey; state.history={...(state.history||{}),[todayKey]:{tasks:{...(current.tasks||{})},qaza:{...(current.qaza||{})},completed:0,max:dailyMax()}}; save(); render(); restored=true; }
+            if(current){ const done=entryCompletedCount(current); if(done>=3) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(done>=dailyMax()) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; state.tasks={...(current.tasks||{})}; state.qaza={...(current.qaza||{})}; state.activeDate=todayKey; state.lastDate=todayKey; state.history={...(state.history||{}),[todayKey]:{tasks:{...(current.tasks||{})},qaza:{...(current.qaza||{})},completed:0,max:dailyMax()}}; save(); render(); restored=true; }
           }
           refreshStreak(); save(); renderCalendar(); renderAchievementsTeaser(); renderStats(document.querySelector('#stats-view').classList.contains('active')); renderProfile();
           return restored;
@@ -584,7 +609,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       document.querySelector('#welcome').textContent = state.name?`Ассаламу алейкум, ${state.name}`:'Ассаламу алейкум';
       paintGuest();
       renderProfile(); renderAchievementsTeaser();
-      if(!state.achievementBaselineReady){ state.seenAchievements=Object.fromEntries(achievementData().filter(badge=>badge.earned).map(badge=>[badge.title,true])); state.achievementBaselineReady=true; save(); }
+      if(!state.achievementBaselineReady&&(!state.userId||Array.isArray(state.remoteEntries))){ settleAchievementBaseline(); save(); }
       const activeDate=new Date(`${entryDateKey}T12:00:00`), isToday=entryDateKey===todayKey;
       document.querySelector('#tasks-heading').textContent=isToday?'Сегодняшние дела':'Дела за выбранный день';
       document.querySelector('#top-day').textContent=appLocale()==='ky-KG'?(isToday?'Бүгүн':'Тандалган күн'):(isToday?'Сегодня':'Выбранный день');
@@ -1718,6 +1743,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const user=await response.json();
         const guestToday=!state.userId&&entryDateKey===todayKey&&entryHasProgress({tasks:state.tasks,qaza:state.qaza})?{tasks:copyEntry(state.tasks),qaza:copyEntry(state.qaza),zikr:state.zikrPending?.[todayKey]}:null;
         state={...blankState(),name:user.displayName,login:user.login,userId:user.id,token:user.token,rememberMe:document.querySelector('#login-remember').checked};
+        restoreCelebrations();
         /* Nothing is sent until the profile's own day is known, so an empty phone cannot overwrite it. */
         showCabinet(); save(); clearTimeout(syncTimer); finishAuth(); refreshVisibleLeaderboards(); loadPushStatus();
         fetchPersonalEntries(true).then(restored=>{
