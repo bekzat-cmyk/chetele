@@ -751,6 +751,40 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       {id:'hawqala', title:'Ля хауля ва ля куввата илля биллях', arabic:'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ', translit:'Ля хауля ва ля куввата илля биллях.', meaning:'Нет мощи и силы ни у кого, кроме Аллаха.', goal:33},
       {id:'hasbunallah', title:'Хасбуналлаху ва ни‘маль-вакиль', arabic:'حَسْبُنَا ٱللَّٰهُ وَنِعْمَ ٱلْوَكِيلُ', translit:'Хасбуналлаху ва ни‘маль-вакиль.', meaning:'Достаточно нам Аллаха, и как прекрасен Он как Покровитель.', goal:33}
     ];
+    /* Morning and evening adhkar. Each one counts like any zikr (into tasks.tasbihat), under
+       its own id per set, so the morning and the evening progress stay apart. */
+    const ADHKAR_SETS = {
+      morning:{title:'Утренние азкары', short:'Утро', when:'после фаджра до восхода', icon:'sun'},
+      evening:{title:'Вечерние азкары', short:'Вечер', when:'после асра до магриба', icon:'moon'}
+    };
+    const ADHKAR_COMMON = {
+      kursi:{title:'Аят аль-Курси', long:true, goal:1, arabic:'ٱللَّهُ لَا إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِي ٱلسَّمَٰوَٰتِ وَمَا فِي ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِي يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِيُّ ٱلْعَظِيمُ', translit:'Аллаху ля иляха илля хуваль-хайюль-каййум…', meaning:'Аллах — нет божества, кроме Него, Живого, Поддерживающего жизнь. Сура аль-Бакара, 255.'},
+      qul:{title:'Три последние суры', long:true, goal:3, arabic:'قُلْ هُوَ ٱللَّهُ أَحَدٌ ۝ ٱللَّهُ ٱلصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌ', translit:'Куль хуваллаху ахад…', meaning:'Прочитайте суры аль-Ихлас, аль-Фалак и ан-Нас — три раза.'},
+      sayyid:{title:'Сайид аль-истигфар', long:true, goal:1, arabic:'ٱللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا ٱسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَٱغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ ٱلذُّنُوبَ إِلَّا أَنْتَ', translit:'Аллахумма анта рабби, ля иляха илля анта…', meaning:'О Аллах, Ты мой Господь, нет божества, кроме Тебя. Прости меня, ведь никто не прощает грехи, кроме Тебя.'},
+      bismillah:{title:'Бисмилляхи-ллязи ля ядурру', goal:3, arabic:'بِسْمِ ٱللَّهِ ٱلَّذِي لَا يَضُرُّ مَعَ ٱسْمِهِ شَيْءٌ فِي ٱلْأَرْضِ وَلَا فِي ٱلسَّمَاءِ وَهُوَ ٱلسَّمِيعُ ٱلْعَلِيمُ', translit:'Бисмилляхи-ллязи ля ядурру ма‘а-смихи шай’ун фи-ль-арды ва ля фи-с-сама’, ва хува-с-сами‘у-ль-‘алим.', meaning:'С именем Аллаха, с именем Которого ничто не причинит вреда ни на земле, ни на небе.'},
+      raditu:{title:'Радыту билляхи раббан', goal:3, arabic:'رَضِيتُ بِٱللَّهِ رَبًّا، وَبِٱلْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', translit:'Радыту билляхи раббан, ва биль-ислами динан, ва би-Мухаммадин ﷺ набийя.', meaning:'Я доволен Аллахом как Господом, исламом как религией и Мухаммадом ﷺ как пророком.'},
+      hasbi:{title:'Хасбияллаху ля иляха илля хува', goal:7, arabic:'حَسْبِيَ ٱللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ ٱلْعَرْشِ ٱلْعَظِيمِ', translit:'Хасбияллаху ля иляха илля хува, ‘аляйхи таваккальту ва хува раббу-ль-‘арши-ль-‘азым.', meaning:'Достаточно мне Аллаха, нет божества, кроме Него. На Него я уповаю, и Он — Господь великого Трона.'},
+      tasbih:{title:'Субханаллахи ва бихамдихи', goal:100, arabic:'سُبْحَانَ ٱللَّهِ وَبِحَمْدِهِ', translit:'Субханаллахи ва бихамдихи.', meaning:'Пречист Аллах и хвала Ему.'}
+    };
+    const ADHKAR = {
+      morning:[
+        ['kursi'],['qul'],
+        ['asbahna',{title:'Асбахна ва асбаха-ль-мульку лиллях', long:true, goal:1, arabic:'أَصْبَحْنَا وَأَصْبَحَ ٱلْمُلْكُ لِلَّهِ، وَٱلْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا ٱللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ ٱلْمُلْكُ وَلَهُ ٱلْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ', translit:'Асбахна ва асбаха-ль-мульку лиллях, валь-хамду лиллях…', meaning:'Мы встретили утро, и встретило утро царство Аллаха. Хвала Аллаху, нет божества, кроме Него.'}],
+        ['bika',{title:'Аллахумма бика асбахна', goal:1, arabic:'ٱللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ ٱلنُّشُورُ', translit:'Аллахумма бика асбахна, ва бика амсайна, ва бика нахйа, ва бика намуту, ва иляйка-н-нушур.', meaning:'О Аллах, благодаря Тебе мы дожили до утра и до вечера, живём и умираем, и к Тебе — воскрешение.'}],
+        ['sayyid'],['bismillah'],['raditu'],['hasbi'],['tasbih']
+      ],
+      evening:[
+        ['kursi'],['qul'],
+        ['amsayna',{title:'Амсайна ва амса-ль-мульку лиллях', long:true, goal:1, arabic:'أَمْسَيْنَا وَأَمْسَى ٱلْمُلْكُ لِلَّهِ، وَٱلْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا ٱللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ ٱلْمُلْكُ وَلَهُ ٱلْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ', translit:'Амсайна ва амса-ль-мульку лиллях, валь-хамду лиллях…', meaning:'Мы встретили вечер, и встретило вечер царство Аллаха. Хвала Аллаху, нет божества, кроме Него.'}],
+        ['bika',{title:'Аллахумма бика амсайна', goal:1, arabic:'ٱللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ ٱلْمَصِيرُ', translit:'Аллахумма бика амсайна, ва бика асбахна, ва бика нахйа, ва бика намуту, ва иляйка-ль-масыр.', meaning:'О Аллах, благодаря Тебе мы дожили до вечера и до утра, живём и умираем, и к Тебе — возвращение.'}],
+        ['sayyid'],['bismillah'],
+        ['audhu',{title:'А‘узу би-калимати-ллях', goal:3, arabic:'أَعُوذُ بِكَلِمَاتِ ٱللَّهِ ٱلتَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', translit:'А‘узу би-калимати-лляхи-т-таммати мин шарри ма халак.', meaning:'Прибегаю к совершенным словам Аллаха от зла того, что Он сотворил.'}],
+        ['raditu'],['hasbi'],['tasbih']
+      ]
+    };
+    Object.entries(ADHKAR).forEach(([set,list])=>list.forEach(([key,own])=>ZIKR.push({...(own||ADHKAR_COMMON[key]),id:`${set==='morning'?'am':'pm'}_${key}`,set})));
+    const ZIKR_GENERAL=ZIKR.filter(item=>!item.set);
+    const zikrSet=set=>ZIKR.filter(item=>item.set===set);
     const ZIKR_DEFAULT_FAVORITES=['subhanallah','alhamdulillah','allahuakbar','salawat'];
     let zikrScreen='hub', zikrCurrent=ZIKR[0].id, zikrFilter='all', zikrCelebrate=false;
     /* Salawat typed or added on the main screen is the salawat counter itself: both
@@ -762,6 +796,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       state.zikrPending=ChetZikrSync.addPending(state.zikrPending,entryDateKey,'salawat',matched.delta);
       save(); scheduleZikrFlush();
     }
+    /* The counter's arrows walk through one set: the adhkar of that time, or the general list. */
+    function zikrSequence(item){ return item?.set?zikrSet(item.set):ZIKR_GENERAL; }
     function zikrToday(id){ return Number(state.tasks?.zikr?.[id])||0; }
     function zikrAllTime(id){
       const seen=new Set([entryDateKey]); let sum=zikrToday(id);
@@ -825,6 +861,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function renderZikr(){
       const root=document.querySelector('#zikr-view'); if(!root) return;
       root.classList.toggle('is-counter',zikrScreen==='counter');
+      const currentItem=ZIKR.find(zikr=>zikr.id===zikrCurrent);
+      const themeSet=zikrScreen==='list'&&ADHKAR_SETS[zikrFilter]?zikrFilter:zikrScreen==='counter'&&currentItem?.set||'';
+      if(themeSet) root.dataset.set=themeSet; else delete root.dataset.set;
       matchSalawatCounter();
       const number=new Intl.NumberFormat(appLocale());
       const favorites=new Set(state.zikrFavorites||ZIKR_DEFAULT_FAVORITES);
@@ -835,15 +874,20 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const head=(eyebrow,title,sub,side)=>`<header class="stats-top zg-top">${side.startsWith('<button')?side:''}<div><span class="stats-eyebrow">${eyebrow}</span><h2>${title}</h2><span class="stats-period-label">${sub}</span></div>${side.startsWith('<button')?'':side}</header>`;
       if(zikrScreen!=='counter') root.dataset.key='';
       if(zikrScreen==='list'){
-        const titles={all:'Все зикры',starred:'Избранное',open:'Осталось'};
-        const items=ZIKR.filter(item=>zikrFilter==='all'||(zikrFilter==='starred'?favorites.has(item.id):zikrToday(item.id)<item.goal));
+        const titles={all:'Все зикры',starred:'Избранное',open:'Осталось'}, setInfo=ADHKAR_SETS[zikrFilter];
+        const items=setInfo?zikrSet(zikrFilter):zikrFilter==='starred'?ZIKR.filter(item=>favorites.has(item.id)):ZIKR_GENERAL.filter(item=>zikrFilter==='all'||zikrToday(item.id)<item.goal);
         const rows=items.map(item=>{ const today=zikrToday(item.id), done=today>=item.goal, starred=favorites.has(item.id);
-          return `<li class="zg-row"><button type="button" class="zg-row-main" data-zikr-open="${item.id}"><span class="zg-row-copy"><b>${item.title}</b><small>${done?'цель на сегодня выполнена':item.meaning}</small></span><span class="zg-row-progress"><span class="zg-track" aria-hidden="true"><i style="width:${percent(today,item.goal)}%"></i></span><em class="${done?'done':''}">${number.format(today)} / ${item.goal}</em></span></button><button type="button" class="zg-star ${starred?'on':''}" data-zikr-star="${item.id}" aria-pressed="${starred}" aria-label="Избранное: ${item.title}">${icon('softStar')}</button></li>`; }).join('');
+          return `<li class="zg-row"><button type="button" class="zg-row-main" data-zikr-open="${item.id}"><span class="zg-row-copy"><b>${item.title}</b><small>${done?'цель на сегодня выполнена':item.goal<33?`${item.goal} ${plural(item.goal,'раз','раза','раз')} · ${item.meaning}`:item.meaning}</small></span><span class="zg-row-progress"><span class="zg-track" aria-hidden="true"><i style="width:${percent(today,item.goal)}%"></i></span><em class="${done?'done':''}">${number.format(today)} / ${item.goal}</em></span></button><button type="button" class="zg-star ${starred?'on':''}" data-zikr-star="${item.id}" aria-pressed="${starred}" aria-label="Избранное: ${item.title}">${icon('softStar')}</button></li>`; }).join('');
+        if(setInfo){
+          const done=items.filter(item=>zikrToday(item.id)>=item.goal).length;
+          root.innerHTML=`${head('Азкары',setInfo.title,`${done} из ${items.length} прочитано`,round('data-zikr-go="hub"','softBack','Назад'))}<section class="zg-set-banner"><i class="zg-set-icon">${icon(setInfo.icon)}</i><span><b>${done===items.length?'Все азкары прочитаны':`Осталось ${items.length-done}`}</b><small>Время: ${setInfo.when}</small></span><span class="zg-track" aria-hidden="true"><i style="width:${percent(done,items.length)}%"></i></span></section><ol class="zg-list">${rows}</ol>`;
+          return;
+        }
         root.innerHTML=`${head('Зикр',titles[zikrFilter],zikrs(items.length),round('data-zikr-go="hub"','softBack','Назад'))}<div class="stats-seg glass-seg" role="radiogroup" aria-label="Фильтр зикров">${Object.entries({all:'Все',starred:'Избранные',open:'Осталось'}).map(([id,label])=>`<button type="button" role="radio" aria-checked="${zikrFilter===id}" class="${zikrFilter===id?'active':''}" data-zikr-filter="${id}">${label}</button>`).join('')}</div>${rows?`<ol class="zg-list">${rows}</ol>`:'<p class="zg-empty">Здесь пока пусто.</p>'}`;
         return;
       }
       if(zikrScreen==='counter'){
-        const item=ZIKR.find(zikr=>zikr.id===zikrCurrent)||ZIKR[0], index=ZIKR.indexOf(item), today=zikrToday(item.id);
+        const item=currentItem||ZIKR[0], sequence=zikrSequence(item), index=sequence.indexOf(item), today=zikrToday(item.id);
         /* The bar counts rounds of the goal (33): 33 fills it, 34 starts round two at 1 / 33. */
         const inRound=today?((today-1)%item.goal)+1:0, lap=today?Math.floor((today-1)/item.goal)+1:1;
         const hint=today<item.goal?`ещё ${item.goal-today} до цели`:inRound===item.goal?(lap===1?'цель выполнена':`${lap}-й круг пройден`):`${lap}-й круг · ещё ${item.goal-inRound}`;
@@ -867,7 +911,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const tap=zikrCelebrate
           ?`<button type="button" class="zg-tap celebrate" data-zikr-tap aria-label="Цель выполнена, продолжить счёт"><span class="zg-done-icon">${icon('check')}</span><b class="zg-done-title">Цель выполнена</b><span class="zg-hint">Нажмите, чтобы продолжить счёт</span></button>`
           :`<button type="button" class="zg-tap" data-zikr-tap aria-label="Отметить: ${today+1}"><span class="zg-count">${number.format(today)}</span><span class="zg-hint">${hint}</span><small>Нажмите в любом месте карточки</small></button>`;
-        root.innerHTML=`<header class="zg-bar">${round('data-zikr-go="list"','softBack','К списку')}<span class="zg-pos">${index+1} из ${ZIKR.length}</span><span class="zg-arrows">${round('data-zikr-step="-1"','softBack','Предыдущий зикр')}${round('data-zikr-step="1"','softChevron','Следующий зикр')}</span></header>${dayNote}<section class="zg-text"><span class="zg-label">${item.title}</span><p class="zg-arabic" lang="ar" dir="rtl">${item.arabic}</p><b>${item.translit}</b><p>${item.meaning}</p></section><section class="zg-counter">${goal}${tap}</section><div class="zg-foot"><button type="button" class="zg-circle" data-zikr-minus aria-label="Убрать одно">${icon('softMinus')}</button><span class="zg-total"><small>всего</small><b>${number.format(zikrAllTime(item.id))}</b></span><button type="button" class="zg-circle" data-zikr-reset aria-label="Сбросить счёт за день">${icon('softReset')}</button></div>`;
+        root.innerHTML=`<header class="zg-bar">${round('data-zikr-go="list"','softBack','К списку')}<span class="zg-pos">${item.set?`${ADHKAR_SETS[item.set].short} · `:''}${index+1} из ${sequence.length}</span><span class="zg-arrows">${round('data-zikr-step="-1"','softBack','Предыдущий зикр')}${round('data-zikr-step="1"','softChevron','Следующий зикр')}</span></header>${dayNote}<section class="zg-text${item.long?' zg-long':''}"><span class="zg-label">${item.title}${item.goal<33?` · ${item.goal} ${plural(item.goal,'раз','раза','раз')}`:''}</span><p class="zg-arabic" lang="ar" dir="rtl">${item.arabic}</p><b>${item.translit}</b><p>${item.meaning}</p></section><section class="zg-counter">${goal}${tap}</section><div class="zg-foot"><button type="button" class="zg-circle" data-zikr-minus aria-label="Убрать одно">${icon('softMinus')}</button><span class="zg-total"><small>всего</small><b>${number.format(zikrAllTime(item.id))}</b></span><button type="button" class="zg-circle" data-zikr-reset aria-label="Сбросить счёт за день">${icon('softReset')}</button></div>`;
         return;
       }
       /* Today's total is the same salawat + zikr as in the deeds of the day, typed numbers included. */
@@ -875,19 +919,22 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const typed=Math.max(0,todayTotal-ZIKR.reduce((sum,item)=>sum+zikrToday(item.id),0)), last=state.zikrLast&&ZIKR.find(item=>item.id===state.zikrLast.id);
       const event=(state.events||[]).find(item=>item.mode!=='personal_path'&&['salawat','dhikr'].includes(item.metric));
       const eventPercent=event?percent(Number(event.totalProgress||0),Number(event.goal||0)):0;
-      const open=ZIKR.filter(item=>zikrToday(item.id)<item.goal).length;
+      const open=ZIKR_GENERAL.filter(item=>zikrToday(item.id)<item.goal).length;
+      const hour=new Date().getHours(), nowSet=entryDateKey!==todayKey?'':hour>=3&&hour<12?'morning':hour>=15&&hour<23?'evening':'';
+      const adhkar=Object.entries(ADHKAR_SETS).map(([id,info])=>{ const list=zikrSet(id), done=list.filter(item=>zikrToday(item.id)>=item.goal).length;
+        return `<button type="button" class="zg-adhkar zg-adhkar-${id}" data-zikr-list="${id}"><span class="zg-adhkar-top"><i class="zg-set-icon">${icon(info.icon)}</i>${done===list.length?`<em>${icon('check')}готово</em>`:nowSet===id?'<em>сейчас</em>':''}</span><span class="zg-adhkar-copy"><b>${info.title}</b><small>${info.when}</small></span><span class="zg-adhkar-progress"><span class="zg-track" aria-hidden="true"><i style="width:${percent(done,list.length)}%"></i></span><strong>${done}/${list.length}</strong></span></button>`; }).join('');
       const dayLabel=entryDateKey===todayKey?'Сегодня':formatDayLabel(entryDateKey);
       const times=`${number.format(todayTotal)} ${plural(todayTotal,'раз','раза','раз')}`;
-      root.innerHTML=`${head('Поминание Аллаха','Зикр',`${times} ${entryDateKey===todayKey?'сегодня':'за день'}`,`<i class="stats-badge" aria-hidden="true">${icon('softSalawat')}</i>`)}<section class="zg-hero" aria-label="${dayLabel}"><div class="zg-hero-bar"><span>${dayLabel}</span><em>как в делах дня</em></div><article class="zg-hero-card"><div class="zg-sum"><b>${number.format(todayTotal)}</b><span>${plural(todayTotal,'раз','раза','раз')}</span></div><div class="zg-split"><span><small>Салават</small><b>${number.format(daySalawat)}</b></span><span><small>Зикр</small><b>${number.format(dayZikr)}</b></span></div>${typed?`<p class="zg-typed">из них ${number.format(typed)} введено на главном экране</p>`:''}${last?`<button type="button" class="zg-continue" data-zikr-open="${last.id}"><i>${icon('softSalawat')}</i>Продолжить: ${last.title}</button>`:''}</article></section><div class="zg-entries"><button type="button" class="zg-entry" data-zikr-list="all"><i class="zg-circle-icon">${icon('softList')}</i><span><b>Все зикры</b><small>${zikrs(ZIKR.length)}</small></span></button><button type="button" class="zg-entry" data-zikr-list="starred"><i class="zg-circle-icon zg-gold">${icon('softStar')}</i><span><b>Избранное</b><small>${zikrs(favorites.size)}</small></span></button></div>${event?`<button type="button" class="zg-event" data-view="events-view"><span><small>Общий зикр</small><b>${number.format(Number(event.totalProgress||0))}</b><em>${escapeHtml(event.title)} · цель ${number.format(Number(event.goal||0))}</em></span><span class="zg-ring" aria-label="${eventPercent} процентов"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27"/><circle class="zg-ring-value" cx="32" cy="32" r="27" stroke-dasharray="${Math.round(eventPercent*1.696)} 170"/></svg><b>${eventPercent}%</b></span></button>`:''}<button type="button" class="zg-entry zg-wide" data-zikr-list="open"><i class="zg-circle-icon">${icon('softClock')}</i><span><b>Осталось сегодня</b><small>${open?`${zikrs(open)} ещё не дошли до цели`:'все цели на сегодня выполнены'}</small></span></button>`;
+      root.innerHTML=`${head('Поминание Аллаха','Зикр',`${times} ${entryDateKey===todayKey?'сегодня':'за день'}`,`<i class="stats-badge" aria-hidden="true">${icon('softSalawat')}</i>`)}<section class="zg-hero" aria-label="${dayLabel}"><div class="zg-hero-bar"><span>${dayLabel}</span><em>как в делах дня</em></div><article class="zg-hero-card"><div class="zg-sum"><b>${number.format(todayTotal)}</b><span>${plural(todayTotal,'раз','раза','раз')}</span></div><div class="zg-split"><span><small>Салават</small><b>${number.format(daySalawat)}</b></span><span><small>Зикр</small><b>${number.format(dayZikr)}</b></span></div>${typed?`<p class="zg-typed">из них ${number.format(typed)} введено на главном экране</p>`:''}${last?`<button type="button" class="zg-continue" data-zikr-open="${last.id}"><i>${icon('softSalawat')}</i>Продолжить: ${last.title}</button>`:''}</article></section><div class="zg-adhkar-grid" aria-label="Утренние и вечерние азкары">${adhkar}</div><div class="zg-entries"><button type="button" class="zg-entry" data-zikr-list="all"><i class="zg-circle-icon">${icon('softList')}</i><span><b>Все зикры</b><small>${zikrs(ZIKR_GENERAL.length)}</small></span></button><button type="button" class="zg-entry" data-zikr-list="starred"><i class="zg-circle-icon zg-gold">${icon('softStar')}</i><span><b>Избранное</b><small>${zikrs(favorites.size)}</small></span></button></div>${event?`<button type="button" class="zg-event" data-view="events-view"><span><small>Общий зикр</small><b>${number.format(Number(event.totalProgress||0))}</b><em>${escapeHtml(event.title)} · цель ${number.format(Number(event.goal||0))}</em></span><span class="zg-ring" aria-label="${eventPercent} процентов"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27"/><circle class="zg-ring-value" cx="32" cy="32" r="27" stroke-dasharray="${Math.round(eventPercent*1.696)} 170"/></svg><b>${eventPercent}%</b></span></button>`:''}<button type="button" class="zg-entry zg-wide" data-zikr-list="open"><i class="zg-circle-icon">${icon('softClock')}</i><span><b>Осталось сегодня</b><small>${open?`${zikrs(open)} ещё не дошли до цели`:'все цели на сегодня выполнены'}</small></span></button>`;
     }
     document.addEventListener('click',event=>{
       const target=event.target;
       const go=target.closest('[data-zikr-go]'); if(go){ zikrScreen=go.dataset.zikrGo; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
       const list=target.closest('[data-zikr-list]'); if(list){ zikrFilter=list.dataset.zikrList; zikrScreen='list'; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
       const filter=target.closest('[data-zikr-filter]'); if(filter){ zikrFilter=filter.dataset.zikrFilter; renderZikr(); return; }
-      const open=target.closest('[data-zikr-open]'); if(open){ zikrCurrent=open.dataset.zikrOpen; zikrScreen='counter'; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
+      const open=target.closest('[data-zikr-open]'); if(open){ zikrCurrent=open.dataset.zikrOpen; const opened=ZIKR.find(item=>item.id===zikrCurrent); if(opened?.set) zikrFilter=opened.set; else if(ADHKAR_SETS[zikrFilter]) zikrFilter='all'; zikrScreen='counter'; zikrCelebrate=false; renderZikr(); window.scrollTo(0,0); riseIn(document.querySelector('#zikr-view')); return; }
       const star=target.closest('[data-zikr-star]'); if(star){ const set=new Set(state.zikrFavorites||ZIKR_DEFAULT_FAVORITES), id=star.dataset.zikrStar; if(set.has(id)) set.delete(id); else set.add(id); state.zikrFavorites=[...set]; save(); renderZikr(); return; }
-      const step=target.closest('[data-zikr-step]'); if(step){ const index=(ZIKR.findIndex(item=>item.id===zikrCurrent)+Number(step.dataset.zikrStep)+ZIKR.length)%ZIKR.length; zikrCurrent=ZIKR[index].id; zikrCelebrate=false; renderZikr(); return; }
+      const step=target.closest('[data-zikr-step]'); if(step){ const sequence=zikrSequence(ZIKR.find(item=>item.id===zikrCurrent)||ZIKR[0]), index=(sequence.findIndex(item=>item.id===zikrCurrent)+Number(step.dataset.zikrStep)+sequence.length)%sequence.length; zikrCurrent=sequence[index].id; zikrCelebrate=false; renderZikr(); return; }
       if(target.closest('[data-zikr-tap]')){ if(zikrCelebrate){ zikrCelebrate=false; renderZikr(); return; } zikrAdd(zikrCurrent,1); return; }
       if(target.closest('[data-zikr-minus]')){ zikrCelebrate=false; zikrAdd(zikrCurrent,-1); return; }
       if(target.closest('[data-zikr-reset]')){ if(!zikrToday(zikrCurrent)||!confirm('Сбросить счёт этого зикра за день?')) return; zikrCelebrate=false; zikrAdd(zikrCurrent,-zikrToday(zikrCurrent)); }
@@ -3340,6 +3387,61 @@ body.app-dark #app .zg-track{background:rgba(255,255,255,.1)}
 body.app-dark #app .zg-track i,body.app-dark #app .zg-ring .zg-ring-value{background:#EEF5F2;stroke:#EEF5F2}
 body.app-dark #app .zg-ring circle{stroke:rgba(255,255,255,.12)}
 body.app-dark #app .zg-row{border-color:rgba(255,255,255,.06)}
+/* Morning and evening adhkar: a sunrise amber for the day and a twilight indigo for the evening. */
+body #app #zikr-view{--am-1:#FFF1D6;--am-2:#FFD08F;--am-ink:#5B3410;--am-accent:#E0862B;--pm-1:#3E4396;--pm-2:#1B1F55;--pm-ink:#F3F4FF;--pm-accent:#8E9BFF}
+body #app .zg-adhkar-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body #app .zg-adhkar{min-height:178px;padding:16px;border-radius:28px;display:flex;flex-direction:column;gap:12px;text-align:left;position:relative;overflow:hidden}
+body #app .zg-adhkar-morning{border:1px solid rgba(255,255,255,.9);background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.75),transparent 55%),linear-gradient(160deg,var(--am-1),var(--am-2));color:var(--am-ink);box-shadow:0 14px 34px rgba(224,134,43,.22)}
+body #app .zg-adhkar-evening{border:1px solid rgba(160,170,255,.35);background:radial-gradient(110% 80% at 100% 0%,rgba(142,155,255,.45),transparent 60%),linear-gradient(160deg,var(--pm-1),var(--pm-2));color:var(--pm-ink);box-shadow:0 14px 34px rgba(27,31,85,.32)}
+body #app .zg-adhkar-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+body #app .zg-set-icon{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center}
+body #app .zg-set-icon .lucide{width:22px;height:22px}
+body #app .zg-adhkar-morning .zg-set-icon,body #app #zikr-view[data-set=morning] .zg-set-icon{background:#fff;color:var(--am-accent);box-shadow:0 0 0 6px rgba(255,255,255,.35)}
+body #app .zg-adhkar-evening .zg-set-icon,body #app #zikr-view[data-set=evening] .zg-set-icon{background:rgba(255,255,255,.14);color:#FFE3A3;box-shadow:0 0 0 6px rgba(255,255,255,.06)}
+body #app .zg-adhkar-evening .zg-set-icon .lucide,body #app #zikr-view[data-set=evening] .zg-set-icon .lucide{fill:currentColor}
+body #app .zg-adhkar-top em{height:26px;padding:0 10px;border-radius:13px;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-style:normal;font-weight:600}
+body #app .zg-adhkar-top em .lucide{width:14px;height:14px;stroke-width:2.4}
+body #app .zg-adhkar-morning .zg-adhkar-top em{background:rgba(255,255,255,.75);color:var(--am-ink)}
+body #app .zg-adhkar-evening .zg-adhkar-top em{background:rgba(255,255,255,.16);color:var(--pm-ink)}
+body #app .zg-adhkar-copy{display:flex;flex-direction:column;gap:3px;margin-top:auto}
+body #app .zg-adhkar-copy b{font-size:17px;font-weight:600;line-height:1.2}
+body #app .zg-adhkar-copy small{font-size:12px;opacity:.75}
+body #app .zg-adhkar-progress{display:flex;align-items:center;gap:8px}
+body #app .zg-adhkar-progress strong{font-size:13px;font-weight:600}
+body #app .zg-adhkar-morning .zg-track{background:rgba(91,52,16,.12)}
+body #app .zg-adhkar-morning .zg-track i{background:var(--am-accent)}
+body #app .zg-adhkar-evening .zg-track{background:rgba(255,255,255,.16)}
+body #app .zg-adhkar-evening .zg-track i{background:var(--pm-accent)}
+body #app .zg-adhkar:active{transform:scale(.985)}
+body #app .zg-set-banner{padding:16px;border-radius:28px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px 14px}
+body #app .zg-set-banner>span:not(.zg-track){display:flex;flex-direction:column;gap:2px}
+body #app .zg-set-banner b{font-size:17px;font-weight:600}
+body #app .zg-set-banner small{font-size:13px;opacity:.75}
+body #app .zg-set-banner .zg-track{grid-column:1/-1}
+body #app #zikr-view[data-set=morning] .zg-set-banner{background:linear-gradient(160deg,var(--am-1),var(--am-2));color:var(--am-ink);border:1px solid rgba(255,255,255,.9)}
+body #app #zikr-view[data-set=evening] .zg-set-banner{background:linear-gradient(160deg,var(--pm-1),var(--pm-2));color:var(--pm-ink);border:1px solid rgba(160,170,255,.35)}
+body #app #zikr-view[data-set=morning] .zg-set-banner .zg-track{background:rgba(91,52,16,.12)}
+body #app #zikr-view[data-set=evening] .zg-set-banner .zg-track{background:rgba(255,255,255,.16)}
+body #app #zikr-view[data-set=morning] .zg-track i{background:var(--am-accent)}
+body #app #zikr-view[data-set=evening] .zg-track i{background:var(--pm-accent)}
+body #app #zikr-view[data-set=morning] .zg-row-progress em.done,body #app #zikr-view[data-set=morning] .zg-label{color:var(--am-accent)}
+body #app #zikr-view[data-set=evening] .zg-row-progress em.done,body #app #zikr-view[data-set=evening] .zg-label{color:#5B66C9}
+body #app #zikr-view[data-set=morning] .zg-text{background:linear-gradient(180deg,rgba(255,246,228,.92),rgba(255,255,255,.7))}
+body #app #zikr-view[data-set=evening] .zg-text{background:linear-gradient(180deg,rgba(234,236,255,.92),rgba(255,255,255,.7))}
+body #app #zikr-view[data-set=morning] .zg-tap{background:linear-gradient(180deg,#FFF8EC,#FFE9C7)}
+body #app #zikr-view[data-set=evening] .zg-tap{background:linear-gradient(180deg,#F1F2FF,#DEE1FB)}
+body #app .zg-text.zg-long{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body #app .zg-text.zg-long .zg-arabic{font-size:clamp(20px,5.6vw,25px);line-height:1.95}
+body.app-dark #app #zikr-view{--am-1:#4A3214;--am-2:#2E1F0D;--am-ink:#FFE9C9;--am-accent:#F2A65A;--pm-1:#262A6B;--pm-2:#12143A}
+body.app-dark #app .zg-adhkar-morning{border-color:rgba(255,200,130,.18);background:radial-gradient(120% 90% at 100% 0%,rgba(242,166,90,.25),transparent 55%),linear-gradient(160deg,var(--am-1),var(--am-2));box-shadow:none}
+body.app-dark #app .zg-adhkar-evening{box-shadow:none}
+body.app-dark #app .zg-adhkar-morning .zg-set-icon,body.app-dark #app #zikr-view[data-set=morning] .zg-set-icon{background:rgba(255,255,255,.1);box-shadow:none}
+body.app-dark #app .zg-adhkar-morning .zg-adhkar-top em{background:rgba(255,255,255,.12)}
+body.app-dark #app .zg-adhkar-morning .zg-track,body.app-dark #app #zikr-view[data-set=morning] .zg-set-banner .zg-track{background:rgba(255,255,255,.12)}
+body.app-dark #app #zikr-view[data-set=morning] .zg-set-banner{border-color:rgba(255,200,130,.18)}
+body.app-dark #app #zikr-view[data-set=morning] .zg-text,body.app-dark #app #zikr-view[data-set=morning] .zg-tap{background:linear-gradient(180deg,rgba(74,50,20,.75),rgba(30,24,16,.9))}
+body.app-dark #app #zikr-view[data-set=evening] .zg-text,body.app-dark #app #zikr-view[data-set=evening] .zg-tap{background:linear-gradient(180deg,rgba(38,42,107,.75),rgba(18,20,58,.9))}
+body.app-dark #app #zikr-view[data-set=evening] .zg-row-progress em.done,body.app-dark #app #zikr-view[data-set=evening] .zg-label{color:var(--pm-accent)}
 /* The counter fits one screen without scrolling: the text gets 60% of the free height, the tap area 40%. */
 body #app #zikr-view.active.is-counter{height:calc(100dvh - 100px - env(safe-area-inset-bottom));gap:12px;overflow:hidden}
 body #app #zikr-view.is-counter .zg-text{flex:6 1 0;height:auto;min-height:0;padding:16px 18px}
