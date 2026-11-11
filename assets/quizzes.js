@@ -6,15 +6,21 @@
   const CSS = `
 body #app #quiz-view.active{display:flex;flex-direction:column;gap:22px;padding-bottom:calc(120px + env(safe-area-inset-bottom))}
 body #app #quiz-view.focus{padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+/* Everything is drawn inside one lasting container: the app replays its entrance on every
+   new direct child of a view, which made each repaint flash. The container only slides
+   (no fade), so glass behind it never loses its blur mid-animation. */
+#quiz-view .qz-root{display:flex;flex-direction:column;gap:22px;min-width:0}
+body #app #quiz-view.active>.qz-root{animation:qzSlide .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes qzSlide{from{transform:translateY(12px)}}
 body #app.quiz-focus .nav{display:none}
 #quiz-view .qz-top{padding:max(12px,calc(56px - env(safe-area-inset-top))) 4px 0;display:flex;flex-direction:column;gap:18px}
-#quiz-view .qz-round{width:44px;height:44px;flex:none;border-radius:22px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;display:grid;place-items:center;padding:0}
+#quiz-view .qz-round{width:44px;height:44px;flex:none;border-radius:22px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.26);color:#fff;display:grid;place-items:center;padding:0}
 #quiz-view .qz-round svg{width:20px;height:20px}
 #quiz-view .qz-title{display:flex;flex-direction:column}
 #quiz-view .qz-title span{margin-bottom:6px;color:rgba(255,255,255,.78);font-size:14px;font-weight:500}
 #quiz-view .qz-title h2{margin:0;color:#fff;font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
 #quiz-view .qz-title em{font-style:normal;color:rgba(255,255,255,.72);font-size:30px;font-weight:400;letter-spacing:-.02em;line-height:1.15}
-#quiz-view .qz-shell{border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.32);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:0 20px 50px rgba(16,22,26,.10);display:flex;flex-direction:column}
+#quiz-view .qz-shell{border-radius:32px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.4);box-shadow:0 20px 50px rgba(16,22,26,.10);display:flex;flex-direction:column}
 #quiz-view .qz-shell-bar{min-height:52px;padding:10px 18px;box-sizing:border-box;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 #quiz-view .qz-panel{margin:-1px;padding:22px 20px 20px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:linear-gradient(180deg,rgba(246,249,248,.95),rgba(233,239,237,.9));box-shadow:0 14px 40px rgba(16,22,26,.10),inset 0 1px 0 #fff;display:flex;flex-direction:column;gap:16px;color:#10161A}
 #quiz-view .qz-pill{height:28px;padding:0 12px;border-radius:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;white-space:nowrap;background:rgba(255,255,255,.7);color:#10161A}
@@ -91,9 +97,9 @@ body #app.quiz-focus .nav{display:none}
 #quiz-view .qz-ring b{display:block;text-align:center;font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1}
 #quiz-view .qz-ring small{display:block;text-align:center;font-size:14px;color:#7A858B}
 #quiz-view .qz-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-#quiz-view .qz-levels span{padding:10px 4px;border-radius:16px;background:rgba(255,255,255,.7);color:#5E6A71;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+#quiz-view .qz-levels span{min-width:0;padding:10px 3px;border-radius:16px;background:rgba(255,255,255,.7);color:#5E6A71;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
 #quiz-view .qz-levels span.on{background:#0B0F12;color:#fff}
-#quiz-view .qz-levels b{font-size:12px;font-weight:600;line-height:1.25}
+#quiz-view .qz-levels b{max-width:100%;font-size:clamp(10px,3vw,12px);font-weight:600;line-height:1.25;overflow-wrap:anywhere;hyphens:auto}
 #quiz-view .qz-levels small{font-size:11px;opacity:.8}
 #quiz-view .qz-review{padding:6px 20px 8px;border-radius:28px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);display:flex;flex-direction:column;color:#10161A}
 #quiz-view .qz-review>b{padding-top:14px;font-size:17px;font-weight:600}
@@ -111,7 +117,7 @@ body #app.quiz-focus .nav{display:none}
 #quiz-view .qz-rise{animation:qzRise .32s cubic-bezier(.2,.8,.2,1) both}
 @keyframes qzRise{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @keyframes qzPulse{50%{opacity:.55}}
-@media (prefers-reduced-motion:reduce){#quiz-view .qz-rise,#quiz-view .qz-feedback,#quiz-view .qz-skel{animation:none}#quiz-view .qz-track i,#quiz-view .qz-opt{transition:none}}
+@media (prefers-reduced-motion:reduce){body #app #quiz-view.active>.qz-root,#quiz-view .qz-rise,#quiz-view .qz-feedback,#quiz-view .qz-skel{animation:none}#quiz-view .qz-track i,#quiz-view .qz-opt{transition:none}}
 body.app-dark #app #quiz-view .qz-shell,body.app-dark #app #quiz-view .qz-row,body.app-dark #app #quiz-view .qz-best,body.app-dark #app #quiz-view .qz-review,body.app-dark #app #quiz-view .qz-feedback,body.app-dark #app #quiz-view .qz-empty{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72);box-shadow:none;color:var(--ink)}
 body.app-dark #app #quiz-view .qz-panel{border-color:rgba(255,255,255,.1);background:rgba(23,32,30,.92);box-shadow:none;color:var(--ink)}
 body.app-dark #app #quiz-view .qz-stats,body.app-dark #app #quiz-view .qz-pill,body.app-dark #app #quiz-view .qz-levels span,body.app-dark #app #quiz-view .qz-ball,body.app-dark #app #quiz-view .qz-opt i{background:rgba(255,255,255,.08);color:var(--ink);border-color:rgba(255,255,255,.08)}
@@ -132,6 +138,29 @@ body.app-dark #app #quiz-view .qz-ring circle:first-child{stroke:rgba(255,255,25
 body.app-dark #app #quiz-view .qz-pill.good,body.app-dark #app #quiz-view .qz-mistake .yes,body.app-dark #app #quiz-view .qz-row em small.ok{color:#7FC8A6}
 body.app-dark #app #quiz-view .qz-pill.bad,body.app-dark #app #quiz-view .qz-mistake .no{color:#F0938A}
 body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
+/* The app's dark theme makes every <b> light; text on the light tile is set explicitly. */
+body.app-dark #app #quiz-view .qz-levels span.on b,body.app-dark #app #quiz-view .qz-levels span.on small{color:#0b1110}
+body.app-dark #app #quiz-view .qz-opt.right small{color:#7FC8A6}
+body.app-dark #app #quiz-view .qz-opt.wrong small{color:#F0938A}
+body.app-dark #app #quiz-view .qz-opt.right i{background:#2F7F64;color:#fff}
+body.app-dark #app #quiz-view .qz-opt.wrong i{background:#B8463B;color:#fff}
+body.app-dark #app #quiz-view .qz-opt.picked i{background:#eef5f2;color:#0b1110}
+.qz-sheet{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;background:rgba(16,22,26,.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:qzFade .2s ease both}
+.qz-sheet section{width:min(100%,540px);box-sizing:border-box;padding:10px 20px calc(24px + env(safe-area-inset-bottom));border-radius:32px 32px 0 0;background:rgba(246,249,248,.97);box-shadow:0 -20px 50px rgba(16,22,26,.18);display:flex;flex-direction:column;gap:14px;color:#10161A;font-family:Inter,-apple-system,system-ui,sans-serif;animation:qzUp .32s cubic-bezier(.2,.8,.2,1) both}
+.qz-sheet section>i{align-self:center;width:40px;height:5px;border-radius:3px;background:rgba(16,22,26,.18)}
+.qz-sheet h2{margin:4px 0 0;font-size:22px;font-weight:600;letter-spacing:-.02em;color:inherit}
+.qz-sheet p{margin:0;font-size:15px;line-height:1.5;color:#5E6A71}
+.qz-sheet button{height:54px;border-radius:27px;border:0;font:inherit;font-size:16px;font-weight:600}
+.qz-sheet .stay{background:#0B0F12;color:#fff}
+.qz-sheet .leave{background:rgba(190,60,50,.10);color:#A3342A}
+body.app-dark .qz-sheet section{background:#17201e;color:#eef5f2}
+body.app-dark .qz-sheet h2{color:#eef5f2}
+body.app-dark .qz-sheet p{color:#9baea7}
+body.app-dark .qz-sheet .stay{background:#eef5f2;color:#0b1110}
+body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
+@keyframes qzFade{from{opacity:0}}
+@keyframes qzUp{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.qz-sheet,.qz-sheet section{animation:none}}
 `;
   const P = {
     brain: 'M12 5.5a3 3 0 0 0-5.4-1.8A3.2 3.2 0 0 0 4 7.6a3.2 3.2 0 0 0-.4 5.3A3.6 3.6 0 0 0 7.2 18.4 2.9 2.9 0 0 0 12 19.6zM12 5.5a3 3 0 0 1 5.4-1.8A3.2 3.2 0 0 1 20 7.6a3.2 3.2 0 0 1 .4 5.3 3.6 3.6 0 0 1-3.6 5.5 2.9 2.9 0 0 1-4.8 1.2zM12 5.5v14.1M8.5 9.2c1.4 0 2.4.9 2.4 2.2M15.5 9.2c-1.4 0-2.4.9-2.4 2.2M7.6 14.6c1.3-.2 2.6.4 3.1 1.5M16.4 14.6c-1.3-.2-2.6.4-3.1 1.5',
@@ -155,25 +184,43 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
   const call = (path, options) => typeof apiFetch === 'function' ? apiFetch(apiUrl(path), options) : fetch(`/api/index.php?path=${encodeURIComponent(path)}`, options);
 
   const S = { screen: 'list', list: null, failed: false, category: 'Все', quiz: null, order: [], index: 0, picked: -1, answers: [], startedAt: 0, result: null, saving: false };
-  let root = null;
+  let root = null, view = null;
 
   function setFocus(on) {
     document.querySelector('#app')?.classList.toggle('quiz-focus', on);
-    root?.classList.toggle('focus', on);
+    view?.classList.toggle('focus', on);
   }
-  function paint(rise) {
+  /* Cards rise when a screen changes; the header never animates, so its glass stays put. */
+  function rise(elements) {
+    let i = 0;
+    elements.forEach(el => { if (el.matches('header')) return; el.classList.add('qz-rise'); el.style.animationDelay = `${i++ * 40}ms`; });
+  }
+  function paint(animate) {
     if (!root) return;
     setFocus(S.screen !== 'list');
     root.innerHTML = S.screen === 'list' ? listHtml() : S.screen === 'intro' ? introHtml() : S.screen === 'question' ? questionHtml() : resultHtml();
-    if (rise) { root.querySelectorAll(':scope > *').forEach((el, i) => { el.classList.add('qz-rise'); el.style.animationDelay = `${i * 40}ms`; }); }
+    if (animate) rise([...root.children]);
+  }
+  /* Brings the screen up to date without replacing what is already there, so cards that
+     are still rising keep rising instead of jumping. */
+  function morph(html) {
+    const fresh = document.createElement('div'); fresh.innerHTML = html;
+    const old = [...root.children], neu = [...fresh.children];
+    if (old.length !== neu.length || old.some((el, i) => el.tagName !== neu[i].tagName)) { root.replaceChildren(...neu); return; }
+    old.forEach((el, i) => {
+      if (el.innerHTML !== neu[i].innerHTML) el.innerHTML = neu[i].innerHTML;
+      const rising = el.classList.contains('qz-rise'); el.className = neu[i].className; if (rising) el.classList.add('qz-rise');
+    });
   }
   function go(screen) { S.screen = screen; paint(true); window.scrollTo(0, 0); }
 
   /* ---------- List ---------- */
+  /* The list repaints only when it changed, so a refresh in the background is invisible. */
   async function loadList() {
+    const before = JSON.stringify([S.list, S.failed]), first = !S.list;
     try { const response = await call('quizzes'); if (!response.ok) throw Error(); S.list = await response.json(); S.failed = false; }
     catch { S.failed = !S.list; }
-    if (S.screen === 'list') paint(false);
+    if (S.screen === 'list' && JSON.stringify([S.list, S.failed]) !== before) { if (first) paint(true); else morph(listHtml()); }
   }
   function listHtml() {
     const list = S.list || [], done = list.filter(q => q.myBest !== null && q.myBest !== undefined).length;
@@ -209,7 +256,7 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
       const response = await call(`quizzes/${id}`); if (!response.ok) throw Error((await response.json().catch(() => ({}))).error || 'Тест недоступен');
       S.quiz = { ...(brief || {}), ...(await response.json()) };
     } catch (error) { S.quiz = { ...(brief || {}), id, error: error.message || 'Тест недоступен' }; }
-    if (S.screen === 'intro') paint(false);
+    if (S.screen === 'intro') morph(introHtml());
   }
   function introHtml() {
     const q = S.quiz || {}, n = q.questions ? q.questions.length : q.questionCount || 0;
@@ -245,13 +292,40 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
       <div class="qz-progress"><span><span>Вопрос ${S.index + 1} из ${total}</span><em>${esc(S.quiz.title)}</em></span><span class="qz-track" role="progressbar" aria-label="Прогресс теста" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${S.index + 1}"><i style="width:${Math.round((S.index + 1) / total * 100)}%"></i></span></div></div></header>
       <article class="qz-panel"><h1 class="qz-q">${esc(q.text)}</h1><div class="qz-options" role="group" aria-label="Варианты ответа">${opts}</div></article>${feedback}<div class="qz-bottom">${action}</div>`;
   }
+  /* Answering changes the options in place and adds the explanation: nothing is redrawn. */
   function pick(choice) {
     if (S.picked >= 0) return;
     S.picked = choice; S.answers[S.index] = { questionId: S.order[S.index].id, choice };
-    paint(false);
-    root.querySelector('.qz-feedback, .qz-bottom')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const fresh = document.createElement('div'); fresh.innerHTML = questionHtml();
+    const now = root.querySelectorAll('.qz-opt'), next = fresh.querySelectorAll('.qz-opt');
+    now.forEach((button, i) => {
+      button.className = next[i].className;
+      button.setAttribute('aria-label', next[i].getAttribute('aria-label'));
+      button.setAttribute('aria-disabled', 'true');
+      button.querySelector('small').textContent = next[i].querySelector('small').textContent;
+    });
+    const bottom = root.querySelector('.qz-bottom'), feedback = fresh.querySelector('.qz-feedback');
+    if (feedback) bottom.before(feedback);
+    bottom.replaceWith(fresh.querySelector('.qz-bottom'));
+    (root.querySelector('.qz-feedback') || root.querySelector('.qz-bottom'))?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-  function next() { S.index++; S.picked = -1; paint(true); window.scrollTo(0, 0); }
+  /* The next question keeps the header: its progress bar slides on, the cards rise. */
+  function next() {
+    S.index++; S.picked = -1;
+    const head = root.querySelector('.qz-top');
+    const fresh = document.createElement('div'); fresh.innerHTML = questionHtml();
+    const freshHead = fresh.querySelector('.qz-top');
+    if (head && freshHead && head.querySelector('.qz-track')) {
+      head.querySelector('.qz-progress > span').innerHTML = freshHead.querySelector('.qz-progress > span').innerHTML;
+      const track = head.querySelector('.qz-track');
+      track.setAttribute('aria-valuenow', String(S.index + 1));
+      track.querySelector('i').style.width = freshHead.querySelector('.qz-track i').style.width;
+      [...root.children].forEach(child => { if (child !== head) child.remove(); });
+      const cards = [...fresh.children].filter(child => child !== freshHead);
+      root.append(...cards); rise(cards);
+    } else paint(true);
+    window.scrollTo(0, 0);
+  }
 
   /* ---------- Result ---------- */
   async function finish() {
@@ -259,7 +333,7 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
     const seconds = Math.round((Date.now() - S.startedAt) / 1000);
     S.result = { right, total, seconds, best: Math.max(right, S.quiz.myBest ?? 0), saved: false, note: '' };
     go('result');
-    if (guest()) { S.result.note = 'guest'; paint(false); return; }
+    if (guest()) { S.result.note = 'guest'; morph(resultHtml()); return; }
     S.saving = true;
     try {
       const response = await call(`quizzes/${S.quiz.id}/attempts`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: state.userId, answers: S.answers, durationSec: seconds }) });
@@ -270,7 +344,7 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
       S.quiz.myBest = data.best;
     } catch (error) { S.result.note = error.message; }
     S.saving = false;
-    if (S.screen === 'result') paint(false);
+    if (S.screen === 'result') morph(resultHtml());
   }
   function resultHtml() {
     const r = S.result, q = S.quiz, li = levelIndex(r.right, r.total), levels = q.levels || ['Начинающий', 'Знающий', 'Хорошие знания', 'Отлично'], ranges = levelRanges(r.total);
@@ -291,16 +365,32 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
       <div class="qz-bottom"><button type="button" class="qz-cta" data-qz-again>${svg('reset')}Пройти ещё раз</button>${r.note === 'guest' ? '<button type="button" class="qz-cta ghost" data-qz-login>Войти в профиль</button>' : ''}<button type="button" class="qz-cta ghost" data-qz-back>Все тесты</button></div>`;
   }
 
+  /* Leaving mid-test asks in the app's own sheet, not the browser's dialog. */
+  function askQuit() {
+    if (document.querySelector('.qz-sheet')) return;
+    const left = S.order.length - S.answers.filter(Boolean).length;
+    const layer = document.createElement('div'); layer.className = 'qz-sheet';
+    layer.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="qz-quit-title"><i aria-hidden="true"></i><h2 id="qz-quit-title">Выйти из теста?</h2><p>Ответы этой попытки не сохранятся.${left > 0 ? ` До конца ${left === 1 ? 'остался 1 вопрос' : `осталось ${left} ${plural(left, 'вопрос', 'вопроса', 'вопросов')}`}.` : ''}</p><button type="button" class="stay" data-stay>Продолжить тест</button><button type="button" class="leave" data-leave>Выйти</button></section>`;
+    const close = () => { layer.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = event => { if (event.key === 'Escape') close(); };
+    layer.addEventListener('click', event => {
+      if (event.target === layer || event.target.closest('[data-stay]')) close();
+      if (event.target.closest('[data-leave]')) { close(); go('list'); loadList(); }
+    });
+    document.addEventListener('keydown', onKey);
+    document.body.append(layer); layer.querySelector('[data-stay]').focus();
+  }
+
   /* ---------- Wiring ---------- */
   document.addEventListener('click', event => {
     if (!root || !root.contains(event.target)) return;
     const t = event.target;
     const open = t.closest('[data-qz-open]'); if (open) { openQuiz(open.dataset.qzOpen); return; }
-    const cat = t.closest('[data-qz-cat]'); if (cat) { S.category = cat.dataset.qzCat; paint(false); return; }
+    const cat = t.closest('[data-qz-cat]'); if (cat) { S.category = cat.dataset.qzCat; morph(listHtml()); return; }
     if (t.closest('[data-qz-retry]')) { S.failed = false; paint(false); loadList(); return; }
     if (t.closest('[data-qz-back]')) { go('list'); loadList(); return; }
     if (t.closest('[data-qz-start]') || t.closest('[data-qz-again]')) { start(); return; }
-    if (t.closest('[data-qz-quit]')) { if (S.answers.length && !confirm('Выйти из теста? Ответы не сохранятся.')) return; go('intro'); return; }
+    if (t.closest('[data-qz-quit]')) { if (S.answers.length) askQuit(); else { go('list'); loadList(); } return; }
     const p = t.closest('[data-qz-pick]'); if (p) { pick(Number(p.dataset.qzPick)); return; }
     if (t.closest('[data-qz-next]')) { next(); return; }
     if (t.closest('[data-qz-finish]')) { finish(); return; }
@@ -310,13 +400,15 @@ body.app-dark #app #quiz-view .qz-pill.new{color:#a9b3ff}
   window.ChetQuizzes = {
     /* Called each time the tab opens: the list refreshes, a test in progress stays. */
     show() {
-      root = document.querySelector('#quiz-view');
-      if (!root) return;
+      view = document.querySelector('#quiz-view');
+      if (!view) return;
+      root = view.querySelector('.qz-root');
+      if (!root) { root = document.createElement('div'); root.className = 'qz-root'; view.append(root); }
       if (!document.querySelector('#qz-style')) { const style = document.createElement('style'); style.id = 'qz-style'; style.textContent = CSS; document.head.appendChild(style); }
       /* Back on the tab: a test in progress continues, anything else returns to the list. */
       if (S.screen === 'intro' || S.screen === 'result') S.screen = 'list';
       if (S.screen === 'list') { paint(true); loadList(); } else paint(false);
     },
-    hide() { setFocus(false); }
+    hide() { setFocus(false); document.querySelector('.qz-sheet')?.remove(); }
   };
 })();
