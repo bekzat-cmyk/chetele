@@ -611,7 +611,7 @@ try {
         requireAdmin($config);
         $events = $db->query("SELECT e.*,
             (SELECT COUNT(*) FROM event_participants p WHERE p.event_id=e.id) AS participant_count,
-            (SELECT COALESCE(SUM(CAST(JSON_UNQUOTE(JSON_EXTRACT(d.tasks, '$.salawat')) AS UNSIGNED)),0)
+            (SELECT COALESCE(SUM(CASE e.metric WHEN 'quran_pages' THEN " . eventMetricSql('quran_pages', 'd.tasks') . " WHEN 'dhikr' THEN " . eventMetricSql('dhikr', 'd.tasks') . " WHEN 'tahajjud_count' THEN " . eventMetricSql('tahajjud_count', 'd.tasks') . " ELSE " . eventMetricSql('salawat', 'd.tasks') . " END),0)
              FROM event_participants p INNER JOIN daily_entries d ON d.user_id=p.user_id
              WHERE p.event_id=e.id AND d.entry_date BETWEEN GREATEST(e.starts_on, DATE(p.joined_at)) AND e.ends_on) AS total_progress
             FROM events e ORDER BY created_at DESC")->fetchAll();
