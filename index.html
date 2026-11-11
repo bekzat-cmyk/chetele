@@ -292,7 +292,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
-    const APP_VERSION = '1.2.0';
+    const APP_VERSION = '2.0';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -1100,6 +1100,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     function openProfileScreen(kind){ profileScreen=kind; profileScreenNote=''; renderProfileScreen(); showView('profile-sub-view'); window.scrollTo(0,0); }
     function renderProfileScreen(){
       const root=document.querySelector('#profile-sub-view'); if(!root) return;
+      root.classList.toggle('ps-about',profileScreen==='about');
       const number=new Intl.NumberFormat(appLocale());
       const head=(title,eyebrow='Профиль',back='profile-view')=>`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="${back}" aria-label="${back==='rating-view'?'Назад в рейтинг':'Назад в профиль'}">${icon('softBack')}</button><div><span class="stats-eyebrow">${eyebrow}</span><h2>${title}</h2></div></header>`;
       const toggle=(attrs,on,label)=>`<span class="st-switch"><input type="checkbox" ${attrs} ${on?'checked':''} aria-label="${label}"><i></i></span>`;
@@ -1136,7 +1137,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       }
       if(profileScreen==='about'){
         const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
-        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="img/logo.png" alt="" width="64" height="64"><span class="ps-copy"><b>Chetele</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}`;
+        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="img/logo.png" alt="" width="64" height="64"><span class="ps-copy"><b>Chetele</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
         return;
       }
       if(profileScreen==='rename'){
@@ -3672,6 +3673,17 @@ body #app .ps-city-row.on span{opacity:1}
 body #app .ps-city-row .lucide{width:20px;height:20px;stroke-width:2.2}
 body #app .ps-app img{width:64px;height:64px;flex:none;border-radius:18px;border:1px solid rgba(16,22,26,.06);background:#F4F1EA;object-fit:contain}
 body #app .ps-app .ps-copy b{font-size:20px}
+/* «О приложении»: blocks closer together, and the author with a Telegram link. */
+body #app #profile-sub-view.ps-about.active{gap:17px}
+body #app .ps-author{display:flex;flex-direction:column;gap:14px}
+body #app .ps-author-row{display:flex;align-items:center;gap:12px}
+body #app .ps-author-av{width:48px;height:48px;flex:none;border-radius:50%;background:#0B0F12;color:#fff;display:grid;place-items:center;font-size:16px;font-weight:600;letter-spacing:.02em}
+body #app .ps-author .ps-copy small{display:block;color:#5E6A71;font-size:13px}
+body #app .ps-author .ps-copy b{display:block;font-size:18px;font-weight:600}
+body #app .ps-author-link{white-space:nowrap;height:50px;padding:0 18px;border-radius:25px;background:#0B0F12;color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600}
+body #app .ps-author-link .lucide{width:18px;height:18px}
+body.app-dark #app .ps-author-av,body.app-dark #app .ps-author-link{background:#eef5f2;color:#0b1110}
+body.app-dark #app .ps-author .ps-copy small{color:var(--muted)}
 body #app .ps-rename{gap:12px}
 body #app .ps-rename label{color:#5E6A71;font-size:14px}
 body #app .ps-input{height:56px;padding:0 16px;border:1.5px solid #10161A;border-radius:18px;background:#fff;color:#10161A;font:500 18px Inter,-apple-system,sans-serif;outline:0}
