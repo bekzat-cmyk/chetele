@@ -110,7 +110,12 @@ textarea.input{height:104px;padding:14px 16px;resize:vertical;line-height:1.45}
 .top p{margin:0;font-size:15px;color:rgba(255,255,255,.85)}
 .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .top-back{display:flex;align-items:center;gap:14px}
-.view{display:flex;flex-direction:column;gap:20px;animation:rise .45s cubic-bezier(.22,1,.36,1) both}
+/* The page slides in, and each glass card fades on its own: fading the whole page would
+   switch the cards' blur off until the animation ends, which reads as a flash. */
+.view{display:flex;flex-direction:column;gap:20px;animation:slide .45s cubic-bezier(.22,1,.36,1) both}
+.view .glass,.view .top{animation:fade .35s ease both}
+.view.still,.view.still .glass,.view.still .top{animation:none}
+@keyframes slide{from{transform:translateY(10px)}}
 .view.still{animation:none}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}}
 .tabbar{display:none}
@@ -552,13 +557,15 @@ tbody tr:last-child td{border-bottom:0}
   const tools = () => `<button type="button" class="btn-glass" data-search aria-label="Поиск" title="Поиск (/)">${icon('search')}</button><button type="button" class="btn-glass" data-bell aria-label="Уведомления" aria-haspopup="dialog">${icon('bell')}<span class="dot" id="bell-dot" hidden></span></button>`;
   /* The page rises in only when the section changes, not on every repaint. */
   let shownView = '';
-  function mount(html, key) { main.innerHTML = `<div class="view${key === shownView ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
+  /* After a loading placeholder the real page replaces it in place, without a second entrance. */
+  function mount(html, key) { main.innerHTML = `<div class="view${key === shownView || shownView === 'loading' ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
   function loading(title) { mount(top('Chetele', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
   function failed(title, error) { mount(top('Chetele', title, 'Не удалось загрузить') + `<section class="glass card"><div class="empty">${esc(error.message)}<br><br><button type="button" class="btn small" data-refresh>Повторить</button></div></section>`, 'failed'); }
 
   /* ---------- Overview ---------- */
   async function showOverview() {
-    loading('Обзор');
+    /* Repeat visits and «Обновить» keep the current page until fresh numbers arrive. */
+    if (!data.overview) loading('Обзор');
     let ov, events;
     try { [ov, events] = await Promise.all([req('admin/overview'), loadEvents(true), loadModeration(true)]); data.overview = ov; }
     catch (error) { failed('Обзор', error); return; }
@@ -1023,7 +1030,7 @@ tbody tr:last-child td{border-bottom:0}
 
   /* ---------- Settings ---------- */
   async function showSettings() {
-    loading('Настройки');
+    if (!data.settings) loading('Настройки');
     let s;
     try { s = await req('admin/settings'); data.settings = s; } catch (error) { failed('Настройки', error); return; }
     const zones = [['Asia/Bishkek', 'Бишкек · UTC+6'], ['Asia/Almaty', 'Алматы · UTC+5'], ['Asia/Tashkent', 'Ташкент · UTC+5'], ['Europe/Moscow', 'Москва · UTC+3']];
