@@ -129,6 +129,11 @@ textarea.input{height:104px;padding:14px 16px;resize:vertical;line-height:1.45}
 .chart span{flex:1;min-width:0;border-radius:6px 6px 3px 3px;background:rgba(16,22,26,.16);transition:height .6s cubic-bezier(.22,1,.36,1)}
 .chart span:last-child{background:var(--black)}
 .chart span:hover{background:rgba(16,22,26,.4)}
+/* In a group report the chart fills the height of the card beside it. */
+.ov-grid.stretch{align-items:stretch}
+.ov-grid.stretch .chart{flex:1;height:auto;min-height:200px}
+.chart.dense{gap:3px}.chart.dense span{border-radius:3px 3px 1px 1px}
+.chart.tight{gap:1px}.chart.tight span{border-radius:2px 2px 0 0}
 .chart-axis{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
 .ev-mini{display:flex;align-items:center;gap:12px;text-decoration:none}
 .ev-mini-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
@@ -846,10 +851,10 @@ tbody tr:last-child td{border-bottom:0}
         ${kpi('flag', perDay.toLocaleString('ru-RU', { maximumFractionDigits: 1 }), 'дел в день на человека', '')}
         ${kpi('rating', num(sum('points')), 'очков за период', '')}
       </div>
-      <div class="ov-grid">
+      <div class="ov-grid stretch">
         <section class="glass card">
           <div class="card-head"><h2>Сколько человек отмечали дела</h2><small class="muted">из ${n} по дням</small></div>
-          <div class="chart" role="img" aria-label="Активные участники по дням">${series.map(d => `<span style="height:${Math.max(2, d.active / max * 100)}%" title="${shortDate(d.key)}: ${d.active} из ${n}, дел ${d.deeds}"></span>`).join('')}</div>
+          <div class="chart${days > 30 ? ' tight' : days > 7 ? ' dense' : ''}" role="img" aria-label="Активные участники по дням">${series.map(d => `<span style="height:${Math.max(2, d.active / max * 100)}%" title="${shortDate(d.key)}: ${d.active} из ${n}, дел ${d.deeds}"></span>`).join('')}</div>
           <div class="chart-axis"><span>${shortDate(r.from)}</span><span>Сегодня · ${series[series.length - 1].active} из ${n}</span></div>
         </section>
         <section class="glass card"><div class="card-head"><h2>Давно не отмечали</h2>${quiet.length ? `<span class="chip" style="background:var(--amber-bg);color:var(--amber)">${quiet.length}</span>` : ''}</div>
