@@ -175,6 +175,48 @@ function requireUser(PDO $db, string $userId): void {
     if (!hash_equals($sessionUser, $userId)) respond(403, ['error' => 'Нет доступа к этому кабинету.']);
 }
 
+/* Groups are the admin's own lists of members (a family, a class, a mosque circle),
+   so their reports can be read together. Members leave a group when deleted. */
+function ensureGroupsTables(PDO $db): void {
+    $db->exec('CREATE TABLE IF NOT EXISTS admin_groups (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(80) NOT NULL,
+        description VARCHAR(300) NOT NULL DEFAULT \'\',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+    $db->exec('CREATE TABLE IF NOT EXISTS admin_group_members (
+        group_id INT UNSIGNED NOT NULL,
+        user_id CHAR(36) NOT NULL,
+        added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (group_id, user_id),
+        INDEX idx_group_members_user (user_id),
+        CONSTRAINT fk_group_members_group FOREIGN KEY (group_id) REFERENCES admin_groups(id) ON DELETE CASCADE,
+        CONSTRAINT fk_group_members_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+}
+
+/* Reads a group's name, description and member ids from a request body. */
+function groupInput(array $body): array {
+    $name = trim((string)($body['name'] ?? ''));
+    $description = trim((string)($body['description'] ?? ''));
+    if ($name === '' || mb_strlen($name) > 80) respond(400, ['error' => 'Название группы — от 1 до 80 символов.']);
+    $members = $body['members'] ?? [];
+    if (!is_array($members) || count($members) > 1000) respond(400, ['error' => 'Некорректный список участников.']);
+    $ids = [];
+    foreach ($members as $id) {
+        if (!is_string($id) || !preg_match('/^[a-f0-9-]{36}$/i', $id)) respond(400, ['error' => 'Некорректный участник в списке.']);
+        $ids[strtolower($id)] = true;
+    }
+    return [$name, mb_substr($description, 0, 300, 'UTF-8'), array_keys($ids)];
+}
+
+/* Replaces a group's members; ids of deleted accounts are skipped. */
+function saveGroupMembers(PDO $db, int $groupId, array $userIds): void {
+    $db->prepare('DELETE FROM admin_group_members WHERE group_id = ?')->execute([$groupId]);
+    $insert = $db->prepare('INSERT INTO admin_group_members (group_id, user_id) SELECT ?, id FROM users WHERE id = ?');
+    foreach ($userIds as $userId) $insert->execute([$groupId, $userId]);
+}
+
 function ensureAdminSettingsTable(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS admin_settings (
         setting_key VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -308,6 +350,7 @@ try {
     ensurePushTable($db);
     ensureEventsTables($db);
     ensureAdminSettingsTable($db);
+    ensureGroupsTables($db);
     ensureSessionsTable($db);
 
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -677,6 +720,102 @@ try {
             if ($statement->rowCount()===0) { $db->rollBack(); respond(404,['error'=>'Пользователь не найден.']); }
             $db->commit(); respond(200,['deleted'=>true]);
         } catch (Throwable $error) { if($db->inTransaction()) $db->rollBack(); throw $error; }
+    }
+
+    if ($method === 'GET' && $parts === ['admin','groups']) {
+        requireAdmin($config);
+        /* The list shows each group's last 7 days: who marked anything and how many deeds. */
+        $groups = $db->query("SELECT g.id, g.name, g.description, g.created_at,
+            (SELECT COUNT(*) FROM admin_group_members m WHERE m.group_id = g.id) AS member_count,
+            (SELECT COUNT(DISTINCT d.user_id) FROM admin_group_members m INNER JOIN daily_entries d ON d.user_id = m.user_id
+              WHERE m.group_id = g.id AND d.entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) AND d.completed_count > 0) AS active_week,
+            (SELECT COALESCE(SUM(d.completed_count), 0) FROM admin_group_members m INNER JOIN daily_entries d ON d.user_id = m.user_id
+              WHERE m.group_id = g.id AND d.entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)) AS deeds_week,
+            (SELECT GROUP_CONCAT(u.display_name ORDER BY m.added_at SEPARATOR '\n') FROM admin_group_members m INNER JOIN users u ON u.id = m.user_id
+              WHERE m.group_id = g.id) AS member_names
+            FROM admin_groups g ORDER BY g.name")->fetchAll();
+        foreach ($groups as &$group) {
+            $names = $group['member_names'] === null ? [] : explode("\n", (string)$group['member_names']);
+            $group['preview'] = array_slice($names, 0, 5);
+            unset($group['member_names']);
+        }
+        unset($group);
+        respond(200, $groups);
+    }
+
+    if ($method === 'POST' && $parts === ['admin','groups']) {
+        requireAdmin($config);
+        [$name, $description, $members] = groupInput(requestBody());
+        $db->beginTransaction();
+        try {
+            $db->prepare('INSERT INTO admin_groups (name, description) VALUES (?, ?)')->execute([$name, $description]);
+            $groupId = (int)$db->lastInsertId();
+            saveGroupMembers($db, $groupId, $members);
+            $db->commit();
+        } catch (Throwable $error) { if ($db->inTransaction()) $db->rollBack(); throw $error; }
+        respond(201, ['id' => $groupId]);
+    }
+
+    if ($method === 'PUT' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'groups') {
+        requireAdmin($config);
+        $groupId = (int)$parts[2];
+        [$name, $description, $members] = groupInput(requestBody());
+        $exists = $db->prepare('SELECT 1 FROM admin_groups WHERE id = ?'); $exists->execute([$groupId]);
+        if (!$exists->fetchColumn()) respond(404, ['error' => 'Группа не найдена.']);
+        $db->beginTransaction();
+        try {
+            $db->prepare('UPDATE admin_groups SET name = ?, description = ? WHERE id = ?')->execute([$name, $description, $groupId]);
+            saveGroupMembers($db, $groupId, $members);
+            $db->commit();
+        } catch (Throwable $error) { if ($db->inTransaction()) $db->rollBack(); throw $error; }
+        respond(200, ['updated' => true]);
+    }
+
+    if ($method === 'DELETE' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'groups') {
+        requireAdmin($config);
+        $statement = $db->prepare('DELETE FROM admin_groups WHERE id = ?'); $statement->execute([(int)$parts[2]]);
+        if ($statement->rowCount() === 0) respond(404, ['error' => 'Группа не найдена.']);
+        respond(200, ['deleted' => true]);
+    }
+
+    /* A group's report for the last 7, 30 or 90 days, ending today: totals per member
+       and how many members were active each day. */
+    if ($method === 'GET' && count($parts) === 4 && $parts[0] === 'admin' && $parts[1] === 'groups' && $parts[3] === 'report') {
+        requireAdmin($config);
+        $groupId = (int)$parts[2];
+        $days = (int)($_GET['days'] ?? 7);
+        if (!in_array($days, [7, 30, 90], true)) $days = 7;
+        $group = $db->prepare('SELECT id, name, description, created_at FROM admin_groups WHERE id = ?'); $group->execute([$groupId]);
+        $groupData = $group->fetch();
+        if (!$groupData) respond(404, ['error' => 'Группа не найдена.']);
+        $to = (string)$db->query('SELECT CURDATE()')->fetchColumn();
+        $from = (new DateTimeImmutable($to))->modify('-' . ($days - 1) . ' days')->format('Y-m-d');
+        $num = fn(string $key) => "COALESCE(SUM(CAST(JSON_UNQUOTE(JSON_EXTRACT(d.tasks, '$.{$key}')) AS UNSIGNED)), 0)";
+        $yes = fn(string $key) => "COALESCE(SUM(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(d.tasks, '$.{$key}')) = 'yes' THEN 1 ELSE 0 END), 0)";
+        $members = $db->prepare("SELECT u.id, u.display_name, u.login, m.added_at,
+            COALESCE(SUM(CASE WHEN d.completed_count > 0 THEN 1 ELSE 0 END), 0) AS active_days,
+            COALESCE(SUM(d.completed_count), 0) AS deeds,
+            COALESCE(SUM(d.points), 0) AS points,
+            {$num('salawat')} AS salawat,
+            {$num('tasbihat')} AS tasbihat,
+            {$num('quran')} AS quran,
+            {$yes('tahajjud')} AS tahajjud,
+            {$yes('fast')} AS fast,
+            (SELECT MAX(l.entry_date) FROM daily_entries l WHERE l.user_id = u.id AND l.completed_count > 0) AS last_active
+            FROM admin_group_members m
+            INNER JOIN users u ON u.id = m.user_id
+            LEFT JOIN daily_entries d ON d.user_id = u.id AND d.entry_date BETWEEN ? AND ?
+            WHERE m.group_id = ?
+            GROUP BY u.id, u.display_name, u.login, m.added_at
+            ORDER BY deeds DESC, u.display_name");
+        $members->execute([$from, $to, $groupId]);
+        $daily = $db->prepare('SELECT d.entry_date AS date,
+            COUNT(DISTINCT CASE WHEN d.completed_count > 0 THEN d.user_id END) AS active,
+            COALESCE(SUM(d.completed_count), 0) AS deeds
+            FROM daily_entries d INNER JOIN admin_group_members m ON m.user_id = d.user_id AND m.group_id = ?
+            WHERE d.entry_date BETWEEN ? AND ? GROUP BY d.entry_date ORDER BY d.entry_date');
+        $daily->execute([$groupId, $from, $to]);
+        respond(200, ['group' => $groupData, 'days' => $days, 'from' => $from, 'to' => $to, 'members' => $members->fetchAll(), 'daily' => $daily->fetchAll()]);
     }
 
     if ($method === 'POST' && $parts === ['admin','events']) {

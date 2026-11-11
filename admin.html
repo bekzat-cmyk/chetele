@@ -260,6 +260,50 @@ tbody tr:last-child td{border-bottom:0}
 .info b{font-size:14px;font-weight:600}
 .info small{font-size:12px;color:var(--muted);line-height:1.4}
 
+
+/* Groups */
+.groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.group-card{padding:20px;border-radius:30px;display:flex;flex-direction:column;gap:14px;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease}
+.group-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(16,22,26,.1)}
+.group-card h2{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.group-card p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stack{display:flex;align-items:center}
+.stack .avatar{width:34px;height:34px;font-size:13px;margin-left:-8px;box-shadow:0 0 0 2px #F2F3F4}
+.stack .avatar:first-child{margin-left:0}
+.stack .avatar.more{background:var(--black);color:#fff;border-color:var(--black);font-size:12px}
+.group-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.group-stats span{padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.8);display:flex;flex-direction:column;gap:6px}
+.group-stats b{font-size:18px;font-weight:600}
+.group-stats small{font-size:12px;color:var(--muted)}
+.group-new{border:2px dashed rgba(16,22,26,.16);background:rgba(255,255,255,.35);align-items:center;justify-content:center;text-align:center;color:var(--soft);min-height:220px}
+.picker{display:flex;flex-direction:column;max-height:520px;overflow:auto;margin:0 -8px;padding:0 8px}
+.pick{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid rgba(16,22,26,.06);cursor:pointer}
+.pick:last-child{border-bottom:0}
+.pick div{flex:1;min-width:0;display:flex;flex-direction:column}
+.pick b{font-size:14px;font-weight:600}
+.pick small{font-size:12px;color:var(--muted)}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.tick{width:24px;height:24px;flex:none;border-radius:8px;border:2px solid rgba(16,22,26,.2);display:grid;place-items:center;color:transparent;transition:background .15s ease,border-color .15s ease}
+.tick svg.i{width:15px;height:15px;stroke-width:2.6}
+.pick input:checked~.tick{background:var(--black);border-color:var(--black);color:#fff}
+.pick input:focus-visible~.tick{outline:2px solid var(--black);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip-x{height:32px;padding:0 6px 0 12px;border-radius:16px;border:0;background:#fff;box-shadow:0 2px 8px rgba(16,22,26,.06);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.chip-x svg.i{width:14px;height:14px;color:var(--muted)}
+.totals{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.totals span{padding:14px;border-radius:22px;background:rgba(255,255,255,.82);display:flex;flex-direction:column;gap:8px}
+.totals i{width:34px;height:34px;border-radius:50%;background:rgba(16,22,26,.06);display:grid;place-items:center}
+.totals i svg.i{width:17px;height:17px}
+.totals b{font-size:22px;font-weight:600;letter-spacing:-.02em}
+.totals small{font-size:12px;color:var(--muted)}
+.days-cell{display:flex;flex-direction:column;gap:6px;min-width:90px}
+.days-cell b{font-size:13px;font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.quiet{color:var(--muted)}
+.flag{height:24px;padding:0 9px;border-radius:12px;background:var(--amber-bg);color:var(--amber);font-size:12px;font-weight:600;display:inline-flex;align-items:center;white-space:nowrap}
+@media (max-width:1240px){.groups{grid-template-columns:repeat(2,minmax(0,1fr))}.totals{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:860px){.groups{grid-template-columns:minmax(0,1fr)}.totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 /* Dialog and toast */
 .layer{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(11,15,18,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .2s ease both}
 @keyframes fade{from{opacity:0}}
@@ -330,6 +374,7 @@ tbody tr:last-child td{border-bottom:0}
       <a href="#overview" data-route="overview"><span data-icon="home"></span>Обзор<em></em></a>
       <a href="#events" data-route="events"><span data-icon="flag"></span>События<em id="nav-events"></em></a>
       <a href="#users" data-route="users"><span data-icon="users"></span>Участники<em id="nav-users"></em></a>
+      <a href="#groups" data-route="groups"><span data-icon="group"></span>Группы<em id="nav-groups"></em></a>
       <a href="#settings" data-route="settings"><span data-icon="sliders"></span>Настройки<em></em></a>
     </nav>
     <div class="side-status"><span id="app-version">Сайт работает</span><a href="/" target="_blank" rel="noopener">Открыть приложение<i data-icon="arrow"></i></a></div>
@@ -340,6 +385,7 @@ tbody tr:last-child td{border-bottom:0}
     <a href="#overview" data-route="overview" aria-label="Обзор"><i data-icon="home"></i><span>Обзор</span></a>
     <a href="#events" data-route="events" aria-label="События"><i data-icon="flag"></i><span>События</span></a>
     <a href="#users" data-route="users" aria-label="Участники"><i data-icon="users"></i><span>Участники</span></a>
+    <a href="#groups" data-route="groups" aria-label="Группы"><i data-icon="group"></i><span>Группы</span></a>
     <a href="#settings" data-route="settings" aria-label="Настройки"><i data-icon="sliders"></i><span>Настройки</span></a>
   </nav>
 </div>
@@ -357,7 +403,8 @@ tbody tr:last-child td{border-bottom:0}
     trash:'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13', logout:'M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10', x:'M6 6l12 12M18 6L6 18',
     arrow:'M7 17L17 7M9 7h8v8', lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3', phone:'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 18h2',
     rating:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5',
-    copy:'M8 8h11v12H8zM5 16V4h11', alert:'M12 4l9 16H3zM12 10v4M12 17.5h.01', refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
+    copy:'M8 8h11v12H8zM5 16V4h11', group:'M8 7.5a3 3 0 1 0 0 .01M16 7.5a3 3 0 1 0 0 .01M2.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5M10.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5',
+    download:'M12 4v11M7 10l5 5 5-5M5 20h14', flame:'M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.6 2 3 0-3 .5-5.5.5-8z', alert:'M12 4l9 16H3zM12 10v4M12 17.5h.01', refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
     salawat:'M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2',
     zikr:'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM8.5 7h7v4h-7zM10 16a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
     quran:'M12 6.5C10 5 7.3 4.6 4.5 5.2v9.6c2.8-.6 5.5-.2 7.5 1.3 2-1.5 4.7-1.9 7.5-1.3V5.2C16.7 4.6 14 5 12 6.5zM12 6.5v9.6M6 20.5l12-4M18 20.5l-12-4'
@@ -368,7 +415,8 @@ tbody tr:last-child td{border-bottom:0}
   const esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
   const num = v => (Number(v) || 0).toLocaleString('ru-RU');
   const plural = (n, one, few, many) => { const d = n % 10, h = n % 100; return d === 1 && h !== 11 ? one : d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many; };
-  const api = p => '/api/index.php?path=' + encodeURIComponent(p);
+  /* The route goes in ?path=; anything after its own ? stays a separate query parameter. */
+  const api = p => { const [path, query] = p.split('?'); return '/api/index.php?path=' + encodeURIComponent(path) + (query ? '&' + query : ''); };
   let cred = null;
   async function req(path, options = {}) {
     const response = await fetch(api(path), { ...options, headers: { ...(options.headers || {}), 'X-Admin-Login': cred?.login || '', 'X-Admin-Password': cred?.password || '' } });
@@ -426,7 +474,8 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   /* ---------- Data ---------- */
-  const data = { events: null, users: null, overview: null, settings: null };
+  const data = { events: null, users: null, overview: null, settings: null, groups: null };
+  async function loadGroups(force) { if (force || !data.groups) data.groups = await req('admin/groups'); $('#nav-groups').textContent = data.groups.length || ''; return data.groups; }
   async function loadEvents(force) { if (force || !data.events) data.events = await req('admin/events'); paintCounts(); return data.events; }
   async function loadUsers(force) { if (force || !data.users) data.users = await req('admin/users'); paintCounts(); return data.users; }
   function paintCounts() {
@@ -682,7 +731,150 @@ tbody tr:last-child td{border-bottom:0}
   async function deleteUser(id) {
     const u = data.users.find(x => x.id === id); if (!u) return;
     if (!await confirmDialog({ title: 'Удалить аккаунт?', text: `Будут удалены аккаунт «${u.display_name}», все его отметки, участие в событиях и напоминания. Это нельзя отменить.` })) return;
-    try { await req(`admin/users/${id}`, { method: 'DELETE' }); us.selected = null; await loadUsers(true); data.events = null; paintUsers(); toast('Аккаунт удалён'); }
+    try { await req(`admin/users/${id}`, { method: 'DELETE' }); us.selected = null; await loadUsers(true); data.events = data.groups = null; paintUsers(); toast('Аккаунт удалён'); }
+    catch (error) { toast(error.message); }
+  }
+
+  /* ---------- Groups ---------- */
+  const initials = name => esc((name || '?').slice(0, 1));
+  async function showGroups() {
+    if (!data.groups) loading('Группы');
+    let groups;
+    try { groups = await loadGroups(!data.groups); } catch (error) { failed('Группы', error); return; }
+    const card = g => {
+      const n = Number(g.member_count) || 0, active = Number(g.active_week) || 0, rest = n - (g.preview || []).length;
+      const avatars = (g.preview || []).map(name => `<span class="avatar" title="${esc(name)}">${initials(name)}</span>`).join('') + (rest > 0 ? `<span class="avatar more">+${rest}</span>` : '');
+      return `<a class="glass group-card" href="#groups/${g.id}">
+        <div><h2>${esc(g.name)}</h2>${g.description ? `<p>${esc(g.description)}</p>` : ''}</div>
+        <div class="stack" aria-label="${n} ${plural(n, 'участник', 'участника', 'участников')}">${avatars || '<small class="muted">Пока никого</small>'}</div>
+        <div class="group-stats">
+          <span><small>активны за неделю</small><b>${active} из ${n}</b><i class="bar"><i style="width:${n ? Math.round(active / n * 100) : 0}%"></i></i></span>
+          <span><small>дел за неделю</small><b>${num(g.deeds_week)}</b><small>${n ? `≈ ${(Number(g.deeds_week) / n / 7).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} в день на человека` : '—'}</small></span>
+        </div>
+      </a>`;
+    };
+    mount(top('Сообщество', 'Группы', groups.length ? `${groups.length} ${plural(groups.length, 'группа', 'группы', 'групп')} · отчёты по каждой` : 'Объедините участников и смотрите отчёт по ним', refreshBtn + `<a class="btn black" href="#groups/new">${icon('plus')}Создать группу</a>`) + `
+      <div class="groups">${groups.map(card).join('')}<a class="glass group-card group-new" href="#groups/new"><span class="circle">${icon('plus')}</span><b>Новая группа</b><small class="muted">Семья, класс, кружок при мечети — кого угодно</small></a></div>`, 'groups');
+  }
+
+  async function showGroupEditor(id) {
+    loading(id ? 'Изменить группу' : 'Новая группа');
+    let users, report = null;
+    try {
+      [users] = await Promise.all([loadUsers(!data.users)]);
+      if (id) report = await req(`admin/groups/${id}/report?days=7`);
+    } catch (error) { failed('Группа', error); return; }
+    const picked = new Set(report ? report.members.map(m => m.id) : []);
+    let query = '';
+    const g = report ? report.group : { name: '', description: '' };
+    mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#groups${id ? '/' + id : ''}" aria-label="Назад">${icon('back')}</a><div class="top-copy"><span>Группы</span><h1>${id ? 'Изменить группу' : 'Новая группа'}</h1></div></div>
+      <div class="top-actions">${id ? `<button type="button" class="btn danger" data-delete-group="${id}">${icon('trash')}Удалить</button>` : ''}<button type="submit" form="group-form" class="btn black">${id ? 'Сохранить' : 'Создать группу'}</button></div></header>
+      <form id="group-form" class="split" novalidate>
+        <section class="glass card" style="flex:1">
+          <div class="card-head"><h2>Участники</h2><b id="picked-count"></b></div>
+          <div class="chips" id="picked"></div>
+          <label class="search" style="width:100%">${icon('search')}<input id="pick-search" type="search" placeholder="Найти по имени или логину" aria-label="Найти участника"></label>
+          <div class="picker" id="picker" role="group" aria-label="Все участники"></div>
+        </section>
+        <aside class="glass card detail">
+          <div class="card-head"><h2>Группа</h2></div>
+          <label class="field"><span>Название</span><input class="input" name="name" maxlength="80" required value="${esc(g.name)}" placeholder="Например, Семья или 9 «Б» класс"></label>
+          <label class="field"><span>Описание</span><textarea class="input" name="description" maxlength="300" placeholder="Кто в группе и зачем — видно только вам">${esc(g.description)}</textarea></label>
+          <div class="info"><span class="circle">${icon('lock')}</span><div><b>Видно только в админке</b><small>Участники не узнают, что они в группе</small></div></div>
+          <p id="group-error" class="error" role="alert"></p>
+        </aside>
+      </form>`, 'group-editor');
+    const byId = new Map(users.map(u => [u.id, u]));
+    function paintPicked() {
+      $('#picked-count').textContent = `${picked.size} ${plural(picked.size, 'выбран', 'выбрано', 'выбрано')}`;
+      $('#picked').innerHTML = [...picked].map(uid => { const u = byId.get(uid); return u ? `<button type="button" class="chip-x" data-unpick="${esc(uid)}" aria-label="Убрать ${esc(u.display_name)}">${esc(u.display_name)}${icon('x')}</button>` : ''; }).join('') || '<small class="muted">Отметьте участников в списке ниже</small>';
+    }
+    function paintPicker() {
+      const q = query.toLowerCase();
+      const list = users.filter(u => !q || `${u.display_name} ${u.login}`.toLowerCase().includes(q));
+      list.sort((a, b) => (picked.has(b.id) - picked.has(a.id)) || String(a.display_name).localeCompare(String(b.display_name), 'ru'));
+      $('#picker').innerHTML = list.slice(0, 300).map(u => `<label class="pick"><span class="avatar">${initials(u.display_name)}</span><div><b>${esc(u.display_name)}</b><small>@${esc(u.login || '—')} · ${num(u.points)} очков</small></div><input type="checkbox" value="${esc(u.id)}" ${picked.has(u.id) ? 'checked' : ''}><span class="tick">${icon('check')}</span></label>`).join('') || '<div class="empty">Никого не нашли.</div>';
+    }
+    paintPicked(); paintPicker();
+    const form = $('#group-form');
+    form.addEventListener('change', event => { const box = event.target; if (box.type !== 'checkbox') return; if (box.checked) picked.add(box.value); else picked.delete(box.value); paintPicked(); });
+    form.addEventListener('click', event => { const chip = event.target.closest('[data-unpick]'); if (!chip) return; picked.delete(chip.dataset.unpick); paintPicked(); paintPicker(); });
+    $('#pick-search').addEventListener('input', event => { query = event.target.value; paintPicker(); });
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const f = new FormData(form), body = { name: f.get('name').trim(), description: f.get('description').trim(), members: [...picked] };
+      if (!body.name) { $('#group-error').textContent = 'Введите название группы.'; return; }
+      const button = document.querySelector('[form=group-form]'); button.disabled = true;
+      try {
+        const saved = id ? await send(`admin/groups/${id}`, 'PUT', body) : await send('admin/groups', 'POST', body);
+        data.groups = null; toast(id ? 'Группа сохранена' : 'Группа создана');
+        location.hash = `#groups/${id || saved.id}`;
+      } catch (error) { $('#group-error').textContent = error.message; button.disabled = false; }
+    });
+  }
+
+  const reportState = { days: 7 };
+  async function showGroupReport(id) {
+    loading('Отчёт группы');
+    let r;
+    try { r = await req(`admin/groups/${id}/report?days=${reportState.days}`); } catch (error) { failed('Отчёт группы', error); return; }
+    const members = r.members, n = members.length, days = r.days;
+    const sum = key => members.reduce((s, m) => s + (Number(m[key]) || 0), 0);
+    const active = members.filter(m => Number(m.active_days) > 0).length;
+    const deeds = sum('deeds'), perDay = n ? deeds / n / days : 0;
+    const byDay = Object.fromEntries(r.daily.map(d => [String(d.date).slice(0, 10), d]));
+    const series = Array.from({ length: days }, (_, i) => { const d = parseDay(r.from); d.setDate(d.getDate() + i); const key = dayKey(d); return { key, active: Number(byDay[key]?.active) || 0, deeds: Number(byDay[key]?.deeds) || 0 }; });
+    const today = dayKey();
+    const quiet = members.filter(m => !m.last_active || daysBetween(String(m.last_active).slice(0, 10), today) >= 3);
+    const kpi = (name, value, label, chip) => `<article class="glass kpi"><div class="kpi-top"><span class="circle">${icon(name)}</span>${chip ? `<span class="chip">${chip}</span>` : ''}</div><div><b>${value}</b><small>${label}</small></div></article>`;
+    const total = (name, value, label) => `<span><i>${icon(name)}</i><b class="num">${num(value)}</b><small>${label}</small></span>`;
+    const last = m => !m.last_active ? '<span class="flag">ни разу</span>' : daysBetween(String(m.last_active).slice(0, 10), today) >= 3 ? `<span class="flag">${relDay(m.last_active)}</span>` : relDay(m.last_active);
+    const rows = members.map(m => `<tr>
+        <td class="wide"><span class="cell-main"><span class="avatar">${initials(m.display_name)}</span><div><b>${esc(m.display_name)}</b><small>@${esc(m.login || '—')}</small></div></span></td>
+        <td><span class="days-cell"><b>${Number(m.active_days)} из ${days}</b><i class="bar"><i style="width:${Math.round(Number(m.active_days) / days * 100)}%"></i></i></span></td>
+        <td class="num"><b>${num(m.deeds)}</b></td>
+        <td class="num hide-sm">${num(m.salawat)}</td><td class="num hide-sm">${num(m.tasbihat)}</td><td class="num hide-sm">${num(m.quran)}</td><td class="num hide-sm">${num(m.tahajjud)}</td><td class="num hide-sm">${num(m.fast)}</td>
+        <td class="hide-sm">${last(m)}</td>
+      </tr>`).join('') || `<tr><td colspan="9" class="wide"><div class="empty">В группе пока никого. <a class="link" href="#groups/${id}/edit">Добавить участников${icon('chev')}</a></div></td></tr>`;
+    const max = Math.max(1, n);
+    const periodLabel = `${shortDate(r.from)} — ${shortDate(r.to)}`;
+    mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#groups" aria-label="К группам">${icon('back')}</a><div class="top-copy"><span>Группы · отчёт за ${periodLabel}</span><h1>${esc(r.group.name)}</h1><p>${n} ${plural(n, 'участник', 'участника', 'участников')}${r.group.description ? ' · ' + esc(r.group.description) : ''}</p></div></div>
+      <div class="top-actions"><div class="seg" role="group" aria-label="Период" style="background:rgba(255,255,255,.3)">${[7, 30, 90].map(d => `<button type="button" data-days="${d}" aria-pressed="${days === d}">${d} дней</button>`).join('')}</div><button type="button" class="btn" data-csv>${icon('download')}CSV</button><a class="btn black" href="#groups/${id}/edit">${icon('pen')}Изменить</a></div></header>
+      <div class="kpis">
+        ${kpi('group', num(n), plural(n, 'участник', 'участника', 'участников'), '')}
+        ${kpi('check', `${active} из ${n}`, 'отмечали дела за период', n ? `${Math.round(active / n * 100)}%` : '')}
+        ${kpi('flag', perDay.toLocaleString('ru-RU', { maximumFractionDigits: 1 }), 'дел в день на человека', '')}
+        ${kpi('rating', num(sum('points')), 'очков за период', '')}
+      </div>
+      <div class="ov-grid">
+        <section class="glass card">
+          <div class="card-head"><h2>Сколько человек отмечали дела</h2><small class="muted">из ${n} по дням</small></div>
+          <div class="chart" role="img" aria-label="Активные участники по дням">${series.map(d => `<span style="height:${Math.max(2, d.active / max * 100)}%" title="${shortDate(d.key)}: ${d.active} из ${n}, дел ${d.deeds}"></span>`).join('')}</div>
+          <div class="chart-axis"><span>${shortDate(r.from)}</span><span>Сегодня · ${series[series.length - 1].active} из ${n}</span></div>
+        </section>
+        <section class="glass card"><div class="card-head"><h2>Давно не отмечали</h2>${quiet.length ? `<span class="chip" style="background:var(--amber-bg);color:var(--amber)">${quiet.length}</span>` : ''}</div>
+          ${quiet.length ? quiet.slice(0, 6).map(m => `<div class="person"><span class="avatar">${initials(m.display_name)}</span><div><b>${esc(m.display_name)}</b><small>${m.last_active ? 'последний раз ' + relDay(m.last_active) : 'ещё ни разу не отмечал(а)'}</small></div></div>`).join('') + (quiet.length > 6 ? `<small class="muted">и ещё ${quiet.length - 6}</small>` : '') : `<div class="all-good">${icon('check')}Все отмечали дела за последние 3 дня.</div>`}
+        </section>
+      </div>
+      <section class="glass card"><div class="card-head"><h2>Итого по группе</h2><small class="muted">${periodLabel}</small></div>
+        <div class="totals">${total('salawat', sum('salawat'), 'салават')}${total('zikr', sum('tasbihat'), 'зикр')}${total('quran', sum('quran'), 'стр. Курана')}${total('moon', sum('tahajjud'), 'ночей тахаджуда')}${total('flame', sum('fast'), 'дней поста')}</div>
+      </section>
+      <section class="glass card"><div class="card-head"><h2>Участники</h2><small class="muted">по числу дел</small></div>
+        <table><thead><tr><th>Участник</th><th>Дни с делами</th><th>Дела</th><th>Салават</th><th>Зикр</th><th>Куран</th><th>Тахаджуд</th><th>Пост</th><th>Был(а)</th></tr></thead><tbody>${rows}</tbody></table>
+      </section>`, 'group-report-' + id);
+    main.querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => { reportState.days = Number(b.dataset.days); shownView = ''; showGroupReport(id); }));
+    main.querySelector('[data-csv]').addEventListener('click', () => {
+      const head = ['Участник', 'Логин', 'Дни с делами', 'Дела', 'Очки', 'Салават', 'Зикр', 'Куран, стр.', 'Тахаджуд', 'Пост', 'Последний раз'];
+      const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const lines = [head, ...members.map(m => [m.display_name, m.login, `${m.active_days} из ${days}`, m.deeds, m.points, m.salawat, m.tasbihat, m.quran, m.tahajjud, m.fast, m.last_active || ''])].map(row => row.map(cell).join(';'));
+      const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${r.group.name} — ${r.from}—${r.to}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+  }
+  async function deleteGroup(id) {
+    const g = (data.groups || []).find(x => String(x.id) === String(id));
+    if (!await confirmDialog({ title: 'Удалить группу?', text: `Группа${g ? ' «' + g.name + '»' : ''} исчезнет из админки. Участники и их отметки останутся.` })) return;
+    try { await req(`admin/groups/${id}`, { method: 'DELETE' }); data.groups = null; toast('Группа удалена'); location.hash = '#groups'; }
     catch (error) { toast(error.message); }
   }
 
@@ -737,7 +929,7 @@ tbody tr:last-child td{border-bottom:0}
     if (!cred) return;
     document.querySelector('.menu')?.remove();
     const [section = 'overview', id, action] = location.hash.replace(/^#/, '').split('/');
-    const current = ['overview', 'events', 'users', 'settings'].includes(section) ? section : 'overview';
+    const current = ['overview', 'events', 'users', 'groups', 'settings'].includes(section) ? section : 'overview';
     document.querySelectorAll('[data-route]').forEach(a => { if (a.dataset.route === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     window.scrollTo(0, 0);
     if (current === 'events') {
@@ -746,6 +938,12 @@ tbody tr:last-child td{border-bottom:0}
       else if (id && action === 'copy') showEditor(null, id);
       else showEvents(id || null);
     } else if (current === 'users') showUsers();
+    else if (current === 'groups') {
+      if (id === 'new') showGroupEditor(null);
+      else if (id && action === 'edit') showGroupEditor(id);
+      else if (id) showGroupReport(id);
+      else showGroups();
+    }
     else if (current === 'settings') showSettings();
     else showOverview();
   }
@@ -753,7 +951,7 @@ tbody tr:last-child td{border-bottom:0}
 
   main.addEventListener('click', event => {
     const t = event.target;
-    if (t.closest('[data-refresh]')) { data.events = data.users = null; route(); return; }
+    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = null; route(); return; }
     if (t.closest('[data-logout]')) { logout(); return; }
     const menuBtn = t.closest('[data-menu]'); if (menuBtn) { event.stopPropagation(); openMenu(menuBtn); return; }
     const edit = t.closest('[data-edit]'); if (edit) { location.hash = `#events/${edit.dataset.edit}/edit`; return; }
@@ -765,6 +963,7 @@ tbody tr:last-child td{border-bottom:0}
     const uf = t.closest('[data-ufilter]'); if (uf) { us.filter = uf.dataset.ufilter; paintUsers(); return; }
     if (t.closest('[data-close-user]')) { us.selected = null; paintUsers(); return; }
     const delUser = t.closest('[data-delete-user]'); if (delUser) { deleteUser(delUser.dataset.deleteUser); return; }
+    const delGroup = t.closest('[data-delete-group]'); if (delGroup) { deleteGroup(delGroup.dataset.deleteGroup); return; }
     const urow = t.closest('tr[data-user]'); if (urow) { us.selected = urow.dataset.user; paintUsers(); if (innerWidth <= 1240) $('.detail')?.scrollIntoView({ behavior: 'smooth' }); }
   });
   /* Search keeps focus while the list repaints. */
