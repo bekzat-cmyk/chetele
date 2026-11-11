@@ -72,6 +72,18 @@ body #app.quiz-focus .nav{display:none}
 #quiz-view .qz-progress>span em{font-style:normal;color:rgba(255,255,255,.78);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #quiz-view .qz-track{height:8px;border-radius:4px;background:rgba(255,255,255,.3);overflow:hidden}
 #quiz-view .qz-track i{display:block;height:100%;border-radius:4px;background:#fff;transition:width .3s ease}
+#quiz-view .qz-timer{display:flex;align-items:center;gap:10px;margin-bottom:-4px}
+#quiz-view .qz-timer-track{flex:1;height:8px;border-radius:4px;background:rgba(16,22,26,.08);overflow:hidden}
+#quiz-view .qz-timer-track i{display:block;height:100%;border-radius:4px;background:#2F7F64;transform-origin:left center;will-change:transform;transition:background-color .3s ease}
+#quiz-view .qz-timer b{min-width:40px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:#1F6B4F}
+#quiz-view .qz-timer.warn i{background:#C7782A}#quiz-view .qz-timer.warn b{color:#8A4B12}
+#quiz-view .qz-timer.late i{background:#A3342A}#quiz-view .qz-timer.late b{color:#A3342A}
+#quiz-view .qz-timer.done{opacity:.5}
+body.app-dark #app #quiz-view .qz-timer-track{background:rgba(255,255,255,.1)}
+body.app-dark #app #quiz-view .qz-timer b{color:#7FC8A6}
+body.app-dark #app #quiz-view .qz-timer.warn b{color:#E8B27A}
+body.app-dark #app #quiz-view .qz-timer.late b,body.app-dark #app #quiz-view .qz-mistake .late{color:#F0938A}
+#quiz-view .qz-mistake .late{color:#A3342A}
 #quiz-view .qz-q{margin:0;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
 #quiz-view .qz-options{display:flex;flex-direction:column;gap:10px}
 #quiz-view .qz-opt{min-height:56px;padding:10px 14px 10px 10px;border-radius:20px;border:1.5px solid rgba(16,22,26,.08);background:rgba(255,255,255,.9);color:#10161A;display:flex;align-items:center;gap:12px;text-align:left;font-size:16px;font-weight:600;width:100%;transition:background .2s ease,border-color .2s ease,transform .12s ease}
@@ -175,7 +187,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const plural = (n, one, few, many) => { const d = n % 10, h = n % 100; return d === 1 && h !== 11 ? one : d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many; };
   const questionsWord = n => `${n} ${plural(n, 'вопрос', 'вопроса', 'вопросов')}`;
-  const minutes = n => Math.max(1, Math.round(n * 0.45));
+  const minutes = (n, sec) => Math.max(1, Math.round(sec ? n * sec / 60 : n * 0.45));
   const LETTERS = ['А', 'Б', 'В', 'Г', 'Д', 'Е'];
   const levelIndex = (right, total) => total < 1 ? 0 : right >= total ? 3 : right / total >= 0.8 ? 2 : right / total >= 0.5 ? 1 : 0;
   const levelRanges = total => { const a = Math.ceil(total * 0.5), b = Math.ceil(total * 0.8); const r = (x, y) => x > y ? '—' : x === y ? String(x) : `${x}–${y}`; return [r(0, a - 1), r(a, b - 1), r(b, total - 1), String(total)]; };
@@ -235,10 +247,10 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
     const row = q => {
       const best = q.myBest !== null && q.myBest !== undefined;
       const right = best ? `<em>${q.myBest} из ${q.questionCount}<small class="ok">пройден</small></em>` : '<span class="qz-pill new">Новый</span>';
-      return `<button type="button" class="qz-row" data-qz-open="${q.id}"><span class="qz-ball">${svg(q.category)}</span><span class="qz-copy"><b>${esc(q.title)}</b><small>${esc(q.category)} · ${questionsWord(q.questionCount)} · ~${minutes(q.questionCount)} мин</small></span>${right}</button>`;
+      return `<button type="button" class="qz-row" data-qz-open="${q.id}"><span class="qz-ball">${svg(q.category)}</span><span class="qz-copy"><b>${esc(q.title)}</b><small>${esc(q.category)} · ${questionsWord(q.questionCount)} · ${q.questionTimeSec ? `${q.questionTimeSec} сек на ответ` : `~${minutes(q.questionCount)} мин`}</small></span>${right}</button>`;
     };
     const hero = featured ? `<section class="qz-shell" aria-label="Тест недели"><div class="qz-shell-bar"><span class="qz-pill dark"><i></i>Тест недели</span>${featured.myBest === null ? '<span class="qz-pill">Новый</span>' : ''}</div>
-      <article class="qz-panel"><div class="qz-head"><span class="qz-ball big">${svg(featured.category)}</span><span><b>${esc(featured.title)}</b><small>${esc(featured.category)} · ${questionsWord(featured.questionCount)} · ~${minutes(featured.questionCount)} мин</small></span></div>
+      <article class="qz-panel"><div class="qz-head"><span class="qz-ball big">${svg(featured.category)}</span><span><b>${esc(featured.title)}</b><small>${esc(featured.category)} · ${questionsWord(featured.questionCount)} · ${featured.questionTimeSec ? `${featured.questionTimeSec} сек на ответ` : `~${minutes(featured.questionCount)} мин`}</small></span></div>
       ${featured.description ? `<span class="qz-muted">${esc(featured.description)}</span>` : ''}
       ${featured.showStats ? `<div class="qz-stats"><span><b>${featured.people ?? 0}</b><small>прошли</small></span><span><b>${featured.avgPercent === null ? '—' : featured.avgPercent + '%'}</b><small>в среднем</small></span><span><b>${featured.myBest === null ? '—' : `${featured.myBest}/${featured.questionCount}`}</b><small>мой результат</small></span></div>` : ''}
       <button type="button" class="qz-cta" data-qz-open="${featured.id}">${featured.myBest === null ? 'Начать тест' : 'Пройти снова'}${svg('chev')}</button></article></section>` : '';
@@ -260,9 +272,9 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
   }
   function introHtml() {
     const q = S.quiz || {}, n = q.questions ? q.questions.length : q.questionCount || 0;
-    const head = `<header class="qz-top"><button type="button" class="qz-round" data-qz-back aria-label="Назад к тестам">${svg('back')}</button><div class="qz-title"><span>${esc(q.category || 'Тест')} · ~${minutes(n)} мин</span><h2>${esc(q.title || 'Тест')}</h2><em>проверьте себя</em></div></header>`;
+    const head = `<header class="qz-top"><button type="button" class="qz-round" data-qz-back aria-label="Назад к тестам">${svg('back')}</button><div class="qz-title"><span>${esc(q.category || 'Тест')} · ~${minutes(n, q.questionTimeSec)} мин</span><h2>${esc(q.title || 'Тест')}</h2><em>проверьте себя</em></div></header>`;
     if (q.error) return head + `<div class="qz-empty"><b>${esc(q.error)}</b><button type="button" class="qz-cta ghost" data-qz-back>К тестам</button></div>`;
-    const rules = [['list', questionsWord(n), 'по одному на экране'], q.showAnswers === false ? ['check', 'Ответы — в конце', 'верные варианты и пояснения покажем в разборе'] : ['check', 'Ответ виден сразу', 'после выбора — верный вариант и короткое пояснение'], ['reset', 'Можно пройти снова', 'сохраняем лучший результат']];
+    const rules = [['list', questionsWord(n), 'по одному на экране'], ...(q.questionTimeSec ? [['clock', `${q.questionTimeSec} секунд на ответ`, 'не успели — ответ не засчитывается']] : []), q.showAnswers === false ? ['check', 'Ответы — в конце', 'верные варианты и пояснения покажем в разборе'] : ['check', 'Ответ виден сразу', 'после выбора — верный вариант и короткое пояснение'], ['reset', 'Можно пройти снова', 'сохраняем лучший результат']];
     const best = q.myBest !== null && q.myBest !== undefined ? `<div class="qz-best"><span class="qz-ball ok">${svg('medal')}</span><span><b>Ваш лучший результат — ${q.myBest} из ${n}</b><small>${esc((q.levels || [])[levelIndex(q.myBest, n)] || '')}</small></span></div>` : '';
     return head + `<article class="qz-panel">${q.description ? `<span class="qz-muted" style="font-size:15px">${esc(q.description)}</span>` : ''}<div>${rules.map(([i, t, s]) => `<div class="qz-rule"><span class="qz-ball">${svg(i)}</span><span><b>${t}</b><small>${s}</small></span></div>`).join('')}</div></article>`
       + best + `<div class="qz-bottom">${q.loading ? '<span class="qz-cta wait">Загружаем вопросы…</span>' : `<button type="button" class="qz-cta" data-qz-start>Начать тест${svg('chev')}</button>`}</div>`;
@@ -273,29 +285,67 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
     const q = S.quiz; if (!q || !q.questions || !q.questions.length) return;
     const qs = q.shuffleQuestions ? shuffle(q.questions) : q.questions.slice();
     S.order = qs.map(item => { const idx = item.options.map((_, i) => i); return { ...item, view: q.shuffleOptions ? shuffle(idx) : idx }; });
-    S.index = 0; S.picked = -1; S.answers = []; S.result = null; S.startedAt = Date.now();
-    go('question');
+    S.index = 0; S.picked = -1; S.answers = []; S.result = null; S.startedAt = Date.now(); S.deadline = 0;
+    go('question'); startTimer(true);
   }
   function questionHtml() {
-    const q = S.order[S.index], total = S.order.length, answered = S.picked >= 0, reveal = answered && S.quiz.showAnswers !== false, last = S.index === total - 1;
+    /* S.picked: -1 waiting, -2 time ran out, otherwise the chosen option. */
+    const q = S.order[S.index], total = S.order.length, answered = S.picked !== -1, timedOut = S.picked === -2, reveal = answered && S.quiz.showAnswers !== false, last = S.index === total - 1;
+    const limit = S.quiz.questionTimeSec, left = limit ? Math.max(0, Math.ceil(((S.deadline || 0) - Date.now()) / 1000)) : 0;
+    const timer = limit ? `<div class="qz-timer${answered ? ' done' : ''}" role="timer" aria-label="Время на ответ"><span class="qz-timer-track" aria-hidden="true"><i></i></span><b>${answered ? (timedOut ? '0' : left) : limit} с</b></div>` : '';
     const opts = q.view.map((orig, k) => {
       let cls = '', mark = '';
-      if (reveal) { if (orig === q.correct) { cls = 'right'; mark = 'Верно'; } else if (orig === S.picked) { cls = 'wrong'; mark = 'Ваш ответ'; } else cls = 'dim'; }
+      if (reveal) { if (orig === q.correct) { cls = 'right'; mark = timedOut ? 'Верный ответ' : 'Верно'; } else if (orig === S.picked) { cls = 'wrong'; mark = 'Ваш ответ'; } else cls = 'dim'; }
+      else if (timedOut) cls = 'dim';
       else if (answered) cls = orig === S.picked ? 'picked' : 'dim';
       const label = esc(q.options[orig]) + (reveal ? (orig === q.correct ? ', верный ответ' : orig === S.picked ? ', ваш ответ, неверно' : '') : '');
       return `<button type="button" class="qz-opt ${cls}" data-qz-pick="${orig}" aria-label="${label}"${answered ? ' aria-disabled="true"' : ''}><i>${LETTERS[k]}</i><span>${esc(q.options[orig])}</span><small>${mark}</small></button>`;
     }).join('');
     const ok = S.picked === q.correct;
-    const feedback = reveal ? `<section class="qz-feedback" aria-live="polite"><span class="qz-pill ${ok ? 'good' : 'bad'}">${ok ? 'Верно!' : 'Не совсем'}</span>${q.explanation ? `<p>${esc(q.explanation)}</p>` : ''}</section>` : '';
+    const feedback = timedOut ? `<section class="qz-feedback" aria-live="polite"><span class="qz-pill bad">Время вышло — ответ не засчитан</span>${reveal && q.explanation ? `<p>${esc(q.explanation)}</p>` : ''}</section>`
+      : reveal ? `<section class="qz-feedback" aria-live="polite"><span class="qz-pill ${ok ? 'good' : 'bad'}">${ok ? 'Верно!' : 'Не совсем'}</span>${q.explanation ? `<p>${esc(q.explanation)}</p>` : ''}</section>` : '';
     const action = !answered ? '<span class="qz-cta wait">Выберите ответ</span>' : last ? `<button type="button" class="qz-cta" data-qz-finish>Посмотреть результат${svg('chev')}</button>` : `<button type="button" class="qz-cta" data-qz-next>Дальше${svg('chev')}</button>`;
     return `<header class="qz-top"><div style="display:flex;align-items:center;gap:12px"><button type="button" class="qz-round" data-qz-quit aria-label="Выйти из теста">${svg('x')}</button>
       <div class="qz-progress"><span><span>Вопрос ${S.index + 1} из ${total}</span><em>${esc(S.quiz.title)}</em></span><span class="qz-track" role="progressbar" aria-label="Прогресс теста" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${S.index + 1}"><i style="width:${Math.round((S.index + 1) / total * 100)}%"></i></span></div></div></header>
-      <article class="qz-panel"><h1 class="qz-q">${esc(q.text)}</h1><div class="qz-options" role="group" aria-label="Варианты ответа">${opts}</div></article>${feedback}<div class="qz-bottom">${action}</div>`;
+      <article class="qz-panel">${timer}<h1 class="qz-q">${esc(q.text)}</h1><div class="qz-options" role="group" aria-label="Варианты ответа">${opts}</div></article>${feedback}<div class="qz-bottom">${action}</div>`;
   }
+  /* The timer bar shrinks with one CSS transition; a light tick updates the seconds and
+     ends the question when time is up. Time keeps running while the app is in the background. */
+  let tick = null;
+  function stopTimer() {
+    clearInterval(tick); tick = null;
+    const bar = root?.querySelector('.qz-timer-track i'), limit = S.quiz?.questionTimeSec;
+    if (bar && limit) { const share = Math.max(0, (S.deadline - Date.now()) / (limit * 1000)); bar.style.transition = 'none'; bar.style.transform = `scaleX(${S.picked === -2 ? 0 : share})`; }
+  }
+  function startTimer(fresh) {
+    clearInterval(tick); tick = null;
+    const limit = S.quiz?.questionTimeSec; if (!limit || S.screen !== 'question' || S.picked !== -1) return;
+    if (fresh || !S.deadline) S.deadline = Date.now() + limit * 1000;
+    const box = root.querySelector('.qz-timer'), bar = box?.querySelector('i'), label = box?.querySelector('b'); if (!bar) return;
+    const left = Math.max(0, S.deadline - Date.now());
+    bar.style.transition = 'none'; bar.style.transform = `scaleX(${left / (limit * 1000)})`;
+    void bar.offsetWidth;
+    bar.style.transition = `transform ${left / 1000}s linear, background-color .3s ease`; bar.style.transform = 'scaleX(0)';
+    const update = () => {
+      const ms = S.deadline - Date.now(), secs = Math.max(0, Math.ceil(ms / 1000));
+      label.textContent = `${secs} с`;
+      box.classList.toggle('warn', secs <= Math.max(5, Math.ceil(limit * 0.3)) && secs > 3);
+      box.classList.toggle('late', secs <= 3);
+      if (ms <= 0) timeUp();
+    };
+    update(); tick = setInterval(update, 200);
+  }
+  function timeUp() {
+    if (S.picked !== -1 || S.screen !== 'question') { clearInterval(tick); tick = null; return; }
+    answer(-2);
+  }
+  function pick(choice) { if (S.picked === -1) answer(choice); }
   /* Answering changes the options in place and adds the explanation: nothing is redrawn. */
-  function pick(choice) {
-    if (S.picked >= 0) return;
-    S.picked = choice; S.answers[S.index] = { questionId: S.order[S.index].id, choice };
+  function answer(choice) {
+    S.picked = choice; S.answers[S.index] = { questionId: S.order[S.index].id, choice: choice === -2 ? -1 : choice };
+    stopTimer();
+    root.querySelector('.qz-timer')?.classList.add('done');
+    const label = root.querySelector('.qz-timer b'); if (label && choice === -2) label.textContent = '0 с';
     const fresh = document.createElement('div'); fresh.innerHTML = questionHtml();
     const now = root.querySelectorAll('.qz-opt'), next = fresh.querySelectorAll('.qz-opt');
     now.forEach((button, i) => {
@@ -325,6 +375,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
       root.append(...cards); rise(cards);
     } else paint(true);
     window.scrollTo(0, 0);
+    startTimer(true);
   }
 
   /* ---------- Result ---------- */
@@ -361,7 +412,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
         <div class="qz-stats" style="align-self:stretch"><span><b>${Math.round(share * 100)}%</b><small>правильно</small></span><span><b>${time}</b><small>время</small></span><span><b>${r.best}/${r.total}</b><small>лучший</small></span></div>
         <div class="qz-levels" style="align-self:stretch">${levels.map((name, i) => `<span class="${i === li ? 'on' : ''}"><b>${esc(name)}</b><small>${ranges[i]}</small></span>`).join('')}</div>
       </article>${saveNote}
-      ${mistakes.length ? `<section class="qz-review" aria-label="Разбор ошибок"><b>Разбор ошибок · ${mistakes.length}</b>${mistakes.map(({ item, a }) => `<div class="qz-mistake"><b>${esc(item.text)}</b>${a ? `<span class="no">${svg('x', 2)}Ваш ответ: ${esc(item.options[a.choice] ?? '—')}</span>` : ''}<span class="yes">${svg('check', 2)}Верно: ${esc(item.options[item.correct])}</span>${item.explanation ? `<p>${esc(item.explanation)}</p>` : ''}</div>`).join('')}</section>` : ''}
+      ${mistakes.length ? `<section class="qz-review" aria-label="Разбор ошибок"><b>Разбор ошибок · ${mistakes.length}</b>${mistakes.map(({ item, a }) => `<div class="qz-mistake"><b>${esc(item.text)}</b>${a && a.choice < 0 ? `<span class="late">${svg('clock', 2)}Время вышло — ответ не засчитан</span>` : a ? `<span class="no">${svg('x', 2)}Ваш ответ: ${esc(item.options[a.choice] ?? '—')}</span>` : ''}<span class="yes">${svg('check', 2)}Верно: ${esc(item.options[item.correct])}</span>${item.explanation ? `<p>${esc(item.explanation)}</p>` : ''}</div>`).join('')}</section>` : ''}
       <div class="qz-bottom"><button type="button" class="qz-cta" data-qz-again>${svg('reset')}Пройти ещё раз</button>${r.note === 'guest' ? '<button type="button" class="qz-cta ghost" data-qz-login>Войти в профиль</button>' : ''}<button type="button" class="qz-cta ghost" data-qz-back>Все тесты</button></div>`;
   }
 
@@ -375,7 +426,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
     const onKey = event => { if (event.key === 'Escape') close(); };
     layer.addEventListener('click', event => {
       if (event.target === layer || event.target.closest('[data-stay]')) close();
-      if (event.target.closest('[data-leave]')) { close(); go('list'); loadList(); }
+      if (event.target.closest('[data-leave]')) { close(); stopTimer(); go('list'); loadList(); }
     });
     document.addEventListener('keydown', onKey);
     document.body.append(layer); layer.querySelector('[data-stay]').focus();
@@ -390,7 +441,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
     if (t.closest('[data-qz-retry]')) { S.failed = false; paint(false); loadList(); return; }
     if (t.closest('[data-qz-back]')) { go('list'); loadList(); return; }
     if (t.closest('[data-qz-start]') || t.closest('[data-qz-again]')) { start(); return; }
-    if (t.closest('[data-qz-quit]')) { if (S.answers.length) askQuit(); else { go('list'); loadList(); } return; }
+    if (t.closest('[data-qz-quit]')) { if (S.answers.length) askQuit(); else { stopTimer(); go('list'); loadList(); } return; }
     const p = t.closest('[data-qz-pick]'); if (p) { pick(Number(p.dataset.qzPick)); return; }
     if (t.closest('[data-qz-next]')) { next(); return; }
     if (t.closest('[data-qz-finish]')) { finish(); return; }
@@ -407,7 +458,7 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
       if (!document.querySelector('#qz-style')) { const style = document.createElement('style'); style.id = 'qz-style'; style.textContent = CSS; document.head.appendChild(style); }
       /* Back on the tab: a test in progress continues, anything else returns to the list. */
       if (S.screen === 'intro' || S.screen === 'result') S.screen = 'list';
-      if (S.screen === 'list') { paint(true); loadList(); } else paint(false);
+      if (S.screen === 'list') { paint(true); loadList(); } else { paint(false); if (S.screen === 'question') { if (S.picked === -1 && S.deadline && Date.now() >= S.deadline) timeUp(); else startTimer(false); } }
     },
     hide() { setFocus(false); document.querySelector('.qz-sheet')?.remove(); }
   };

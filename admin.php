@@ -1062,6 +1062,9 @@ tbody tr:last-child td{border-bottom:0}
   const QZ_STATUS = { published: ['Опубликован', 'active'], draft: ['Черновик', 'draft'], hidden: ['Скрыт', 'paused'] };
   const qzPill = s => `<span class="pill ${(QZ_STATUS[s] || QZ_STATUS.draft)[1]}">${(QZ_STATUS[s] || QZ_STATUS.draft)[0]}</span>`;
   const qzWord = n => `${n} ${plural(n, 'вопрос', 'вопроса', 'вопросов')}`;
+  const QZ_TIMES = [10, 15, 20, 30, 45, 60, 90, 120];
+  const timeMode = () => !qe.questionTimeSec ? '' : QZ_TIMES.includes(qe.questionTimeSec) && !qe.customTime ? String(qe.questionTimeSec) : 'custom';
+  const qzTime = q => q.questionTimeSec ? ` · ${q.questionTimeSec} сек на ответ` : '';
   const qz = { tab: 'all', selected: null, details: {} };
   async function loadQuizzes(force) { if (force || !data.quizzes) data.quizzes = await req('admin/quizzes'); $('#nav-quizzes').textContent = data.quizzes.quizzes.filter(q => q.status === 'published').length || ''; return data.quizzes; }
   async function showQuizzes(selectedId) {
@@ -1082,7 +1085,7 @@ tbody tr:last-child td{border-bottom:0}
     const selected = quizzes.find(q => String(q.id) === String(qz.selected)) || null;
     const kpi = (name, value, label, chip) => `<article class="glass kpi"><div class="kpi-top"><span class="circle">${icon(name)}</span>${chip ? `<span class="chip">${chip}</span>` : ''}</div><div><b>${value}</b><small>${label}</small></div></article>`;
     const rows = list.length ? list.map(q => `<tr data-quiz="${q.id}" aria-selected="${selected && selected.id === q.id}">
-        <td class="wide"><span class="cell-main"><span class="circle">${icon('brain')}</span><div><b>${esc(q.title)}${q.featured ? ' <span class="chip" style="height:22px;font-size:11px;margin-left:4px">тест недели</span>' : ''}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}</small></div></span></td>
+        <td class="wide"><span class="cell-main"><span class="circle">${icon('brain')}</span><div><b>${esc(q.title)}${q.featured ? ' <span class="chip" style="height:22px;font-size:11px;margin-left:4px">тест недели</span>' : ''}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}${qzTime(q)}</small></div></span></td>
         <td class="hide-sm"><b>${num(q.attempts)}</b></td>
         <td>${q.attempts ? `<span class="prog"><b>${q.avg}%</b><i class="bar"><i style="width:${q.avg}%"></i></i></span>` : '<small class="muted">пока нет</small>'}</td>
         <td>${qzPill(q.status)}</td></tr>`).join('') : `<tr><td colspan="4" class="wide"><div class="empty">${quizzes.length ? 'В этой вкладке тестов нет.' : 'Тестов пока нет. Создайте первый — участники увидят его во вкладке «Тесты».'}</div></td></tr>`;
@@ -1117,7 +1120,7 @@ tbody tr:last-child td{border-bottom:0}
     }
     const toggle = q.status === 'published' ? `<button type="button" class="btn" data-qz-status="hidden" data-id="${q.id}">${icon('eyeoff')}Скрыть</button>` : `<button type="button" class="btn" data-qz-status="published" data-id="${q.id}">${icon('check')}Опубликовать</button>`;
     return `<div class="d-close">${qzPill(q.status)}<button type="button" class="btn small icon" data-qz-close aria-label="Закрыть карточку">${icon('x')}</button></div>
-      <div class="d-title"><b>${esc(q.title)}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}${q.featured ? ' · тест недели' : ''}</small></div>
+      <div class="d-title"><b>${esc(q.title)}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}${qzTime(q)}${q.featured ? ' · тест недели' : ''}</small></div>
       ${body}
       <div class="d-actions"><a class="btn black" href="#quizzes/${q.id}/edit">${icon('pen')}Изменить</a>${toggle}<button type="button" class="btn danger icon" style="flex:none;width:46px" data-qz-delete="${q.id}" aria-label="Удалить тест">${icon('trash')}</button></div>`;
   }
@@ -1140,7 +1143,7 @@ tbody tr:last-child td{border-bottom:0}
     loading(id ? 'Изменить тест' : 'Новый тест');
     try {
       if (id) { const q = await req(`admin/quizzes/${id}`); qe = { ...q, questions: q.questions.map(x => ({ ...x, options: x.options.slice(), open: false })) }; if (qe.questions[0]) qe.questions[0].open = true; }
-      else qe = { id: null, title: '', description: '', category: 'Основы', status: 'draft', featured: false, showAnswers: true, shuffleQuestions: true, shuffleOptions: false, showStats: true, timeLimitMin: null, levels: QZ_LEVELS.slice(), questions: [blankQuestion()] };
+      else qe = { id: null, title: '', description: '', category: 'Основы', status: 'draft', featured: false, showAnswers: true, shuffleQuestions: true, shuffleOptions: false, showStats: true, timeLimitMin: null, levels: QZ_LEVELS.slice(), questionTimeSec: null, questions: [blankQuestion()] };
     } catch (error) { failed('Тест', error); return; }
     paintQuizEditor();
   }
@@ -1177,6 +1180,8 @@ tbody tr:last-child td{border-bottom:0}
             <label class="field"><span>Описание</span><textarea class="input" data-qe-field="description" maxlength="600" placeholder="О чём тест и кому он полезен">${esc(qe.description)}</textarea></label>
             <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>Тема</span><select class="select input" data-qe-field="category" style="height:48px;border-radius:18px">${QZ_CATS.map(c => `<option ${c === qe.category ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
             <label class="toggle" style="border:0;align-self:end"><div><b>Тест недели</b><small>Большая карточка вверху вкладки</small></div><input type="checkbox" data-qe-flag="featured" ${qe.featured ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label></div>
+            <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>Время на ответ</span><select class="select input" data-qe-timemode style="height:48px;border-radius:18px">${[['', 'Без ограничения'], ...QZ_TIMES.map(s => [String(s), `${s} секунд`]), ['custom', 'Своё значение…']].map(([v, l]) => `<option value="${v}" ${timeMode() === v ? 'selected' : ''}>${l}</option>`).join('')}</select><small>${qe.questionTimeSec ? 'Не успел — ответ не засчитывается' : 'Отвечать можно сколько угодно'}</small></label>
+            ${timeMode() === 'custom' ? `<label class="field"><span>Секунд на вопрос</span><input class="input" type="number" min="5" max="600" step="1" data-qe-time value="${qe.questionTimeSec || ''}"><small>От 5 до 600 секунд</small></label>` : ''}</div>
           </section>
           <section class="glass card"><div class="card-head"><h2>Вопросы · ${n}</h2><small class="muted">стрелками меняйте порядок</small></div>
             <div style="display:flex;flex-direction:column;gap:10px">${qe.questions.map(questionCard).join('')}</div>
@@ -1194,6 +1199,7 @@ tbody tr:last-child td{border-bottom:0}
   }
   function quizErrors() {
     if (!qe.title.trim()) return 'Введите название теста.';
+    if (qe.questionTimeSec && (qe.questionTimeSec < 5 || qe.questionTimeSec > 600)) return 'Время на ответ — от 5 до 600 секунд.';
     for (const [i, q] of qe.questions.entries()) {
       if (!q.text.trim()) return `Вопрос ${i + 1}: введите текст.`;
       if (q.options.filter(o => o.trim()).length < 2) return `Вопрос ${i + 1}: нужно хотя бы два варианта ответа.`;
@@ -1206,7 +1212,7 @@ tbody tr:last-child td{border-bottom:0}
     $('#qe-error').textContent = error; if (error) return;
     /* Empty options are dropped; the right answer keeps pointing at the same text. */
     const questions = qe.questions.map(q => { const kept = q.options.map((o, k) => [o.trim(), k]).filter(([o]) => o); return { id: q.id, text: q.text.trim(), options: kept.map(([o]) => o), correct: kept.findIndex(([, k]) => k === q.correct), explanation: q.explanation.trim() }; });
-    const body = { title: qe.title.trim(), description: qe.description.trim(), category: qe.category, status, featured: qe.featured, showAnswers: qe.showAnswers, shuffleQuestions: qe.shuffleQuestions, shuffleOptions: qe.shuffleOptions, showStats: qe.showStats, timeLimitMin: null, levels: qe.levels, questions };
+    const body = { title: qe.title.trim(), description: qe.description.trim(), category: qe.category, status, featured: qe.featured, showAnswers: qe.showAnswers, shuffleQuestions: qe.shuffleQuestions, shuffleOptions: qe.shuffleOptions, showStats: qe.showStats, timeLimitMin: null, questionTimeSec: qe.questionTimeSec || null, levels: qe.levels, questions };
     button.disabled = true;
     try {
       const saved = qe.id ? await send(`admin/quizzes/${qe.id}`, 'PUT', body) : await send('admin/quizzes', 'POST', body);
@@ -1223,12 +1229,14 @@ tbody tr:last-child td{border-bottom:0}
     else if (d.qeExpl !== undefined) qe.questions[+d.qeExpl].explanation = t.value;
     else if (d.qeOpt) { const [i, k] = d.qeOpt.split('|').map(Number); qe.questions[i].options[k] = t.value; }
     else if (d.qeLevel !== undefined) qe.levels[+d.qeLevel] = t.value;
+    else if (d.qeTime !== undefined) qe.questionTimeSec = Math.round(Number(t.value)) || null;
   });
   main.addEventListener('change', event => {
     if (!qe || shownView !== 'quiz-editor') return;
     const t = event.target, d = t.dataset;
     if (d.qeFlag) { qe[d.qeFlag] = t.checked; return; }
     if (d.qeField === 'category') qe.category = t.value;
+    if (d.qeTimemode !== undefined) { qe.customTime = t.value === 'custom'; qe.questionTimeSec = t.value === 'custom' ? (qe.questionTimeSec || 25) : t.value ? Number(t.value) : null; paintQuizEditor(); return; }
     if (d.qeRight) { const [i, k] = d.qeRight.split('|').map(Number); qe.questions[i].correct = k; paintQuizEditor(); }
   });
   main.addEventListener('click', event => {

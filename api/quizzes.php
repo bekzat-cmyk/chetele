@@ -23,11 +23,15 @@ function ensureQuizTables(PDO $db): void {
         shuffle_options TINYINT(1) NOT NULL DEFAULT 0,
         show_stats TINYINT(1) NOT NULL DEFAULT 1,
         time_limit_min SMALLINT UNSIGNED NULL,
+        question_time_sec SMALLINT UNSIGNED NULL,
         levels TEXT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         KEY idx_quizzes_status (status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+    /* Seconds to answer each question; NULL means no limit. */
+    $columns = $db->query('SHOW COLUMNS FROM quizzes')->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('question_time_sec', $columns, true)) $db->exec('ALTER TABLE quizzes ADD COLUMN question_time_sec SMALLINT UNSIGNED NULL AFTER time_limit_min');
     $db->exec('CREATE TABLE IF NOT EXISTS quiz_questions (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         quiz_id INT UNSIGNED NOT NULL,
@@ -92,6 +96,7 @@ function quizPublic(array $quiz): array {
         'showAnswers' => (int)$quiz['show_answers'] === 1, 'shuffleQuestions' => (int)$quiz['shuffle_questions'] === 1,
         'shuffleOptions' => (int)$quiz['shuffle_options'] === 1, 'showStats' => (int)$quiz['show_stats'] === 1,
         'timeLimitMin' => $quiz['time_limit_min'] === null ? null : (int)$quiz['time_limit_min'],
+        'questionTimeSec' => ($quiz['question_time_sec'] ?? null) === null ? null : (int)$quiz['question_time_sec'],
         'levels' => quizLevels($quiz['levels']),
     ];
 }
@@ -106,6 +111,9 @@ function quizInput(array $body): array {
     if (!in_array($status, ['draft', 'published', 'hidden'], true)) $status = 'draft';
     $limit = $body['timeLimitMin'] ?? null;
     $limit = $limit === null || $limit === '' ? null : max(1, min(180, (int)$limit));
+    /* Time to answer each question: 5 seconds to 10 minutes, or no limit. */
+    $perQuestion = $body['questionTimeSec'] ?? null;
+    $perQuestion = $perQuestion === null || $perQuestion === '' || (int)$perQuestion <= 0 ? null : max(5, min(600, (int)$perQuestion));
     $questions = $body['questions'] ?? [];
     if (!is_array($questions) || count($questions) > 100) respond(400, ['error' => 'В тесте может быть до 100 вопросов.']);
     $clean = [];
@@ -135,6 +143,7 @@ function quizInput(array $body): array {
         'shuffle_options' => ($body['shuffleOptions'] ?? false) === true ? 1 : 0,
         'show_stats' => ($body['showStats'] ?? true) === false ? 0 : 1,
         'time_limit_min' => $limit,
+        'question_time_sec' => $perQuestion,
         'levels' => json_encode(quizLevels($body['levels'] ?? null), JSON_UNESCAPED_UNICODE),
         'questions' => $clean,
     ];
@@ -308,8 +317,8 @@ function handleQuizRoutes(PDO $db, array $config, string $method, array $parts):
         $db->beginTransaction();
         try {
             if ($input['featured']) $db->exec('UPDATE quizzes SET featured=0');
-            $db->prepare('INSERT INTO quizzes (title, description, category, status, featured, show_answers, shuffle_questions, shuffle_options, show_stats, time_limit_min, levels) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-                ->execute([$input['title'], $input['description'], $input['category'], $input['status'], $input['featured'], $input['show_answers'], $input['shuffle_questions'], $input['shuffle_options'], $input['show_stats'], $input['time_limit_min'], $input['levels']]);
+            $db->prepare('INSERT INTO quizzes (title, description, category, status, featured, show_answers, shuffle_questions, shuffle_options, show_stats, time_limit_min, question_time_sec, levels) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+                ->execute([$input['title'], $input['description'], $input['category'], $input['status'], $input['featured'], $input['show_answers'], $input['shuffle_questions'], $input['shuffle_options'], $input['show_stats'], $input['time_limit_min'], $input['question_time_sec'], $input['levels']]);
             $id = (int)$db->lastInsertId();
             saveQuizQuestions($db, $id, $input['questions']);
             $db->commit();
@@ -325,8 +334,8 @@ function handleQuizRoutes(PDO $db, array $config, string $method, array $parts):
         $db->beginTransaction();
         try {
             if ($input['featured']) $db->prepare('UPDATE quizzes SET featured=0 WHERE id<>?')->execute([$id]);
-            $db->prepare('UPDATE quizzes SET title=?, description=?, category=?, status=?, featured=?, show_answers=?, shuffle_questions=?, shuffle_options=?, show_stats=?, time_limit_min=?, levels=? WHERE id=?')
-                ->execute([$input['title'], $input['description'], $input['category'], $input['status'], $input['featured'], $input['show_answers'], $input['shuffle_questions'], $input['shuffle_options'], $input['show_stats'], $input['time_limit_min'], $input['levels'], $id]);
+            $db->prepare('UPDATE quizzes SET title=?, description=?, category=?, status=?, featured=?, show_answers=?, shuffle_questions=?, shuffle_options=?, show_stats=?, time_limit_min=?, question_time_sec=?, levels=? WHERE id=?')
+                ->execute([$input['title'], $input['description'], $input['category'], $input['status'], $input['featured'], $input['show_answers'], $input['shuffle_questions'], $input['shuffle_options'], $input['show_stats'], $input['time_limit_min'], $input['question_time_sec'], $input['levels'], $id]);
             saveQuizQuestions($db, $id, $input['questions']);
             $db->commit();
         } catch (Throwable $error) { if ($db->inTransaction()) $db->rollBack(); throw $error; }
