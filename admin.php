@@ -22,6 +22,9 @@ header('X-Robots-Tag: noindex, nofollow');
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Chetele · Админ-кабинет</title>
+<!-- With a sign-in kept in this tab, a reload opens the cabinet straight away instead of
+     flashing the sign-in form while the saved login is checked. -->
+<script nonce="<?= htmlspecialchars($nonce, ENT_QUOTES) ?>">try { if (sessionStorage.getItem('chetele-admin')) document.documentElement.classList.add('restoring'); } catch {}</script>
 <link rel="icon" href="assets/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,6 +38,7 @@ header('X-Robots-Tag: noindex, nofollow');
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+html.restoring #login{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100vh;font-family:Inter,-apple-system,system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#4F7F76 0,#6F9C92 160px,#9DBFB5 300px,#D3E3DE 440px,#ECF0EF 600px,#F2F3F4 100%) fixed;background-color:#F2F3F4}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 26% 40%,rgba(70,110,140,.22),transparent 34%),radial-gradient(circle at 92% 0%,rgba(255,255,255,.3),transparent 30%),radial-gradient(circle at 80% 105%,rgba(255,200,110,.18),transparent 36%)}
@@ -493,9 +497,11 @@ tbody tr:last-child td{border-bottom:0}
   const plural = (n, one, few, many) => { const d = n % 10, h = n % 100; return d === 1 && h !== 11 ? one : d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many; };
   /* The route goes in ?path=; anything after its own ? stays a separate query parameter. */
   const api = p => { const [path, query] = p.split('?'); return '/api/index.php?path=' + encodeURIComponent(path) + (query ? '&' + query : ''); };
-  let cred = null;
+  let cred = null, signingIn = false;
   async function req(path, options = {}) {
     const response = await fetch(api(path), { ...options, headers: { ...(options.headers || {}), 'X-Admin-Login': cred?.login || '', 'X-Admin-Password': cred?.password || '' } });
+    /* A saved sign-in the server no longer accepts (the password was changed) leads back to the form. */
+    if (response.status === 403 && cred && !signingIn) { signedOut('Данные входа больше не подходят — войдите снова.'); throw Error('Нужно войти снова'); }
     if (!response.ok) throw Error((await response.json().catch(() => ({}))).error || 'Ошибка сервера');
     return response.json();
   }
@@ -1244,11 +1250,12 @@ tbody tr:last-child td{border-bottom:0}
 
   /* ---------- Sign in and out ---------- */
   function enter() {
+    document.documentElement.classList.remove('restoring');
     $('#login').hidden = true; $('#shell').hidden = false;
     $('#me-name').textContent = cred.login; $('#me-avatar').textContent = (cred.login || 'a').slice(0, 1);
     paintVersion(); route();
     loadModeration(true).catch(() => {});
-    req('admin/settings').then(s => { data.settings = s; paintBell(); }).catch(() => {});
+    if (data.settings) paintBell(); else req('admin/settings').then(s => { data.settings = s; paintBell(); }).catch(() => {});
   }
   async function logout() {
     if (!await confirmDialog({ title: 'Выйти из кабинета?', text: 'Для входа снова понадобятся логин и пароль администратора.', action: 'Выйти', danger: false, iconName: 'logout' })) return;
@@ -1256,20 +1263,36 @@ tbody tr:last-child td{border-bottom:0}
     Object.keys(data).forEach(k => { data[k] = null; });
     $('#shell').hidden = true; $('#login').hidden = false; $('#login-pass').value = ''; $('#login-pass').focus();
   }
+  function signedOut(message) {
+    cred = null; try { sessionStorage.removeItem('chetele-admin'); } catch {}
+    Object.keys(data).forEach(k => { data[k] = null; });
+    document.querySelectorAll('.layer,.panel').forEach(el => el.remove());
+    document.documentElement.classList.remove('restoring');
+    $('#shell').hidden = true; $('#login').hidden = false; $('#login-pass').value = '';
+    $('#login-error').textContent = message || ''; $('#login-name').focus();
+  }
   $('#logout').addEventListener('click', logout);
   $('#login-form').addEventListener('submit', async event => {
     event.preventDefault();
     const button = event.submitter || event.target.querySelector('[type=submit]'); button.disabled = true; $('#login-error').textContent = '';
     cred = { login: $('#login-name').value.trim(), password: $('#login-pass').value };
+    signingIn = true;
     try { await loadEvents(true); sessionStorage.setItem('chetele-admin', JSON.stringify(cred)); enter(); }
     catch (error) { cred = null; $('#login-error').textContent = error.message; }
-    finally { button.disabled = false; }
+    finally { button.disabled = false; signingIn = false; }
   });
 
   paintIcons(document);
   try { cred = JSON.parse(sessionStorage.getItem('chetele-admin') || 'null'); } catch { cred = null; }
-  if (cred) { loadEvents(true).then(enter).catch(() => { cred = null; sessionStorage.removeItem('chetele-admin'); }); }
-  else $('#login-name').focus();
+  /* The cabinet opens at once with its own loading state; the first request checks the saved login. */
+  if (cred && cred.login && cred.password) {
+    /* One request checks the saved login first, so a stale password counts as one failed attempt, not several. */
+    document.documentElement.classList.remove('restoring');
+    $('#login').hidden = true; $('#shell').hidden = false;
+    $('#me-name').textContent = cred.login; $('#me-avatar').textContent = (cred.login || 'a').slice(0, 1);
+    loading('Кабинет');
+    req('admin/settings').then(s => { data.settings = s; enter(); }).catch(error => { if (cred) failed('Кабинет', error); });
+  } else signedOut('');
 })();
 </script>
 </body>
