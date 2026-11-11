@@ -395,6 +395,10 @@ tbody tr:last-child td{border-bottom:0}
 
 /* Live quiz console */
 .lv-h{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.lv-body{display:flex;flex-direction:column;gap:20px}
+.lv-next{font-size:14px;font-weight:600;color:var(--green);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.lv-next::before{content:"";width:8px;height:8px;border-radius:50%;background:#2F8F68;animation:lvBlink 1.4s ease-in-out infinite}
+.lv-legend{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2F8F68;margin-right:6px;vertical-align:1px}
 .lv-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .lv-actions .btn{white-space:nowrap}
 .lv-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(16,22,26,.06)}
@@ -418,16 +422,17 @@ tbody tr:last-child td{border-bottom:0}
 .lv-dist{display:flex;flex-direction:column;gap:8px}
 .lv-opt{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:20px;background:rgba(255,255,255,.75);border:1.5px solid rgba(16,22,26,.06)}
 .lv-opt i{width:34px;height:34px;flex:none;border-radius:17px;background:rgba(16,22,26,.06);display:grid;place-items:center;font-style:normal;font-size:14px;font-weight:600}
-.lv-opt b{width:28%;min-width:0;font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lv-opt b{text-align:left;width:28%;min-width:0;font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lv-opt em{flex:1;height:12px;border-radius:6px;background:rgba(16,22,26,.07);overflow:hidden}
 .lv-opt em u{display:block;height:100%;min-width:12px;border-radius:6px;background:rgba(16,22,26,.22);transition:width .4s ease}
 .lv-opt strong{width:40px;text-align:right;font-size:16px;font-weight:600}
 .lv-opt small{width:52px;font-size:12px;font-weight:600;color:var(--green)}
 .lv-opt.right{background:var(--green-bg);border-color:#2F8F68}
 .lv-opt.right i{background:var(--green);color:#fff}.lv-opt.right em u{background:#2F8F68}
-.lv-lobby{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 0 6px;text-align:center}
+.lv-lobby{display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 0 12px;text-align:center}
 .lv-lobby b{font-size:48px;font-weight:600;letter-spacing:-.03em;line-height:1}
-.lv-lobby span{font-size:15px;color:var(--soft)}.lv-lobby small{font-size:13px;color:var(--muted);max-width:420px}
+.lv-lobby span{font-size:16px;font-weight:500;color:var(--soft)}.lv-lobby small{margin-top:4px;font-size:14px;line-height:1.5;color:var(--muted);max-width:440px}
+.lv-names{padding-bottom:8px}
 .lv-names{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .lv-names span{height:36px;padding:0 14px 0 4px;border-radius:18px;background:rgba(255,255,255,.9);border:1px solid var(--line);display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
 .lv-names i,.lv-lb i{width:28px;height:28px;flex:none;border-radius:50%;background:var(--green-bg);color:var(--green);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:600}
@@ -454,8 +459,31 @@ tbody tr:last-child td{border-bottom:0}
 .lv-slot b{max-width:100%;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lv-slot small{font-size:12px;color:var(--muted)}
 .lv-slot span{align-self:stretch;box-sizing:border-box;padding-top:12px;border-radius:18px 18px 6px 6px;border:1px solid rgba(47,155,110,.25);background:linear-gradient(180deg,rgba(47,155,110,.32),rgba(47,155,110,.12));color:var(--green);display:grid;place-items:start center;font-size:28px;font-weight:600}
+.lv-slot.p1 span{height:120px}.lv-slot.p2 span{height:88px}.lv-slot.p3 span{height:66px}
 .lv-slot.first span{border-color:var(--green);background:linear-gradient(180deg,#2F8F68,#1F6B4F);color:#fff}
-@media (max-width:860px){.lv-q{flex-direction:column;align-items:flex-start;gap:12px}.lv-q h2{font-size:22px}.lv-opt b{width:34%}.lv-opt small{display:none}}
+@media (max-width:860px){
+  .lv-q{gap:14px}.lv-q h2{font-size:19px}.lv-q small.muted{font-size:12px}
+  .lv-ring{width:76px;height:76px}.lv-ring svg{width:76px;height:76px}.lv-ring b{font-size:24px}.lv-ring small{font-size:10px}
+  .lv-opt{padding:10px 12px;gap:10px}.lv-opt i{width:30px;height:30px}.lv-opt b{font-size:15px}.lv-opt b{width:34%}.lv-opt small{display:none}
+  /* Phones: compact numbers so the console is on the first screen. */
+  .lv-body{gap:14px}
+  .lv-body .kpis{gap:10px}
+  .lv-body .kpi{padding:12px 14px;border-radius:22px;gap:6px;flex-direction:row;align-items:center}
+  .lv-body .kpi .kpi-top .chip{display:none}
+  .lv-body .kpi .circle{width:34px;height:34px}
+  .lv-body .kpi b{font-size:20px}
+  .lv-body .kpi small{font-size:12px;line-height:1.3}
+  .lv-body .card{padding:16px;border-radius:26px}
+  .lv-stages span{height:30px;padding:0 11px;font-size:12px}
+  .lv-lobby{padding:16px 0 6px}.lv-lobby b{font-size:40px}
+  .lv-podium{gap:8px}
+  .lv-slot i{width:44px;height:44px;font-size:17px}.lv-slot.first i{width:54px;height:54px;font-size:21px}
+  .lv-slot.p1 span{height:88px}.lv-slot.p2 span{height:64px}.lv-slot.p3 span{height:48px}
+  .lv-slot span{font-size:22px;padding-top:8px}
+  .lv-actions .btn{flex:1;justify-content:center}
+  .lv-actions>span[style]{display:none}
+  .lv-dark{border-radius:26px}
+}
 @media (prefers-reduced-motion:reduce){.lv-pill i,.lv-dot{animation:none}.lv-opt em u{transition:none}}
 
 /* Narrower screens */
@@ -1455,7 +1483,8 @@ tbody tr:last-child td{border-bottom:0}
   /* The admin opens a lobby for a published test, starts it, shows each answer and opens
      the next question. The page asks the server every 1.5 s while a quiz runs; only the
      parts that changed are rewritten, so nothing flickers. */
-  const lv = { data: null, recent: [], key: '', parts: {}, deadline: 0, poll: null, tick: null, busy: false, fresh: false, form: { quizId: '', timeSec: 20, push: true } };
+  const lv = { data: null, recent: [], key: '', parts: {}, deadline: 0, poll: null, tick: null, busy: false, fresh: false, form: { quizId: '', timeSec: 20, push: true, auto: false, pauseSec: 8 }, nextAt: 0 };
+  const LV_PAUSES = [5, 8, 12];
   const LV_TIMES = [10, 15, 20, 30, 45, 60];
   const LV_LETTERS = ['А', 'Б', 'В', 'Г', 'Д', 'Е'];
   const lvActive = d => d && ['lobby', 'question', 'reveal'].includes(d.status);
@@ -1468,6 +1497,7 @@ tbody tr:last-child td{border-bottom:0}
     const body = await req('admin/live');
     if (lvActive(body.live) || (lv.data && lv.data.id === body.live?.id)) lv.fresh = false;
     lv.data = body.live; lv.recent = body.recent || [];
+    if (lv.data && lv.data.status === 'reveal' && lv.data.nextInMs !== undefined) { const at = Date.now() + lv.data.nextInMs; if (Math.abs(at - lv.nextAt) > 1200) lv.nextAt = at; } else if (lv.data) lv.nextAt = 0;
     if (lv.data && lv.data.status === 'question') { const deadline = Date.now() + (lv.data.remainingMs || 0); if (Math.abs(deadline - lv.deadline) > 1200 || lv.key !== lvKey()) lv.deadline = deadline; }
     paintLiveNav();
   }
@@ -1488,7 +1518,7 @@ tbody tr:last-child td{border-bottom:0}
     try {
       const body = await send(`admin/live/${lv.data.id}/${action}`, 'POST', {});
       if (action === 'push') toast(body.sent ? `Push отправлен: ${num(body.sent)}` : 'Нет подписчиков на уведомления');
-      else { lv.data = body.live; if (lv.data.status === 'question') lv.deadline = Date.now() + (lv.data.remainingMs || 0); }
+      else { lv.data = body.live; if (lv.data.status === 'question') lv.deadline = Date.now() + (lv.data.remainingMs || 0); lv.nextAt = lv.data.nextInMs !== undefined ? Date.now() + lv.data.nextInMs : 0; if (action === 'auto' || action === 'manual') toast(action === 'auto' ? 'Вопросы переключаются автоматически' : 'Вопросы переключаете вы'); }
     } catch (error) { toast(error.message); }
     lv.busy = false; paintLiveNav(); paintLive(); lvSchedule();
   }
@@ -1497,7 +1527,7 @@ tbody tr:last-child td{border-bottom:0}
     const quizId = Number(lv.form.quizId); if (!quizId) { toast('Выберите тест'); return; }
     lv.busy = true; paintLive();
     try {
-      const body = await send('admin/live', 'POST', { quizId, timeSec: lv.form.timeSec, push: lv.form.push });
+      const body = await send('admin/live', 'POST', { quizId, timeSec: lv.form.timeSec, push: lv.form.push, auto: lv.form.auto, pauseSec: lv.form.pauseSec });
       toast(body.push ? `Лобби открыто · push: ${num(body.push.sent)}` : 'Лобби открыто');
       lv.fresh = false; await lvFetch();
     } catch (error) { toast(error.message); }
@@ -1509,7 +1539,7 @@ tbody tr:last-child td{border-bottom:0}
     const parts = liveParts(), key = lvKey();
     if (key !== lv.key || shownView !== 'live') {
       lv.key = key; lv.parts = parts;
-      mount(parts.top + `<div data-lv="body">${parts.body}</div>`, 'live');
+      mount(parts.top + `<div class="lv-body" data-lv="body">${parts.body}</div>`, 'live');
     } else if (parts.body !== lv.parts.body) {
       const fresh = document.createElement('div'); fresh.innerHTML = parts.body;
       const now = main.querySelector('[data-lv="body"]');
@@ -1521,13 +1551,23 @@ tbody tr:last-child td{border-bottom:0}
   /* The countdown ring moves on its own between requests. */
   function lvTick() {
     clearInterval(lv.tick); lv.tick = null;
-    const d = lv.data; if (!d || d.status !== 'question' || lv.fresh) return;
+    const d = lv.data; if (!d || lv.fresh) return;
+    /* Automatic mode: seconds until the next question, then ask the server. */
+    if (d.status === 'reveal' && d.auto && lv.nextAt) {
+      const count = () => {
+        const el = main.querySelector('[data-lv-sec]'), ms = lv.nextAt - Date.now();
+        if (el) el.textContent = Math.max(0, Math.ceil(ms / 1000));
+        if (ms <= 0) { clearInterval(lv.tick); lv.tick = null; setTimeout(() => lvFetch().then(paintLive).catch(() => {}), 700); }
+      };
+      count(); lv.tick = setInterval(count, 250); return;
+    }
+    if (d.status !== 'question') return;
     const C = 2 * Math.PI * 46;
     const update = () => {
       const ring = main.querySelector('[data-lv-ring]'); if (!ring) { clearInterval(lv.tick); lv.tick = null; return; }
       const ms = Math.max(0, lv.deadline - Date.now()), share = ms / (d.timeSec * 1000);
       ring.querySelector('b').textContent = Math.ceil(ms / 1000);
-      ring.querySelector('circle + circle').setAttribute('stroke-dasharray', `${(C * share).toFixed(1)} ${C.toFixed(1)}`);
+      const arc = ring.querySelector('circle + circle'); arc.setAttribute('stroke-dasharray', `${(C * share).toFixed(1)} ${C.toFixed(1)}`); arc.style.opacity = share > 0 ? '' : '0';
       if (ms <= 0) { clearInterval(lv.tick); lv.tick = null; setTimeout(() => lvFetch().then(paintLive).catch(() => {}), 1800); }
     };
     update(); lv.tick = setInterval(update, 250);
@@ -1543,14 +1583,16 @@ tbody tr:last-child td{border-bottom:0}
         top: top('Тесты · живой режим', 'Живой квиз', 'Все участники проходят тест одновременно', tools() + back),
         body: `<div class="split"><section class="glass card" style="flex:1">
             <h2 class="lv-h">Новый живой квиз</h2>
-            ${published.length ? `<label class="field"><span>Тест</span><select data-lv-quiz>${published.map(q => `<option value="${q.id}"${String(q.id) === String(lv.form.quizId) ? ' selected' : ''}>${esc(q.title)} · ${qzWord(q.questionCount)}</option>`).join('')}</select><small>Вопросы идут в порядке теста, все видят один и тот же вопрос.</small></label>
+            ${published.length ? `<label class="field"><span>Тест</span><select class="select input" data-lv-quiz aria-label="Тест" style="height:48px;border-radius:18px">${published.map(q => `<option value="${q.id}"${String(q.id) === String(lv.form.quizId) ? ' selected' : ''}>${esc(q.title)} · ${qzWord(q.questionCount)}</option>`).join('')}</select><small>Вопросы идут в порядке теста, все видят один и тот же вопрос.</small></label>
             <div class="field"><span>Время на ответ</span><div class="options">${LV_TIMES.map(t => `<label class="option"><input type="radio" name="lv-time" value="${t}" data-lv-time${t === lv.form.timeSec ? ' checked' : ''}>${t} сек</label>`).join('')}</div><small>Верный ответ даёт от 500 до 1000 очков — чем быстрее, тем больше. Неверный или запоздавший — 0.</small></div>
+            <div class="field"><span>Переключение вопросов</span><div class="options"><label class="option"><input type="radio" name="lv-mode" value="manual" data-lv-mode${lv.form.auto ? '' : ' checked'}>Вручную</label><label class="option"><input type="radio" name="lv-mode" value="auto" data-lv-mode${lv.form.auto ? ' checked' : ''}>Автоматически</label></div><small>${lv.form.auto ? 'Ответ показывается сам, следующий вопрос открывается через паузу, после последнего — итоги. Вы только начинаете квиз.' : 'Следующий вопрос открываете вы — удобно, если обсуждаете ответы вслух.'}</small></div>
+            ${lv.form.auto ? `<div class="field"><span>Пауза на ответе</span><div class="options">${LV_PAUSES.map(t => `<label class="option"><input type="radio" name="lv-pause" value="${t}" data-lv-pause${t === lv.form.pauseSec ? ' checked' : ''}>${t} сек</label>`).join('')}</div><small>Столько участники видят верный ответ и таблицу перед следующим вопросом.</small></div>` : ''}
             <label class="toggle"><div><b>Push всем участникам</b><small>«Живой квиз начинается» — уведомление получат все, кто их включил</small></div><input type="checkbox" data-lv-push${lv.form.push ? ' checked' : ''}><span class="switch" aria-hidden="true"></span></label>
-            <div class="lv-actions"><button type="button" class="btn black" data-lv-create${lv.busy ? ' disabled' : ''}>${icon('users')}Открыть лобби</button>${chosen ? `<small class="muted">${qzWord(chosen.questionCount)} · около ${Math.max(1, Math.round(chosen.questionCount * (lv.form.timeSec + 8) / 60))} мин</small>` : ''}</div>`
+            <div class="lv-actions"><button type="button" class="btn black" data-lv-create${lv.busy ? ' disabled' : ''}>${icon('users')}Открыть лобби</button>${chosen ? `<small class="muted">${qzWord(chosen.questionCount)} · около ${Math.max(1, Math.round(chosen.questionCount * (lv.form.timeSec + (lv.form.auto ? lv.form.pauseSec : 8)) / 60))} мин</small>` : ''}</div>`
             : '<div class="empty">Нет опубликованных тестов с вопросами. Опубликуйте тест, чтобы провести его вживую.</div>'}
           </section>
           <aside class="glass card detail"><h2 class="lv-h">Как это работает</h2>
-            <ol class="lv-steps"><li><b>Откройте лобби.</b> Во вкладке «Тесты» у всех появится карточка LIVE — участники подключаются одним нажатием.</li><li><b>Начните квиз,</b> когда все соберутся. Вопрос появляется у всех одновременно, с таймером.</li><li><b>Когда время выйдет,</b> ответ откроется сам. Можно показать его и раньше.</li><li><b>Откройте следующий вопрос.</b> После последнего — пьедестал с тремя победителями.</li></ol>
+            <ol class="lv-steps"><li><b>Откройте лобби.</b> Во вкладке «Тесты» у всех появится карточка LIVE — участники подключаются одним нажатием.</li><li><b>Начните квиз,</b> когда все соберутся. Вопрос появляется у всех одновременно, с таймером.</li><li><b>Когда время выйдет,</b> ответ откроется сам. Можно показать его и раньше.</li><li><b>Откройте следующий вопрос.</b> После последнего — пьедестал с тремя победителями.</li><li><b>Или выберите «Автоматически»</b> — вопросы пойдут сами, с паузой на ответе. Режим можно переключить и во время квиза.</li></ol>
             <h2 class="lv-h" style="margin-top:6px">Прошедшие</h2>${recent}
           </aside></div>`
       };
@@ -1568,7 +1610,7 @@ tbody tr:last-child td{border-bottom:0}
     if (d.status === 'lobby') {
       console = `${stageBar}<div class="lv-lobby" data-lv-part="lobby"><b>${num(d.players)}</b><span>${plural(d.players, 'участник подключился', 'участника подключились', 'участников подключились')}</span><small>Участники видят карточку LIVE во вкладке «Тесты». Начните, когда все соберутся.</small></div>
         <div class="lv-names" data-lv-part="names">${(d.leaders || []).map(l => `<span><i>${esc(l.name.charAt(0).toUpperCase())}</i>${esc(l.name)}</span>`).join('') || '<small class="muted">Пока никого — отправьте push или напомните участникам.</small>'}</div>
-        <div class="lv-actions" data-lv-part="actions"><button type="button" class="btn black" data-lv-do="start"${dis}${d.players ? '' : ' disabled'}>${icon('play')}Начать квиз</button><span style="flex:1"></span><button type="button" class="btn danger" data-lv-do="cancel"${dis}>${icon('x')}Отменить</button></div>`;
+        <div class="lv-actions" data-lv-part="actions"><button type="button" class="btn black" data-lv-do="start"${dis}${d.players ? '' : ' disabled'}>${icon('play')}Начать квиз</button><button type="button" class="btn" data-lv-do="${d.auto ? 'manual' : 'auto'}"${dis}>${icon(d.auto ? 'pause' : 'play')}${d.auto ? 'Режим: авто' : 'Режим: вручную'}</button><span style="flex:1"></span><button type="button" class="btn danger" data-lv-do="cancel"${dis}>${icon('x')}Отменить</button></div>`;
     } else if (d.status === 'question' || d.status === 'reveal') {
       const q = d.questionFull || { text: '', options: [], correct: -1, explanation: '' }, total = Math.max(1, d.answered || 0), C = 2 * Math.PI * 46;
       const share = d.status === 'question' ? Math.max(0, lv.deadline - Date.now()) / (d.timeSec * 1000) : 0;
@@ -1576,27 +1618,33 @@ tbody tr:last-child td{border-bottom:0}
       const last = d.index + 1 >= d.total;
       const actions = d.status === 'question'
         ? `<button type="button" class="btn black" data-lv-do="reveal"${dis}>${icon('check')}Показать ответ</button>`
-        : `<button type="button" class="btn black" data-lv-do="next"${dis}>${last ? `${icon('rating')}Подвести итоги` : `Следующий вопрос${icon('chev')}`}</button>`;
+        : `<button type="button" class="btn black" data-lv-do="next"${dis}>${last ? `${icon('rating')}${d.auto ? 'Итоги сейчас' : 'Подвести итоги'}` : `${d.auto ? 'Следующий сейчас' : 'Следующий вопрос'}${icon('chev')}`}</button>`;
+      const mode = `<button type="button" class="btn" data-lv-do="${d.auto ? 'manual' : 'auto'}"${dis} title="${d.auto ? 'Остановить автоматическое переключение' : 'Открывать вопросы автоматически'}">${icon(d.auto ? 'pause' : 'play')}${d.auto ? 'Вручную' : 'Авто'}</button>`;
+      const next = d.auto && d.status === 'reveal' ? `<span class="lv-next">${last ? 'Итоги' : 'Следующий вопрос'} через&nbsp;<b data-lv-sec></b>&nbsp;с</span>` : '';
       console = `${stageBar}<div class="lv-q">
-          <span class="lv-ring" data-lv-ring role="timer" aria-label="Осталось времени"><svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true"><circle cx="56" cy="56" r="46"></circle><circle cx="56" cy="56" r="46" stroke-dasharray="${(C * share).toFixed(1)} ${C.toFixed(1)}"></circle></svg><span><b>${d.status === 'question' ? Math.ceil(Math.max(0, lv.deadline - Date.now()) / 1000) : 0}</b><small>${d.status === 'question' ? 'секунд' : 'ответ открыт'}</small></span></span>
+          <span class="lv-ring" data-lv-ring role="timer" aria-label="Осталось времени"><svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true"><circle cx="56" cy="56" r="46"></circle><circle cx="56" cy="56" r="46" stroke-dasharray="${(C * share).toFixed(1)} ${C.toFixed(1)}"${share > 0 ? '' : ' style="opacity:0"'}></circle></svg><span><b>${d.status === 'question' ? Math.ceil(Math.max(0, lv.deadline - Date.now()) / 1000) : 0}</b><small>${d.status === 'question' ? 'секунд' : 'ответ открыт'}</small></span></span>
           <div><small class="muted">Вопрос ${d.index + 1} · ${d.status === 'question' ? 'идёт ответ' : 'участники видят верный ответ'}</small><h2>${esc(q.text)}</h2></div></div>
         <div class="lv-dist" data-lv-part="dist">${dist}</div>
         ${d.status === 'reveal' && q.explanation ? `<small class="muted">${esc(q.explanation)}</small>` : ''}
-        <div class="lv-actions" data-lv-part="actions">${actions}<span style="flex:1"></span><button type="button" class="btn danger" data-lv-do="finish"${dis}>${icon('x')}Завершить квиз</button></div>`;
+        <div class="lv-actions" data-lv-part="actions">${actions}${mode}${next}<span style="flex:1"></span><button type="button" class="btn danger" data-lv-do="finish"${dis}>${icon('x')}Завершить квиз</button></div>`;
     } else {
       const leaders = d.leaders || [];
-      const slot = (l, place) => l ? `<div class="lv-slot${place === 1 ? ' first' : ''}"><i>${esc(l.name.charAt(0).toUpperCase())}</i><b>${esc(l.name)}</b><small>${num(l.score)} · ${l.correct} из ${d.total}</small><span style="height:${place === 1 ? 120 : place === 2 ? 88 : 66}px">${place}</span></div>` : '<div class="lv-slot"></div>';
+      const slot = (l, place) => l ? `<div class="lv-slot p${place}${place === 1 ? ' first' : ''}"><i>${esc(l.name.charAt(0).toUpperCase())}</i><b>${esc(l.name)}</b><small>${num(l.score)} · ${l.correct} из ${d.total}</small><span>${place}</span></div>` : '<div class="lv-slot"></div>';
       console = `${stageBar}${d.status === 'cancelled' ? '<div class="empty">Квиз отменён — итоги не подводились.</div>' : leaders.length ? `<div class="lv-podium">${slot(leaders[1], 2)}${slot(leaders[0], 1)}${slot(leaders[2], 3)}</div>` : '<div class="empty">Никто не участвовал.</div>'}
         <div class="lv-actions"><button type="button" class="btn black" data-lv-new>${icon('plus')}Новый живой квиз</button></div>`;
     }
     const board = (d.leaders || []).map((l, i) => `<div class="lv-lb"><b class="${i < 3 && d.status !== 'lobby' ? 'top' : ''}">${l.place}</b><i>${esc(l.name.charAt(0).toUpperCase())}</i><span>${esc(l.name)}</span>${d.status === 'question' ? `<em class="${l.answered ? 'yes' : ''}" title="${l.answered ? 'ответил' : 'ещё думает'}"></em>` : ''}<strong>${num(l.score)}</strong></div>`).join('') || '<div class="empty" style="padding:16px">Пока никого.</div>';
-    const pill = lvActive(d) ? '<span class="lv-pill"><i></i>LIVE</span>' : `<span class="chip">${d.status === 'finished' ? 'Завершён' : 'Отменён'}</span>`;
+    const winner = d.status === 'finished' && (d.leaders || [])[0];
+    const pill = lvActive(d) ? '<span class="lv-pill"><i></i>LIVE</span>' : '';
+    const darkTitle = lvActive(d) ? statusText : d.status === 'finished' ? 'Квиз завершён' : 'Квиз отменён';
+    const darkText = lvActive(d) ? 'Участники видят квиз во вкладке «Тесты» и подключаются одним нажатием, даже после начала.'
+      : winner ? `Победитель — ${esc(winner.name)}, ${num(winner.score)} очков. Итоги видны в приложении ещё полчаса.` : 'Итоги видны в приложении ещё полчаса.';
     return {
-      top: top('Тесты · живой режим', `Живой квиз: ${esc(d.title)}`, `${qzWord(d.total)} · ${d.timeSec} сек на ответ · ${statusText}`, tools() + back),
+      top: top('Живой квиз', esc(d.title), `${qzWord(d.total)} · ${d.timeSec} сек на ответ · ${d.auto ? `авто, пауза ${d.pauseSec} сек` : 'вручную'} · ${statusText}`, tools() + back),
       body: `${kpis}<div class="split"><section class="glass card" style="flex:1">${console}</section>
         <aside class="detail" style="display:flex;flex-direction:column;gap:16px">
-          <section class="lv-dark" data-lv-part="dark">${pill}<b>${statusText}</b><small>Участники видят квиз во вкладке «Тесты» и подключаются одним нажатием${lvActive(d) ? ', даже после начала.' : '.'}</small>${lvActive(d) ? `<button type="button" class="btn small" data-lv-do="push"${dis}>${icon('bell')}Push всем: «Квиз идёт»</button>` : ''}</section>
-          <section class="glass card"><div class="toolbar"><b style="font-size:17px;font-weight:600">Таблица</b><small class="muted" data-lv-part="count">${num(d.players)} · ${d.status === 'question' ? '● ответил' : 'по очкам'}</small></div><div class="lv-board" data-lv-part="board">${board}</div></section>
+          <section class="lv-dark" data-lv-part="dark">${pill}<b>${darkTitle}</b><small>${darkText}</small>${lvActive(d) ? `<button type="button" class="btn small" data-lv-do="push"${dis}>${icon('bell')}Push всем: «Квиз идёт»</button>` : ''}</section>
+          <section class="glass card"><div class="toolbar"><b style="font-size:17px;font-weight:600">Таблица</b><small class="muted" data-lv-part="count">${num(d.players)} ${plural(d.players, 'участник', 'участника', 'участников')}${d.status === 'question' ? ' · <span class="lv-legend"></span>ответил' : ''}</small></div><div class="lv-board" data-lv-part="board">${board}</div></section>
         </aside></div>`
     };
   }
@@ -1676,6 +1724,8 @@ tbody tr:last-child td{border-bottom:0}
     if (t.matches('[data-lv-quiz]')) { lv.form.quizId = t.value; lv.key = ''; paintLive(); }
     if (t.matches('[data-lv-time]')) { lv.form.timeSec = Number(t.value); lv.key = ''; paintLive(); }
     if (t.matches('[data-lv-push]')) lv.form.push = t.checked;
+    if (t.matches('[data-lv-mode]')) { lv.form.auto = t.value === 'auto'; lv.key = ''; paintLive(); }
+    if (t.matches('[data-lv-pause]')) { lv.form.pauseSec = Number(t.value); lv.key = ''; paintLive(); }
   });
   main.addEventListener('change', event => { if (event.target.id === 'ev-mode') { ev.mode = event.target.value; paintEvents(); } });
   document.addEventListener('click', event => {

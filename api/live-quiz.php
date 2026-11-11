@@ -8,8 +8,9 @@ declare(strict_types=1);
    a faster one. The app learns what is happening by asking every second or two.
 
    Steps: lobby → question → reveal → question … → finished (or cancelled). When a
-   question's time runs out, the next request moves it to reveal by itself; the admin
-   opens each next question. */
+   question's time runs out, the next request moves it to reveal by itself. The admin
+   opens each next question, or chooses the automatic mode: then the next question
+   opens by itself after a short pause on the answer, and the last one ends the quiz. */
 
 const LIVE_ACTIVE = ['lobby', 'question', 'reveal'];
 const LIVE_GRACE_MS = 1500;          // network delay forgiven after the timer ends
@@ -24,11 +25,17 @@ function ensureLiveTables(PDO $db): void {
         q_started_ms BIGINT NULL,
         time_sec SMALLINT UNSIGNED NOT NULL DEFAULT 20,
         question_ids TEXT NOT NULL,
+        auto_next TINYINT(1) NOT NULL DEFAULT 0,
+        pause_sec SMALLINT UNSIGNED NOT NULL DEFAULT 8,
+        reveal_ms BIGINT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         finished_at TIMESTAMP NULL,
         KEY idx_live_status (status, created_at),
         CONSTRAINT fk_live_quiz FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+    /* Columns added with the automatic mode. */
+    $columns = $db->query('SHOW COLUMNS FROM live_quizzes')->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('auto_next', $columns, true)) $db->exec('ALTER TABLE live_quizzes ADD COLUMN auto_next TINYINT(1) NOT NULL DEFAULT 0 AFTER question_ids, ADD COLUMN pause_sec SMALLINT UNSIGNED NOT NULL DEFAULT 8 AFTER auto_next, ADD COLUMN reveal_ms BIGINT NULL AFTER pause_sec');
     $db->exec('CREATE TABLE IF NOT EXISTS live_players (
         live_id INT UNSIGNED NOT NULL,
         user_id CHAR(36) NOT NULL,
@@ -74,6 +81,7 @@ function liveFind(PDO $db, int $id): ?array {
 /* A question turns into its reveal on the first request after its time is up, or as
    soon as every player has answered. */
 function liveTick(PDO $db, array $live): array {
+    if ($live['status'] === 'reveal') return liveAutoNext($db, $live);
     if ($live['status'] !== 'question') return $live;
     $over = liveNowMs() > (int)$live['q_started_ms'] + (int)$live['time_sec'] * 1000 + LIVE_GRACE_MS;
     if (!$over) {
@@ -82,14 +90,39 @@ function liveTick(PDO $db, array $live): array {
         $row = $count->fetch();
         $over = (int)$row['players'] > 0 && (int)$row['answers'] >= (int)$row['players'];
     }
-    if ($over) { liveReveal($db, $live); $live['status'] = 'reveal'; }
+    if ($over) { liveReveal($db, $live); $live['status'] = 'reveal'; $live['reveal_ms'] = liveNowMs(); }
     return $live;
+}
+
+/* In the automatic mode the answer stays on screen for the pause, then the next
+   question opens (or the quiz ends after the last one). Only one request moves it. */
+function liveAutoNext(PDO $db, array $live): array {
+    if ((int)($live['auto_next'] ?? 0) !== 1 || $live['reveal_ms'] === null) return $live;
+    if (liveNowMs() < (int)$live['reveal_ms'] + (int)$live['pause_sec'] * 1000) return $live;
+    $fresh = liveAdvance($db, $live);
+    return $fresh ?? $live;
+}
+
+/* reveal → the next question, or finished after the last one. Returns the new row, or null when another request already moved it. */
+function liveAdvance(PDO $db, array $live): ?array {
+    $next = (int)$live['q_index'] + 1;
+    if ($next >= count(liveQuestionIds($live))) {
+        $move = $db->prepare("UPDATE live_quizzes SET status = 'finished', finished_at = NOW() WHERE id = ? AND status = 'reveal' AND q_index = ?");
+        $move->execute([(int)$live['id'], (int)$live['q_index']]);
+    } else {
+        $move = $db->prepare("UPDATE live_quizzes SET status = 'question', q_index = ?, q_started_ms = ?, reveal_ms = NULL WHERE id = ? AND status = 'reveal' AND q_index = ?");
+        $move->execute([$next, liveNowMs(), (int)$live['id'], (int)$live['q_index']]);
+    }
+    $find = $db->prepare('SELECT l.*, q.title, q.category FROM live_quizzes l JOIN quizzes q ON q.id = l.quiz_id WHERE l.id = ?');
+    $find->execute([(int)$live['id']]);
+    $row = $find->fetch();
+    return $row ?: null;
 }
 
 /* Who missed the question loses their streak. Only the request that actually moves the step does this. */
 function liveReveal(PDO $db, array $live): void {
-    $move = $db->prepare("UPDATE live_quizzes SET status = 'reveal' WHERE id = ? AND status = 'question' AND q_index = ?");
-    $move->execute([(int)$live['id'], (int)$live['q_index']]);
+    $move = $db->prepare("UPDATE live_quizzes SET status = 'reveal', reveal_ms = ? WHERE id = ? AND status = 'question' AND q_index = ?");
+    $move->execute([liveNowMs(), (int)$live['id'], (int)$live['q_index']]);
     if ($move->rowCount() === 0) return;
     $db->prepare('UPDATE live_players p SET p.streak = 0 WHERE p.live_id = ? AND NOT EXISTS (SELECT 1 FROM live_answers a WHERE a.live_id = p.live_id AND a.user_id = p.user_id AND a.q_index = ? AND a.ok = 1)')
         ->execute([(int)$live['id'], (int)$live['q_index']]);
@@ -150,7 +183,10 @@ function liveState(PDO $db, array $live, ?string $userId, bool $admin = false): 
         'players' => count($standings), 'joined' => $me !== null,
         'names' => array_slice(array_map(fn($row) => $row['name'], $standings), 0, 12),
         'createdAt' => $live['created_at'], 'finishedAt' => $live['finished_at'],
+        'auto' => (int)($live['auto_next'] ?? 0) === 1, 'pauseSec' => (int)($live['pause_sec'] ?? 8),
     ];
+    if ($status === 'reveal' && $out['auto'] && $live['reveal_ms'] !== null)
+        $out['nextInMs'] = max(0, (int)$live['reveal_ms'] + (int)$live['pause_sec'] * 1000 - liveNowMs());
     if ($me !== null) $out['me'] = ['score' => $me['score'], 'place' => $me['place'], 'correct' => $me['correct'], 'streak' => $me['streak'], 'move' => $me['move']];
     if (in_array($status, ['question', 'reveal'], true)) {
         $question = liveQuestion($db, $live);
@@ -257,6 +293,8 @@ function handleLiveRoutes(PDO $db, array $config, string $method, array $parts):
         $body = requestBody();
         $quizId = (int)($body['quizId'] ?? 0);
         $timeSec = max(5, min(120, (int)($body['timeSec'] ?? 20)));
+        $auto = !empty($body['auto']) ? 1 : 0;
+        $pauseSec = max(3, min(30, (int)($body['pauseSec'] ?? 8)));
         $running = $db->query("SELECT COUNT(*) FROM live_quizzes WHERE status IN ('lobby','question','reveal')")->fetchColumn();
         if ((int)$running > 0) respond(409, ['error' => 'Уже идёт живой квиз. Завершите его, чтобы начать новый.']);
         $quiz = $db->prepare("SELECT id, title FROM quizzes WHERE id = ? AND status = 'published'");
@@ -267,7 +305,7 @@ function handleLiveRoutes(PDO $db, array $config, string $method, array $parts):
         $ids->execute([$quizId]);
         $list = array_map('intval', $ids->fetchAll(PDO::FETCH_COLUMN));
         if (!$list) respond(409, ['error' => 'В тесте нет вопросов.']);
-        $db->prepare('INSERT INTO live_quizzes (quiz_id, time_sec, question_ids) VALUES (?, ?, ?)')->execute([$quizId, $timeSec, json_encode($list)]);
+        $db->prepare('INSERT INTO live_quizzes (quiz_id, time_sec, question_ids, auto_next, pause_sec) VALUES (?, ?, ?, ?, ?)')->execute([$quizId, $timeSec, json_encode($list), $auto, $pauseSec]);
         $id = (int)$db->lastInsertId();
         $push = null;
         if (!empty($body['push'])) $push = livePushAll($db, $config, 'Живой квиз начинается', '«' . $found['title'] . '» — подключайтесь во вкладке «Тесты».');
@@ -282,15 +320,16 @@ function handleLiveRoutes(PDO $db, array $config, string $method, array $parts):
             if (!in_array($live['status'], LIVE_ACTIVE, true)) respond(409, ['error' => 'Квиз уже закончился.']);
             respond(200, livePushAll($db, $config, 'Живой квиз идёт', '«' . $live['title'] . '» — подключайтесь во вкладке «Тесты».'));
         }
-        if ($action === 'start' || $action === 'next') {
-            $from = $action === 'start' ? 'lobby' : 'reveal';
-            if ($live['status'] !== $from) respond(409, ['error' => $action === 'start' ? 'Квиз уже начался.' : 'Сначала покажите ответ на текущий вопрос.']);
-            $nextIndex = (int)$live['q_index'] + 1;
-            if ($nextIndex >= $total) {
-                $db->prepare("UPDATE live_quizzes SET status = 'finished', finished_at = NOW() WHERE id = ?")->execute([$id]);
-            } else {
-                $db->prepare("UPDATE live_quizzes SET status = 'question', q_index = ?, q_started_ms = ? WHERE id = ? AND status = ?")->execute([$nextIndex, liveNowMs(), $id, $from]);
-            }
+        if ($action === 'start') {
+            if ($live['status'] !== 'lobby') respond(409, ['error' => 'Квиз уже начался.']);
+            $db->prepare("UPDATE live_quizzes SET status = 'question', q_index = 0, q_started_ms = ? WHERE id = ? AND status = 'lobby'")->execute([liveNowMs(), $id]);
+        } elseif ($action === 'next') {
+            if ($live['status'] !== 'reveal') respond(409, ['error' => 'Сначала покажите ответ на текущий вопрос.']);
+            liveAdvance($db, $live);
+        } elseif ($action === 'auto' || $action === 'manual') {
+            if (!in_array($live['status'], LIVE_ACTIVE, true)) respond(409, ['error' => 'Квиз уже закончился.']);
+            /* Switching to automatic during an answer counts the pause from now. */
+            $db->prepare('UPDATE live_quizzes SET auto_next = ?, reveal_ms = IF(status = \'reveal\', ?, reveal_ms) WHERE id = ?')->execute([$action === 'auto' ? 1 : 0, liveNowMs(), $id]);
         } elseif ($action === 'reveal') {
             if ($live['status'] !== 'question') respond(409, ['error' => 'Сейчас нет открытого вопроса.']);
             liveReveal($db, $live);

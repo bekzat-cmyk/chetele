@@ -538,7 +538,7 @@ body.app-dark #app #quiz-view .qz-live b,body.app-dark #app #quiz-view .qz-verdi
      every 1.5 s on the live screen, every 15 s while the list is open (for the invitation).
      The server keeps the clock and the score; the app only counts down and shows. */
   const LIVE_ACTIVE = ['lobby', 'question', 'reveal'];
-  const L = { data: null, key: '', deadline: 0, picked: null, late: false, note: '', timer: null, poll: null, on: false };
+  const L = { data: null, key: '', deadline: 0, nextAt: 0, picked: null, late: false, note: '', timer: null, poll: null, on: false };
   const number = n => new Intl.NumberFormat('ru-RU').format(n || 0);
   const initial = name => esc(String(name || '?').trim().charAt(0).toUpperCase() || '?');
   const liveKey = d => d ? `${d.id}:${d.status}:${d.index}` : '';
@@ -569,6 +569,7 @@ body.app-dark #app #quiz-view .qz-live b,body.app-dark #app #quiz-view .qz-verdi
     if (S.screen !== 'live') return;
     if (changed) {
       L.key = key;
+      L.nextAt = data && data.status === 'reveal' && data.nextInMs !== undefined ? Date.now() + data.nextInMs : 0;
       if (data && data.status === 'question') {
         L.deadline = Date.now() + (data.remainingMs || 0);
         L.picked = data.myAnswer ? data.myAnswer.choice : null; L.late = false; L.note = '';
@@ -578,6 +579,11 @@ body.app-dark #app #quiz-view .qz-live b,body.app-dark #app #quiz-view .qz-verdi
     }
     if (!data) return;
     if (data.status === 'lobby') { morph(liveHtml()); return; }
+    /* The admin may switch the automatic mode on or off during an answer. */
+    if (data.status === 'reveal') {
+      const at = data.nextInMs !== undefined ? Date.now() + data.nextInMs : 0;
+      if (Boolean(at) !== Boolean(L.nextAt) || Math.abs(at - L.nextAt) > 1200) { L.nextAt = at; const bottom = root.querySelector('.qz-bottom'), fresh = document.createElement('div'); fresh.innerHTML = liveHtml(); const next = fresh.querySelector('.qz-bottom'); if (bottom && next) bottom.replaceWith(next); liveTimer(); }
+    }
     if (data.status === 'question') {
       const count = root.querySelector('[data-live-count]'); if (count) count.textContent = `Ответили ${data.answered || 0} из ${data.players}`;
       const drift = Date.now() + (data.remainingMs || 0) - L.deadline;
@@ -586,7 +592,13 @@ body.app-dark #app #quiz-view .qz-live b,body.app-dark #app #quiz-view .qz-verdi
   }
   function liveTimer() {
     clearInterval(L.timer); L.timer = null;
-    const d = L.data; if (!d || d.status !== 'question' || S.screen !== 'live') return;
+    const d = L.data; if (!d || S.screen !== 'live') return;
+    if (d.status === 'reveal' && L.nextAt) {
+      const last = d.index + 1 >= d.total;
+      const count = () => { const el = root.querySelector('[data-live-next]'), secs = Math.max(0, Math.ceil((L.nextAt - Date.now()) / 1000)); if (el) el.textContent = `${last ? 'Итоги' : 'Следующий вопрос'} через ${secs} с`; if (secs <= 0) { clearInterval(L.timer); L.timer = null; } };
+      count(); L.timer = setInterval(count, 250); return;
+    }
+    if (d.status !== 'question') return;
     const box = root.querySelector('.qz-timer'), bar = box?.querySelector('i'), label = box?.querySelector('b'); if (!bar) return;
     const limit = d.timeSec * 1000, left = Math.max(0, L.deadline - Date.now());
     bar.style.transition = 'none'; bar.style.transform = `scaleX(${left / limit})`;
@@ -688,7 +700,7 @@ body.app-dark #app #quiz-view .qz-live b,body.app-dark #app #quiz-view .qz-verdi
       const last = d.index + 1 >= d.total;
       return bar + verdict + `<section class="qz-card"><div class="qz-card-head"><b>Как ответили</b><small>${r.right} из ${d.players} верно</small></div>${dist}${r.explanation ? `<span class="qz-muted" style="font-size:13px">${esc(r.explanation)}</span>` : ''}</section>
         <section class="qz-card"><div class="qz-card-head"><b>Таблица после ${d.index + 1} ${plural(d.index + 1, 'вопроса', 'вопросов', 'вопросов')}</b>${d.me ? `<small>вы ${d.me.place}-й</small>` : ''}</div><div class="qz-board">${leaders.map(boardRow).join('')}${meRow}</div></section>
-        <div class="qz-bottom"><span class="qz-cta wait"><span class="qz-dot"></span>${last ? 'Скоро итоги' : 'Следующий вопрос скоро'}</span></div>`;
+        <div class="qz-bottom"><span class="qz-cta wait"><span class="qz-dot"></span><span data-live-next>${L.nextAt ? `${last ? 'Итоги' : 'Следующий вопрос'} через ${Math.max(0, Math.ceil((L.nextAt - Date.now()) / 1000))} с` : last ? 'Скоро итоги' : 'Следующий вопрос скоро'}</span></span></div>`;
     }
 
     /* Finished: the three best on the podium, then everyone else. */
