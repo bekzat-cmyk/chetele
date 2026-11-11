@@ -309,6 +309,48 @@ tbody tr:last-child td{border-bottom:0}
 @media (max-width:1240px){.groups{grid-template-columns:repeat(2,minmax(0,1fr))}.totals{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:860px){.groups{grid-template-columns:minmax(0,1fr)}.totals{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* Pause, moderation, deeds, search and notifications */
+.pill.paused{background:var(--amber-bg);color:var(--amber)}
+.ov-grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr);gap:16px;align-items:start}
+.deed{display:flex;flex-direction:column;gap:6px;padding:8px 0}
+.deed span{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.deed b{font-weight:600}
+.deed small{color:var(--muted);font-size:13px}
+.deed .bar{height:8px}
+.mod-group{display:flex;flex-direction:column;gap:4px}
+.mod-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mod-head .cell-main b{font-size:17px}
+.mod-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid rgba(16,22,26,.06)}
+.mod-row:last-child{border-bottom:0}
+.mod-row>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mod-row b{font-size:14px;font-weight:600}
+.mod-row small{font-size:12px;color:var(--muted)}
+.mod-actions{display:flex;gap:6px;flex:none}
+.btn.ok{border-color:rgba(31,107,79,.25);background:var(--green-bg);color:var(--green)}
+.btn-glass{position:relative}
+.btn-glass .dot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#E0862B;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+.panel{position:fixed;z-index:45;top:84px;right:28px;width:min(400px,calc(100vw - 32px));max-height:calc(100vh - 120px);overflow:auto;padding:16px;border-radius:28px;background:#F6F9F8;box-shadow:0 30px 70px rgba(11,15,18,.28);display:flex;flex-direction:column;gap:10px;animation:rise .25s cubic-bezier(.22,1,.36,1) both}
+.panel h2{margin:4px 4px 2px;font-size:18px;font-weight:600}
+.panel .todo{text-decoration:none}
+.search-layer{place-items:start center;padding-top:12vh}
+.search-box{width:min(560px,100%);padding:14px;border-radius:30px;background:#F6F9F8;box-shadow:0 30px 70px rgba(11,15,18,.3);display:flex;flex-direction:column;gap:8px;animation:rise .25s cubic-bezier(.22,1,.36,1) both}
+.search-box .search{width:100%;height:52px;border-radius:26px}
+.search-box .search input{font-size:16px}
+.results{display:flex;flex-direction:column;max-height:56vh;overflow:auto}
+.results h3{margin:10px 8px 4px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.result{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:18px;text-decoration:none;border:0;background:none;text-align:left;width:100%}
+.result:hover,.result:focus-visible{background:rgba(16,22,26,.05)}
+.result div{flex:1;min-width:0;display:flex;flex-direction:column}
+.result b{font-size:14px;font-weight:600}
+.result small{font-size:12px;color:var(--muted)}
+.secret{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;border-radius:20px;background:#fff;border:1px solid var(--line)}
+.secret code{flex:1;font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
+@media (max-width:1240px){.ov-grid3{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.hide-xs{display:none}}
+/* Six sections fit a phone only as icons. */
+@media (max-width:440px){nav.tabbar a[aria-current=page]{padding:0;width:48px}nav.tabbar a[aria-current=page] span{display:none}}
+@media (max-width:860px){.panel{top:auto;bottom:96px;right:16px}}
+
 /* Dialog and toast */
 .layer{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(11,15,18,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .2s ease both}
 @keyframes fade{from{opacity:0}}
@@ -380,6 +422,7 @@ tbody tr:last-child td{border-bottom:0}
       <a href="#events" data-route="events"><span data-icon="flag"></span>События<em id="nav-events"></em></a>
       <a href="#users" data-route="users"><span data-icon="users"></span>Участники<em id="nav-users"></em></a>
       <a href="#groups" data-route="groups"><span data-icon="group"></span>Группы<em id="nav-groups"></em></a>
+      <a href="#moderation" data-route="moderation"><span data-icon="shield"></span>Модерация<em id="nav-moderation"></em></a>
       <a href="#settings" data-route="settings"><span data-icon="sliders"></span>Настройки<em></em></a>
     </nav>
     <div class="side-status"><span id="app-version">Сайт работает</span><a href="/" target="_blank" rel="noopener">Открыть приложение<i data-icon="arrow"></i></a></div>
@@ -391,6 +434,7 @@ tbody tr:last-child td{border-bottom:0}
     <a href="#events" data-route="events" aria-label="События"><i data-icon="flag"></i><span>События</span></a>
     <a href="#users" data-route="users" aria-label="Участники"><i data-icon="users"></i><span>Участники</span></a>
     <a href="#groups" data-route="groups" aria-label="Группы"><i data-icon="group"></i><span>Группы</span></a>
+    <a href="#moderation" data-route="moderation" aria-label="Модерация"><i data-icon="shield"></i><span>Модерация</span></a>
     <a href="#settings" data-route="settings" aria-label="Настройки"><i data-icon="sliders"></i><span>Настройки</span></a>
   </nav>
 </div>
@@ -409,6 +453,7 @@ tbody tr:last-child td{border-bottom:0}
     arrow:'M7 17L17 7M9 7h8v8', lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3', phone:'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 18h2',
     rating:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5',
     copy:'M8 8h11v12H8zM5 16V4h11', group:'M8 7.5a3 3 0 1 0 0 .01M16 7.5a3 3 0 1 0 0 .01M2.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5M10.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5',
+    shield:'M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6zM9 12l2 2 4-4', bell:'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0', pause:'M9 6v12M15 6v12', play:'M8 5.5v13l10-6.5z', send:'M4 12l16-8-6 16-2.5-6.5zM11.5 13.5L20 4', key:'M14.5 9.5a4 4 0 1 0-3.4 4L5 19.5V21h3v-2h2v-2h2l1.1-1.1a4 4 0 0 0 1.4-6.4zM16 8h.01',
     download:'M12 4v11M7 10l5 5 5-5M5 20h14', flame:'M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.6 2 3 0-3 .5-5.5.5-8z', alert:'M12 4l9 16H3zM12 10v4M12 17.5h.01', refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
     salawat:'M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2',
     zikr:'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM8.5 7h7v4h-7zM10 16a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
@@ -451,11 +496,12 @@ tbody tr:last-child td{border-bottom:0}
   const metricOf = e => METRICS[e.metric] || METRICS.salawat;
   const MODES = { common_goal: 'Общая цель', personal_path: 'Личный путь' };
   function stateOf(e) {
+    if (e.status === 'paused') return e.ends_on < dayKey() ? 'finished' : 'paused';
     if (e.status !== 'published') return e.status || 'draft';
     const today = dayKey();
     return e.ends_on < today ? 'finished' : e.starts_on > today ? 'published' : 'active';
   }
-  const STATE_LABEL = { active: 'Идёт', published: 'Скоро', draft: 'Черновик', finished: 'Завершено' };
+  const STATE_LABEL = { active: 'Идёт', published: 'Скоро', draft: 'Черновик', finished: 'Завершено', paused: 'Пауза' };
   const progressOf = e => Number(e.total_progress) || 0;
   const pctOf = e => Math.min(100, Math.round(progressOf(e) / Math.max(1, Number(e.goal)) * 100));
   const period = e => `${shortDate(e.starts_on)} — ${shortDate(e.ends_on)}`;
@@ -479,7 +525,8 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   /* ---------- Data ---------- */
-  const data = { events: null, users: null, overview: null, settings: null, groups: null };
+  const data = { events: null, users: null, overview: null, settings: null, groups: null, moderation: null };
+  async function loadModeration(force) { if (force || !data.moderation) data.moderation = await req('admin/moderation'); $('#nav-moderation').textContent = data.moderation.length || ''; paintBell(); return data.moderation; }
   async function loadGroups(force) { if (force || !data.groups) data.groups = await req('admin/groups'); $('#nav-groups').textContent = data.groups.length || ''; return data.groups; }
   async function loadEvents(force) { if (force || !data.events) data.events = await req('admin/events'); paintCounts(); return data.events; }
   async function loadUsers(force) { if (force || !data.users) data.users = await req('admin/users'); paintCounts(); return data.users; }
@@ -493,9 +540,11 @@ tbody tr:last-child td{border-bottom:0}
   const top = (kicker, title, sub, actions = '') => `<header class="top"><div class="top-copy"><span>${kicker}</span><h1>${title}</h1><p>${sub}</p></div><div class="top-actions">${actions}</div></header>`;
   const createBtn = `<a class="btn black" href="#events/new">${icon('plus')}Создать событие</a>`;
   const refreshBtn = `<button type="button" class="btn-glass" data-refresh aria-label="Обновить данные">${icon('refresh')}</button>`;
+  /* Search and notifications sit in every section's header. */
+  const tools = () => `<button type="button" class="btn-glass" data-search aria-label="Поиск" title="Поиск (/)">${icon('search')}</button><button type="button" class="btn-glass" data-bell aria-label="Уведомления" aria-haspopup="dialog">${icon('bell')}<span class="dot" id="bell-dot" hidden></span></button>`;
   /* The page rises in only when the section changes, not on every repaint. */
   let shownView = '';
-  function mount(html, key) { main.innerHTML = `<div class="view${key === shownView ? ' still' : ''}">${html}</div>`; shownView = key; }
+  function mount(html, key) { main.innerHTML = `<div class="view${key === shownView ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
   function loading(title) { mount(top('Chetele', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
   function failed(title, error) { mount(top('Chetele', title, 'Не удалось загрузить') + `<section class="glass card"><div class="empty">${esc(error.message)}<br><br><button type="button" class="btn small" data-refresh>Повторить</button></div></section>`, 'failed'); }
 
@@ -503,7 +552,7 @@ tbody tr:last-child td{border-bottom:0}
   async function showOverview() {
     loading('Обзор');
     let ov, events;
-    try { [ov, events] = await Promise.all([req('admin/overview'), loadEvents(true)]); data.overview = ov; }
+    try { [ov, events] = await Promise.all([req('admin/overview'), loadEvents(true), loadModeration(true)]); data.overview = ov; }
     catch (error) { failed('Обзор', error); return; }
     const today = dayKey(), byDay = Object.fromEntries((ov.activity || []).map(r => [String(r.date).slice(0, 10), Number(r.entries) || 0]));
     const days = Array.from({ length: 30 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - 29 + i); const key = dayKey(d); return { key, n: byDay[key] || 0 }; });
@@ -521,13 +570,18 @@ tbody tr:last-child td{border-bottom:0}
     const recent = (ov.recentUsers || []).map(u => `<div class="person"><span class="avatar">${esc((u.display_name || '?').slice(0, 1))}</span><div><b>${esc(u.display_name)}</b><small>зарегистрировался</small></div><small class="muted">${relDay(u.created_at)}</small></div>`).join('') || '<div class="empty">Пока никого.</div>';
 
     const todos = [];
+    const waiting = data.moderation || [];
+    if (waiting.length) { const titles = [...new Set(waiting.map(w => w.title))]; todos.push(['amber', 'shield', `${num(waiting.length)} ${plural(waiting.length, 'заявка ждёт', 'заявки ждут', 'заявок ждут')} проверки`, `${titles.slice(0, 2).map(x => `«${esc(x)}»`).join(', ')}${titles.length > 2 ? ` и ещё ${titles.length - 2}` : ''} · ручная модерация`, 'Проверить', '#moderation']); }
     events.filter(e => stateOf(e) === 'draft').forEach(e => todos.push(['', 'pen', `Черновик «${esc(e.title)}»`, 'Ещё не опубликован', 'Открыть', `#events/${e.id}/edit`]));
-    active.filter(e => daysBetween(today, e.ends_on) <= 3).forEach(e => { const left = daysBetween(today, e.ends_on); todos.push(['indigo', 'clock', `«${esc(e.title)}» ${left ? `кончится через ${left} ${plural(left, 'день', 'дня', 'дней')}` : 'кончается сегодня'}`, `Цель выполнена на ${pctOf(e)}%`, 'Открыть', `#events/${e.id}`]); });
+    active.filter(e => daysBetween(today, e.ends_on) <= 3).forEach(e => { const left = daysBetween(today, e.ends_on); todos.push(['indigo', 'clock', `«${esc(e.title)}» ${left ? `кончится через ${left} ${plural(left, 'день', 'дня', 'дней')}` : 'кончается сегодня'}`, e.mode === 'personal_path' ? 'Напомните участникам о личном пути' : `Цель выполнена на ${pctOf(e)}% — напомнить участникам?`, 'Напомнить', `remind:${e.id}`]); });
     active.filter(e => !(Number(e.participant_count) > 0)).forEach(e => todos.push(['amber', 'users', `В «${esc(e.title)}» пока нет участников`, 'Событие уже идёт — расскажите о нём сообществу', 'Открыть', `#events/${e.id}`]));
-    const todoHtml = todos.length ? todos.slice(0, 5).map(([tone, ic, title, text, btn, href]) => `<div class="todo ${tone}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div><a class="btn small" href="${href}">${btn}</a></div>`).join('') : `<div class="all-good">${icon('check')}Всё в порядке — ничего не ждёт вашего внимания.</div>`;
+    const todoHtml = todos.length ? todos.slice(0, 5).map(([tone, ic, title, text, btn, href]) => `<div class="todo ${tone}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div>${href.startsWith('remind:') ? `<button type="button" class="btn small" data-remind="${href.slice(7)}">${btn}</button>` : `<a class="btn small" href="${href}">${btn}</a>`}</div>`).join('') : `<div class="all-good">${icon('check')}Всё в порядке — ничего не ждёт вашего внимания.</div>`;
 
+    const DEEDS = [['salawat', 'Салават'], ['tasbihat', 'Тасбихат'], ['quran', 'Куран'], ['nafil', 'Нафиль-намазы'], ['jauchan', 'Джаушан'], ['kitap', 'Чтение книги'], ['tahajjud', 'Тахаджуд'], ['qaza', 'Каза-намазы'], ['fast', 'Пост']];
+    const deedsToday = ov.deedsToday || {}, deedRows = DEEDS.map(([k, l]) => [l, Number(deedsToday[k]) || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const deedHtml = deedRows.length ? deedRows.map(([l, n]) => `<div class="deed"><span><b>${l}</b><small>${num(n)} ${plural(n, 'человек', 'человека', 'человек')}</small></span><i class="bar"><i style="width:${Math.round(n / Math.max(1, todayEntries) * 100)}%"></i></i></div>`).join('') : '<div class="empty">Сегодня пока никто не отметил дела.</div>';
     const weekday = new Intl.DateTimeFormat('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
-    mount(top(`Ассаламу алейкум, ${esc(cred.login)}`, 'Обзор', weekday[0].toUpperCase() + weekday.slice(1), refreshBtn + createBtn) + `
+    mount(top(`Ассаламу алейкум, ${esc(cred.login)}`, 'Обзор', weekday[0].toUpperCase() + weekday.slice(1), tools() + refreshBtn + createBtn) + `
       <div class="kpis">
         ${kpi('users', num(users), 'участников всего', ov.newUsersPeriod ? `+${num(ov.newUsersPeriod)} за 30 дней` : '')}
         ${kpi('check', num(todayEntries), 'отметили дела сегодня', users ? `${Math.round(todayEntries / users * 100)}% от всех` : '')}
@@ -543,8 +597,9 @@ tbody tr:last-child td{border-bottom:0}
         </section>
         <section class="glass card"><div class="card-head"><h2>События сейчас</h2><a class="link" href="#events">Все${icon('chev')}</a></div>${nowHtml}</section>
       </div>
-      <div class="ov-grid2">
+      <div class="ov-grid3">
         <section class="glass card"><div class="card-head"><h2>Новые участники</h2><a class="link" href="#users">Все ${num(users)}${icon('chev')}</a></div><div>${recent}</div></section>
+        <section class="glass card"><div class="card-head"><h2>Что отмечают чаще</h2><span class="chip">сегодня</span></div><div>${deedHtml}</div></section>
         <section class="glass card"><div class="card-head"><h2>Требует внимания</h2>${todos.length ? `<span class="chip" style="background:var(--amber-bg);color:var(--amber)">${todos.length}</span>` : ''}</div>${todoHtml}</section>
       </div>`, 'overview');
   }
@@ -571,7 +626,7 @@ tbody tr:last-child td{border-bottom:0}
         <td><span class="pill ${st}">${STATE_LABEL[st] || st}</span></td>
         <td class="right hide-sm"><span class="menu-wrap"><button type="button" class="btn small icon" data-menu="${e.id}" aria-label="Действия с событием" aria-haspopup="menu">${icon('more')}</button></span></td>
       </tr>`; }).join('') : `<tr><td colspan="5" class="wide"><div class="empty">${events.length ? 'По этому фильтру событий нет.' : 'Событий пока нет. Создайте первое — оно сразу появится в приложении.'}</div></td></tr>`;
-    mount(top('Управление', 'События', `${num(events.length)} ${plural(events.length, 'событие', 'события', 'событий')} · ${running} ${plural(running, 'идёт', 'идут', 'идут')} сейчас`, refreshBtn + createBtn) + `
+    mount(top('Управление', 'События', `${num(events.length)} ${plural(events.length, 'событие', 'события', 'событий')} · ${running} ${plural(running, 'идёт', 'идут', 'идут')} сейчас`, tools() + refreshBtn + createBtn) + `
       <div class="split">
         <section class="glass card">
           <div class="toolbar"><div class="seg" role="group" aria-label="Статус">${TABS.map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${ev.tab === k}">${l} · ${counts[k]}</button>`).join('')}</div>
@@ -592,26 +647,45 @@ tbody tr:last-child td{border-bottom:0}
       pace = done >= goal ? 'Цель уже достигнута, ма ша Аллах' : `Чтобы успеть, нужно ~${num(need)} в день — сейчас ${num(have)}`;
     } else if (st === 'published') pace = `Начнётся через ${daysBetween(today, e.starts_on)} ${plural(daysBetween(today, e.starts_on), 'день', 'дня', 'дней')}`;
     else if (st === 'finished') pace = done >= goal ? 'Цель выполнена' : 'Событие завершилось';
+    else if (st === 'paused') pace = 'На паузе: в приложении видно, но вступить нельзя';
     else pace = 'Черновик: участники увидят событие после публикации';
-    const when = st === 'active' ? `осталось ${left} ${plural(left, 'день', 'дня', 'дней')}` : st === 'published' ? 'ещё не началось' : st === 'finished' ? 'завершено' : 'черновик';
+    const when = st === 'active' ? `осталось ${left} ${plural(left, 'день', 'дня', 'дней')}` : st === 'published' ? 'ещё не началось' : st === 'finished' ? 'завершено' : st === 'paused' ? 'на паузе' : 'черновик';
+    const pending = Number(e.pending_count) || 0;
     return `<div class="d-close"><span class="pill ${st}">${STATE_LABEL[st]}</span><button type="button" class="btn small icon" data-close-detail aria-label="Закрыть карточку">${icon('x')}</button></div>
       <div class="d-title"><b>${esc(e.title)}</b><small>${MODES[e.mode] || ''} · ${period(e)} · ${when}</small></div>
       <div class="d-dark"><span><b>${num(done)}</b><small>из ${num(goal)} ${m.unit}</small></span><i class="bar"><i style="width:${pctOf(e)}%"></i></i><small>${pace}</small></div>
       <div class="d-stats"><span><b>${num(e.participant_count)}</b><small>${plural(Number(e.participant_count) || 0, 'участник', 'участника', 'участников')}</small></span><span><b>${pctOf(e)}%</b><small>цели</small></span></div>
-      <div class="d-rows"><span><em>Считаем</em>${m.label}</span><span><em>Рейтинг</em>${Number(e.leaderboard_enabled) === 0 ? 'выключен' : 'включён'}</span><span><em>Имена в рейтинге</em>${({ names: 'полностью', initials: 'инициалы', anonymous: 'анонимно' })[e.results_visibility] || 'полностью'}</span>${e.description ? `<span><em>Описание</em><span style="padding:0;border:0;text-align:right;max-width:200px">${esc(e.description)}</span></span>` : ''}</div>
-      <div class="d-actions"><a class="btn black" href="#events/${e.id}/edit">${icon('pen')}Изменить</a><button type="button" class="btn danger" data-delete-event="${e.id}" aria-label="Удалить событие">${icon('trash')}</button></div>`;
+      <div class="d-rows"><span><em>Считаем</em>${m.label}</span><span><em>Рейтинг</em>${Number(e.leaderboard_enabled) === 0 ? 'выключен' : 'включён'}</span><span><em>Имена в рейтинге</em>${({ names: 'полностью', initials: 'инициалы', anonymous: 'анонимно' })[e.results_visibility] || 'полностью'}</span><span><em>Ручная проверка</em>${Number(e.moderation) ? (pending ? `<a class="link" href="#moderation">${num(pending)} ${plural(pending, 'заявка ждёт', 'заявки ждут', 'заявок ждут')}${icon('chev')}</a>` : 'включена') : 'выключена'}</span><span><em>Напомнить за день до конца</em>${Number(e.remind_before_end) === 0 ? 'нет' : 'да'}</span>${e.description ? `<span><em>Описание</em><span style="padding:0;border:0;text-align:right;max-width:200px">${esc(e.description)}</span></span>` : ''}</div>
+      <div class="d-actions"><a class="btn black" href="#events/${e.id}/edit">${icon('pen')}Изменить</a>${st === 'active' || st === 'published' ? `<button type="button" class="btn" data-pause="${e.id}">${icon('pause')}Пауза</button>` : st === 'paused' ? `<button type="button" class="btn" data-resume="${e.id}">${icon('play')}Продолжить</button>` : ''}<button type="button" class="btn danger icon" style="flex:none;width:46px" data-delete-event="${e.id}" aria-label="Удалить событие">${icon('trash')}</button></div>
+      ${st === 'active' ? `<button type="button" class="btn" data-remind="${e.id}">${icon('send')}Напомнить участникам</button>` : ''}`;
   }
   function openMenu(button) {
     document.querySelector('.menu')?.remove();
     const id = button.dataset.menu, e = data.events.find(x => String(x.id) === id); if (!e) return;
     const menu = document.createElement('div'); menu.className = 'menu'; menu.setAttribute('role', 'menu');
-    menu.innerHTML = `<button type="button" role="menuitem" data-edit="${id}">${icon('pen')}Изменить</button><button type="button" role="menuitem" data-copy="${id}">${icon('copy')}Дублировать</button><button type="button" role="menuitem" class="danger" data-delete-event="${id}">${icon('trash')}Удалить</button>`;
+    const st = stateOf(e);
+    menu.innerHTML = `<button type="button" role="menuitem" data-edit="${id}">${icon('pen')}Изменить</button><button type="button" role="menuitem" data-copy="${id}">${icon('copy')}Дублировать</button>${st === 'active' || st === 'published' ? `<button type="button" role="menuitem" data-pause="${id}">${icon('pause')}Пауза</button>` : st === 'paused' ? `<button type="button" role="menuitem" data-resume="${id}">${icon('play')}Продолжить</button>` : ''}${st === 'active' ? `<button type="button" role="menuitem" data-remind="${id}">${icon('send')}Напомнить</button>` : ''}<button type="button" role="menuitem" class="danger" data-delete-event="${id}">${icon('trash')}Удалить</button>`;
     button.parentElement.append(menu); menu.querySelector('button').focus();
   }
   async function deleteEvent(id) {
     const e = data.events.find(x => String(x.id) === String(id)); if (!e) return;
     if (!await confirmDialog({ title: 'Удалить событие?', text: `«${e.title}» исчезнет из приложения вместе с прогрессом участников. Это нельзя отменить.` })) return;
     try { await req(`admin/events/${id}`, { method: 'DELETE' }); ev.selected = null; await loadEvents(true); paintEvents(); toast('Событие удалено'); }
+    catch (error) { toast(error.message); }
+  }
+
+  async function setPaused(id, paused) {
+    document.querySelector('.menu')?.remove();
+    const e = data.events.find(x => String(x.id) === String(id)); if (!e) return;
+    if (paused && !await confirmDialog({ title: 'Поставить на паузу?', text: `«${e.title}» останется в приложении с пометкой «На паузе», но вступить в него будет нельзя. Отметки участников продолжат считаться.`, action: 'Пауза', danger: false, iconName: 'pause' })) return;
+    try { await send(`admin/events/${id}/pause`, 'POST', { paused }); await loadEvents(true); if (location.hash.startsWith('#events')) paintEvents(); toast(paused ? 'Событие на паузе' : 'Событие снова идёт'); }
+    catch (error) { toast(error.message); }
+  }
+  async function remind(id) {
+    document.querySelector('.menu')?.remove();
+    const e = (data.events || []).find(x => String(x.id) === String(id)); if (!e) return;
+    if (!await confirmDialog({ title: 'Напомнить участникам?', text: `Участники «${e.title}» с включёнными уведомлениями получат push. Отправить можно раз в час.`, action: 'Отправить', danger: false, iconName: 'send' })) return;
+    try { const r = await send(`admin/events/${id}/remind`, 'POST', {}); toast(r.targets ? `Отправлено: ${r.sent} из ${r.targets}` : 'Ни у кого из участников не включены уведомления'); }
     catch (error) { toast(error.message); }
   }
 
@@ -625,9 +699,9 @@ tbody tr:last-child td{border-bottom:0}
       if (id || copyFrom) { item = data.events.find(e => String(e.id) === String(id || copyFrom)); if (!item) throw Error('Событие не найдено.'); }
     } catch (error) { failed('Событие', error); return; }
     const start = new Date(), end = new Date(); end.setDate(end.getDate() + 13);
-    const v = item ? { ...item, title: copyFrom ? item.title + ' (копия)' : item.title } : { title: '', description: '', mode: 'common_goal', metric: 'salawat', goal: 100000, starts_on: dayKey(start), ends_on: dayKey(end), leaderboard_enabled: settings.defaultLeaderboard ? 1 : 0, results_visibility: settings.defaultVisibility || 'names', status: 'draft' };
+    const v = item ? { ...item, title: copyFrom ? item.title + ' (копия)' : item.title } : { title: '', description: '', mode: 'common_goal', metric: 'salawat', goal: 100000, starts_on: dayKey(start), ends_on: dayKey(end), leaderboard_enabled: settings.defaultLeaderboard ? 1 : 0, results_visibility: settings.defaultVisibility || 'names', moderation: settings.defaultModeration ? 1 : 0, remind_before_end: 1, status: 'draft' };
     if (copyFrom) { v.starts_on = dayKey(start); v.ends_on = dayKey(end); }
-    const editing = Boolean(id), published = editing && item.status === 'published';
+    const editing = Boolean(id), published = editing && (item.status === 'published' || item.status === 'paused');
     const metricCard = (key, m) => `<label class="metric"><input type="radio" name="metric" value="${key}" ${v.metric === key ? 'checked' : ''}><i>${icon(m.icon)}</i>${m.label}</label>`;
     const optionCard = (val, label) => `<label class="option"><input type="radio" name="visibility" value="${val}" ${(v.results_visibility || 'names') === val ? 'checked' : ''}>${label}</label>`;
     mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#events${editing ? '/' + id : ''}" aria-label="Назад к событиям">${icon('back')}</a><div class="top-copy"><span>События${editing ? ' · ' + (published ? 'опубликовано' : 'черновик') : ''}</span><h1>${editing ? 'Изменить событие' : 'Новое событие'}</h1></div></div>
@@ -655,6 +729,10 @@ tbody tr:last-child td{border-bottom:0}
             <label class="toggle"><div><b>Рейтинг внутри события</b><small>Участники видят места и очки</small></div><input type="checkbox" name="leaderboard" ${Number(v.leaderboard_enabled) === 0 ? '' : 'checked'}><span class="switch" aria-hidden="true"></span></label>
             <div class="field"><span>Как показывать участников</span><div class="options">${optionCard('names', 'Имя')}${optionCard('initials', 'Инициалы')}${optionCard('anonymous', 'Анонимно')}</div></div>
           </section>
+          <section class="glass card"><div class="card-head"><h2>Участники и напоминания</h2></div>
+            <div><label class="toggle"><div><b>Ручная проверка</b><small>Новые участники ждут вашего одобрения в «Модерации»; до него их отметки не засчитываются</small></div><input type="checkbox" name="moderation" ${Number(v.moderation) ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label>
+            <label class="toggle"><div><b>Напомнить за день до конца</b><small>Push участникам накануне последнего дня, в 18:00</small></div><input type="checkbox" name="remind" ${Number(v.remind_before_end) === 0 ? '' : 'checked'}><span class="switch" aria-hidden="true"></span></label></div>
+          </section>
           <p id="form-error" class="error" role="alert"></p>
         </form>
         <div class="preview" aria-hidden="true"><span>${icon('phone')}Так увидят в приложении</span><div class="phone"><h3>События</h3><div class="p-card"><div class="p-head"><span id="pv-mode"></span><span id="pv-left"></span></div><div class="p-body"><span><span class="circle" id="pv-icon"></span><b id="pv-title"></b></span><small id="pv-desc"></small><i class="bar"><i style="width:${editing ? pctOf(item) : 0}%"></i></i><div class="p-foot"><b id="pv-goal"></b><span class="muted">${editing ? num(item.participant_count) : 0} участников</span></div><span class="p-btn">Участвовать</span></div></div></div></div>
@@ -679,15 +757,15 @@ tbody tr:last-child td{border-bottom:0}
     form.addEventListener('input', syncPreview); form.addEventListener('change', syncPreview); syncPreview();
     form.addEventListener('submit', async event => {
       event.preventDefault();
-      const f = new FormData(form), button = event.submitter, status = button?.dataset.status || 'published';
-      const body = { title: f.get('title').trim(), description: f.get('description').trim(), goal: Math.round(Number(f.get('goal'))), startsOn: f.get('startsOn'), endsOn: f.get('endsOn'), metric: f.get('metric'), mode: f.get('mode'), status, leaderboardEnabled: f.get('leaderboard') === 'on', resultsVisibility: f.get('visibility') };
+      const f = new FormData(form), button = event.submitter, chosen = button?.dataset.status || 'published', status = chosen === 'published' && editing && item.status === 'paused' ? 'paused' : chosen;
+      const body = { title: f.get('title').trim(), description: f.get('description').trim(), goal: Math.round(Number(f.get('goal'))), startsOn: f.get('startsOn'), endsOn: f.get('endsOn'), metric: f.get('metric'), mode: f.get('mode'), status, leaderboardEnabled: f.get('leaderboard') === 'on', resultsVisibility: f.get('visibility'), moderation: f.get('moderation') === 'on', remindBeforeEnd: f.get('remind') === 'on' };
       const error = !body.title ? 'Введите название события.' : !(body.goal >= 1) ? 'Цель должна быть больше нуля.' : !body.startsOn || !body.endsOn || body.endsOn < body.startsOn ? 'Проверьте даты: окончание не раньше начала.' : '';
       $('#form-error').textContent = error; if (error) return;
       document.querySelectorAll('[form=event-form]').forEach(b => { b.disabled = true; });
       try {
         const saved = editing ? await send(`admin/events/${id}`, 'PUT', body) : await send('admin/events', 'POST', body);
         await loadEvents(true);
-        toast(status === 'draft' ? 'Черновик сохранён' : editing ? 'Изменения сохранены' : 'Событие опубликовано');
+        toast(status === 'draft' ? 'Черновик сохранён' : editing ? 'Изменения сохранены' : 'Событие опубликовано'); data.moderation = null;
         location.hash = `#events/${editing ? id : saved.id}`;
       } catch (err) { $('#form-error').textContent = err.message; document.querySelectorAll('[form=event-form]').forEach(b => { b.disabled = false; }); }
     });
@@ -711,15 +789,16 @@ tbody tr:last-child td{border-bottom:0}
     const rows = shown.length ? shown.map(u => `<tr data-user="${esc(u.id)}" aria-selected="${selected && selected.id === u.id}">
         <td class="wide"><span class="cell-main"><span class="avatar">${esc((u.display_name || '?').slice(0, 1))}</span><div><b>${esc(u.display_name)}</b><small>@${esc(u.login || '—')}</small></div></span></td>
         <td class="hide-sm">${relDay(u.created_at)}</td>
+        <td class="hide-sm">${u.last_active ? relDay(u.last_active) : '<span class="muted">ещё не отмечал</span>'}</td>
         <td><b>${num(u.points)}</b> <small class="muted">очков</small></td>
         <td class="hide-sm">${num(u.event_count)}</td>
-      </tr>`).join('') : `<tr><td colspan="4" class="wide"><div class="empty">${users.length ? 'Никого не нашли.' : 'Участников пока нет.'}</div></td></tr>`;
-    mount(top('Сообщество', 'Участники', `${num(users.length)} ${plural(users.length, 'человек', 'человека', 'человек')} · ${num(fresh.length)} новых за 30 дней`, refreshBtn) + `
+      </tr>`).join('') : `<tr><td colspan="5" class="wide"><div class="empty">${users.length ? 'Никого не нашли.' : 'Участников пока нет.'}</div></td></tr>`;
+    mount(top('Сообщество', 'Участники', `${num(users.length)} ${plural(users.length, 'человек', 'человека', 'человек')} · ${num(fresh.length)} новых за 30 дней`, tools() + refreshBtn + `<button type="button" class="btn" data-users-csv>${icon('download')}Выгрузить CSV</button>`) + `
       <div class="split">
         <section class="glass card">
           <div class="toolbar"><div class="seg" role="group" aria-label="Фильтр">${[['all', `Все · ${num(users.length)}`], ['new', `Новые · ${num(fresh.length)}`], ['events', `В событиях · ${num(users.filter(u => Number(u.event_count) > 0).length)}`]].map(([k, l]) => `<button type="button" data-ufilter="${k}" aria-pressed="${us.filter === k}">${l}</button>`).join('')}</div>
             <span><label class="search">${icon('search')}<input id="us-search" type="search" placeholder="Имя или логин" aria-label="Найти участника" value="${esc(us.query)}"></label></span></div>
-          <table><thead><tr><th>Участник</th><th>С нами с</th><th>Очки</th><th>События</th></tr></thead><tbody>${rows}</tbody></table>
+          <table><thead><tr><th>Участник</th><th>С нами с</th><th>Последняя отметка</th><th>Очки</th><th>События</th></tr></thead><tbody>${rows}</tbody></table>
           ${list.length > shown.length ? `<small class="muted">Показаны первые ${shown.length} из ${num(list.length)} — уточните поиск</small>` : ''}
         </section>
         <aside class="glass card detail" aria-label="Карточка участника">${selected ? userDetail(selected) : `<div class="detail-empty"><span class="circle">${icon('users')}</span>Выберите участника, чтобы увидеть его карточку.</div>`}</aside>
@@ -730,14 +809,37 @@ tbody tr:last-child td{border-bottom:0}
     const joined = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).format(parseDay(u.created_at));
     return `<div class="d-close"><span class="cell-main"><span class="avatar" style="width:52px;height:52px;font-size:20px">${esc((u.display_name || '?').slice(0, 1))}</span><div><b style="font-size:20px;letter-spacing:-.02em">${esc(u.display_name)}</b><small>@${esc(u.login || '—')}</small></div></span><button type="button" class="btn small icon" data-close-user aria-label="Закрыть карточку">${icon('x')}</button></div>
       <div class="d-stats three"><span><b>#${rank}</b><small>по очкам</small></span><span><b>${num(u.points)}</b><small>очков</small></span><span><b>${num(u.event_count)}</b><small>${plural(Number(u.event_count) || 0, 'событие', 'события', 'событий')}</small></span></div>
-      <div class="d-rows"><span><em>С нами с</em>${joined}</span><span><em>Логин</em>@${esc(u.login || '—')}</span></div>
-      <button type="button" class="btn danger" data-delete-user="${esc(u.id)}">${icon('trash')}Удалить аккаунт</button>`;
+      <div class="d-rows"><span><em>С нами с</em>${joined}</span><span><em>Логин</em>@${esc(u.login || '—')}</span><span><em>Последняя отметка</em>${u.last_active ? relDay(u.last_active) : 'ещё не было'}</span><span><em>Дней с отметками</em>${num(u.active_days)}</span><span><em>Уведомления</em>${Number(u.push_devices) ? `включены · ${num(u.push_devices)} ${plural(Number(u.push_devices), 'устройство', 'устройства', 'устройств')}` : 'выключены'}</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><button type="button" class="btn" data-reset-pass="${esc(u.id)}">${icon('lock')}Сбросить пароль</button>
+      <button type="button" class="btn danger" data-delete-user="${esc(u.id)}">${icon('trash')}Удалить аккаунт</button></div>`;
   }
   async function deleteUser(id) {
     const u = data.users.find(x => x.id === id); if (!u) return;
     if (!await confirmDialog({ title: 'Удалить аккаунт?', text: `Будут удалены аккаунт «${u.display_name}», все его отметки, участие в событиях и напоминания. Это нельзя отменить.` })) return;
     try { await req(`admin/users/${id}`, { method: 'DELETE' }); us.selected = null; await loadUsers(true); data.events = data.groups = null; paintUsers(); toast('Аккаунт удалён'); }
     catch (error) { toast(error.message); }
+  }
+
+  /* A temporary password is shown once; the admin passes it on and the member changes nothing else. */
+  async function resetPassword(id) {
+    const u = data.users.find(x => x.id === id); if (!u) return;
+    if (!await confirmDialog({ title: 'Сбросить пароль?', text: `Для «${u.display_name}» создадим временный пароль. Старый перестанет работать, а все устройства выйдут из аккаунта.`, action: 'Сбросить', danger: false, iconName: 'lock' })) return;
+    let result; try { result = await send(`admin/users/${id}/password`, 'POST', {}); } catch (error) { toast(error.message); return; }
+    const layer = document.createElement('div'); layer.className = 'layer';
+    layer.innerHTML = `<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="pw-title"><span class="circle" style="color:var(--green)">${icon('check')}</span><h2 id="pw-title">Новый пароль готов</h2><p>Передайте его участнику лично. Вход: логин <b>@${esc(u.login)}</b> и этот пароль. Больше мы его не покажем.</p><div class="secret"><code>${esc(result.password)}</code><button type="button" class="btn small" data-copy-pass>${icon('copy')}Копировать</button></div><div class="dialog-actions"><button type="button" class="btn black" data-no>Готово</button></div></section>`;
+    const close = () => { layer.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = event => { if (event.key === 'Escape') close(); };
+    layer.addEventListener('click', async event => {
+      if (event.target.closest('[data-no]')) close();
+      if (event.target.closest('[data-copy-pass]')) { try { await navigator.clipboard.writeText(result.password); toast('Пароль скопирован'); } catch { toast('Скопируйте вручную'); } }
+    });
+    document.addEventListener('keydown', onKey); document.body.append(layer); layer.querySelector('[data-copy-pass]').focus();
+  }
+  function usersCsv() {
+    const cell = v => { const s = String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const rows = [['Имя', 'Логин', 'Регистрация', 'Последняя отметка', 'Дней с отметками', 'Очки', 'События', 'Уведомления'], ...data.users.map(u => [u.display_name, u.login, String(u.created_at).slice(0, 10), u.last_active ? String(u.last_active).slice(0, 10) : '', Number(u.active_days) || 0, Number(u.points) || 0, Number(u.event_count) || 0, Number(u.push_devices) ? 'да' : 'нет'])];
+    const blob = new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `chetele-участники-${dayKey()}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
   /* ---------- Groups ---------- */
@@ -758,7 +860,7 @@ tbody tr:last-child td{border-bottom:0}
         </div>
       </a>`;
     };
-    mount(top('Сообщество', 'Группы', groups.length ? `${groups.length} ${plural(groups.length, 'группа', 'группы', 'групп')} · отчёты по каждой` : 'Объедините участников и смотрите отчёт по ним', refreshBtn + `<a class="btn black" href="#groups/new">${icon('plus')}Создать группу</a>`) + `
+    mount(top('Сообщество', 'Группы', groups.length ? `${groups.length} ${plural(groups.length, 'группа', 'группы', 'групп')} · отчёты по каждой` : 'Объедините участников и смотрите отчёт по ним', tools() + refreshBtn + `<a class="btn black" href="#groups/new">${icon('plus')}Создать группу</a>`) + `
       <div class="groups">${groups.map(card).join('')}<a class="glass group-card group-new" href="#groups/new"><span class="circle">${icon('plus')}</span><b>Новая группа</b><small class="muted">Семья, класс, кружок при мечети — кого угодно</small></a></div>`, 'groups');
   }
 
@@ -883,6 +985,34 @@ tbody tr:last-child td{border-bottom:0}
     catch (error) { toast(error.message); }
   }
 
+  /* ---------- Moderation ---------- */
+  async function showModeration() {
+    if (!data.moderation) loading('Модерация');
+    try { await Promise.all([loadModeration(true), loadEvents(!data.events)]); } catch (error) { failed('Модерация', error); return; }
+    paintModeration();
+  }
+  function paintModeration() {
+    const list = data.moderation, byEvent = new Map();
+    list.forEach(r => { if (!byEvent.has(r.event_id)) byEvent.set(r.event_id, []); byEvent.get(r.event_id).push(r); });
+    const moderated = (data.events || []).filter(e => Number(e.moderation) && stateOf(e) !== 'finished');
+    const groups = [...byEvent.entries()].map(([eventId, rows]) => {
+      const first = rows[0], m = METRICS[first.metric] || METRICS.salawat;
+      return `<section class="glass card mod-group"><div class="mod-head"><span class="cell-main"><span class="circle">${icon(m.icon)}</span><div><b>${esc(first.title)}</b><small>${MODES[first.mode] || ''} · ${shortDate(first.starts_on)} — ${shortDate(first.ends_on)} · ${num(rows.length)} ${plural(rows.length, 'заявка', 'заявки', 'заявок')}</small></div></span>
+        <span class="mod-actions">${rows.length > 1 ? `<button type="button" class="btn small ok" data-approve-all="${eventId}">${icon('check')}Одобрить всех</button>` : ''}</span></div>
+        ${rows.map(r => `<div class="mod-row"><span class="avatar">${esc((r.display_name || '?').slice(0, 1))}</span><div><b>${esc(r.display_name)}</b><small>@${esc(r.login)} · заявка ${relDay(r.joined_at)} · уже ${num(r.progress)} ${m.unit}${r.personal_target ? ` · цель ${num(r.personal_target)}` : ''}</small></div>
+          <span class="mod-actions"><button type="button" class="btn small ok" data-approve="${eventId}|${esc(r.user_id)}">${icon('check')}<span class="hide-xs">Одобрить</span></button><button type="button" class="btn small danger icon" data-reject="${eventId}|${esc(r.user_id)}" aria-label="Отклонить заявку ${esc(r.display_name)}">${icon('x')}</button></span></div>`).join('')}
+      </section>`;
+    }).join('');
+    const empty = `<section class="glass card"><div class="all-good">${icon('check')}Все заявки проверены.</div><p class="muted" style="margin:0;font-size:14px;line-height:1.5">${moderated.length ? `Ручная проверка включена в ${moderated.length} ${plural(moderated.length, 'событии', 'событиях', 'событиях')}: ${moderated.map(e => `«${esc(e.title)}»`).join(', ')}. Новые участники появятся здесь.` : 'Ручную проверку можно включить в настройках события — тогда новые участники будут ждать одобрения здесь, а их отметки начнут засчитываться после него.'}</p></section>`;
+    mount(top('Управление', 'Модерация', list.length ? `${num(list.length)} ${plural(list.length, 'заявка ждёт', 'заявки ждут', 'заявок ждут')} проверки` : 'Новых заявок нет', tools() + refreshBtn) + (groups || empty) +
+      `<p class="muted" style="margin:0 4px;font-size:13px;color:rgba(16,22,26,.6)">После одобрения отметки участника засчитываются с момента заявки. Отклонённый участник видит «Заявка отклонена» и не попадает в рейтинг.</p>`, 'moderation');
+  }
+  async function decide(decision, items) {
+    if (decision === 'reject' && !await confirmDialog({ title: items.length > 1 ? 'Отклонить заявки?' : 'Отклонить заявку?', text: 'Участник увидит «Заявка отклонена», его отметки не попадут в событие.', action: 'Отклонить', iconName: 'x' })) return;
+    try { await send('admin/moderation', 'POST', { decision, items }); await Promise.all([loadModeration(true), loadEvents(true)]); paintModeration(); toast(decision === 'approve' ? (items.length > 1 ? `Одобрено: ${items.length}` : 'Участник одобрен') : 'Заявка отклонена'); }
+    catch (error) { toast(error.message); }
+  }
+
   /* ---------- Settings ---------- */
   async function showSettings() {
     loading('Настройки');
@@ -891,13 +1021,14 @@ tbody tr:last-child td{border-bottom:0}
     const zones = [['Asia/Bishkek', 'Бишкек · UTC+6'], ['Asia/Almaty', 'Алматы · UTC+5'], ['Asia/Tashkent', 'Ташкент · UTC+5'], ['Europe/Moscow', 'Москва · UTC+3']];
     if (!zones.some(([z]) => z === s.timezone)) zones.unshift([s.timezone, s.timezone]);
     const opt = (val, label) => `<label class="option"><input type="radio" name="visibility" value="${val}" ${s.defaultVisibility === val ? 'checked' : ''}>${label}</label>`;
-    mount(top('Кабинет', 'Настройки', 'Правила новых событий и доступ') + `
+    const sys = s.system || {}, cron = sys.cron, cronState = cronStatus(cron);
+    mount(top('Кабинет', 'Настройки', 'Правила новых событий и доступ', tools()) + `
       <div class="settings">
         <form id="settings-form" class="glass card"><div class="card-head"><h2>Новые события по умолчанию</h2></div>
           <label class="field"><span>Часовой пояс</span><select class="select input" name="timezone" style="height:48px;border-radius:18px">${zones.map(([z, l]) => `<option value="${esc(z)}" ${z === s.timezone ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select><small>Даты начала и окончания событий считаются по нему</small></label>
           <div class="field"><span>Как показывать участников в рейтинге</span><div class="options">${opt('names', 'Имя')}${opt('initials', 'Инициалы')}${opt('anonymous', 'Анонимно')}</div></div>
           <div><label class="toggle"><div><b>Рейтинг внутри события</b><small>Включён в новых событиях</small></div><input type="checkbox" name="leaderboard" ${s.defaultLeaderboard ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label>
-          <label class="toggle"><div><b>Ручная проверка результатов</b><small>Запомним выбор — сама проверка появится позже</small></div><input type="checkbox" name="moderation" ${s.defaultModeration ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label></div>
+          <label class="toggle"><div><b>Ручная проверка участников</b><small>Включена в новых событиях: заявки ждут одобрения в «Модерации»</small></div><input type="checkbox" name="moderation" ${s.defaultModeration ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label></div>
           <div class="form-foot"><button type="submit" class="btn black">Сохранить</button><p id="settings-error" class="error" role="alert"></p></div>
         </form>
         <div class="settings-side">
@@ -906,7 +1037,7 @@ tbody tr:last-child td{border-bottom:0}
             <button type="button" class="btn danger" data-logout>${icon('logout')}Выйти из кабинета</button>
           </section>
           <section class="glass card"><div class="card-head"><h2>Приложение</h2></div>
-            <div class="d-rows"><span><em>Версия</em><b id="sw-version">—</b></span><span><em>Адрес</em><a href="/" target="_blank" rel="noopener">chetele.ru</a></span></div>
+            <div class="d-rows"><span><em>Версия</em><b id="sw-version">—</b></span><span><em>Push-подписок</em><b>${num(sys.pushSubscriptions)}${sys.pushUsers ? ` <small class="muted" style="font-weight:500">· ${num(sys.pushUsers)} ${plural(Number(sys.pushUsers), 'человек', 'человека', 'человек')}</small>` : ''}</b></span><span><em>Напоминания</em>каждую минуту · cron</span><span><em>Последний запуск cron</em><b style="${cronState.bad ? 'color:var(--red)' : ''}">${cronState.text}</b></span>${cron && cron.error ? `<span><em>Ошибка cron</em><small style="max-width:200px;text-align:right;color:var(--red)">${esc(cron.error)}</small></span>` : ''}<span><em>Адрес</em><a href="/" target="_blank" rel="noopener">chetele.ru</a></span></div>
           </section>
         </div>
       </div>`, 'settings');
@@ -919,6 +1050,13 @@ tbody tr:last-child td{border-bottom:0}
       finally { button.disabled = false; }
     });
   }
+  /* The cron runs every minute; a report older than 10 minutes means it stopped. */
+  function cronStatus(cron) {
+    if (!cron || !cron.at) return { text: 'нет данных', bad: true };
+    const at = new Date(cron.at), minutes = Math.round((Date.now() - at) / 6e4);
+    const time = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(at);
+    return { text: minutes < 2 ? `только что · ${time}` : minutes < 60 ? `${minutes} мин назад` : time, bad: minutes > 10 || Boolean(cron.error), minutes };
+  }
   /* The app's version is its service-worker cache name. */
   let version = '';
   async function paintVersion() {
@@ -929,12 +1067,77 @@ tbody tr:last-child td{border-bottom:0}
     const el = $('#sw-version'); if (el) el.textContent = version;
   }
 
+  /* ---------- Notifications ---------- */
+  /* What needs the admin: waiting participants, events about to end, a stopped cron. */
+  function alerts() {
+    const list = [], today = dayKey();
+    const waiting = data.moderation || [];
+    if (waiting.length) list.push(['amber', 'shield', `${num(waiting.length)} ${plural(waiting.length, 'заявка ждёт', 'заявки ждут', 'заявок ждут')} проверки`, 'Ручная модерация', '#moderation']);
+    (data.events || []).filter(e => stateOf(e) === 'active' && daysBetween(today, e.ends_on) <= 3).forEach(e => { const left = daysBetween(today, e.ends_on); list.push(['indigo', 'clock', `«${esc(e.title)}» ${left ? `кончится через ${left} ${plural(left, 'день', 'дня', 'дней')}` : 'кончается сегодня'}`, e.mode === 'personal_path' ? 'Личный путь' : `Цель выполнена на ${pctOf(e)}%`, `#events/${e.id}`]); });
+    const cron = data.settings?.system?.cron;
+    if (data.settings?.system && cronStatus(cron).bad) list.push(['', 'alert', 'Напоминания не отправляются', cron?.error ? esc(cron.error) : `Cron давно не запускался: ${cronStatus(cron).text}`, '#settings']);
+    return list;
+  }
+  function paintBell() {
+    const n = alerts().length;
+    document.querySelectorAll('#bell-dot').forEach(dot => { dot.hidden = !n; dot.textContent = n > 9 ? '9+' : n; });
+  }
+  async function openBell() {
+    if (document.querySelector('.panel')) { closePanel(); return; }
+    const panel = document.createElement('section'); panel.className = 'panel'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Уведомления');
+    panel.innerHTML = '<h2>Уведомления</h2><div class="empty" style="padding:20px">Проверяем…</div>';
+    document.body.append(panel);
+    try { const [, , s] = await Promise.all([loadModeration(true), loadEvents(!data.events), req('admin/settings')]); data.settings = s; } catch (error) { panel.innerHTML = `<h2>Уведомления</h2><div class="empty">${esc(error.message)}</div>`; return; }
+    if (!panel.isConnected) return;
+    const list = alerts(); paintBell();
+    panel.innerHTML = '<h2>Уведомления</h2>' + (list.length ? list.map(([tone, ic, title, text, href]) => `<a class="todo ${tone}" href="${href}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div>${icon('chev')}</a>`).join('') : `<div class="all-good">${icon('check')}Ничего нового — всё под контролем.</div>`);
+  }
+  const closePanel = () => document.querySelector('.panel')?.remove();
+
+  /* ---------- Search ---------- */
+  async function openSearch() {
+    if (document.querySelector('.search-layer')) return;
+    closePanel();
+    const layer = document.createElement('div'); layer.className = 'layer search-layer';
+    layer.innerHTML = `<section class="search-box" role="dialog" aria-modal="true" aria-label="Поиск"><label class="search">${icon('search')}<input type="search" placeholder="Участник, событие или группа" aria-label="Что найти" autocomplete="off"></label><div class="results" role="listbox"><div class="empty" style="padding:18px">Загружаем…</div></div></section>`;
+    const close = () => { layer.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = event => { if (event.key === 'Escape') close(); };
+    layer.addEventListener('click', event => {
+      if (event.target === layer) { close(); return; }
+      const hit = event.target.closest('[data-go]'); if (!hit) return;
+      const [kind, id] = hit.dataset.go.split(':');
+      close();
+      if (kind === 'user') { us.selected = id; us.query = ''; us.filter = 'all'; if (location.hash === '#users') paintUsers(); else location.hash = '#users'; }
+      else if (kind === 'event') { ev.tab = 'all'; ev.query = ''; location.hash = `#events/${id}`; }
+      else location.hash = `#groups/${id}`;
+    });
+    document.addEventListener('keydown', onKey);
+    document.body.append(layer);
+    const input = layer.querySelector('input'), results = layer.querySelector('.results'); input.focus();
+    try { await Promise.all([loadUsers(!data.users), loadEvents(!data.events), loadGroups(!data.groups)]); } catch (error) { results.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+    const paint = () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q) { results.innerHTML = `<div class="empty" style="padding:18px">${num(data.users.length)} ${plural(data.users.length, 'участник', 'участника', 'участников')}, ${num(data.events.length)} ${plural(data.events.length, 'событие', 'события', 'событий')}, ${num(data.groups.length)} ${plural(data.groups.length, 'группа', 'группы', 'групп')}</div>`; return; }
+      const users = data.users.filter(u => `${u.display_name} ${u.login}`.toLowerCase().includes(q)).slice(0, 6);
+      const events = data.events.filter(e => `${e.title} ${e.description || ''}`.toLowerCase().includes(q)).slice(0, 5);
+      const groups = data.groups.filter(g => `${g.name} ${g.description || ''}`.toLowerCase().includes(q)).slice(0, 5);
+      const row = (go, lead, title, sub) => `<button type="button" class="result" data-go="${go}">${lead}<div><b>${title}</b><small>${sub}</small></div>${icon('chev')}</button>`;
+      results.innerHTML = (users.length ? '<h3>Участники</h3>' + users.map(u => row(`user:${esc(u.id)}`, `<span class="avatar">${esc((u.display_name || '?').slice(0, 1))}</span>`, esc(u.display_name), `@${esc(u.login)} · ${num(u.points)} очков`)).join('') : '')
+        + (events.length ? '<h3>События</h3>' + events.map(e => row(`event:${e.id}`, `<span class="circle">${icon(metricOf(e).icon)}</span>`, esc(e.title), `${STATE_LABEL[stateOf(e)]} · ${period(e)}`)).join('') : '')
+        + (groups.length ? '<h3>Группы</h3>' + groups.map(g => row(`group:${g.id}`, `<span class="circle">${icon('group')}</span>`, esc(g.name), `${num(g.member_count)} ${plural(Number(g.member_count) || 0, 'участник', 'участника', 'участников')}`)).join('') : '')
+        || '<div class="empty" style="padding:18px">Ничего не нашли.</div>';
+    };
+    input.addEventListener('input', paint); paint();
+    input.addEventListener('keydown', event => { if (event.key === 'Enter') results.querySelector('[data-go]')?.click(); });
+  }
+
   /* ---------- Routing ---------- */
   function route() {
     if (!cred) return;
     document.querySelector('.menu')?.remove();
     const [section = 'overview', id, action] = location.hash.replace(/^#/, '').split('/');
-    const current = ['overview', 'events', 'users', 'groups', 'settings'].includes(section) ? section : 'overview';
+    const current = ['overview', 'events', 'users', 'groups', 'moderation', 'settings'].includes(section) ? section : 'overview';
+    closePanel();
     document.querySelectorAll('[data-route]').forEach(a => { if (a.dataset.route === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     window.scrollTo(0, 0);
     if (current === 'events') {
@@ -949,6 +1152,7 @@ tbody tr:last-child td{border-bottom:0}
       else if (id) showGroupReport(id);
       else showGroups();
     }
+    else if (current === 'moderation') showModeration();
     else if (current === 'settings') showSettings();
     else showOverview();
   }
@@ -956,7 +1160,17 @@ tbody tr:last-child td{border-bottom:0}
 
   main.addEventListener('click', event => {
     const t = event.target;
-    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = null; route(); return; }
+    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = null; route(); return; }
+    if (t.closest('[data-search]')) { openSearch(); return; }
+    if (t.closest('[data-bell]')) { event.stopPropagation(); openBell(); return; }
+    const pause = t.closest('[data-pause]'); if (pause) { setPaused(pause.dataset.pause, true); return; }
+    const resume = t.closest('[data-resume]'); if (resume) { setPaused(resume.dataset.resume, false); return; }
+    const rem = t.closest('[data-remind]'); if (rem) { remind(rem.dataset.remind); return; }
+    const ok = t.closest('[data-approve]'); if (ok) { const [eventId, userId] = ok.dataset.approve.split('|'); decide('approve', [{ eventId: Number(eventId), userId }]); return; }
+    const no = t.closest('[data-reject]'); if (no) { const [eventId, userId] = no.dataset.reject.split('|'); decide('reject', [{ eventId: Number(eventId), userId }]); return; }
+    const all = t.closest('[data-approve-all]'); if (all) { decide('approve', data.moderation.filter(r => String(r.event_id) === all.dataset.approveAll).map(r => ({ eventId: Number(r.event_id), userId: r.user_id }))); return; }
+    if (t.closest('[data-users-csv]')) { usersCsv(); return; }
+    const reset = t.closest('[data-reset-pass]'); if (reset) { resetPassword(reset.dataset.resetPass); return; }
     if (t.closest('[data-logout]')) { logout(); return; }
     const menuBtn = t.closest('[data-menu]'); if (menuBtn) { event.stopPropagation(); openMenu(menuBtn); return; }
     const edit = t.closest('[data-edit]'); if (edit) { location.hash = `#events/${edit.dataset.edit}/edit`; return; }
@@ -977,14 +1191,23 @@ tbody tr:last-child td{border-bottom:0}
     if (event.target.id === 'us-search') { us.query = event.target.value; paintUsers(); const s = $('#us-search'); s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
   });
   main.addEventListener('change', event => { if (event.target.id === 'ev-mode') { ev.mode = event.target.value; paintEvents(); } });
-  document.addEventListener('click', event => { if (!event.target.closest('.menu') && !event.target.closest('[data-menu]')) document.querySelector('.menu')?.remove(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') document.querySelector('.menu')?.remove(); });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.menu') && !event.target.closest('[data-menu]')) document.querySelector('.menu')?.remove();
+    if (!event.target.closest('.panel') && !event.target.closest('[data-bell]')) closePanel();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { document.querySelector('.menu')?.remove(); closePanel(); }
+    /* «/» opens search when no field has focus. */
+    if (event.key === '/' && cred && !$('#shell').hidden && !event.target.closest('input,textarea,select') && !document.querySelector('.layer')) { event.preventDefault(); openSearch(); }
+  });
 
   /* ---------- Sign in and out ---------- */
   function enter() {
     $('#login').hidden = true; $('#shell').hidden = false;
     $('#me-name').textContent = cred.login; $('#me-avatar').textContent = (cred.login || 'a').slice(0, 1);
     paintVersion(); route();
+    loadModeration(true).catch(() => {});
+    req('admin/settings').then(s => { data.settings = s; paintBell(); }).catch(() => {});
   }
   async function logout() {
     if (!await confirmDialog({ title: 'Выйти из кабинета?', text: 'Для входа снова понадобятся логин и пароль администратора.', action: 'Выйти', danger: false, iconName: 'logout' })) return;

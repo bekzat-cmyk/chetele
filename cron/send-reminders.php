@@ -111,7 +111,34 @@ try {
         }
     }
 
-    cronReport(['subscriptions' => count($subscriptions), 'sent' => $sent, 'failed' => $failed, 'lastError' => $lastError ?? null]);
+    /* The evening before an event's last day (18:00 in the admin's time zone), its approved
+       participants get one push. reminded_on is set before sending, so a crash never repeats it. */
+    $eventReminders = 0;
+    try {
+        require_once __DIR__ . '/../api/event-reminders.php';
+        $zone = (string)($db->query("SELECT setting_value FROM admin_settings WHERE setting_key = 'timezone'")->fetchColumn() ?: 'Asia/Bishkek');
+        if (!in_array($zone, timezone_identifiers_list(), true)) $zone = 'Asia/Bishkek';
+        $adminNow = $utcNow->setTimezone(new DateTimeZone($zone));
+        if ((int)$adminNow->format('G') >= 18) {
+            $todayAdmin = $adminNow->format('Y-m-d');
+            $due = $db->prepare("SELECT id, title, mode FROM events WHERE status = 'published' AND remind_before_end = 1 AND ends_on = ? AND (reminded_on IS NULL OR reminded_on <> ?)");
+            $due->execute([$adminNow->modify('+1 day')->format('Y-m-d'), $todayAdmin]);
+            $mark = $db->prepare('UPDATE events SET reminded_on = ? WHERE id = ?');
+            foreach ($due->fetchAll() as $event) {
+                $mark->execute([$todayAdmin, $event['id']]);
+                $body = $event['mode'] === 'personal_path'
+                    ? 'Завтра последний день вашего личного пути. Отметьте сегодняшние дела.'
+                    : 'Завтра последний день. Отметьте дела — они засчитаются в общую цель.';
+                $result = sendEventPush($db, (int)$event['id'], '«' . $event['title'] . '» — завтра финал', $body, $config);
+                $eventReminders += $result['sent'];
+            }
+        }
+    } catch (Throwable $error) {
+        $lastError = 'event reminders: ' . $error->getMessage();
+        error_log('Chetele event reminder error: ' . $error->getMessage());
+    }
+
+    cronReport(['subscriptions' => count($subscriptions), 'sent' => $sent, 'failed' => $failed, 'eventReminders' => $eventReminders, 'lastError' => $lastError ?? null]);
     echo 'Niet reminders: sent=' . $sent . '; failed=' . $failed . PHP_EOL;
 } catch (Throwable $error) {
     cronReport(['error' => $error->getMessage()]);

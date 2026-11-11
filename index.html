@@ -1324,9 +1324,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const pills=event=>{
         const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=dayDiff(todayKey,event.ends_on);
         const status=upcoming?`<span class="evs-pill soon">С ${shortDate(event.starts_on)}</span>`:`<span class="evs-pill live"><i></i>${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
-        return `<div class="evs-pills">${status}<span class="evs-pill">${personal?'Личный путь':'Общая цель'}</span>${event.joined?'<span class="evs-pill joined">Вы участвуете</span>':''}</div>`;
+        return `<div class="evs-pills">${status}<span class="evs-pill">${personal?'Личный путь':'Общая цель'}</span>${event.paused?'<span class="evs-pill paused">На паузе</span>':''}${event.pending?'<span class="evs-pill pending">Ждёт подтверждения</span>':event.rejected?'<span class="evs-pill rejected">Заявка отклонена</span>':event.joined?'<span class="evs-pill joined">Вы участвуете</span>':''}</div>`;
       };
-      const join=event=>event.joined?'':isGuest()?`<button type="button" class="ps-primary evs-join" data-auth="signup">${guestSvg('lock')}Участвовать</button>`:`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
+      const join=event=>event.joined||event.paused?'':isGuest()?`<button type="button" class="ps-primary evs-join" data-auth="signup">${guestSvg('lock')}Участвовать</button>`:`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
       const copy=(event,big)=>`<div class="evs-copy">${big?'':`<i class="evs-icon">${icon(metricIcon[event.metric]||'softEvents')}</i>`}<span><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.description||(event.mode==='personal_path'?'Личный путь в своём темпе.':'Общая цель сообщества.'))}</p></span></div>`;
       const progress=(value,target,unit)=>{ const percent=Math.min(100,Math.round(value/Math.max(1,target)*100)); return `<div class="evs-progress"><div><b>${number.format(value)}</b><span>из ${number.format(target)} ${unit}</span><strong>${percent}%</strong></div><span class="zg-track" aria-hidden="true"><i style="width:${percent}%"></i></span></div>`; };
       const participants=n=>`${number.format(n)} ${plural(n,'участник','участника','участников')}`;
@@ -3705,6 +3705,8 @@ body #app .evs-pill.live{background:#0B0F12!important;color:#fff}
 body #app .evs-pill.live i{width:6px;height:6px;margin-right:6px;border-radius:3px;background:#7FD3A8}
 body #app .evs-pill.soon{background:rgba(255,200,110,.25)!important;color:#8A5A1C}
 body #app .evs-pill.joined{color:#2F7A5F}
+body #app .evs-pill.pending,body #app .evs-pill.paused{color:#8A4B12}
+body #app .evs-pill.rejected{color:#A3342A}
 body #app .evs-copy{display:flex;align-items:flex-start;gap:12px}
 body #app .evs-copy>span{display:flex;flex-direction:column;gap:4px}
 body #app .evs-copy h3{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
@@ -3747,6 +3749,8 @@ body.app-dark #app .evs-hero-card{border-color:rgba(255,255,255,.1);background:r
 body.app-dark #app .evs-pill,body.app-dark #app .evs-hero-bar .evs-pill,body.app-dark #app .evs-stats{background:rgba(255,255,255,.08);color:var(--ink)}
 body.app-dark #app .evs-pill.live{background:#EEF5F2!important;color:#0B1110}
 body.app-dark #app .evs-pill.joined{color:#7FC8A6}
+body.app-dark #app .evs-pill.pending,body.app-dark #app .evs-pill.paused{color:#E8B27A}
+body.app-dark #app .evs-pill.rejected{color:#F0938A}
 body.app-dark #app .evs-copy p,body.app-dark #app .evs-stats small,body.app-dark #app .evs-progress span,body.app-dark #app .evs-meta,body.app-dark #app .evs-foot,body.app-dark #app .evs-note,body.app-dark #app .evs-leaders h4,body.app-dark #app .evs-empty p{color:var(--muted)}
 body.app-dark #app .evs-icon{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none}
 body.app-dark #app .evs-stats span+span{border-color:rgba(255,255,255,.08)}
