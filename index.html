@@ -3231,6 +3231,19 @@ html body.app-dark #app .rt-track{background:rgba(95,199,154,.12)}
 html body.app-dark #app .rt-track i{background:#5FC79A}
 html body.app-dark #app .rt-row.me .rt-row-avatar{background:#5FC79A;border-color:#5FC79A;color:#0B1110}
 html body #app .guest-seat .rt-me-place{background:transparent;color:#7A858B}
+/* The podium in green: pale steps for 2nd and 3rd, a deep green step and avatar for 1st. */
+html body #app .rt-step{border-color:rgba(47,155,110,.25);background:linear-gradient(180deg,rgba(47,155,110,.32),rgba(47,155,110,.12))}
+html body #app .rt-step span{color:#1F6B4F}
+html body #app .rt-slot.first .rt-step{border-color:#1F6B4F;background:linear-gradient(180deg,#2F8F68,#1F6B4F)}
+html body #app .rt-slot.first .rt-step span{color:#fff}
+html body #app .rt-podium .rt-avatar{border-color:rgba(47,155,110,.25);background:rgba(47,155,110,.16);color:#1F6B4F}
+html body #app .rt-podium .rt-slot.first .rt-avatar{border-color:#1F6B4F;background:#1F6B4F;color:#fff}
+html body.app-dark #app .rt-step{border-color:rgba(95,199,154,.2);background:linear-gradient(180deg,rgba(95,199,154,.26),rgba(95,199,154,.08))}
+html body.app-dark #app .rt-step span{color:#7FC8A6}
+html body.app-dark #app .rt-slot.first .rt-step{border-color:#5FC79A;background:linear-gradient(180deg,#5FC79A,#3B9E74)}
+html body.app-dark #app .rt-slot.first .rt-step span{color:#0B1110}
+html body.app-dark #app .rt-podium .rt-avatar{border-color:rgba(95,199,154,.22);background:rgba(95,199,154,.16);color:#BFEBD6}
+html body.app-dark #app .rt-podium .rt-slot.first .rt-avatar{border-color:#5FC79A;background:#5FC79A;color:#0B1110}
 html body.app-dark #app .stats-heat span.is-today{border-color:#0B1110}
 html body.app-dark #app .stats-card hr{background:rgba(255,255,255,.08)}
 html body.app-dark #app .stats-section-head span,html body.app-dark #app .stats-tile-top,html body.app-dark #app #stats-view .stats-tile-top span,html body.app-dark #app .stats-section-sub{color:var(--muted)}
