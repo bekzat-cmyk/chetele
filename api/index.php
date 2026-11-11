@@ -512,6 +512,12 @@ try {
     $path = trim((string)($_GET['path'] ?? ''), '/');
     $parts = $path === '' ? [] : explode('/', $path);
 
+    /* Quizzes live in their own file; it answers every quizzes/… and admin/quizzes/… route. */
+    if (($parts[0] ?? '') === 'quizzes' || (($parts[0] ?? '') === 'admin' && ($parts[1] ?? '') === 'quizzes')) {
+        require_once __DIR__ . '/quizzes.php';
+        handleQuizRoutes($db, $config, $method, $parts);
+    }
+
     if ($method === 'GET' && $parts === ['health']) {
         $db->query('SELECT 1');
         respond(200, ['status' => 'ok']);

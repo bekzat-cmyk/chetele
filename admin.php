@@ -375,9 +375,11 @@ tbody tr:last-child td{border-bottom:0}
 .secret{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;border-radius:20px;background:#fff;border:1px solid var(--line)}
 .secret code{flex:1;font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
 @media (max-width:860px){.ov-grid3{grid-template-columns:minmax(0,1fr)}}
+.preview.quiz-side{width:360px;gap:16px;align-items:stretch}
+@media (max-width:1240px){.editor.quiz-editor{flex-direction:column}.preview.quiz-side{width:100%}}
 @media (max-width:480px){.hide-xs{display:none}}
 /* Six sections fit a phone only as icons. */
-@media (max-width:440px){nav.tabbar a[aria-current=page]{padding:0;width:48px}nav.tabbar a[aria-current=page] span{display:none}}
+@media (max-width:440px){nav.tabbar{gap:2px!important}nav.tabbar a{min-width:44px!important;height:44px!important}nav.tabbar a[aria-current=page]{padding:0;width:44px}nav.tabbar a[aria-current=page] span{display:none}}
 @media (max-width:860px){.panel{top:auto;bottom:96px;right:16px}}
 
 /* Dialog and toast */
@@ -452,6 +454,7 @@ tbody tr:last-child td{border-bottom:0}
       <a href="#users" data-route="users"><span data-icon="users"></span>Участники<em id="nav-users"></em></a>
       <a href="#groups" data-route="groups"><span data-icon="group"></span>Группы<em id="nav-groups"></em></a>
       <a href="#moderation" data-route="moderation"><span data-icon="shield"></span>Модерация<em id="nav-moderation"></em></a>
+      <a href="#quizzes" data-route="quizzes"><span data-icon="brain"></span>Тесты<em id="nav-quizzes"></em></a>
       <a href="#settings" data-route="settings"><span data-icon="sliders"></span>Настройки<em></em></a>
     </nav>
     <div class="side-status"><span id="app-version">Сайт работает</span><a href="/" target="_blank" rel="noopener">Открыть приложение<i data-icon="arrow"></i></a></div>
@@ -464,6 +467,7 @@ tbody tr:last-child td{border-bottom:0}
     <a href="#users" data-route="users" aria-label="Участники"><i data-icon="users"></i><span>Участники</span></a>
     <a href="#groups" data-route="groups" aria-label="Группы"><i data-icon="group"></i><span>Группы</span></a>
     <a href="#moderation" data-route="moderation" aria-label="Модерация"><i data-icon="shield"></i><span>Модерация</span></a>
+    <a href="#quizzes" data-route="quizzes" aria-label="Тесты"><i data-icon="brain"></i><span>Тесты</span></a>
     <a href="#settings" data-route="settings" aria-label="Настройки"><i data-icon="sliders"></i><span>Настройки</span></a>
   </nav>
 </div>
@@ -482,6 +486,7 @@ tbody tr:last-child td{border-bottom:0}
     arrow:'M7 17L17 7M9 7h8v8', lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3', phone:'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 18h2',
     rating:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5',
     copy:'M8 8h11v12H8zM5 16V4h11', group:'M8 7.5a3 3 0 1 0 0 .01M16 7.5a3 3 0 1 0 0 .01M2.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5M10.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5',
+    brain:'M12 5.5a3 3 0 0 0-5.4-1.8A3.2 3.2 0 0 0 4 7.6a3.2 3.2 0 0 0-.4 5.3A3.6 3.6 0 0 0 7.2 18.4 2.9 2.9 0 0 0 12 19.6zM12 5.5a3 3 0 0 1 5.4-1.8A3.2 3.2 0 0 1 20 7.6a3.2 3.2 0 0 1 .4 5.3 3.6 3.6 0 0 1-3.6 5.5 2.9 2.9 0 0 1-4.8 1.2zM12 5.5v14.1M8.5 9.2c1.4 0 2.4.9 2.4 2.2M15.5 9.2c-1.4 0-2.4.9-2.4 2.2M7.6 14.6c1.3-.2 2.6.4 3.1 1.5M16.4 14.6c-1.3-.2-2.6.4-3.1 1.5', up:'M6 14.5l6-6 6 6', down:'M6 9.5l6 6 6-6', eyeoff:'M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-2.6 3.3M6.6 6.6C4 8.3 2.5 12 2.5 12s3.5 6 9.5 6c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2',
     book:'M5 5a2 2 0 0 1 2-2h12v15H7a2 2 0 0 0-2 2zM5 20a2 2 0 0 0 2 2h12v-4M9 7h6', star:'M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.9z',
     shield:'M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6zM9 12l2 2 4-4', bell:'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0', pause:'M9 6v12M15 6v12', play:'M8 5.5v13l10-6.5z', send:'M4 12l16-8-6 16-2.5-6.5zM11.5 13.5L20 4', key:'M14.5 9.5a4 4 0 1 0-3.4 4L5 19.5V21h3v-2h2v-2h2l1.1-1.1a4 4 0 0 0 1.4-6.4zM16 8h.01',
     download:'M12 4v11M7 10l5 5 5-5M5 20h14', flame:'M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.6 2 3 0-3 .5-5.5.5-8z', alert:'M12 4l9 16H3zM12 10v4M12 17.5h.01', refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
@@ -561,7 +566,7 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   /* ---------- Data ---------- */
-  const data = { events: null, users: null, overview: null, settings: null, groups: null, moderation: null };
+  const data = { events: null, users: null, overview: null, settings: null, groups: null, moderation: null, quizzes: null };
   async function loadModeration(force) { if (force || !data.moderation) data.moderation = await req('admin/moderation'); $('#nav-moderation').textContent = data.moderation.length || ''; paintBell(); return data.moderation; }
   async function loadGroups(force) { if (force || !data.groups) data.groups = await req('admin/groups'); $('#nav-groups').textContent = data.groups.length || ''; return data.groups; }
   async function loadEvents(force) { if (force || !data.events) data.events = await req('admin/events'); paintCounts(); return data.events; }
@@ -1051,6 +1056,199 @@ tbody tr:last-child td{border-bottom:0}
     catch (error) { toast(error.message); }
   }
 
+  /* ---------- Tests ---------- */
+  const QZ_CATS = ['Намаз', 'Куран', 'Пост', 'Сира', 'Основы', 'Другое'];
+  const QZ_LEVELS = ['Начинающий', 'Знающий', 'Хорошие знания', 'Отлично'];
+  const QZ_STATUS = { published: ['Опубликован', 'active'], draft: ['Черновик', 'draft'], hidden: ['Скрыт', 'paused'] };
+  const qzPill = s => `<span class="pill ${(QZ_STATUS[s] || QZ_STATUS.draft)[1]}">${(QZ_STATUS[s] || QZ_STATUS.draft)[0]}</span>`;
+  const qzWord = n => `${n} ${plural(n, 'вопрос', 'вопроса', 'вопросов')}`;
+  const qz = { tab: 'all', selected: null, details: {} };
+  async function loadQuizzes(force) { if (force || !data.quizzes) data.quizzes = await req('admin/quizzes'); $('#nav-quizzes').textContent = data.quizzes.quizzes.filter(q => q.status === 'published').length || ''; return data.quizzes; }
+  async function showQuizzes(selectedId) {
+    if (selectedId !== undefined) qz.selected = selectedId;
+    if (!data.quizzes) loading('Тесты');
+    try { await loadQuizzes(!data.quizzes); } catch (error) { failed('Тесты', error); return; }
+    paintQuizzes();
+    if (qz.selected && !qz.details[qz.selected]) loadQuizDetail(qz.selected);
+  }
+  async function loadQuizDetail(id) {
+    try { qz.details[id] = await req(`admin/quizzes/${id}`); } catch (error) { qz.details[id] = { error: error.message }; }
+    if (location.hash.startsWith('#quizzes') && String(qz.selected) === String(id)) paintQuizzes();
+  }
+  function paintQuizzes() {
+    const { quizzes, summary } = data.quizzes, counts = { all: quizzes.length, published: 0, draft: 0, hidden: 0 };
+    quizzes.forEach(q => { counts[q.status] = (counts[q.status] || 0) + 1; });
+    const list = quizzes.filter(q => qz.tab === 'all' || q.status === qz.tab);
+    const selected = quizzes.find(q => String(q.id) === String(qz.selected)) || null;
+    const kpi = (name, value, label, chip) => `<article class="glass kpi"><div class="kpi-top"><span class="circle">${icon(name)}</span>${chip ? `<span class="chip">${chip}</span>` : ''}</div><div><b>${value}</b><small>${label}</small></div></article>`;
+    const rows = list.length ? list.map(q => `<tr data-quiz="${q.id}" aria-selected="${selected && selected.id === q.id}">
+        <td class="wide"><span class="cell-main"><span class="circle">${icon('brain')}</span><div><b>${esc(q.title)}${q.featured ? ' <span class="chip" style="height:22px;font-size:11px;margin-left:4px">тест недели</span>' : ''}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}</small></div></span></td>
+        <td class="hide-sm"><b>${num(q.attempts)}</b></td>
+        <td>${q.attempts ? `<span class="prog"><b>${q.avg}%</b><i class="bar"><i style="width:${q.avg}%"></i></i></span>` : '<small class="muted">пока нет</small>'}</td>
+        <td>${qzPill(q.status)}</td></tr>`).join('') : `<tr><td colspan="4" class="wide"><div class="empty">${quizzes.length ? 'В этой вкладке тестов нет.' : 'Тестов пока нет. Создайте первый — участники увидят его во вкладке «Тесты».'}</div></td></tr>`;
+    const published = counts.published || 0;
+    mount(top('Знания', 'Тесты', `${num(quizzes.length)} ${plural(quizzes.length, 'тест', 'теста', 'тестов')} · ${num(summary.attempts30)} ${plural(summary.attempts30, 'прохождение', 'прохождения', 'прохождений')} за 30 дней`, tools() + refreshBtn + `<a class="btn black" href="#quizzes/new">${icon('plus')}Создать тест</a>`) + `
+      <div class="kpis">
+        ${kpi('brain', num(published), plural(published, 'тест опубликован', 'теста опубликовано', 'тестов опубликовано'), counts.draft ? `+${counts.draft} ${plural(counts.draft, 'черновик', 'черновика', 'черновиков')}` : '')}
+        ${kpi('check', num(summary.attempts30), 'прохождений за 30 дней', summary.people30 ? `${num(summary.people30)} ${plural(summary.people30, 'человек', 'человека', 'человек')}` : '')}
+        ${kpi('rating', summary.avg === null ? '—' : summary.avg + '%', 'средний результат', '')}
+        ${kpi('users', num(summary.peopleAll), 'прошли хотя бы один', summary.users ? `${Math.round(summary.peopleAll / summary.users * 100)}% участников` : '')}
+      </div>
+      <div class="split">
+        <section class="glass card">
+          <div class="toolbar"><div class="seg" role="group" aria-label="Статус">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'Черновики'], ['hidden', 'Скрытые']].map(([k, l]) => `<button type="button" data-qz-tab="${k}" aria-pressed="${qz.tab === k}">${l} · ${counts[k] || 0}</button>`).join('')}</div></div>
+          <table><thead><tr><th>Тест</th><th>Прохождений</th><th>Средний результат</th><th>Статус</th></tr></thead><tbody>${rows}</tbody></table>
+        </section>
+        <aside class="glass card detail" aria-label="Карточка теста">${selected ? quizDetail(selected) : `<div class="detail-empty"><span class="circle">${icon('brain')}</span>Выберите тест, чтобы увидеть, как его проходят и где ошибаются.</div>`}</aside>
+      </div>`, 'quizzes');
+  }
+  function quizDetail(q) {
+    const d = qz.details[q.id], st = d && !d.error ? d.stats : null;
+    let body = '<div class="empty" style="padding:20px">Загружаем статистику…</div>';
+    if (d && d.error) body = `<div class="empty" style="padding:20px">${esc(d.error)}</div>`;
+    else if (st && !st.attempts) body = '<div class="empty" style="padding:20px">Тест ещё никто не прошёл.</div>';
+    else if (st) {
+      const total = d.questions.length, values = Array.from({ length: total + 1 }, (_, i) => Number(st.distribution[i]) || 0), max = Math.max(1, ...values);
+      const mins = st.medianSec === null ? '—' : `${Math.floor(st.medianSec / 60)}:${String(st.medianSec % 60).padStart(2, '0')}`;
+      body = `<div class="d-dark"><span><b>${st.avg}%</b><small>средний результат</small></span><small>Сколько правильных ответов набрали участники</small>
+          <span aria-hidden="true" style="height:90px;align-items:flex-end;gap:4px">${values.map((v, i) => `<span style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px" title="${i} из ${total}: ${v}"><i style="display:block;width:100%;height:${Math.max(3, v / max * 100)}%;border-radius:4px 4px 1px 1px;background:${i >= Math.ceil(total * 0.8) ? '#fff' : 'rgba(255,255,255,.28)'}"></i><small style="font-size:10px">${i}</small></span>`).join('')}</span></div>
+        <div class="d-stats three"><span><b>${num(st.attempts)}</b><small>прохождений</small></span><span><b>${num(st.perfect)}</b><small>на ${total} из ${total}</small></span><span><b>${mins}</b><small>в среднем</small></span></div>
+        ${st.hardest.some(h => h.wrongPercent > 0) ? `<div><b style="font-size:15px;font-weight:600">Чаще всего ошибаются</b>${st.hardest.filter(h => h.wrongPercent > 0).slice(0, 3).map(h => `<div style="display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid rgba(16,22,26,.06)"><span style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(h.text)}</span><b style="font-weight:600;color:var(--amber);white-space:nowrap">${h.wrongPercent}%</b></span><i class="bar"><i style="width:${h.wrongPercent}%;background:#C7782A"></i></i></div>`).join('')}</div>` : ''}`;
+    }
+    const toggle = q.status === 'published' ? `<button type="button" class="btn" data-qz-status="hidden" data-id="${q.id}">${icon('eyeoff')}Скрыть</button>` : `<button type="button" class="btn" data-qz-status="published" data-id="${q.id}">${icon('check')}Опубликовать</button>`;
+    return `<div class="d-close">${qzPill(q.status)}<button type="button" class="btn small icon" data-qz-close aria-label="Закрыть карточку">${icon('x')}</button></div>
+      <div class="d-title"><b>${esc(q.title)}</b><small>${esc(q.category)} · ${qzWord(q.questionCount)}${q.featured ? ' · тест недели' : ''}</small></div>
+      ${body}
+      <div class="d-actions"><a class="btn black" href="#quizzes/${q.id}/edit">${icon('pen')}Изменить</a>${toggle}<button type="button" class="btn danger icon" style="flex:none;width:46px" data-qz-delete="${q.id}" aria-label="Удалить тест">${icon('trash')}</button></div>`;
+  }
+  async function setQuizStatus(id, status) {
+    try { await send(`admin/quizzes/${id}/status`, 'POST', { status }); await loadQuizzes(true); delete qz.details[id]; paintQuizzes(); loadQuizDetail(id); toast(status === 'published' ? 'Тест опубликован' : 'Тест скрыт из приложения'); }
+    catch (error) { toast(error.message); }
+  }
+  async function deleteQuiz(id) {
+    const q = data.quizzes.quizzes.find(x => String(x.id) === String(id)); if (!q) return;
+    if (!await confirmDialog({ title: 'Удалить тест?', text: `«${q.title}» исчезнет из приложения вместе с результатами участников. Это нельзя отменить.` })) return;
+    try { await req(`admin/quizzes/${id}`, { method: 'DELETE' }); qz.selected = null; await loadQuizzes(true); history.replaceState(null, '', '#quizzes'); paintQuizzes(); toast('Тест удалён'); }
+    catch (error) { toast(error.message); }
+  }
+
+  /* Editor: text fields update the draft as you type; adding, removing, moving and
+     choosing the right answer repaint the questions. */
+  let qe = null;
+  const blankQuestion = () => ({ id: null, text: '', options: ['', '', ''], correct: -1, explanation: '', open: true });
+  async function showQuizEditor(id) {
+    loading(id ? 'Изменить тест' : 'Новый тест');
+    try {
+      if (id) { const q = await req(`admin/quizzes/${id}`); qe = { ...q, questions: q.questions.map(x => ({ ...x, options: x.options.slice(), open: false })) }; if (qe.questions[0]) qe.questions[0].open = true; }
+      else qe = { id: null, title: '', description: '', category: 'Основы', status: 'draft', featured: false, showAnswers: true, shuffleQuestions: true, shuffleOptions: false, showStats: true, timeLimitMin: null, levels: QZ_LEVELS.slice(), questions: [blankQuestion()] };
+    } catch (error) { failed('Тест', error); return; }
+    paintQuizEditor();
+  }
+  function questionCard(q, i) {
+    const n = qe.questions.length, filled = q.options.filter(o => o.trim()).length;
+    const head = `<div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;flex:none;border-radius:15px;background:${q.open ? 'var(--black)' : 'rgba(16,22,26,.06)'};color:${q.open ? '#fff' : 'var(--ink)'};display:grid;place-items:center;font-size:13px;font-weight:600">${i + 1}</span>
+      <button type="button" data-qe-toggle="${i}" style="flex:1;min-width:0;border:0;background:none;padding:0;text-align:left;font-size:15px;font-weight:${q.open ? 600 : 500};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" aria-expanded="${q.open}">${q.text.trim() ? esc(q.text) : `Вопрос ${i + 1}`}</button>
+      ${q.open ? '' : `<small class="muted" style="white-space:nowrap">${filled} ${plural(filled, 'вариант', 'варианта', 'вариантов')}${q.correct < 0 ? ' · <b style="color:var(--amber)">нет верного</b>' : ''}</small>`}
+      <button type="button" class="btn small icon" data-qe-move="${i}|-1" aria-label="Выше" ${i === 0 ? 'disabled' : ''}>${icon('up')}</button>
+      <button type="button" class="btn small icon" data-qe-move="${i}|1" aria-label="Ниже" ${i === n - 1 ? 'disabled' : ''}>${icon('down')}</button>
+      ${q.open ? `<button type="button" class="btn small icon" data-qe-dup="${i}" aria-label="Дублировать вопрос">${icon('copy')}</button><button type="button" class="btn small icon danger" data-qe-del="${i}" aria-label="Удалить вопрос">${icon('trash')}</button>` : ''}</div>`;
+    if (!q.open) return `<div style="padding:12px 14px;border-radius:22px;background:rgba(255,255,255,.8);border:1px solid rgba(16,22,26,.06)">${head}</div>`;
+    const opts = q.options.map((o, k) => `<div style="display:flex;align-items:center;gap:10px">
+        <label style="display:flex;align-items:center;cursor:pointer"><input type="radio" name="qe-right-${i}" data-qe-right="${i}|${k}" ${q.correct === k ? 'checked' : ''} aria-label="Вариант ${'АБВГДЕ'[k]} — верный ответ" style="width:20px;height:20px;accent-color:#1F6B4F;margin:0"></label>
+        <input class="input" data-qe-opt="${i}|${k}" maxlength="200" value="${esc(o)}" placeholder="Вариант ${'АБВГДЕ'[k]}" aria-label="Вариант ${'АБВГДЕ'[k]}" style="flex:1;${q.correct === k ? 'border-color:#2F7F64;background:rgba(47,155,110,.08)' : ''}">
+        ${q.correct === k ? '<span class="chip">Верный</span>' : ''}
+        <button type="button" class="btn small icon" data-qe-optdel="${i}|${k}" aria-label="Удалить вариант" ${q.options.length <= 2 ? 'disabled' : ''}>${icon('x')}</button></div>`).join('');
+    return `<div style="padding:18px;border-radius:24px;background:#fff;border:1.5px solid var(--black);display:flex;flex-direction:column;gap:14px">${head}
+      <label class="field"><span>Текст вопроса</span><textarea class="input" data-qe-text="${i}" maxlength="600" placeholder="Например: сколько обязательных намазов в сутки?" style="height:72px">${esc(q.text)}</textarea></label>
+      <div class="field"><span>Варианты ответа · отметьте верный кружком</span>${opts}${q.options.length < 6 ? `<button type="button" class="btn small" style="align-self:flex-start" data-qe-optadd="${i}">${icon('plus')}Добавить вариант</button>` : ''}</div>
+      <label class="field"><span>Пояснение после ответа</span><textarea class="input" data-qe-expl="${i}" maxlength="800" placeholder="Коротко: почему этот ответ верный" style="height:64px">${esc(q.explanation)}</textarea><small>Участник увидит его сразу после ответа и в разборе ошибок</small></label></div>`;
+  }
+  function paintQuizEditor() {
+    const editing = Boolean(qe.id), published = qe.status === 'published', n = qe.questions.length;
+    const a = Math.ceil(n * 0.5), b = Math.ceil(n * 0.8), r = (x, y) => x > y ? '—' : x === y ? String(x) : `${x}–${y}`;
+    const ranges = [r(0, a - 1), r(a, b - 1), r(b, n - 1), String(n)];
+    const tog = (key, label, text) => `<label class="toggle"><div><b>${label}</b><small>${text}</small></div><input type="checkbox" data-qe-flag="${key}" ${qe[key] ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label>`;
+    mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#quizzes${editing ? '/' + qe.id : ''}" aria-label="Назад к тестам">${icon('back')}</a><div class="top-copy"><span>Тесты${editing ? ' · ' + (QZ_STATUS[qe.status] || QZ_STATUS.draft)[0].toLowerCase() : ''}</span><h1>${editing ? 'Изменить тест' : 'Новый тест'}</h1></div></div>
+      <div class="top-actions">${published ? '' : '<button type="button" class="btn" data-qe-save="draft">Сохранить черновик</button>'}<button type="button" class="btn black" data-qe-save="published">${published ? 'Сохранить' : 'Опубликовать'}</button></div></header>
+      <div class="editor quiz-editor">
+        <div class="editor-form">
+          <section class="glass card"><div class="card-head"><h2>Основное</h2></div>
+            <label class="field"><span>Название</span><input class="input" data-qe-field="title" maxlength="120" value="${esc(qe.title)}" placeholder="Например, Основы намаза"></label>
+            <label class="field"><span>Описание</span><textarea class="input" data-qe-field="description" maxlength="600" placeholder="О чём тест и кому он полезен">${esc(qe.description)}</textarea></label>
+            <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>Тема</span><select class="select input" data-qe-field="category" style="height:48px;border-radius:18px">${QZ_CATS.map(c => `<option ${c === qe.category ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
+            <label class="toggle" style="border:0;align-self:end"><div><b>Тест недели</b><small>Большая карточка вверху вкладки</small></div><input type="checkbox" data-qe-flag="featured" ${qe.featured ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label></div>
+          </section>
+          <section class="glass card"><div class="card-head"><h2>Вопросы · ${n}</h2><small class="muted">стрелками меняйте порядок</small></div>
+            <div style="display:flex;flex-direction:column;gap:10px">${qe.questions.map(questionCard).join('')}</div>
+            <button type="button" data-qe-add style="height:56px;border-radius:22px;border:2px dashed rgba(16,22,26,.16);background:rgba(255,255,255,.35);color:var(--soft);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">${icon('plus')}Добавить вопрос</button>
+          </section>
+          <p id="qe-error" class="error" role="alert"></p>
+        </div>
+        <div class="preview quiz-side">
+          <section class="glass card"><div class="card-head"><h2>Правила</h2></div><div>${tog('showAnswers', 'Показывать ответ сразу', 'Верный вариант и пояснение после каждого вопроса')}${tog('shuffleQuestions', 'Перемешивать вопросы', 'У каждого участника свой порядок')}${tog('shuffleOptions', 'Перемешивать варианты', 'Варианты ответа меняются местами')}${tog('showStats', 'Показывать статистику', 'Участники видят, сколько человек прошли и средний результат')}</div></section>
+          <section class="glass card"><div class="card-head"><h2>Уровни по результату</h2></div><small class="muted" style="margin-top:-8px">Сколько правильных ответов — такой уровень увидит участник</small>
+            ${qe.levels.map((l, i) => `<div style="display:flex;align-items:center;gap:10px"><span style="width:64px;height:40px;flex:none;border-radius:14px;background:rgba(16,22,26,.05);display:grid;place-items:center;font-size:14px;font-weight:600">${ranges[i]}</span><input class="input" data-qe-level="${i}" maxlength="40" value="${esc(l)}" aria-label="Название уровня ${i + 1}" style="height:40px"></div>`).join('')}</section>
+          <div class="info" style="background:rgba(78,92,190,.08)"><span class="circle" style="color:var(--indigo)">${icon('alert')}</span><div><b>Проверьте перед публикацией</b><small>У каждого вопроса один верный ответ. Тексты по фикху лучше показать знающему человеку.</small></div></div>
+        </div>
+      </div>`, 'quiz-editor');
+  }
+  function quizErrors() {
+    if (!qe.title.trim()) return 'Введите название теста.';
+    for (const [i, q] of qe.questions.entries()) {
+      if (!q.text.trim()) return `Вопрос ${i + 1}: введите текст.`;
+      if (q.options.filter(o => o.trim()).length < 2) return `Вопрос ${i + 1}: нужно хотя бы два варианта ответа.`;
+      if (q.correct < 0 || !q.options[q.correct]?.trim()) return `Вопрос ${i + 1}: отметьте верный ответ.`;
+    }
+    return '';
+  }
+  async function saveQuiz(status, button) {
+    const error = status === 'published' && !qe.questions.length ? 'Добавьте хотя бы один вопрос.' : quizErrors();
+    $('#qe-error').textContent = error; if (error) return;
+    /* Empty options are dropped; the right answer keeps pointing at the same text. */
+    const questions = qe.questions.map(q => { const kept = q.options.map((o, k) => [o.trim(), k]).filter(([o]) => o); return { id: q.id, text: q.text.trim(), options: kept.map(([o]) => o), correct: kept.findIndex(([, k]) => k === q.correct), explanation: q.explanation.trim() }; });
+    const body = { title: qe.title.trim(), description: qe.description.trim(), category: qe.category, status, featured: qe.featured, showAnswers: qe.showAnswers, shuffleQuestions: qe.shuffleQuestions, shuffleOptions: qe.shuffleOptions, showStats: qe.showStats, timeLimitMin: null, levels: qe.levels, questions };
+    button.disabled = true;
+    try {
+      const saved = qe.id ? await send(`admin/quizzes/${qe.id}`, 'PUT', body) : await send('admin/quizzes', 'POST', body);
+      const id = qe.id || saved.id; delete qz.details[id]; data.quizzes = null;
+      toast(status === 'draft' ? 'Черновик сохранён' : qe.status === 'published' ? 'Изменения сохранены' : 'Тест опубликован');
+      location.hash = `#quizzes/${id}`;
+    } catch (err) { $('#qe-error').textContent = err.message; button.disabled = false; }
+  }
+  main.addEventListener('input', event => {
+    if (!qe || shownView !== 'quiz-editor') return;
+    const t = event.target, d = t.dataset;
+    if (d.qeField) qe[d.qeField] = t.value;
+    else if (d.qeText !== undefined) qe.questions[+d.qeText].text = t.value;
+    else if (d.qeExpl !== undefined) qe.questions[+d.qeExpl].explanation = t.value;
+    else if (d.qeOpt) { const [i, k] = d.qeOpt.split('|').map(Number); qe.questions[i].options[k] = t.value; }
+    else if (d.qeLevel !== undefined) qe.levels[+d.qeLevel] = t.value;
+  });
+  main.addEventListener('change', event => {
+    if (!qe || shownView !== 'quiz-editor') return;
+    const t = event.target, d = t.dataset;
+    if (d.qeFlag) { qe[d.qeFlag] = t.checked; return; }
+    if (d.qeField === 'category') qe.category = t.value;
+    if (d.qeRight) { const [i, k] = d.qeRight.split('|').map(Number); qe.questions[i].correct = k; paintQuizEditor(); }
+  });
+  main.addEventListener('click', event => {
+    const t = event.target;
+    const row = t.closest('tr[data-quiz]'); if (row) { qz.selected = row.dataset.quiz; history.replaceState(null, '', `#quizzes/${row.dataset.quiz}`); paintQuizzes(); if (!qz.details[qz.selected]) loadQuizDetail(qz.selected); if (innerWidth <= 1240) $('.detail')?.scrollIntoView({ behavior: 'smooth' }); return; }
+    const tab = t.closest('[data-qz-tab]'); if (tab) { qz.tab = tab.dataset.qzTab; paintQuizzes(); return; }
+    if (t.closest('[data-qz-close]')) { qz.selected = null; history.replaceState(null, '', '#quizzes'); paintQuizzes(); return; }
+    const st = t.closest('[data-qz-status]'); if (st) { setQuizStatus(st.dataset.id, st.dataset.qzStatus); return; }
+    const del = t.closest('[data-qz-delete]'); if (del) { deleteQuiz(del.dataset.qzDelete); return; }
+    if (!qe || shownView !== 'quiz-editor') return;
+    const save = t.closest('[data-qe-save]'); if (save) { saveQuiz(save.dataset.qeSave, save); return; }
+    if (t.closest('[data-qe-add]')) { qe.questions.forEach(q => { q.open = false; }); qe.questions.push(blankQuestion()); paintQuizEditor(); requestAnimationFrame(() => { const last = main.querySelectorAll('[data-qe-text]'); last[last.length - 1]?.focus(); }); return; }
+    const tg = t.closest('[data-qe-toggle]'); if (tg) { const i = +tg.dataset.qeToggle, open = !qe.questions[i].open; qe.questions.forEach(q => { q.open = false; }); qe.questions[i].open = open; paintQuizEditor(); return; }
+    const mv = t.closest('[data-qe-move]'); if (mv) { const [i, dir] = mv.dataset.qeMove.split('|').map(Number), j = i + dir; if (j < 0 || j >= qe.questions.length) return; [qe.questions[i], qe.questions[j]] = [qe.questions[j], qe.questions[i]]; paintQuizEditor(); return; }
+    const dup = t.closest('[data-qe-dup]'); if (dup) { const i = +dup.dataset.qeDup, q = qe.questions[i]; qe.questions.forEach(x => { x.open = false; }); qe.questions.splice(i + 1, 0, { ...q, id: null, options: q.options.slice(), open: true }); paintQuizEditor(); return; }
+    const rm = t.closest('[data-qe-del]'); if (rm) { const i = +rm.dataset.qeDel; qe.questions.splice(i, 1); if (qe.questions[i]) qe.questions[i].open = true; else if (qe.questions[i - 1]) qe.questions[i - 1].open = true; paintQuizEditor(); return; }
+    const oa = t.closest('[data-qe-optadd]'); if (oa) { qe.questions[+oa.dataset.qeOptadd].options.push(''); paintQuizEditor(); return; }
+    const od = t.closest('[data-qe-optdel]'); if (od) { const [i, k] = od.dataset.qeOptdel.split('|').map(Number), q = qe.questions[i]; q.options.splice(k, 1); if (q.correct === k) q.correct = -1; else if (q.correct > k) q.correct--; paintQuizEditor(); return; }
+  });
+
   /* ---------- Settings ---------- */
   async function showSettings() {
     if (!data.settings) loading('Настройки');
@@ -1183,7 +1381,7 @@ tbody tr:last-child td{border-bottom:0}
     if (!cred) return;
     document.querySelector('.menu')?.remove();
     const [section = 'overview', id, action] = location.hash.replace(/^#/, '').split('/');
-    const current = ['overview', 'events', 'users', 'groups', 'moderation', 'settings'].includes(section) ? section : 'overview';
+    const current = ['overview', 'events', 'users', 'groups', 'moderation', 'quizzes', 'settings'].includes(section) ? section : 'overview';
     closePanel();
     document.querySelectorAll('[data-route]').forEach(a => { if (a.dataset.route === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     window.scrollTo(0, 0);
@@ -1200,6 +1398,11 @@ tbody tr:last-child td{border-bottom:0}
       else showGroups();
     }
     else if (current === 'moderation') showModeration();
+    else if (current === 'quizzes') {
+      if (id === 'new') showQuizEditor(null);
+      else if (id && action === 'edit') showQuizEditor(id);
+      else showQuizzes(id || null);
+    }
     else if (current === 'settings') showSettings();
     else showOverview();
   }
@@ -1207,7 +1410,7 @@ tbody tr:last-child td{border-bottom:0}
 
   main.addEventListener('click', event => {
     const t = event.target;
-    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = null; route(); return; }
+    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = data.quizzes = null; qz.details = {}; route(); return; }
     if (t.closest('[data-search]')) { openSearch(); return; }
     if (t.closest('[data-bell]')) { event.stopPropagation(); openBell(); return; }
     const pause = t.closest('[data-pause]'); if (pause) { setPaused(pause.dataset.pause, true); return; }
