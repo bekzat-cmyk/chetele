@@ -289,7 +289,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="minimum-celebration" class="reward reward-minimum" hidden><button type="button" class="reward-dim" data-reward-close aria-label="Закрыть"></button><section class="reward-sheet" role="status" aria-live="polite"><span class="reward-spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><h2>Минимум дня выполнен</h2><p>Вы сделали <b>3 дела</b>. Можно продолжить в своём темпе — или просто порадоваться этому шагу.</p><button type="button" class="reward-primary" data-reward-close>Продолжить</button></section></div>
   <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><section class="reward-badge-card"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></section></div>
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
-  <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><p class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
+  <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
     const APP_VERSION = '1.2.0';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
@@ -1312,11 +1312,11 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const root=document.querySelector('#events-list'); if(!root) return;
       root.removeAttribute('aria-busy');
       document.querySelectorAll('#events-view [data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
-      const number=new Intl.NumberFormat(appLocale()), units={salawat:'салаватов',dhikr:'зикров',quran_pages:'стр.',tahajjud_count:'ночей'};
+      const number=new Intl.NumberFormat(appLocale()), units={salawat:'салаватов',dhikr:'зикров',quran_pages:'стр.',book_pages:'стр.',tahajjud_count:'ночей'}, unitOf=event=>event.metric==='custom'?(event.custom_unit||'раз'):(units[event.metric]||'раз');
       const plural=(n,one,few,many)=>{ const d=n%10,h=n%100; return d===1&&h!==11?one:d>=2&&d<=4&&(h<12||h>14)?few:many; };
       const shortDate=key=>new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`));
       const dayDiff=(from,to)=>Math.round((new Date(`${to}T12:00:00`)-new Date(`${from}T12:00:00`))/86400000);
-      const metricIcon={salawat:'softSalawat',dhikr:'softZikr',quran_pages:'softQuran',tahajjud_count:'softTahajjud'};
+      const metricIcon={salawat:'softSalawat',dhikr:'softZikr',quran_pages:'softQuran',book_pages:'softKitap',tahajjud_count:'softTahajjud',custom:'softStar'};
       const live=events.filter(event=>event.starts_on<=todayKey), soon=events.filter(event=>event.starts_on>todayKey);
       const sub=document.querySelector('#events-sub');
       if(sub) sub.textContent=live.length?`${live.length} ${plural(live.length,'идёт','идут','идут')} сейчас`:soon.length?'Скоро начнутся':'Скоро новое событие';
@@ -1326,25 +1326,26 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const status=upcoming?`<span class="evs-pill soon">С ${shortDate(event.starts_on)}</span>`:`<span class="evs-pill live"><i></i>${left<=0?'Последний день':`Идёт · ещё ${left} ${plural(left,'день','дня','дней')}`}</span>`;
         return `<div class="evs-pills">${status}<span class="evs-pill">${personal?'Личный путь':'Общая цель'}</span>${event.paused?'<span class="evs-pill paused">На паузе</span>':''}${event.pending?'<span class="evs-pill pending">Ждёт подтверждения</span>':event.rejected?'<span class="evs-pill rejected">Заявка отклонена</span>':event.joined?'<span class="evs-pill joined">Вы участвуете</span>':''}</div>`;
       };
-      const join=event=>event.joined||event.paused?'':isGuest()?`<button type="button" class="ps-primary evs-join" data-auth="signup">${guestSvg('lock')}Участвовать</button>`:`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
+      const join=event=>event.joined||event.paused?'':isGuest()?`<button type="button" class="ps-primary evs-join" data-auth="signup">${guestSvg('lock')}Участвовать</button>`:`<button type="button" class="ps-primary evs-join" data-event-join="${event.id}" data-event-mode="${event.mode==='personal_path'?'personal_path':'common_goal'}" data-event-metric="${escapeHtml(event.metric||'')}" data-event-unit="${escapeHtml(unitOf(event))}" data-event-step="${Number(event.custom_step)||1}" data-event-title="${escapeHtml(event.title)}" data-event-days="${dayDiff(event.starts_on,event.ends_on)+1}">Участвовать</button>`;
+      const contribute=event=>event.canContribute?`<button type="button" class="ps-primary evs-join evs-contribute" data-event-contribute="${event.id}">${icon('softStar')}Добавить вклад${event.pending?' · ждёт подтверждения':''}</button>`:'';
       const copy=(event,big)=>`<div class="evs-copy">${big?'':`<i class="evs-icon">${icon(metricIcon[event.metric]||'softEvents')}</i>`}<span><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.description||(event.mode==='personal_path'?'Личный путь в своём темпе.':'Общая цель сообщества.'))}</p></span></div>`;
       const progress=(value,target,unit)=>{ const percent=Math.min(100,Math.round(value/Math.max(1,target)*100)); return `<div class="evs-progress"><div><b>${number.format(value)}</b><span>из ${number.format(target)} ${unit}</span><strong>${percent}%</strong></div><span class="zg-track" aria-hidden="true"><i style="width:${percent}%"></i></span></div>`; };
       const participants=n=>`${number.format(n)} ${plural(n,'участник','участника','участников')}`;
       const hero=live.find(event=>event.mode!=='personal_path');
       const heroCard=event=>{
-        const unit=units[event.metric]||'раз', stat=(value,label)=>`<span><b>${value}</b><small>${label}</small></span>`;
+        const unit=unitOf(event), stat=(value,label)=>`<span><b>${value}</b><small>${label}</small></span>`;
         const leaders=Array.isArray(event.leaders)&&event.leaders.length?`<div class="evs-leaders"><h4>Лидеры</h4>${event.leaders.map((leader,index)=>`<div class="evs-leader"><span class="evs-place">${index+1}</span><span class="rt-row-avatar">${escapeHtml(Array.from(String(leader.name||'').trim())[0]||'·')}</span><b>${escapeHtml(leader.name)}</b><strong>${number.format(leader.progress)}</strong></div>`).join('')}</div>`:'';
-        return `<section class="evs-hero" aria-label="${escapeHtml(event.title)}"><div class="evs-hero-bar">${pills(event)}</div><article class="evs-hero-card">${copy(event,true)}${progress(Number(event.totalProgress||0),Number(event.goal||0),unit)}<div class="evs-stats">${stat(event.joined?number.format(event.myProgress||0):'—','мой вклад')}${stat(event.joined&&event.myRank?`#${event.myRank}`:'—','моё место')}${stat(number.format(event.participants||0),plural(Number(event.participants||0),'участник','участника','участников'))}</div>${leaders}${join(event)}</article></section>`;
+        return `<section class="evs-hero" aria-label="${escapeHtml(event.title)}"><div class="evs-hero-bar">${pills(event)}</div><article class="evs-hero-card">${copy(event,true)}${progress(Number(event.totalProgress||0),Number(event.goal||0),unit)}<div class="evs-stats">${stat(event.joined?number.format(event.myProgress||0):'—','мой вклад')}${stat(event.joined&&event.myRank?`#${event.myRank}`:'—','моё место')}${stat(number.format(event.participants||0),plural(Number(event.participants||0),'участник','участника','участников'))}</div>${leaders}${join(event)}${contribute(event)}</article></section>`;
       };
       const card=event=>{
-        const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=Math.max(0,dayDiff(todayKey,event.ends_on)), unit=units[event.metric]||'раз';
+        const personal=event.mode==='personal_path', upcoming=event.starts_on>todayKey, left=Math.max(0,dayDiff(todayKey,event.ends_on)), unit=unitOf(event);
         let body='';
         if(personal&&event.joined) body=`${progress(Number(event.myProgress||0),Number(event.personalTarget||0),unit)}<p class="evs-meta">${upcoming?`Старт ${shortDate(event.starts_on)}`:`Осталось ${left} ${plural(left,'день','дня','дней')}`} · ${participants(Number(event.participants||0))}</p>`;
         else if(!personal&&!upcoming) body=progress(Number(event.totalProgress||0),Number(event.goal||0),unit);
-        return `<article class="evs-card">${pills(event)}${copy(event,false)}${body}${event.joined?'':`<div class="evs-foot"><span>${participants(Number(event.participants||0))}</span>${join(event)}</div>`}</article>`;
+        return `<article class="evs-card">${pills(event)}${copy(event,false)}${body}${contribute(event)}${event.joined?'':`<div class="evs-foot"><span>${participants(Number(event.participants||0))}</span>${join(event)}</div>`}</article>`;
       };
       const others=live.filter(event=>event!==hero);
-      root.innerHTML=`${isGuest()?guestCta('Смотреть можно, участвовать — с профилем','Ваши салаваты и дела будут засчитываться в события автоматически.'):''}${hero?heroCard(hero):''}${others.map(card).join('')}${soon.length?`<section class="evs-soon"><h3 class="evs-heading">Скоро</h3>${soon.map(card).join('')}</section>`:''}<p class="evs-note">Отметки засчитываются в событие с момента участия.</p>`;
+      root.innerHTML=`${isGuest()?guestCta('Смотреть можно, участвовать — с профилем','Ваши салаваты и дела будут засчитываться в события автоматически.'):''}${hero?heroCard(hero):''}${others.map(card).join('')}${soon.length?`<section class="evs-soon"><h3 class="evs-heading">Скоро</h3>${soon.map(card).join('')}</section>`:''}<p class="evs-note">Отметки засчитываются в событие с момента участия.${events.some(event=>event.metric==='custom')?' В событиях со своим счётом вклад добавляется кнопкой в карточке.':''}</p>`;
     }
     async function fetchEvents(){
       const root=document.querySelector('#events-list'); if(!root) return;
@@ -1360,13 +1361,45 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     const GOAL_KINDS={
       tahajjud_count:{unit:n=>goalPlural(n,'ночь','ночи','ночей'),step:1},
       quran_pages:{unit:n=>goalPlural(n,'страница','страницы','страниц'),step:10,presets:[30,100,604]},
+      book_pages:{unit:n=>goalPlural(n,'страница','страницы','страниц'),step:10,presets:[100,300,1000]},
       salawat:{unit:n=>goalPlural(n,'салават','салавата','салаватов'),step:100,presets:[1000,5000,10000]},
       dhikr:{unit:n=>goalPlural(n,'зикр','зикра','зикров'),step:100,presets:[1000,5000,10000]}
     };
-    let goalKind=null, goalLabels=[];
+    let goalKind=null, goalLabels=[], goalMode='join', contributeEventId=null;
+    /* The same sheet adds an amount to a custom event: number, quick steps, and the last
+       entries with a way to remove a mistaken one. */
+    function setupContribute(eventId){
+      const event=(state.events||[]).find(item=>String(item.id)===String(eventId)); if(!event) return false;
+      const step=Math.max(1,Number(event.custom_step)||1), unit=event.custom_unit||'раз';
+      goalMode='contribute'; contributeEventId=event.id;
+      goalKind={unit:()=>unit,step,presets:[step,step*5,step*10],max:99999}; goalLabels=[`+${step}`,`+${step*5}`,`+${step*10}`].map(()=>unit);
+      document.querySelector('#personal-goal-title').textContent='Добавить вклад';
+      document.querySelector('#personal-goal-event').textContent=`${event.title} · у вас ${Number(event.myProgress||0).toLocaleString('ru-RU')} ${unit}`;
+      document.querySelector('#personal-goal-note').textContent=event.pending?'Вклад сохранится и засчитается после подтверждения участия':'Вклад засчитывается в событие сразу';
+      document.querySelector('#personal-goal-input').value=step;
+      paintContributions(event); paintPersonalGoal(); return true;
+    }
+    function paintContributions(event){
+      const box=document.querySelector('#personal-goal-entries'), entries=event?.myEntries||[], unit=event?.custom_unit||'раз';
+      box.hidden=!entries.length;
+      box.innerHTML=entries.length?`<h3>Ваши записи</h3>${entries.map(entry=>`<div class="pg-entry"><span><b>${Number(entry.amount).toLocaleString('ru-RU')} ${escapeHtml(unit)}</b><small>${new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${String(entry.date).slice(0,10)}T12:00:00`))}</small></span><button type="button" data-contrib-delete="${entry.id}" aria-label="Удалить запись"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg></button></div>`).join('')}`:'';
+    }
+    async function deleteContribution(button){
+      button.disabled=true;
+      try { const response=await apiFetch(apiUrl(`events/${contributeEventId}/contributions/${button.dataset.contribDelete}`),{method:'DELETE'}); if(!response.ok) throw new Error(); await fetchEvents(); setupContribute(contributeEventId); }
+      catch { button.disabled=false; document.querySelector('#personal-goal-error').textContent='Не удалось удалить запись.'; }
+    }
+    function resetGoalSheet(){
+      goalMode='join'; contributeEventId=null;
+      document.querySelector('#personal-goal-title').textContent='Ваша цель';
+      document.querySelector('#personal-goal-note').textContent='Цель можно изменить позже в карточке события';
+      paintContributions(null);
+    }
     function setupPersonalGoal(button){
+      resetGoalSheet();
       const metric=button.dataset.eventMetric, days=Math.max(1,Number(button.dataset.eventDays)||30);
-      const kind=GOAL_KINDS[metric]||{unit:n=>goalPlural(n,'раз','раза','раз'),step:1,presets:[10,50,100]};
+      const customStep=Math.max(1,Number(button.dataset.eventStep)||1), customUnit=button.dataset.eventUnit||'раз';
+      const kind=metric==='custom'?{unit:()=>customUnit,step:customStep,presets:[customStep*10,customStep*50,customStep*100]}:GOAL_KINDS[metric]||{unit:n=>goalPlural(n,'раз','раза','раз'),step:1,presets:[10,50,100]};
       const presets=kind.presets||[...new Set([Math.max(1,Math.round(days/3)),Math.max(1,Math.round(days*2/3)),days])];
       goalKind={...kind,presets,max:metric==='tahajjud_count'?days:999999};
       document.querySelector('#personal-goal-event').textContent=`${button.dataset.eventTitle||''} · событие длится ${days} ${goalPlural(days,'день','дня','дней')}`;
@@ -1379,7 +1412,8 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const value=Number(document.querySelector('#personal-goal-input').value)||0, format=n=>n.toLocaleString('ru-RU');
       document.querySelector('#personal-goal-unit').textContent=goalKind.unit(value);
       document.querySelector('#personal-goal-presets').innerHTML=goalKind.presets.map((n,index)=>`<button type="button" class="${n===value?'active':''}" data-goal-preset="${n}" aria-pressed="${n===value}"><b>${format(n)}</b><small>${goalLabels[index]||goalKind.unit(n)}</small></button>`).join('');
-      document.querySelector('#personal-goal-save').textContent=value?`Участвовать · ${format(value)} ${goalKind.unit(value)}`:'Участвовать';
+      const verb=goalMode==='contribute'?'Добавить':'Участвовать';
+      document.querySelector('#personal-goal-save').textContent=value?`${verb} · ${format(value)} ${goalKind.unit(value)}`:verb;
     }
     document.querySelector('#personal-goal-input').addEventListener('input',paintPersonalGoal);
     document.querySelector('#personal-goal-modal').addEventListener('click',event=>{
@@ -1388,12 +1422,21 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const step=event.target.closest('[data-goal-step]');
       if(step&&goalKind){ const next=(Number(input.value)||0)+Number(step.dataset.goalStep)*goalKind.step; input.value=Math.min(goalKind.max,Math.max(1,next)); paintPersonalGoal(); return; }
       const preset=event.target.closest('[data-goal-preset]');
-      if(preset){ input.value=preset.dataset.goalPreset; paintPersonalGoal(); }
+      if(preset){ input.value=preset.dataset.goalPreset; paintPersonalGoal(); return; }
+      const remove=event.target.closest('[data-contrib-delete]'); if(remove) deleteContribution(remove);
     });
     function closePersonalGoalModal(){ closeLayer(document.querySelector('#personal-goal-modal')); personalGoalButton=null; }
+    document.addEventListener('click',event=>{ const button=event.target.closest('[data-event-contribute]'); if(!button||!state.userId) return; if(!setupContribute(button.dataset.eventContribute)) return; document.querySelector('#personal-goal-error').textContent=''; openLayer(document.querySelector('#personal-goal-modal')); requestAnimationFrame(()=>document.querySelector('#personal-goal-input').focus({preventScroll:true})); });
     document.addEventListener('click',event=>{ const button=event.target.closest('[data-event-join]'); if(!button||!state.userId||!state.login) return; if(button.dataset.eventMode!=='personal_path'){ joinEvent(button); return; } personalGoalButton=button; setupPersonalGoal(button); document.querySelector('#personal-goal-error').textContent=''; openLayer(document.querySelector('#personal-goal-modal')); requestAnimationFrame(()=>document.querySelector('.personal-goal-save').focus({preventScroll:true})); });
     document.querySelector('#personal-goal-cancel').addEventListener('click',closePersonalGoalModal);
-    document.querySelector('#personal-goal-form').addEventListener('submit',event=>{ event.preventDefault(); const target=Number(document.querySelector('#personal-goal-input').value); if(!Number.isInteger(target)||target<1){ document.querySelector('#personal-goal-error').textContent='Укажите цель больше нуля.'; return; } const button=personalGoalButton; closePersonalGoalModal(); if(button) joinEvent(button,target); });
+    document.querySelector('#personal-goal-form').addEventListener('submit',async event=>{ event.preventDefault(); const target=Number(document.querySelector('#personal-goal-input').value); if(!Number.isInteger(target)||target<1){ document.querySelector('#personal-goal-error').textContent=goalMode==='contribute'?'Введите целое число больше нуля.':'Укажите цель больше нуля.'; return; }
+      if(goalMode==='contribute'){
+        const save=document.querySelector('#personal-goal-save'); save.disabled=true;
+        try { const response=await apiFetch(apiUrl(`events/${contributeEventId}/contributions`),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,amount:target})}); if(!response.ok){ const data=await response.json().catch(()=>({})); throw new Error(data.error||'Не удалось сохранить вклад.'); } closePersonalGoalModal(); await fetchEvents(); }
+        catch(error){ document.querySelector('#personal-goal-error').textContent=error.message; }
+        finally { save.disabled=false; }
+        return;
+      } const button=personalGoalButton; closePersonalGoalModal(); if(button) joinEvent(button,target); });
     function renderCalendar(){
       const calendar=document.querySelector('#week-calendar'), formatter=new Intl.DateTimeFormat(appLocale(),{weekday:'narrow'}), now=new Date(), monday=(now.getDay()+6)%7;
       const flameIcon=icon('flame');
@@ -2729,6 +2772,17 @@ body .personal-goal-modal .personal-goal-presets{display:grid;grid-template-colu
 body .personal-goal-modal .personal-goal-presets:empty{display:none}
 body .personal-goal-modal .personal-goal-presets button{min-height:44px;padding:4px 6px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:800;box-shadow:none}
 body .personal-goal-modal .personal-goal-presets button.active{border-color:var(--hero);background:var(--accent-soft);color:var(--accent-ink)}
+body .personal-goal-modal .personal-goal-entries{display:flex;flex-direction:column;gap:2px}
+body .personal-goal-modal .personal-goal-entries[hidden]{display:none}
+body .personal-goal-modal .personal-goal-entries h3{margin:0 0 4px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+body .personal-goal-modal .pg-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+body .personal-goal-modal .pg-entry:last-child{border-bottom:0}
+body .personal-goal-modal .pg-entry span{display:flex;flex-direction:column}
+body .personal-goal-modal .pg-entry b{color:var(--ink);font-size:15px;font-weight:800}
+body .personal-goal-modal .pg-entry small{color:var(--muted);font-size:12px;font-weight:600}
+body .personal-goal-modal .pg-entry button{width:40px;height:40px;padding:0;border:0;border-radius:12px;background:var(--page);color:#B42318;display:grid;place-items:center}
+body .personal-goal-modal .pg-entry button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body #app .evs-contribute{margin-top:10px}
 body .personal-goal-modal .personal-goal-error{margin:0;color:#B42318;font-size:13px;font-weight:700}
 body .personal-goal-modal .personal-goal-error:empty{display:none}
 body .personal-goal-modal .personal-goal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}

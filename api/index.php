@@ -130,6 +130,12 @@ function ensureEventsTables(PDO $db): void {
     if (!in_array('manual_reminded_at', $eventColumns, true)) {
         $db->exec('ALTER TABLE events ADD COLUMN manual_reminded_at DATETIME NULL AFTER reminded_on');
     }
+    if (!in_array('custom_unit', $eventColumns, true)) {
+        $db->exec('ALTER TABLE events ADD COLUMN custom_unit VARCHAR(16) NULL AFTER metric');
+    }
+    if (!in_array('custom_step', $eventColumns, true)) {
+        $db->exec('ALTER TABLE events ADD COLUMN custom_step INT UNSIGNED NOT NULL DEFAULT 1 AFTER custom_unit');
+    }
     $db->exec('CREATE TABLE IF NOT EXISTS event_participants (
         event_id BIGINT UNSIGNED NOT NULL,
         user_id CHAR(36) NOT NULL,
@@ -142,6 +148,17 @@ function ensureEventsTables(PDO $db): void {
     if (!in_array('personal_target', $participantColumns, true)) {
         $db->exec('ALTER TABLE event_participants ADD COLUMN personal_target BIGINT UNSIGNED NULL AFTER joined_at');
     }
+    $db->exec('CREATE TABLE IF NOT EXISTS event_contributions (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        event_id BIGINT UNSIGNED NOT NULL,
+        user_id CHAR(36) NOT NULL,
+        amount INT UNSIGNED NOT NULL,
+        entry_date DATE NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        KEY idx_contributions_event_user (event_id, user_id),
+        CONSTRAINT fk_contribution_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+        CONSTRAINT fk_contribution_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
     /* approved | pending | rejected. Only approved participants count in totals and ratings. */
     if (!in_array('status', $participantColumns, true)) {
         $db->exec("ALTER TABLE event_participants ADD COLUMN status VARCHAR(12) NOT NULL DEFAULT 'approved' AFTER personal_target");
@@ -246,8 +263,72 @@ function ensureAdminSettingsTable(PDO $db): void {
 function eventMetricSql(string $metric, string $tasksColumn): string {
     if ($metric === 'quran_pages') return "CAST(JSON_UNQUOTE(JSON_EXTRACT({$tasksColumn}, '$.quran')) AS UNSIGNED)";
     if ($metric === 'dhikr') return "CAST(JSON_UNQUOTE(JSON_EXTRACT({$tasksColumn}, '$.tasbihat')) AS UNSIGNED)";
+    if ($metric === 'book_pages') return "CAST(JSON_UNQUOTE(JSON_EXTRACT({$tasksColumn}, '$.kitap')) AS UNSIGNED)";
     if ($metric === 'tahajjud_count') return "CASE WHEN JSON_UNQUOTE(JSON_EXTRACT({$tasksColumn}, '$.tahajjud')) = 'yes' THEN 1 ELSE 0 END";
     return "CAST(JSON_UNQUOTE(JSON_EXTRACT({$tasksColumn}, '$.salawat')) AS UNSIGNED)";
+}
+
+const EVENT_METRICS = ['salawat','dhikr','quran_pages','book_pages','tahajjud_count','custom'];
+
+/* A «custom» event is not tied to the app's deeds: participants add their own amounts
+   (kilometres, pages, visits…) to event_contributions. Every other metric is read from
+   daily_entries between the event's start (or the day of joining) and its end. */
+function eventIsCustom(array $event): bool { return ($event['metric'] ?? '') === 'custom'; }
+
+/* Rows (user_id, progress) for the event's approved participants. */
+function eventProgressTable(array $event): array {
+    if (eventIsCustom($event)) {
+        return ["SELECT p.user_id, COALESCE(SUM(c.amount),0) AS progress FROM event_participants p
+            LEFT JOIN event_contributions c ON c.event_id=p.event_id AND c.user_id=p.user_id
+            WHERE p.event_id=? AND p.status='approved' GROUP BY p.user_id", [$event['id']]];
+    }
+    $metricSql = eventMetricSql((string)$event['metric'], 'e.tasks');
+    return ["SELECT p.user_id, COALESCE(SUM({$metricSql}),0) AS progress FROM event_participants p
+        LEFT JOIN daily_entries e ON e.user_id=p.user_id AND e.entry_date BETWEEN GREATEST(?, DATE(p.joined_at)) AND ?
+        WHERE p.event_id=? AND p.status='approved' GROUP BY p.user_id", [$event['starts_on'], $event['ends_on'], $event['id']]];
+}
+
+function eventTotal(PDO $db, array $event): int {
+    [$sql, $params] = eventProgressTable($event);
+    $statement = $db->prepare("SELECT COALESCE(SUM(progress),0) FROM ({$sql}) t");
+    $statement->execute($params);
+    return (int)$statement->fetchColumn();
+}
+
+function eventLeaders(PDO $db, array $event, int $limit): array {
+    [$sql, $params] = eventProgressTable($event);
+    $statement = $db->prepare("SELECT u.display_name AS name, t.progress FROM ({$sql}) t INNER JOIN users u ON u.id=t.user_id ORDER BY t.progress DESC, u.display_name ASC LIMIT {$limit}");
+    $statement->execute($params);
+    return array_map(fn($row) => ['name' => $row['name'], 'progress' => (int)$row['progress']], $statement->fetchAll());
+}
+
+function eventRank(PDO $db, array $event, int $progress): int {
+    [$sql, $params] = eventProgressTable($event);
+    $statement = $db->prepare("SELECT 1 + COUNT(*) FROM ({$sql}) t WHERE t.progress > ?");
+    $statement->execute([...$params, $progress]);
+    return (int)$statement->fetchColumn();
+}
+
+/* One member's own progress, whatever their approval status. */
+function eventUserProgress(PDO $db, array $event, string $userId, string $joinedAt): int {
+    if (eventIsCustom($event)) {
+        $statement = $db->prepare('SELECT COALESCE(SUM(amount),0) FROM event_contributions WHERE event_id=? AND user_id=?');
+        $statement->execute([$event['id'], $userId]);
+    } else {
+        $metricSql = eventMetricSql((string)$event['metric'], 'tasks');
+        $statement = $db->prepare("SELECT COALESCE(SUM({$metricSql}),0) FROM daily_entries WHERE user_id=? AND entry_date BETWEEN GREATEST(?, DATE(?)) AND ?");
+        $statement->execute([$userId, $event['starts_on'], $joinedAt, $event['ends_on']]);
+    }
+    return (int)$statement->fetchColumn();
+}
+
+/* Unit and quick-button step of a custom event, read from a request body. */
+function customEventInput(array $body, string $metric): array {
+    if ($metric !== 'custom') return [null, 1];
+    $unit = trim(preg_replace('/\s+/u', ' ', (string)($body['customUnit'] ?? '')) ?? '');
+    if ($unit === '' || mb_strlen($unit, 'UTF-8') > 16) respond(400, ['error' => 'Укажите, в чём считаем: например «км», «стр.» или «раз» (до 16 символов).']);
+    $step = (int)($body['customStep'] ?? 1);
+    return [$unit, max(1, min(10000, $step))];
 }
 
 function requireAdmin(array $config): void {
@@ -620,43 +701,68 @@ try {
     if ($method === 'GET' && $parts === ['events']) {
         /* Personal progress is shown only for the session owner. */
         $userId = (string)(sessionUserId($db) ?? '');
+        $today = (string)$db->query('SELECT CURDATE()')->fetchColumn();
         $events = $db->query("SELECT * FROM events WHERE status IN ('published','paused') AND ends_on >= CURDATE() ORDER BY starts_on ASC, id DESC")->fetchAll();
         foreach ($events as &$event) {
-            $metricSql = eventMetricSql((string)$event['metric'], 'e.tasks');
-            $progress = $db->prepare("SELECT COALESCE(SUM({$metricSql}),0) FROM daily_entries e INNER JOIN event_participants p ON p.user_id=e.user_id AND p.event_id=? AND p.status='approved' WHERE e.entry_date BETWEEN GREATEST(?, DATE(p.joined_at)) AND ?");
-            $progress->execute([$event['id'], $event['starts_on'], $event['ends_on']]);
-            $event['totalProgress'] = (int)$progress->fetchColumn();
+            unset($event['reminded_on'], $event['manual_reminded_at']);
+            $event['totalProgress'] = eventTotal($db, $event);
             $count = $db->prepare("SELECT COUNT(*) FROM event_participants WHERE event_id = ? AND status = 'approved'"); $count->execute([$event['id']]); $event['participants'] = (int)$count->fetchColumn();
             $event['joined'] = false; $event['pending'] = false; $event['rejected'] = false; $event['paused'] = $event['status'] === 'paused'; $event['myProgress'] = 0; $event['myRank'] = null; $event['personalTarget'] = null; $event['leaders'] = [];
+            $event['custom'] = eventIsCustom($event); $event['canContribute'] = false; $event['myEntries'] = [];
             if (preg_match('/^[a-f0-9-]{36}$/i', $userId)) {
                 $joined = $db->prepare('SELECT joined_at, personal_target, status FROM event_participants WHERE event_id=? AND user_id=?'); $joined->execute([$event['id'], $userId]); $participant=$joined->fetch();
                 $event['joined'] = (bool)$participant;
                 $event['pending'] = $participant && $participant['status'] === 'pending';
                 $event['rejected'] = $participant && $participant['status'] === 'rejected';
                 if ($participant) {
-                    $mineSql = eventMetricSql((string)$event['metric'], 'tasks');
-                    $mine = $db->prepare("SELECT COALESCE(SUM({$mineSql}),0) FROM daily_entries WHERE user_id=? AND entry_date BETWEEN GREATEST(?, DATE(?)) AND ?");
-                    $mine->execute([$userId, $event['starts_on'], $participant['joined_at'], $event['ends_on']]);
-                    $event['myProgress']=(int)$mine->fetchColumn(); $event['personalTarget']=$participant['personal_target'] === null ? null : (int)$participant['personal_target'];
+                    $event['myProgress'] = eventUserProgress($db, $event, $userId, (string)$participant['joined_at']);
+                    $event['personalTarget'] = $participant['personal_target'] === null ? null : (int)$participant['personal_target'];
+                    if ($event['custom']) {
+                        /* Custom amounts can be added while the event runs, pause or not; a pending
+                           member's amounts are kept and count once approved. */
+                        $event['canContribute'] = !$event['rejected'] && $event['starts_on'] <= $today;
+                        $mine = $db->prepare('SELECT id, amount, entry_date FROM event_contributions WHERE event_id=? AND user_id=? ORDER BY id DESC LIMIT 10');
+                        $mine->execute([$event['id'], $userId]);
+                        $event['myEntries'] = array_map(fn($row) => ['id' => (int)$row['id'], 'amount' => (int)$row['amount'], 'date' => $row['entry_date']], $mine->fetchAll());
+                    }
                 }
             }
             if (($event['mode'] ?? 'common_goal') === 'common_goal' && (int)($event['leaderboard_enabled'] ?? 1) === 1) {
-                $leaderSql = eventMetricSql((string)$event['metric'], 'e.tasks');
-                $leaders = $db->prepare("SELECT u.display_name AS name, COALESCE(SUM({$leaderSql}),0) AS progress FROM event_participants p INNER JOIN users u ON u.id=p.user_id LEFT JOIN daily_entries e ON e.user_id=p.user_id AND e.entry_date BETWEEN GREATEST(?, DATE(p.joined_at)) AND ? WHERE p.event_id=? AND p.status='approved' GROUP BY p.user_id,u.display_name ORDER BY progress DESC,u.display_name ASC LIMIT 3");
-                $leaders->execute([$event['starts_on'], $event['ends_on'], $event['id']]); $event['leaders']=$leaders->fetchAll();
+                $event['leaders'] = eventLeaders($db, $event, 3);
                 foreach ($event['leaders'] as $index => &$leader) {
                     if (($event['results_visibility'] ?? 'names') === 'anonymous') $leader['name']='Участник '.str_pad((string)($index+1),2,'0',STR_PAD_LEFT);
                     elseif (($event['results_visibility'] ?? 'names') === 'initials') { $parts=preg_split('/\s+/u',trim((string)$leader['name']))?:[]; $leader['name']=implode(' ',array_map(function($part){ return mb_substr($part,0,1,'UTF-8').'.'; },$parts)); }
                 }
                 unset($leader);
-                if ($event['joined'] && !$event['pending'] && !$event['rejected']) {
-                    $rankSql = eventMetricSql((string)$event['metric'], 'e.tasks');
-                    $rank = $db->prepare("SELECT 1 + COUNT(*) FROM (SELECT p.user_id, COALESCE(SUM({$rankSql}),0) AS progress FROM event_participants p LEFT JOIN daily_entries e ON e.user_id=p.user_id AND e.entry_date BETWEEN GREATEST(?, DATE(p.joined_at)) AND ? WHERE p.event_id=? AND p.status='approved' GROUP BY p.user_id) ranked WHERE progress > ?");
-                    $rank->execute([$event['starts_on'], $event['ends_on'], $event['id'], $event['myProgress']]); $event['myRank']=(int)$rank->fetchColumn();
-                }
+                if ($event['joined'] && !$event['pending'] && !$event['rejected']) $event['myRank'] = eventRank($db, $event, $event['myProgress']);
             }
         }
         unset($event); respond(200, $events);
+    }
+
+    /* A participant adds an amount to a custom event («прошёл 5 км», «прочитал 20 страниц»). */
+    if ($method === 'POST' && count($parts) === 3 && $parts[0] === 'events' && $parts[2] === 'contributions') {
+        $eventId=(int)$parts[1]; $body=requestBody(); $userId=(string)($body['userId']??''); $value=amount($body['amount']??0);
+        if ($eventId<1 || !preg_match('/^[a-f0-9-]{36}$/i',$userId)) respond(400,['error'=>'Некорректные данные.']);
+        if ($value<1) respond(400,['error'=>'Введите число больше нуля.']);
+        requireUser($db, $userId);
+        $find=$db->prepare("SELECT e.id, p.status FROM events e INNER JOIN event_participants p ON p.event_id=e.id AND p.user_id=?
+            WHERE e.id=? AND e.metric='custom' AND e.status IN ('published','paused') AND e.starts_on<=CURDATE() AND e.ends_on>=CURDATE()");
+        $find->execute([$userId,$eventId]); $row=$find->fetch();
+        if (!$row) respond(404,['error'=>'Сейчас в это событие нельзя добавить вклад.']);
+        if ($row['status']==='rejected') respond(403,['error'=>'Заявка на участие отклонена.']);
+        $today=$db->prepare('SELECT COUNT(*) FROM event_contributions WHERE event_id=? AND user_id=? AND entry_date=CURDATE()'); $today->execute([$eventId,$userId]);
+        if ((int)$today->fetchColumn()>=50) respond(429,['error'=>'Слишком много записей за день.']);
+        $insert=$db->prepare('INSERT INTO event_contributions (event_id,user_id,amount,entry_date) VALUES (?,?,?,CURDATE())'); $insert->execute([$eventId,$userId,$value]);
+        respond(201,['id'=>(int)$db->lastInsertId()]);
+    }
+
+    /* A participant removes one of their own amounts, e.g. a typo. */
+    if ($method === 'DELETE' && count($parts) === 4 && $parts[0] === 'events' && $parts[2] === 'contributions') {
+        $sessionUser=sessionUserId($db); if ($sessionUser===null) respond(401,['error'=>'Сессия истекла. Войдите снова.','reason'=>'session_required']);
+        $statement=$db->prepare('DELETE FROM event_contributions WHERE id=? AND event_id=? AND user_id=?'); $statement->execute([(int)$parts[3],(int)$parts[1],$sessionUser]);
+        if ($statement->rowCount()===0) respond(404,['error'=>'Запись не найдена.']);
+        respond(200,['deleted'=>true]);
     }
 
     if ($method === 'POST' && count($parts) === 3 && $parts[0] === 'events' && $parts[2] === 'join') {
@@ -676,10 +782,10 @@ try {
         $events = $db->query("SELECT e.*,
             (SELECT COUNT(*) FROM event_participants p WHERE p.event_id=e.id AND p.status='approved') AS participant_count,
             (SELECT COUNT(*) FROM event_participants p WHERE p.event_id=e.id AND p.status='pending') AS pending_count,
-            (SELECT COALESCE(SUM(CASE e.metric WHEN 'quran_pages' THEN " . eventMetricSql('quran_pages', 'd.tasks') . " WHEN 'dhikr' THEN " . eventMetricSql('dhikr', 'd.tasks') . " WHEN 'tahajjud_count' THEN " . eventMetricSql('tahajjud_count', 'd.tasks') . " ELSE " . eventMetricSql('salawat', 'd.tasks') . " END),0)
-             FROM event_participants p INNER JOIN daily_entries d ON d.user_id=p.user_id
-             WHERE p.event_id=e.id AND p.status='approved' AND d.entry_date BETWEEN GREATEST(e.starts_on, DATE(p.joined_at)) AND e.ends_on) AS total_progress
+            (SELECT COUNT(*) FROM event_contributions c WHERE c.event_id=e.id) AS contribution_count
             FROM events e ORDER BY created_at DESC")->fetchAll();
+        foreach ($events as &$event) $event['total_progress'] = eventTotal($db, $event);
+        unset($event);
         respond(200, $events);
     }
 
@@ -867,13 +973,14 @@ try {
         $metric=(string)($body['metric']??'salawat'); $mode=(string)($body['mode']??'common_goal'); $status=(string)($body['status']??'published');
         $leaderboardEnabled=($body['leaderboardEnabled']??true)===true?1:0; $resultsVisibility=(string)($body['resultsVisibility']??'names');
         $moderation=($body['moderation']??false)===true?1:0; $remindBeforeEnd=($body['remindBeforeEnd']??true)===true?1:0;
-        if (!in_array($metric, ['salawat','dhikr','quran_pages','tahajjud_count'], true)) $metric='salawat';
+        if (!in_array($metric, EVENT_METRICS, true)) $metric='salawat';
+        [$customUnit,$customStep]=customEventInput($body,$metric);
         if (!in_array($mode, ['common_goal','personal_path'], true)) $mode='common_goal';
         if (!in_array($status, ['draft','published'], true)) $status='published';
         if (!in_array($resultsVisibility, ['names','initials','anonymous'], true)) $resultsVisibility='names';
         if($title==='' || mb_strlen($title)>120 || $goal<1 || !validDate($starts) || !validDate($ends) || $ends<$starts) respond(400,['error'=>'Проверьте название, цель и даты.']);
-        $statement=$db->prepare("INSERT INTO events (title,description,mode,leaderboard_enabled,results_visibility,moderation,remind_before_end,metric,goal,starts_on,ends_on,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-        $statement->execute([$title,mb_substr($description,0,800,'UTF-8'),$mode,$leaderboardEnabled,$resultsVisibility,$moderation,$remindBeforeEnd,$metric,$goal,$starts,$ends,$status]); respond(201,['id'=>(int)$db->lastInsertId()]);
+        $statement=$db->prepare("INSERT INTO events (title,description,mode,leaderboard_enabled,results_visibility,moderation,remind_before_end,metric,custom_unit,custom_step,goal,starts_on,ends_on,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        $statement->execute([$title,mb_substr($description,0,800,'UTF-8'),$mode,$leaderboardEnabled,$resultsVisibility,$moderation,$remindBeforeEnd,$metric,$customUnit,$customStep,$goal,$starts,$ends,$status]); respond(201,['id'=>(int)$db->lastInsertId()]);
     }
 
     if ($method === 'PUT' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'events') {
@@ -884,12 +991,13 @@ try {
         $leaderboardEnabled=($body['leaderboardEnabled']??true)===true?1:0; $resultsVisibility=(string)($body['resultsVisibility']??'names');
         $moderation=($body['moderation']??false)===true?1:0; $remindBeforeEnd=($body['remindBeforeEnd']??true)===true?1:0;
         if ($eventId<1 || $title==='' || mb_strlen($title)>120 || $goal<1 || !validDate($starts) || !validDate($ends) || $ends<$starts) respond(400,['error'=>'Проверьте название, цель и даты.']);
-        if (!in_array($metric, ['salawat','dhikr','quran_pages','tahajjud_count'], true)) $metric='salawat';
+        if (!in_array($metric, EVENT_METRICS, true)) $metric='salawat';
+        [$customUnit,$customStep]=customEventInput($body,$metric);
         if (!in_array($mode, ['common_goal','personal_path'], true)) $mode='common_goal';
         if (!in_array($status, ['draft','published','paused'], true)) $status='published';
         if (!in_array($resultsVisibility, ['names','initials','anonymous'], true)) $resultsVisibility='names';
-        $statement=$db->prepare('UPDATE events SET title=?,description=?,mode=?,leaderboard_enabled=?,results_visibility=?,moderation=?,remind_before_end=?,metric=?,goal=?,starts_on=?,ends_on=?,status=? WHERE id=?');
-        $statement->execute([$title,mb_substr($description,0,800,'UTF-8'),$mode,$leaderboardEnabled,$resultsVisibility,$moderation,$remindBeforeEnd,$metric,$goal,$starts,$ends,$status,$eventId]);
+        $statement=$db->prepare('UPDATE events SET title=?,description=?,mode=?,leaderboard_enabled=?,results_visibility=?,moderation=?,remind_before_end=?,metric=?,custom_unit=?,custom_step=?,goal=?,starts_on=?,ends_on=?,status=? WHERE id=?');
+        $statement->execute([$title,mb_substr($description,0,800,'UTF-8'),$mode,$leaderboardEnabled,$resultsVisibility,$moderation,$remindBeforeEnd,$metric,$customUnit,$customStep,$goal,$starts,$ends,$status,$eventId]);
         /* Switching moderation off lets everyone who waited in. */
         if ($moderation===0) $db->prepare("UPDATE event_participants SET status='approved' WHERE event_id=? AND status='pending'")->execute([$eventId]);
         /* MySQL returns 0 affected rows when the submitted values are identical.
@@ -923,11 +1031,8 @@ try {
         $title='«'.$event['title'].'»';
         if (($event['mode']??'common_goal')==='personal_path') $body='Ваш личный путь продолжается — отметьте сегодняшние дела.';
         else {
-            $metricSql=eventMetricSql((string)$event['metric'],'d.tasks');
-            $progress=$db->prepare("SELECT COALESCE(SUM({$metricSql}),0) FROM event_participants p INNER JOIN daily_entries d ON d.user_id=p.user_id WHERE p.event_id=? AND p.status='approved' AND d.entry_date BETWEEN GREATEST(?, DATE(p.joined_at)) AND ?");
-            $progress->execute([$eventId,$event['starts_on'],$event['ends_on']]);
-            $percent=min(100,(int)floor((int)$progress->fetchColumn()/max(1,(int)$event['goal'])*100));
-            $body="Общая цель выполнена на {$percent}%. Отметьте свои дела — каждый вклад засчитывается.";
+            $percent=min(100,(int)floor(eventTotal($db,$event)/max(1,(int)$event['goal'])*100));
+            $body="Общая цель выполнена на {$percent}%. ".(eventIsCustom($event)?'Добавьте свой вклад в карточке события.':'Отметьте свои дела — каждый вклад засчитывается.');
         }
         require_once __DIR__ . '/event-reminders.php';
         $db->prepare('UPDATE events SET manual_reminded_at=NOW() WHERE id=?')->execute([$eventId]);
@@ -937,14 +1042,11 @@ try {
     /* Moderation queue: participants of moderated events waiting for approval. */
     if ($method === 'GET' && $parts === ['admin','moderation']) {
         requireAdmin($config);
-        $rows=$db->query("SELECT p.event_id,p.user_id,p.joined_at,p.personal_target,e.title,e.metric,e.mode,e.starts_on,e.ends_on,u.display_name,u.login
+        $rows=$db->query("SELECT p.event_id,p.user_id,p.joined_at,p.personal_target,e.id,e.title,e.metric,e.custom_unit,e.mode,e.starts_on,e.ends_on,u.display_name,u.login
             FROM event_participants p INNER JOIN events e ON e.id=p.event_id INNER JOIN users u ON u.id=p.user_id
             WHERE p.status='pending' ORDER BY p.joined_at ASC LIMIT 500")->fetchAll();
         foreach ($rows as &$row) {
-            $metricSql=eventMetricSql((string)$row['metric'],'tasks');
-            $mine=$db->prepare("SELECT COALESCE(SUM({$metricSql}),0) FROM daily_entries WHERE user_id=? AND entry_date BETWEEN GREATEST(?, DATE(?)) AND ?");
-            $mine->execute([$row['user_id'],$row['starts_on'],$row['joined_at'],$row['ends_on']]);
-            $row['progress']=(int)$mine->fetchColumn();
+            $row['progress']=eventUserProgress($db,$row,(string)$row['user_id'],(string)$row['joined_at']);
         }
         unset($row);
         respond(200,$rows);

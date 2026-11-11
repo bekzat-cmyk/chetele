@@ -121,14 +121,14 @@ try {
         $adminNow = $utcNow->setTimezone(new DateTimeZone($zone));
         if ((int)$adminNow->format('G') >= 18) {
             $todayAdmin = $adminNow->format('Y-m-d');
-            $due = $db->prepare("SELECT id, title, mode FROM events WHERE status = 'published' AND remind_before_end = 1 AND ends_on = ? AND (reminded_on IS NULL OR reminded_on <> ?)");
+            $due = $db->prepare("SELECT id, title, mode, metric FROM events WHERE status = 'published' AND remind_before_end = 1 AND ends_on = ? AND (reminded_on IS NULL OR reminded_on <> ?)");
             $due->execute([$adminNow->modify('+1 day')->format('Y-m-d'), $todayAdmin]);
             $mark = $db->prepare('UPDATE events SET reminded_on = ? WHERE id = ?');
             foreach ($due->fetchAll() as $event) {
                 $mark->execute([$todayAdmin, $event['id']]);
                 $body = $event['mode'] === 'personal_path'
                     ? 'Завтра последний день вашего личного пути. Отметьте сегодняшние дела.'
-                    : 'Завтра последний день. Отметьте дела — они засчитаются в общую цель.';
+                    : ($event['metric'] === 'custom' ? 'Завтра последний день. Добавьте свой вклад в карточке события.' : 'Завтра последний день. Отметьте дела — они засчитаются в общую цель.');
                 $result = sendEventPush($db, (int)$event['id'], '«' . $event['title'] . '» — завтра финал', $body, $config);
                 $eventReminders += $result['sent'];
             }
