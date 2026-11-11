@@ -314,7 +314,7 @@ tbody tr:last-child td{border-bottom:0}
 
 /* Pause, moderation, deeds, search and notifications */
 .pill.paused{background:var(--amber-bg);color:var(--amber)}
-.ov-grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr);gap:16px;align-items:start}
+.ov-grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}
 .deed{display:flex;flex-direction:column;gap:6px;padding:8px 0}
 .deed span{display:flex;justify-content:space-between;gap:8px;font-size:14px}
 .deed b{font-weight:600}
@@ -348,7 +348,7 @@ tbody tr:last-child td{border-bottom:0}
 .result small{font-size:12px;color:var(--muted)}
 .secret{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;border-radius:20px;background:#fff;border:1px solid var(--line)}
 .secret code{flex:1;font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
-@media (max-width:1240px){.ov-grid3{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.ov-grid3{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:480px){.hide-xs{display:none}}
 /* Six sections fit a phone only as icons. */
 @media (max-width:440px){nav.tabbar a[aria-current=page]{padding:0;width:48px}nav.tabbar a[aria-current=page] span{display:none}}
@@ -577,13 +577,6 @@ tbody tr:last-child td{border-bottom:0}
 
     const recent = (ov.recentUsers || []).map(u => `<div class="person"><span class="avatar">${esc((u.display_name || '?').slice(0, 1))}</span><div><b>${esc(u.display_name)}</b><small>зарегистрировался</small></div><small class="muted">${relDay(u.created_at)}</small></div>`).join('') || '<div class="empty">Пока никого.</div>';
 
-    const todos = [];
-    const waiting = data.moderation || [];
-    if (waiting.length) { const titles = [...new Set(waiting.map(w => w.title))]; todos.push(['amber', 'shield', `${num(waiting.length)} ${plural(waiting.length, 'заявка ждёт', 'заявки ждут', 'заявок ждут')} проверки`, `${titles.slice(0, 2).map(x => `«${esc(x)}»`).join(', ')}${titles.length > 2 ? ` и ещё ${titles.length - 2}` : ''} · ручная модерация`, 'Проверить', '#moderation']); }
-    events.filter(e => stateOf(e) === 'draft').forEach(e => todos.push(['', 'pen', `Черновик «${esc(e.title)}»`, 'Ещё не опубликован', 'Открыть', `#events/${e.id}/edit`]));
-    active.filter(e => daysBetween(today, e.ends_on) <= 3).forEach(e => { const left = daysBetween(today, e.ends_on); todos.push(['indigo', 'clock', `«${esc(e.title)}» ${left ? `кончится через ${left} ${plural(left, 'день', 'дня', 'дней')}` : 'кончается сегодня'}`, e.mode === 'personal_path' ? 'Напомните участникам о личном пути' : `Цель выполнена на ${pctOf(e)}% — напомнить участникам?`, 'Напомнить', `remind:${e.id}`]); });
-    active.filter(e => !(Number(e.participant_count) > 0)).forEach(e => todos.push(['amber', 'users', `В «${esc(e.title)}» пока нет участников`, 'Событие уже идёт — расскажите о нём сообществу', 'Открыть', `#events/${e.id}`]));
-    const todoHtml = todos.length ? todos.slice(0, 5).map(([tone, ic, title, text, btn, href]) => `<div class="todo ${tone}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div>${href.startsWith('remind:') ? `<button type="button" class="btn small" data-remind="${href.slice(7)}">${btn}</button>` : `<a class="btn small" href="${href}">${btn}</a>`}</div>`).join('') : `<div class="all-good">${icon('check')}Всё в порядке — ничего не ждёт вашего внимания.</div>`;
 
     const DEEDS = [['salawat', 'Салават'], ['tasbihat', 'Тасбихат'], ['quran', 'Куран'], ['nafil', 'Нафиль-намазы'], ['jauchan', 'Джаушан'], ['kitap', 'Чтение книги'], ['tahajjud', 'Тахаджуд'], ['qaza', 'Каза-намазы'], ['fast', 'Пост']];
     const deedsToday = ov.deedsToday || {}, deedRows = DEEDS.map(([k, l]) => [l, Number(deedsToday[k]) || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 6);
@@ -608,7 +601,6 @@ tbody tr:last-child td{border-bottom:0}
       <div class="ov-grid3">
         <section class="glass card"><div class="card-head"><h2>Новые участники</h2><a class="link" href="#users">Все ${num(users)}${icon('chev')}</a></div><div>${recent}</div></section>
         <section class="glass card"><div class="card-head"><h2>Что отмечают чаще</h2><span class="chip">сегодня</span></div><div>${deedHtml}</div></section>
-        <section class="glass card"><div class="card-head"><h2>Требует внимания</h2>${todos.length ? `<span class="chip" style="background:var(--amber-bg);color:var(--amber)">${todos.length}</span>` : ''}</div>${todoHtml}</section>
       </div>`, 'overview');
   }
 
@@ -1090,6 +1082,8 @@ tbody tr:last-child td{border-bottom:0}
     const waiting = data.moderation || [];
     if (waiting.length) list.push(['amber', 'shield', `${num(waiting.length)} ${plural(waiting.length, 'заявка ждёт', 'заявки ждут', 'заявок ждут')} проверки`, 'Ручная модерация', '#moderation']);
     (data.events || []).filter(e => stateOf(e) === 'active' && daysBetween(today, e.ends_on) <= 3).forEach(e => { const left = daysBetween(today, e.ends_on); list.push(['indigo', 'clock', `«${esc(e.title)}» ${left ? `кончится через ${left} ${plural(left, 'день', 'дня', 'дней')}` : 'кончается сегодня'}`, e.mode === 'personal_path' ? 'Личный путь' : `Цель выполнена на ${pctOf(e)}%`, `#events/${e.id}`]); });
+    (data.events || []).filter(e => stateOf(e) === 'active' && !(Number(e.participant_count) > 0)).forEach(e => list.push(['amber', 'users', `В «${esc(e.title)}» пока нет участников`, 'Событие уже идёт — расскажите о нём сообществу', `#events/${e.id}`]));
+    (data.events || []).filter(e => stateOf(e) === 'draft').forEach(e => list.push(['', 'pen', `Черновик «${esc(e.title)}»`, 'Ещё не опубликован', `#events/${e.id}/edit`]));
     const cron = data.settings?.system?.cron;
     if (data.settings?.system && cronStatus(cron).bad) list.push(['', 'alert', 'Напоминания не отправляются', cron?.error ? esc(cron.error) : `Cron давно не запускался: ${cronStatus(cron).text}`, '#settings']);
     return list;
