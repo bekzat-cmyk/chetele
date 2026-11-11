@@ -517,6 +517,11 @@ try {
         require_once __DIR__ . '/quizzes.php';
         handleQuizRoutes($db, $config, $method, $parts);
     }
+    /* The live quiz: live/… for members, admin/live/… for the host. */
+    if (($parts[0] ?? '') === 'live' || (($parts[0] ?? '') === 'admin' && ($parts[1] ?? '') === 'live')) {
+        require_once __DIR__ . '/live-quiz.php';
+        handleLiveRoutes($db, $config, $method, $parts);
+    }
 
     if ($method === 'GET' && $parts === ['health']) {
         $db->query('SELECT 1');
