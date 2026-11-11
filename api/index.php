@@ -331,7 +331,41 @@ function customEventInput(array $body, string $metric): array {
     return [$unit, max(1, min(10000, $step))];
 }
 
-function requireAdmin(array $config): void {
+/* The client's address. Behind the hosting's own nginx proxy REMOTE_ADDR is a local
+   address, and only then is X-Real-IP / X-Forwarded-For trusted. */
+function clientIp(): string {
+    $remote = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+    $isProxy = $remote === '' || filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
+    if ($isProxy) {
+        /* X-Real-IP is set by the proxy itself. In X-Forwarded-For only the last entry was
+           added by the proxy; earlier ones come from the client and can be forged. */
+        $real = trim((string)($_SERVER['HTTP_X_REAL_IP'] ?? ''));
+        if (filter_var($real, FILTER_VALIDATE_IP)) return $real;
+        $chain = array_map('trim', explode(',', (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')));
+        $last = (string)end($chain);
+        if (filter_var($last, FILTER_VALIDATE_IP)) return $last;
+    }
+    return $remote !== '' ? $remote : 'unknown';
+}
+
+const ADMIN_MAX_FAILURES = 5;
+const ADMIN_LOCK_MINUTES = 15;
+
+function ensureAdminAttemptsTable(PDO $db): void {
+    $db->exec('CREATE TABLE IF NOT EXISTS admin_login_failures (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        ip VARCHAR(45) NOT NULL,
+        login_tried VARCHAR(64) NOT NULL DEFAULT \'\',
+        failed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        KEY idx_admin_failures_ip_time (ip, failed_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+}
+
+/* Checks the admin's login and password on every admin request. After ADMIN_MAX_FAILURES
+   wrong attempts from one address within ADMIN_LOCK_MINUTES, that address is refused
+   (even with the right password) until the window passes. Other addresses, the admin's
+   included, are not affected, so the lock cannot be used to shut the admin out. */
+function requireAdmin(array $config, PDO $db): void {
     $legacyKey = (string)($config['admin_key'] ?? '');
     $providedKey = (string)($_SERVER['HTTP_X_ADMIN_KEY'] ?? '');
     $login = (string)($_SERVER['HTTP_X_ADMIN_LOGIN'] ?? '');
@@ -342,9 +376,31 @@ function requireAdmin(array $config): void {
        admin API stays closed. */
     $credentialsConfigured = $expectedLogin !== '' && strlen($expectedPassword) >= 12 && $expectedPassword !== 'admin12345';
     if ($legacyKey === '' && !$credentialsConfigured) respond(503, ['error' => 'Админ-доступ не настроен: задайте admin_login и admin_password (от 12 символов) в api/config.php.']);
+
+    ensureAdminAttemptsTable($db);
+    $ip = clientIp();
+    $recent = $db->prepare('SELECT COUNT(*), MIN(failed_at) FROM admin_login_failures WHERE ip = ? AND failed_at > DATE_SUB(NOW(), INTERVAL ' . ADMIN_LOCK_MINUTES . ' MINUTE)');
+    $recent->execute([$ip]);
+    [$failures, $firstFailure] = $recent->fetch(PDO::FETCH_NUM);
+    if ((int)$failures >= ADMIN_MAX_FAILURES) {
+        $wait = $db->prepare('SELECT GREATEST(1, CEIL(TIMESTAMPDIFF(SECOND, NOW(), DATE_ADD(?, INTERVAL ' . ADMIN_LOCK_MINUTES . ' MINUTE)) / 60))');
+        $wait->execute([$firstFailure]);
+        $minutes = (int)$wait->fetchColumn();
+        header('Retry-After: ' . ($minutes * 60));
+        respond(429, ['error' => "Слишком много неверных попыток входа. Попробуйте через {$minutes} мин.", 'reason' => 'admin_locked']);
+    }
+
     $keyAllowed = $legacyKey !== '' && hash_equals($legacyKey, $providedKey);
     $credentialsAllowed = $credentialsConfigured && hash_equals($expectedLogin, $login) && hash_equals($expectedPassword, $password);
-    if (!$keyAllowed && !$credentialsAllowed) respond(403, ['error' => 'Неверный логин или пароль администратора.']);
+    if ($keyAllowed || $credentialsAllowed) {
+        if ((int)$failures > 0) $db->prepare('DELETE FROM admin_login_failures WHERE ip = ?')->execute([$ip]);
+        return;
+    }
+
+    $db->prepare('INSERT INTO admin_login_failures (ip, login_tried) VALUES (?, ?)')->execute([$ip, mb_substr($login, 0, 64, 'UTF-8')]);
+    $db->exec('DELETE FROM admin_login_failures WHERE failed_at < DATE_SUB(NOW(), INTERVAL 30 DAY)');
+    $left = ADMIN_MAX_FAILURES - (int)$failures - 1;
+    respond(403, ['error' => $left > 0 ? "Неверный логин или пароль администратора. Осталось попыток: {$left}." : 'Неверный логин или пароль. Вход с этого адреса закрыт на ' . ADMIN_LOCK_MINUTES . ' минут.']);
 }
 
 function validReminderTime($value): bool {
@@ -778,7 +834,7 @@ try {
     }
 
     if ($method === 'GET' && $parts === ['admin','events']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $events = $db->query("SELECT e.*,
             (SELECT COUNT(*) FROM event_participants p WHERE p.event_id=e.id AND p.status='approved') AS participant_count,
             (SELECT COUNT(*) FROM event_participants p WHERE p.event_id=e.id AND p.status='pending') AS pending_count,
@@ -790,7 +846,7 @@ try {
     }
 
     if ($method === 'GET' && $parts === ['admin','users']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $users = $db->query("SELECT u.id,u.display_name,u.login,u.created_at,
             (SELECT COUNT(*) FROM event_participants p WHERE p.user_id=u.id AND p.status='approved') AS event_count,
             (SELECT COALESCE(SUM(e.points),0) FROM daily_entries e WHERE e.user_id=u.id) AS points,
@@ -802,7 +858,7 @@ try {
     }
 
     if ($method === 'GET' && $parts === ['admin','overview']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $users=(int)$db->query('SELECT COUNT(*) FROM users')->fetchColumn();
         $activeEvents=(int)$db->query("SELECT COUNT(*) FROM events WHERE status='published' AND starts_on<=CURDATE() AND ends_on>=CURDATE()")->fetchColumn();
         $todayEntries=(int)$db->query('SELECT COUNT(*) FROM daily_entries WHERE entry_date=CURDATE()')->fetchColumn();
@@ -828,7 +884,7 @@ try {
     }
 
     if ($method === 'GET' && $parts === ['admin','settings']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $defaults=['timezone'=>'Asia/Bishkek','defaultLeaderboard'=>true,'defaultVisibility'=>'names','defaultModeration'=>false];
         $saved=$db->query('SELECT setting_key,setting_value FROM admin_settings')->fetchAll();
         foreach($saved as $row) if(array_key_exists($row['setting_key'],$defaults)) {
@@ -841,12 +897,15 @@ try {
             'pushSubscriptions'=>(int)$db->query('SELECT COUNT(*) FROM push_subscriptions WHERE active=1')->fetchColumn(),
             'pushUsers'=>(int)$db->query('SELECT COUNT(DISTINCT user_id) FROM push_subscriptions WHERE active=1')->fetchColumn(),
             'cron'=>$cron,
+            'failedLogins24h'=>(int)$db->query('SELECT COUNT(*) FROM admin_login_failures WHERE failed_at > DATE_SUB(NOW(), INTERVAL 1 DAY)')->fetchColumn(),
+            'failedIps24h'=>(int)$db->query('SELECT COUNT(DISTINCT ip) FROM admin_login_failures WHERE failed_at > DATE_SUB(NOW(), INTERVAL 1 DAY)')->fetchColumn(),
+            'lastFailedAt'=>$db->query('SELECT MAX(failed_at) FROM admin_login_failures')->fetchColumn() ?: null,
         ];
         respond(200,$defaults);
     }
 
     if ($method === 'PUT' && $parts === ['admin','settings']) {
-        requireAdmin($config); $body=requestBody();
+        requireAdmin($config, $db); $body=requestBody();
         $settings=[
             'timezone'=>validTimezone($body['timezone']??null)?$body['timezone']:'Asia/Bishkek',
             'defaultLeaderboard'=>!empty($body['defaultLeaderboard'])?'1':'0',
@@ -859,7 +918,7 @@ try {
     }
 
     if ($method === 'DELETE' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'users') {
-        requireAdmin($config); $userId=(string)$parts[2];
+        requireAdmin($config, $db); $userId=(string)$parts[2];
         if (!preg_match('/^[a-f0-9-]{36}$/i',$userId)) respond(400,['error'=>'Некорректный пользователь.']);
         $db->beginTransaction();
         try {
@@ -873,7 +932,7 @@ try {
     }
 
     if ($method === 'GET' && $parts === ['admin','groups']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         /* The list shows each group's last 7 days: who marked anything and how many deeds. */
         $groups = $db->query("SELECT g.id, g.name, g.description, g.created_at,
             (SELECT COUNT(*) FROM admin_group_members m WHERE m.group_id = g.id) AS member_count,
@@ -894,7 +953,7 @@ try {
     }
 
     if ($method === 'POST' && $parts === ['admin','groups']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         [$name, $description, $members] = groupInput(requestBody());
         $db->beginTransaction();
         try {
@@ -907,7 +966,7 @@ try {
     }
 
     if ($method === 'PUT' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'groups') {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $groupId = (int)$parts[2];
         [$name, $description, $members] = groupInput(requestBody());
         $exists = $db->prepare('SELECT 1 FROM admin_groups WHERE id = ?'); $exists->execute([$groupId]);
@@ -922,7 +981,7 @@ try {
     }
 
     if ($method === 'DELETE' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'groups') {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $statement = $db->prepare('DELETE FROM admin_groups WHERE id = ?'); $statement->execute([(int)$parts[2]]);
         if ($statement->rowCount() === 0) respond(404, ['error' => 'Группа не найдена.']);
         respond(200, ['deleted' => true]);
@@ -931,7 +990,7 @@ try {
     /* A group's report for the last 7, 30 or 90 days, ending today: totals per member
        and how many members were active each day. */
     if ($method === 'GET' && count($parts) === 4 && $parts[0] === 'admin' && $parts[1] === 'groups' && $parts[3] === 'report') {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $groupId = (int)$parts[2];
         $days = (int)($_GET['days'] ?? 7);
         if (!in_array($days, [7, 30, 90], true)) $days = 7;
@@ -969,7 +1028,7 @@ try {
     }
 
     if ($method === 'POST' && $parts === ['admin','events']) {
-        requireAdmin($config); $body=requestBody(); $title=trim((string)($body['title']??'')); $description=trim((string)($body['description']??'')); $goal=(int)($body['goal']??0); $starts=(string)($body['startsOn']??''); $ends=(string)($body['endsOn']??'');
+        requireAdmin($config, $db); $body=requestBody(); $title=trim((string)($body['title']??'')); $description=trim((string)($body['description']??'')); $goal=(int)($body['goal']??0); $starts=(string)($body['startsOn']??''); $ends=(string)($body['endsOn']??'');
         $metric=(string)($body['metric']??'salawat'); $mode=(string)($body['mode']??'common_goal'); $status=(string)($body['status']??'published');
         $leaderboardEnabled=($body['leaderboardEnabled']??true)===true?1:0; $resultsVisibility=(string)($body['resultsVisibility']??'names');
         $moderation=($body['moderation']??false)===true?1:0; $remindBeforeEnd=($body['remindBeforeEnd']??true)===true?1:0;
@@ -984,7 +1043,7 @@ try {
     }
 
     if ($method === 'PUT' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'events') {
-        requireAdmin($config); $eventId=(int)$parts[2]; $body=requestBody();
+        requireAdmin($config, $db); $eventId=(int)$parts[2]; $body=requestBody();
         $title=trim((string)($body['title']??'')); $description=trim((string)($body['description']??'')); $goal=(int)($body['goal']??0);
         $starts=(string)($body['startsOn']??''); $ends=(string)($body['endsOn']??'');
         $metric=(string)($body['metric']??'salawat'); $mode=(string)($body['mode']??'common_goal'); $status=(string)($body['status']??'published');
@@ -1011,7 +1070,7 @@ try {
     }
 
     if ($method === 'POST' && count($parts) === 4 && $parts[0] === 'admin' && $parts[1] === 'events' && $parts[3] === 'pause') {
-        requireAdmin($config); $eventId=(int)$parts[2]; $paused=(requestBody()['paused']??true)===true;
+        requireAdmin($config, $db); $eventId=(int)$parts[2]; $paused=(requestBody()['paused']??true)===true;
         $statement=$db->prepare("UPDATE events SET status=? WHERE id=? AND status IN ('published','paused')");
         $statement->execute([$paused?'paused':'published',$eventId]);
         $check=$db->prepare("SELECT status FROM events WHERE id=?"); $check->execute([$eventId]); $status=$check->fetchColumn();
@@ -1022,7 +1081,7 @@ try {
 
     /* «Напомнить»: one push to the event's approved participants, at most once an hour. */
     if ($method === 'POST' && count($parts) === 4 && $parts[0] === 'admin' && $parts[1] === 'events' && $parts[3] === 'remind') {
-        requireAdmin($config); $eventId=(int)$parts[2];
+        requireAdmin($config, $db); $eventId=(int)$parts[2];
         $find=$db->prepare("SELECT *, COALESCE(manual_reminded_at > DATE_SUB(NOW(), INTERVAL 1 HOUR),0) AS recent, (starts_on<=CURDATE() AND ends_on>=CURDATE()) AS live FROM events WHERE id=?"); $find->execute([$eventId]); $event=$find->fetch();
         if (!$event) respond(404,['error'=>'Событие не найдено.']);
         if ($event['status']!=='published' || (int)$event['live']!==1) respond(409,['error'=>'Напомнить можно только об идущем опубликованном событии.']);
@@ -1041,7 +1100,7 @@ try {
 
     /* Moderation queue: participants of moderated events waiting for approval. */
     if ($method === 'GET' && $parts === ['admin','moderation']) {
-        requireAdmin($config);
+        requireAdmin($config, $db);
         $rows=$db->query("SELECT p.event_id,p.user_id,p.joined_at,p.personal_target,e.id,e.title,e.metric,e.custom_unit,e.mode,e.starts_on,e.ends_on,u.display_name,u.login
             FROM event_participants p INNER JOIN events e ON e.id=p.event_id INNER JOIN users u ON u.id=p.user_id
             WHERE p.status='pending' ORDER BY p.joined_at ASC LIMIT 500")->fetchAll();
@@ -1053,7 +1112,7 @@ try {
     }
 
     if ($method === 'POST' && $parts === ['admin','moderation']) {
-        requireAdmin($config); $body=requestBody();
+        requireAdmin($config, $db); $body=requestBody();
         $decision=(string)($body['decision']??''); $items=$body['items']??[];
         if (!in_array($decision,['approve','reject'],true) || !is_array($items) || count($items)<1 || count($items)>500) respond(400,['error'=>'Некорректное решение.']);
         $statement=$db->prepare("UPDATE event_participants SET status=? WHERE event_id=? AND user_id=? AND status='pending'");
@@ -1069,7 +1128,7 @@ try {
     /* A new temporary password, shown once to the admin to pass on. All of the member's
        sessions end, so the old password and any lost phone stop working. */
     if ($method === 'POST' && count($parts) === 4 && $parts[0] === 'admin' && $parts[1] === 'users' && $parts[3] === 'password') {
-        requireAdmin($config); $userId=(string)$parts[2];
+        requireAdmin($config, $db); $userId=(string)$parts[2];
         if (!preg_match('/^[a-f0-9-]{36}$/i',$userId)) respond(400,['error'=>'Некорректный пользователь.']);
         $alphabet='abcdefghjkmnpqrstuvwxyz23456789'; $password='';
         for ($i=0;$i<10;$i++) $password.=$alphabet[random_int(0,strlen($alphabet)-1)];
@@ -1080,7 +1139,7 @@ try {
     }
 
     if ($method === 'DELETE' && count($parts) === 3 && $parts[0] === 'admin' && $parts[1] === 'events') {
-        requireAdmin($config); $eventId=(int)$parts[2]; if ($eventId<1) respond(400,['error'=>'Некорректное событие.']);
+        requireAdmin($config, $db); $eventId=(int)$parts[2]; if ($eventId<1) respond(400,['error'=>'Некорректное событие.']);
         $statement=$db->prepare('DELETE FROM events WHERE id=?'); $statement->execute([$eventId]);
         if ($statement->rowCount()===0) respond(404,['error'=>'Событие не найдено.']);
         respond(200,['deleted'=>true]);
