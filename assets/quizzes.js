@@ -200,9 +200,8 @@ body.app-dark .qz-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
 #quiz-view .qz-names span{height:36px;padding:0 14px 0 4px;border-radius:18px;background:rgba(255,255,255,.9);border:1px solid rgba(16,22,26,.06);color:#10161A;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;max-width:100%;box-sizing:border-box}
 #quiz-view .qz-names span .qz-av{width:28px;height:28px;border:0;background:rgba(47,155,110,.16);font-size:12px}
 #quiz-view .qz-names span.more{padding:0 14px;background:rgba(255,255,255,.6);color:#5E6A71}
-#quiz-view .qz-live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#quiz-view .qz-live-grid .qz-opt{min-height:96px;padding:12px;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;font-size:17px;border-radius:22px}
-#quiz-view .qz-live-grid .qz-opt span{flex:none;overflow-wrap:anywhere}
+#quiz-view .qz-live-grid{display:flex;flex-direction:column;gap:10px}
+#quiz-view .qz-live-grid .qz-opt span{min-width:0;overflow-wrap:anywhere}
 #quiz-view .qz-live-grid .qz-opt.picked{background:#0B0F12;border-color:#0B0F12;color:#fff}
 #quiz-view .qz-live-grid .qz-opt.picked i{background:#fff;color:#10161A}
 #quiz-view .qz-dot{width:8px;height:8px;border-radius:50%;background:#2F8F68;animation:qzBlink 1.4s ease-in-out infinite}
