@@ -380,7 +380,17 @@ tbody tr:last-child td{border-bottom:0}
 @media (max-width:480px){.hide-xs{display:none}}
 /* Six sections fit a phone only as icons. */
 @media (max-width:440px){nav.tabbar{gap:2px!important}nav.tabbar a{min-width:44px!important;height:44px!important}nav.tabbar a[aria-current=page]{padding:0;width:44px}nav.tabbar a[aria-current=page] span{display:none}}
-@media (max-width:860px){.panel{top:auto;bottom:96px;right:16px}}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel-head h2{margin:4px 4px 2px}
+.panel-shade{display:none}
+@media (max-width:860px){
+  .panel-shade{display:block;position:fixed;inset:0;z-index:44;border:0;padding:0;background:rgba(16,22,26,.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:panelFade .2s ease both}
+  .panel{top:auto;left:0;right:0;bottom:0;width:auto;max-height:78vh;padding:10px 16px calc(20px + env(safe-area-inset-bottom));border-radius:30px 30px 0 0;box-shadow:0 -20px 50px rgba(16,22,26,.18);animation:panelUp .32s cubic-bezier(.2,.8,.2,1) both}
+  .panel::before{content:"";align-self:center;width:40px;height:5px;flex:none;border-radius:3px;background:rgba(16,22,26,.18)}
+}
+@keyframes panelFade{from{opacity:0}}
+@keyframes panelUp{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.panel,.panel-shade{animation:none}}
 
 /* Dialog and toast */
 .layer{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(11,15,18,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .2s ease both}
@@ -1430,17 +1440,21 @@ tbody tr:last-child td{border-bottom:0}
     const n = alerts().length;
     document.querySelectorAll('#bell-dot').forEach(dot => { dot.hidden = !n; dot.textContent = n > 9 ? '9+' : n; });
   }
+  const PANEL_HEAD = `<div class="panel-head"><h2>Уведомления</h2><button type="button" class="btn small icon" data-panel-close aria-label="Закрыть">${icon('x')}</button></div>`;
   async function openBell() {
     if (document.querySelector('.panel')) { closePanel(); return; }
     const panel = document.createElement('section'); panel.className = 'panel'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Уведомления');
-    panel.innerHTML = '<h2>Уведомления</h2><div class="empty" style="padding:20px">Проверяем…</div>';
-    document.body.append(panel);
-    try { const [, , s] = await Promise.all([loadModeration(true), loadEvents(!data.events), req('admin/settings')]); data.settings = s; } catch (error) { panel.innerHTML = `<h2>Уведомления</h2><div class="empty">${esc(error.message)}</div>`; return; }
+    panel.innerHTML = PANEL_HEAD + '<div class="empty" style="padding:20px">Проверяем…</div>';
+    /* On phones the panel is a bottom sheet over a dimmed page; a tap outside closes it. */
+    const shade = document.createElement('button'); shade.type = 'button'; shade.className = 'panel-shade'; shade.setAttribute('aria-label', 'Закрыть уведомления'); shade.addEventListener('click', closePanel);
+    panel.addEventListener('click', event => { if (event.target.closest('[data-panel-close]') || event.target.closest('a.todo')) closePanel(); });
+    document.body.append(shade, panel);
+    try { const [, , s] = await Promise.all([loadModeration(true), loadEvents(!data.events), req('admin/settings')]); data.settings = s; } catch (error) { panel.innerHTML = `${PANEL_HEAD}<div class="empty">${esc(error.message)}</div>`; return; }
     if (!panel.isConnected) return;
     const list = alerts(); paintBell();
-    panel.innerHTML = '<h2>Уведомления</h2>' + (list.length ? list.map(([tone, ic, title, text, href]) => `<a class="todo ${tone}" href="${href}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div>${icon('chev')}</a>`).join('') : `<div class="all-good">${icon('check')}Ничего нового — всё под контролем.</div>`);
+    panel.innerHTML = PANEL_HEAD + '' + (list.length ? list.map(([tone, ic, title, text, href]) => `<a class="todo ${tone}" href="${href}"><span class="circle">${icon(ic)}</span><div><b>${title}</b><small>${text}</small></div>${icon('chev')}</a>`).join('') : `<div class="all-good">${icon('check')}Ничего нового — всё под контролем.</div>`);
   }
-  const closePanel = () => document.querySelector('.panel')?.remove();
+  const closePanel = () => { document.querySelector('.panel')?.remove(); document.querySelector('.panel-shade')?.remove(); };
 
   /* ---------- Search ---------- */
   async function openSearch() {

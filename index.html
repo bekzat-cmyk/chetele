@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
-  <script src="assets/i18n-ky.js?v=3"></script>
+  <script src="assets/i18n-ky.js?v=4"></script>
   <script src="assets/deeds.js?v=2"></script>
   <script src="assets/hadiths.js?v=1"></script>
   <script src="assets/fasting.js?v=1"></script>
@@ -283,7 +283,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     <nav class="nav"><button class="active" data-view="today-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l1.5 1.5L8 5.5M4 12.5 5.5 14 8 11.5M4 18.5 5.5 20 8 17.5M11 7h9M11 13h9M11 19h9"/></svg></i>Дела</button><button data-view="zikr-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9a5.5 5.5 0 1 0 11.0 0a5.5 5.5 0 1 0 -11.0 0M12 14.5v2M10.5 18a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0M11 19.5l-1 2M13 19.5l1 2"/></svg></i>Зикр</button><button data-view="events-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/></svg></i>События</button><button data-view="quiz-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5a3 3 0 0 0-5.4-1.8A3.2 3.2 0 0 0 4 7.6a3.2 3.2 0 0 0-.4 5.3A3.6 3.6 0 0 0 7.2 18.4 2.9 2.9 0 0 0 12 19.6zM12 5.5a3 3 0 0 1 5.4-1.8A3.2 3.2 0 0 1 20 7.6a3.2 3.2 0 0 1 .4 5.3 3.6 3.6 0 0 1-3.6 5.5 2.9 2.9 0 0 1-4.8 1.2zM12 5.5v14.1M8.5 9.2c1.4 0 2.4.9 2.4 2.2M15.5 9.2c-1.4 0-2.4.9-2.4 2.2M7.6 14.6c1.3-.2 2.6.4 3.1 1.5M16.4 14.6c-1.3-.2-2.6.4-3.1 1.5"/></svg></i>Тесты</button><button data-view="rating-view"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5"/></svg></i>Рейтинг</button></nav>
   </main>
   <section class="desktop-only"><div class="desktop-icon">⌁</div><h1>Chetele — на телефоне</h1><p>Это приложение создано для мобильного ритма дня. Откройте эту страницу со смартфона.</p></section>
-  <div id="calendar-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-calendar aria-label="Закрыть календарь"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="month-title"><div class="sheet-grabber" aria-label="Потяните вниз, чтобы закрыть"></div><div class="sheet-header"><h2>Ваш ритм</h2><button class="sheet-close" data-close-calendar aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="sheet-month-control"><button id="month-prev" class="month-arrow" aria-label="Предыдущий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div><h2 id="month-title">Календарь</h2><p id="month-subtitle">Нажмите на дату</p></div><button id="month-next" class="month-arrow" aria-label="Следующий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="month-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="month-grid" class="month-grid"></div><div class="month-legend" aria-hidden="true"><span><i class="lg-full"></i>все 11 дел</span><span><i class="lg-mid"></i>больше половины</span><span><i class="lg-some"></i>есть дела</span></div><p id="month-summary" class="month-summary"></p><button id="open-selected-day" class="save-progress" hidden>Открыть дела за этот день</button></section></div>
+  <div id="calendar-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-calendar aria-label="Закрыть календарь"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="month-title"><div class="sheet-grabber" aria-label="Потяните вниз, чтобы закрыть"></div><div class="sheet-header"><h2>Ваш ритм</h2><button class="sheet-close" data-close-calendar aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="sheet-month-control"><button id="month-prev" class="month-arrow" aria-label="Предыдущий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div><h2 id="month-title">Календарь</h2><p id="month-subtitle">Нажмите на дату</p></div><button id="month-next" class="month-arrow" aria-label="Следующий месяц"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div><div class="month-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div id="month-grid" class="month-grid"></div><div class="month-legend" aria-hidden="true"><span><i class="lg-full"></i><em id="lg-full-label">все 12 дел</em></span><span><i class="lg-mid"></i>больше половины</span><span><i class="lg-some"></i>есть дела</span></div><p id="month-summary" class="month-summary"></p><button id="open-selected-day" class="save-progress" hidden>Открыть дела за этот день</button></section></div>
   <div id="hadith-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-hadith aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="hadith-sheet-title"><div class="sheet-grabber"></div><div class="sheet-header"><span class="hs-head"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17c2-1 3-3 3-6V7H5v4h4M15 17c2-1 3-3 3-6V7h-4v4h4"/></svg></i><span><h2 id="hadith-sheet-title">Хадис дня</h2><small id="hadith-sheet-date"></small></span></span><button class="sheet-close" data-close-hadith aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><article class="hs-quote"><span class="hs-mark" aria-hidden="true">”</span><p id="hadith-full-text"></p><p id="hadith-full-source"></p></article><div class="hadith-insight"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></i><span><b>Смысл</b><p id="hadith-explanation"></p></span></div><div class="hadith-practice"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></i><span><b>Практика на сегодня</b><p id="hadith-practice"></p></span></div><button type="button" class="continue hs-done" data-close-hadith>Прочитано</button></section></div>
   <div id="rename-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-rename aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="rename-title"><div class="sheet-grabber"></div><div class="sheet-header"><h2 id="rename-title">Изменить имя</h2><button class="sheet-close" data-close-rename aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><form id="rename-form"><label class="rename-label" for="rename-input">Как вас показывать в рейтинге</label><input id="rename-input" class="name-input" maxlength="24" autocomplete="name" required placeholder="Ваше имя" aria-describedby="rename-rule rename-error"><span class="rename-meta"><span id="rename-rule">Буквы, пробел, дефис или апостроф</span><span id="rename-count">0 / 24</span></span><p id="rename-error" class="rename-error" role="alert"></p><button id="rename-save" class="continue" type="submit">Сохранить</button><p class="rename-hint"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>После сохранения имя сразу обновится в рейтинге</p></form></section></div>
   <div id="auth-sheet" class="calendar-sheet" hidden><button class="calendar-sheet-backdrop" data-close-auth aria-label="Закрыть"></button><section class="calendar-sheet-panel" aria-modal="true" role="dialog" aria-labelledby="auth-title"><div class="sheet-grabber"></div><div class="sheet-header"><div class="auth-titles"><h2 id="auth-title">Создайте профиль</h2><p id="auth-sub" class="auth-sub"></p></div><button class="sheet-close" data-close-auth aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><p id="auth-carry" class="auth-carry" hidden><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></i><span id="auth-carry-text"></span></p><form id="name-form" novalidate><input class="name-input" id="name-input" autocomplete="username" maxlength="24" placeholder="Как вас зовут?" aria-label="Имя" /><div class="password-field"><input class="name-input" id="register-password-input" autocomplete="new-password" maxlength="72" type="password" placeholder="Придумайте пароль" aria-label="Пароль" /><button class="password-toggle" type="button" data-password-toggle="register-password-input" aria-label="Показать пароль" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div><p class="auth-error" id="register-error" role="alert"></p><label class="remember-choice"><input id="register-remember" type="checkbox" checked>Запомнить меня на этом телефоне</label><button class="continue" id="start-button" type="submit">Создать профиль</button><button id="show-login" class="switch-auth" type="button">У меня уже есть профиль</button></form><form id="login-form" class="login-form" hidden novalidate><input class="name-input" id="login-input" autocomplete="username" maxlength="24" placeholder="Имя профиля" aria-label="Имя" /><div class="password-field"><input class="name-input" id="password-input" autocomplete="current-password" maxlength="72" type="password" placeholder="Пароль" aria-label="Пароль" /><button class="password-toggle" type="button" data-password-toggle="password-input" aria-label="Показать пароль" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg></button></div><p class="auth-error" id="login-error" role="alert"></p><label class="remember-choice"><input id="login-remember" type="checkbox" checked>Запомнить меня на этом телефоне</label><button class="continue" type="submit">Войти</button><button id="show-register" class="switch-auth" type="button">Создать профиль</button></form></section></div>
@@ -939,7 +939,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const step=target.closest('[data-zikr-step]'); if(step){ const sequence=zikrSequence(ZIKR.find(item=>item.id===zikrCurrent)||ZIKR[0]), index=(sequence.findIndex(item=>item.id===zikrCurrent)+Number(step.dataset.zikrStep)+sequence.length)%sequence.length; zikrCurrent=sequence[index].id; zikrCelebrate=false; renderZikr(); return; }
       if(target.closest('[data-zikr-tap]')){ if(zikrCelebrate){ zikrCelebrate=false; renderZikr(); return; } zikrAdd(zikrCurrent,1); return; }
       if(target.closest('[data-zikr-minus]')){ zikrCelebrate=false; zikrAdd(zikrCurrent,-1); return; }
-      if(target.closest('[data-zikr-reset]')){ if(!zikrToday(zikrCurrent)||!confirm('Сбросить счёт этого зикра за день?')) return; zikrCelebrate=false; zikrAdd(zikrCurrent,-zikrToday(zikrCurrent)); }
+      if(target.closest('[data-zikr-reset]')){ if(!zikrToday(zikrCurrent)) return; const id=zikrCurrent; askSheet({title:'Сбросить счёт?',text:`Счёт этого зикра за сегодня (${zikrToday(id)}) обнулится. Общий итог «всего» уменьшится на столько же.`,ok:'Сбросить',cancel:'Оставить'}).then(yes=>{ if(!yes||zikrCurrent!==id) return; zikrCelebrate=false; zikrAdd(id,-zikrToday(id)); }); return; }
     });
     function renderStats(animate=false){
       const totals=emptyTotals(); personalEntries().forEach(entry=>addToTotals(totals,entry));
@@ -1026,6 +1026,18 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(animate||content.statsHtml!==contentHtml){ content.statsHtml=contentHtml; content.innerHTML=contentHtml; }
       note.hidden=state.statsOnline!==false;
       note.textContent=ky?'Ушул түзмөктө сакталган маалымат көрсөтүлдү. Бардык тарыхты көрүү үчүн интернетке кошулуңуз.':'Показаны данные, сохранённые на этом устройстве. Подключитесь к интернету, чтобы увидеть всю историю.';
+    }
+    /* A question in the app's own bottom sheet instead of the browser's confirm(). Resolves true or false. */
+    function askSheet({title,text='',ok='Да',cancel='Отмена',danger=true}){
+      return new Promise(resolve=>{
+        const layer=document.createElement('div'); layer.className='app-sheet';
+        layer.innerHTML=`<section role="dialog" aria-modal="true" aria-labelledby="app-sheet-title"><i aria-hidden="true"></i><h2 id="app-sheet-title">${escapeHtml(title)}</h2>${text?`<p>${escapeHtml(text)}</p>`:''}<button type="button" class="${danger?'leave':'stay'}" data-sheet-ok>${escapeHtml(ok)}</button><button type="button" class="${danger?'stay':'leave'}" data-sheet-no>${escapeHtml(cancel)}</button></section>`;
+        const done=value=>{ layer.remove(); document.removeEventListener('keydown',onKey); resolve(value); };
+        const onKey=event=>{ if(event.key==='Escape') done(false); };
+        layer.addEventListener('click',event=>{ if(event.target===layer||event.target.closest('[data-sheet-no]')) done(false); else if(event.target.closest('[data-sheet-ok]')) done(true); });
+        document.addEventListener('keydown',onKey);
+        document.body.append(layer); layer.querySelector('[data-sheet-no]').focus();
+      });
     }
     function escapeHtml(value){ return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
     function achievementEntries(){
@@ -1483,6 +1495,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     function formatDayLabel(key){ return new Intl.DateTimeFormat(appLocale(),{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`)); }
     function renderMonthCalendar(){
+      const legend=document.querySelector('#lg-full-label'); if(legend) legend.textContent=`все ${dailyMax()} дел`;
       const now=new Date(), cursor=calendarCursor||new Date(now.getFullYear(),now.getMonth(),1), year=cursor.getFullYear(), month=cursor.getMonth(), first=new Date(year,month,1), days=new Date(year,month+1,0).getDate(), offset=(first.getDay()+6)%7;
       const monthTitle=new Intl.DateTimeFormat(appLocale(),{month:'long',year:'numeric'}).format(cursor).replace(/\s*г\.?$/,'');
       document.querySelector('#month-title').textContent=monthTitle.charAt(0).toUpperCase()+monthTitle.slice(1);
@@ -3217,6 +3230,23 @@ html body #app .stats-bar.is-now i,html body #app .stats-track i{background:#1F6
 html body.app-dark #app .stats-bar i{background:rgba(95,199,154,.2)}
 html body.app-dark #app .stats-bar.is-peak i{background:rgba(95,199,154,.5)}
 html body.app-dark #app .stats-bar.is-now i,html body.app-dark #app .stats-track i{background:#5FC79A}
+/* The app's own question sheet (replaces the browser's confirm). */
+.app-sheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;background:rgba(16,22,26,.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:appSheetFade .2s ease both}
+.app-sheet section{width:min(100%,540px);box-sizing:border-box;padding:10px 20px calc(24px + env(safe-area-inset-bottom));border-radius:32px 32px 0 0;background:rgba(246,249,248,.97);box-shadow:0 -20px 50px rgba(16,22,26,.18);display:flex;flex-direction:column;gap:12px;color:#10161A;font-family:Inter,-apple-system,system-ui,sans-serif;animation:appSheetUp .32s cubic-bezier(.2,.8,.2,1) both}
+.app-sheet section>i{align-self:center;width:40px;height:5px;border-radius:3px;background:rgba(16,22,26,.18);margin-bottom:4px}
+.app-sheet h2{margin:4px 0 0;font-size:22px;font-weight:600;letter-spacing:-.02em;color:inherit}
+.app-sheet p{margin:0 0 6px;font-size:15px;line-height:1.5;color:#5E6A71}
+.app-sheet button{height:54px;border-radius:27px;border:0;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+.app-sheet .stay{background:#0B0F12;color:#fff}
+.app-sheet .leave{background:rgba(190,60,50,.10);color:#A3342A}
+body.app-dark .app-sheet section{background:#17201e;color:#eef5f2}
+body.app-dark .app-sheet h2{color:#eef5f2}
+body.app-dark .app-sheet p{color:#9baea7}
+body.app-dark .app-sheet .stay{background:#eef5f2;color:#0b1110}
+body.app-dark .app-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
+@keyframes appSheetFade{from{opacity:0}}
+@keyframes appSheetUp{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.app-sheet,.app-sheet section{animation:none}}
 /* Calendars in the same greens: the month sheet and the dots under the week. */
 html body #calendar-sheet .month-day.active{background:rgba(47,155,110,.2);color:#10161A}
 html body #calendar-sheet .month-day.mid{background:rgba(47,155,110,.55);color:#fff}
@@ -3224,6 +3254,13 @@ html body #calendar-sheet .month-day.full{background:#1F6B4F;color:#fff}
 html body.app-dark #calendar-sheet .month-day.active{background:rgba(95,199,154,.2);color:var(--ink)}
 html body.app-dark #calendar-sheet .month-day.mid{background:rgba(95,199,154,.5);color:#0B1110}
 html body.app-dark #calendar-sheet .month-day.full{background:#5FC79A;color:#0B1110}
+html body #calendar-sheet .month-legend em{font-style:normal}
+html body #calendar-sheet .month-legend .lg-full{background:#1F6B4F}
+html body #calendar-sheet .month-legend .lg-mid{background:rgba(47,155,110,.55)}
+html body #calendar-sheet .month-legend .lg-some{background:rgba(47,155,110,.2)}
+html body.app-dark #calendar-sheet .month-legend .lg-full{background:#5FC79A}
+html body.app-dark #calendar-sheet .month-legend .lg-mid{background:rgba(95,199,154,.5)}
+html body.app-dark #calendar-sheet .month-legend .lg-some{background:rgba(95,199,154,.2)}
 html body #app .calendar-day.has-progress .day-dot{background:rgba(47,155,110,.55)}
 html body #app .calendar-day.complete .day-dot{background:#1F6B4F}
 html body.app-dark #app .calendar-day.has-progress .day-dot{background:rgba(95,199,154,.55)}
@@ -3580,7 +3617,15 @@ body.app-dark #app #zikr-view[data-set=evening] .zg-text,body.app-dark #app #zik
 body.app-dark #app #zikr-view[data-set=evening] .zg-row-progress em.done,body.app-dark #app #zikr-view[data-set=evening] .zg-label{color:var(--pm-accent)}
 /* The counter fits one screen without scrolling: the text gets 60% of the free height, the tap area 40%. */
 body #app #zikr-view.active.is-counter{height:calc(100dvh - 100px - env(safe-area-inset-bottom));gap:12px;overflow:hidden}
-body #app #zikr-view.is-counter .zg-text{flex:6 1 0;height:auto;min-height:0;padding:16px 18px}
+body #app #zikr-view.is-counter .zg-text{flex:6 1 0;height:auto;min-height:0;padding:22px 20px;justify-content:flex-start;gap:12px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+body #app #zikr-view.is-counter .zg-text::-webkit-scrollbar{display:none}
+/* Auto margins centre short texts; a long one starts at the top and scrolls instead of being cut. */
+body #app #zikr-view.is-counter .zg-text>:first-child{margin-top:auto}
+body #app #zikr-view.is-counter .zg-text>:last-child{margin-bottom:auto}
+body #app #zikr-view.is-counter .zg-label{line-height:1.4;padding:0 6px}
+body #app #zikr-view.is-counter .zg-arabic{padding-top:2px;font-size:clamp(23px,6.6vw,31px);line-height:1.85}
+body #app #zikr-view.is-counter .zg-text b{line-height:1.45;max-width:320px}
+body #app #zikr-view.is-counter .zg-text p:last-child{line-height:1.5;max-width:300px}
 body #app #zikr-view.is-counter .zg-counter{flex:4 1 0;height:auto;min-height:170px}
 body #app #zikr-view.is-counter .zg-goal{height:40px}
 body #app #zikr-view.is-counter .zg-tap{gap:4px}
