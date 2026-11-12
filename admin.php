@@ -284,6 +284,7 @@ tbody tr:last-child td{border-bottom:0}
 .p-body>small{font-size:12px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
 .p-foot{display:flex;justify-content:space-between;font-size:12px}
 .p-btn{height:40px;border-radius:20px;background:var(--black);color:#fff;font-size:14px;font-weight:600;display:grid;place-items:center}
+.p-body>.p-btn{display:flex;align-items:center;justify-content:center;padding:0 16px}
 .form-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
 /* Settings */
@@ -403,8 +404,8 @@ tbody tr:last-child td{border-bottom:0}
 .dialog-actions .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:28px;z-index:60;transform:translateX(-50%);height:48px;padding:0 20px;border-radius:24px;background:var(--black);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 16px 40px rgba(11,15,18,.3);animation:rise .3s cubic-bezier(.22,1,.36,1) both}
 
-/* Quiz editor: a restored draft */
-.qe-restored{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:24px;background:var(--amber-bg);border:1px solid rgba(224,134,43,.25)}
+/* Quiz and event editors: a restored draft */
+.qe-restored{margin-bottom:4px;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:24px;background:var(--amber-bg);border:1px solid rgba(224,134,43,.25)}
 .qe-restored .circle{color:var(--amber)}
 .qe-restored div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .qe-restored b{font-size:15px;font-weight:600}.qe-restored small{font-size:13px;color:var(--soft)}
@@ -858,6 +859,37 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   /* ---------- Editor ---------- */
+  /* The event editor keeps its fields in this browser as they are typed, like the quiz editor. */
+  let evDraft = null;
+  const evKey = (id, copyFrom) => `chetele-event-draft:${id || (copyFrom ? 'copy-' + copyFrom : 'new')}`;
+  function evValues(form) {
+    const out = {};
+    [...form.elements].forEach(el => {
+      if (!el.name) return;
+      if (el.type === 'checkbox') out[el.name] = el.checked;
+      else if (el.type === 'radio') { if (el.checked) out[el.name] = el.value; }
+      else out[el.name] = el.value;
+    });
+    return out;
+  }
+  function evApply(form, values) {
+    [...form.elements].forEach(el => {
+      if (!el.name || !(el.name in values)) return;
+      if (el.type === 'checkbox') el.checked = Boolean(values[el.name]);
+      else if (el.type === 'radio') el.checked = el.value === values[el.name];
+      else el.value = values[el.name];
+    });
+  }
+  const evDirty = () => Boolean(evDraft && evDraft.form.isConnected && JSON.stringify(evValues(evDraft.form)) !== evDraft.baseline);
+  let evTimer = null;
+  function evStore() {
+    clearTimeout(evTimer);
+    evTimer = setTimeout(() => {
+      if (!evDraft || shownView !== 'editor') return;
+      try { if (evDirty()) localStorage.setItem(evDraft.key, JSON.stringify({ savedAt: Date.now(), values: evValues(evDraft.form) })); else localStorage.removeItem(evDraft.key); } catch {}
+      const el = $('#ev-status'); if (el) el.textContent = evDirty() ? 'Черновик сохранён в этом браузере' : '';
+    }, 300);
+  }
   async function showEditor(id, copyFrom) {
     loading(id ? 'Изменить событие' : 'Новое событие');
     let settings, item = null;
@@ -874,6 +906,7 @@ tbody tr:last-child td{border-bottom:0}
     const optionCard = (val, label) => `<label class="option"><input type="radio" name="visibility" value="${val}" ${(v.results_visibility || 'names') === val ? 'checked' : ''}>${label}</label>`;
     mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#events${editing ? '/' + id : ''}" aria-label="Назад к событиям">${icon('back')}</a><div class="top-copy"><span>События${editing ? ' · ' + (published ? 'опубликовано' : 'черновик') : ''}</span><h1>${editing ? 'Изменить событие' : 'Новое событие'}</h1></div></div>
       <div class="top-actions">${published ? '' : '<button type="submit" form="event-form" class="btn" data-status="draft">Сохранить черновик</button>'}<button type="submit" form="event-form" class="btn black" data-status="published">${published ? 'Сохранить' : 'Опубликовать'}</button></div></header>
+      <div id="ev-restored"></div>
       <div class="editor">
         <form id="event-form" class="editor-form" novalidate>
           <section class="glass card"><div class="card-head"><h2>Основное</h2></div>
@@ -905,7 +938,7 @@ tbody tr:last-child td{border-bottom:0}
             <div><label class="toggle"><div><b>Ручная проверка</b><small>Новые участники ждут вашего одобрения в «Модерации»; до него их отметки не засчитываются</small></div><input type="checkbox" name="moderation" ${Number(v.moderation) ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label>
             <label class="toggle"><div><b>Напомнить за день до конца</b><small>Push участникам накануне последнего дня, в 18:00</small></div><input type="checkbox" name="remind" ${Number(v.remind_before_end) === 0 ? '' : 'checked'}><span class="switch" aria-hidden="true"></span></label></div>
           </section>
-          <p id="form-error" class="error" role="alert"></p>
+          <p id="form-error" class="error" role="alert"></p><small id="ev-status" class="muted" aria-live="polite"></small>
         </form>
         <div class="preview" aria-hidden="true"><span>${icon('phone')}Так увидят в приложении</span><div class="phone"><h3>События</h3><div class="p-card"><div class="p-head"><span id="pv-mode"></span><span id="pv-left"></span></div><div class="p-body"><span><span class="circle" id="pv-icon"></span><b id="pv-title"></b></span><small id="pv-desc"></small><i class="bar"><i style="width:${editing ? pctOf(item) : 0}%"></i></i><div class="p-foot"><b id="pv-goal"></b><span class="muted">${editing ? num(item.participant_count) : 0} участников</span></div><span class="p-btn">Участвовать</span></div></div></div></div>
       </div>`, 'editor');
@@ -930,6 +963,22 @@ tbody tr:last-child td{border-bottom:0}
       else hint.hidden = true;
     }
     form.addEventListener('input', syncPreview); form.addEventListener('change', syncPreview); syncPreview();
+    evDraft = { key: evKey(id, copyFrom), form, baseline: JSON.stringify(evValues(form)) };
+    leaveOk = false;
+    try {
+      const saved = JSON.parse(localStorage.getItem(evDraft.key) || 'null');
+      if (saved && saved.values && JSON.stringify(saved.values) !== evDraft.baseline) {
+        evApply(form, saved.values); syncPreview();
+        $('#ev-restored').innerHTML = `<div class="qe-restored"><span class="circle">${icon('reset')}</span><div><b>Восстановлен несохранённый черновик</b><small>Изменения от ${qeTime(saved.savedAt)} — вы вышли, не сохранив их.</small></div><button type="button" class="btn small" data-ev-discard>${editing ? 'Отменить изменения' : 'Начать заново'}</button></div>`;
+        $('#ev-status').textContent = 'Черновик сохранён в этом браузере';
+      }
+    } catch {}
+    form.addEventListener('input', evStore); form.addEventListener('change', evStore);
+    $('#ev-restored').addEventListener('click', event => {
+      if (!event.target.closest('[data-ev-discard]')) return;
+      confirmDialog({ title: editing ? 'Отменить изменения?' : 'Начать заново?', text: editing ? 'Несохранённые изменения пропадут, событие останется как было.' : 'Несохранённый черновик события удалится.', action: editing ? 'Отменить изменения' : 'Удалить черновик', cancel: 'Оставить' })
+        .then(ok => { if (!ok) return; try { localStorage.removeItem(evDraft.key); } catch {} showEditor(id, copyFrom); });
+    });
     form.addEventListener('click', event => { const u = event.target.closest('[data-unit]'); if (!u) return; form.customUnit.value = u.dataset.unit; syncPreview(); });
     form.addEventListener('submit', async event => {
       event.preventDefault();
@@ -940,6 +989,8 @@ tbody tr:last-child td{border-bottom:0}
       document.querySelectorAll('[form=event-form]').forEach(b => { b.disabled = true; });
       try {
         const saved = editing ? await send(`admin/events/${id}`, 'PUT', body) : await send('admin/events', 'POST', body);
+        try { localStorage.removeItem(evDraft.key); } catch {}
+        evDraft.baseline = JSON.stringify(evValues(form)); leaveOk = true;
         await loadEvents(true);
         toast(status === 'draft' ? 'Черновик сохранён' : editing ? 'Изменения сохранены' : 'Событие опубликовано'); data.moderation = null;
         location.hash = `#events/${editing ? id : saved.id}`;
@@ -1761,9 +1812,10 @@ tbody tr:last-child td{border-bottom:0}
   let leaveOk = false, routedHash = location.hash;
   window.addEventListener('hashchange', () => {
     const target = location.hash;
-    if (shownView === 'quiz-editor' && !leaveOk && qeDirty() && target !== routedHash) {
+    const unsaved = (shownView === 'quiz-editor' && qeDirty()) || (shownView === 'editor' && evDirty());
+    if (unsaved && !leaveOk && target !== routedHash) {
       history.replaceState(null, '', routedHash);
-      confirmDialog({ title: 'Выйти без сохранения?', text: 'Тест ещё не сохранён на сайте. Черновик останется в этом браузере — откройте редактор снова, и он восстановится.', action: 'Выйти', cancel: 'Остаться', danger: false, iconName: 'alert' })
+      confirmDialog({ title: 'Выйти без сохранения?', text: `${shownView === 'editor' ? 'Событие ещё не сохранено' : 'Тест ещё не сохранён'} на сайте. Черновик останется в этом браузере — откройте редактор снова, и он восстановится.`, action: 'Выйти', cancel: 'Остаться', danger: false, iconName: 'alert' })
         .then(ok => { if (!ok) return; leaveOk = true; location.hash = target; });
       return;
     }
