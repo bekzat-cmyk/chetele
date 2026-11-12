@@ -403,6 +403,17 @@ tbody tr:last-child td{border-bottom:0}
 .dialog-actions .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:28px;z-index:60;transform:translateX(-50%);height:48px;padding:0 20px;border-radius:24px;background:var(--black);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 16px 40px rgba(11,15,18,.3);animation:rise .3s cubic-bezier(.22,1,.36,1) both}
 
+/* No connection */
+.offline{align-items:center;text-align:center;padding:48px 24px;gap:12px}
+.offline-icon{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink);box-shadow:var(--shadow)}
+.offline-icon svg.i{width:28px;height:28px}
+.offline-icon.warn{color:var(--amber);background:var(--amber-bg)}
+.offline h2{margin:6px 0 0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.offline p{margin:0 0 8px;max-width:420px;font-size:15px;line-height:1.5;color:var(--muted)}
+.offline-bar{position:fixed;z-index:60;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);height:40px;padding:0 16px;border-radius:20px;background:var(--black);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 12px 30px rgba(11,15,18,.25)}
+.offline-bar svg.i{width:16px;height:16px}
+@media (max-width:860px){.offline-bar{bottom:calc(96px + env(safe-area-inset-bottom))}}
+
 /* Live quiz console */
 .lv-h{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
 .lv-body{display:flex;flex-direction:column;gap:20px}
@@ -587,6 +598,7 @@ tbody tr:last-child td{border-bottom:0}
     clock:'M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M12 7.5V12l3 2', pen:'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4',
     trash:'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13', logout:'M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10', x:'M6 6l12 12M18 6L6 18',
     arrow:'M7 17L17 7M9 7h8v8', lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3', phone:'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 18h2',
+    wifioff:'M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.4M19 12.9a10 10 0 0 0-2.3-1.6M1.8 9.3A15 15 0 0 1 6.4 6.7M22.2 9.3A15 15 0 0 0 11 5.1M12 20h.01',
     rating:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 6h2.5v1.5A3 3 0 0 1 17 10.5M7 6H4.5v1.5A3 3 0 0 0 7 10.5',
     copy:'M8 8h11v12H8zM5 16V4h11', group:'M8 7.5a3 3 0 1 0 0 .01M16 7.5a3 3 0 1 0 0 .01M2.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5M10.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5',
     brain:'M12 5.5a3 3 0 0 0-5.4-1.8A3.2 3.2 0 0 0 4 7.6a3.2 3.2 0 0 0-.4 5.3A3.6 3.6 0 0 0 7.2 18.4 2.9 2.9 0 0 0 12 19.6zM12 5.5a3 3 0 0 1 5.4-1.8A3.2 3.2 0 0 1 20 7.6a3.2 3.2 0 0 1 .4 5.3 3.6 3.6 0 0 1-3.6 5.5 2.9 2.9 0 0 1-4.8 1.2zM12 5.5v14.1M8.5 9.2c1.4 0 2.4.9 2.4 2.2M15.5 9.2c-1.4 0-2.4.9-2.4 2.2M7.6 14.6c1.3-.2 2.6.4 3.1 1.5M16.4 14.6c-1.3-.2-2.6.4-3.1 1.5', up:'M6 14.5l6-6 6 6', down:'M6 9.5l6 6 6-6', eyeoff:'M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-2.6 3.3M6.6 6.6C4 8.3 2.5 12 2.5 12s3.5 6 9.5 6c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2',
@@ -607,7 +619,9 @@ tbody tr:last-child td{border-bottom:0}
   const api = p => { const [path, query] = p.split('?'); return '/api/index.php?path=' + encodeURIComponent(path) + (query ? '&' + query : ''); };
   let cred = null, signingIn = false;
   async function req(path, options = {}) {
-    const response = await fetch(api(path), { ...options, headers: { ...(options.headers || {}), 'X-Admin-Login': cred?.login || '', 'X-Admin-Password': cred?.password || '' } });
+    let response;
+    try { response = await fetch(api(path), { ...options, headers: { ...(options.headers || {}), 'X-Admin-Login': cred?.login || '', 'X-Admin-Password': cred?.password || '' } }); }
+    catch { const error = Error('Нет соединения с интернетом'); error.offline = true; throw error; }
     /* A saved sign-in the server no longer accepts (the password was changed) leads back to the form. */
     if (response.status === 403 && cred && !signingIn) { signedOut('Данные входа больше не подходят — войдите снова.'); throw Error('Нужно войти снова'); }
     if (!response.ok) throw Error((await response.json().catch(() => ({}))).error || 'Ошибка сервера');
@@ -691,7 +705,16 @@ tbody tr:last-child td{border-bottom:0}
   /* After a loading placeholder the real page replaces it in place, without a second entrance. */
   function mount(html, key) { main.innerHTML = `<div class="view${key === shownView || shownView === 'loading' ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
   function loading(title) { mount(top('Chetele', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
-  function failed(title, error) { mount(top('Chetele', title, 'Не удалось загрузить') + `<section class="glass card"><div class="empty">${esc(error.message)}<br><br><button type="button" class="btn small" data-refresh>Повторить</button></div></section>`, 'failed'); }
+  /* Without a connection the page shows a calm placeholder and reloads by itself when the connection returns. */
+  function failed(title, error) {
+    const offline = error?.offline || !navigator.onLine;
+    const body = offline
+      ? `<section class="glass card offline"><span class="offline-icon">${icon('wifioff')}</span><h2>Нет соединения с интернетом</h2><p>Проверьте Wi‑Fi или мобильный интернет. Страница обновится сама, как только связь вернётся.</p><button type="button" class="btn black" data-refresh>${icon('refresh')}Повторить</button></section>`
+      : `<section class="glass card offline"><span class="offline-icon warn">${icon('alert')}</span><h2>Не удалось загрузить</h2><p>${esc(error?.message || 'Ошибка сервера')}. Попробуйте ещё раз через минуту.</p><button type="button" class="btn black" data-refresh>${icon('refresh')}Повторить</button></section>`;
+    mount(top('Chetele', title, offline ? 'Нет связи' : 'Не удалось загрузить') + body, 'failed');
+  }
+  window.addEventListener('online', () => { document.querySelector('.offline-bar')?.remove(); if (shownView === 'failed' && cred) { data.events = data.users = data.groups = data.moderation = data.quizzes = null; route(); } });
+  window.addEventListener('offline', () => { if (!cred || document.querySelector('.offline-bar')) return; const bar = document.createElement('div'); bar.className = 'offline-bar'; bar.setAttribute('role', 'status'); bar.innerHTML = icon('wifioff') + 'Нет соединения — данные могут быть неактуальны'; document.body.append(bar); });
 
   /* ---------- Overview ---------- */
   async function showOverview() {
