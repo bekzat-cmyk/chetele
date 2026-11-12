@@ -403,6 +403,13 @@ tbody tr:last-child td{border-bottom:0}
 .dialog-actions .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:28px;z-index:60;transform:translateX(-50%);height:48px;padding:0 20px;border-radius:24px;background:var(--black);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 16px 40px rgba(11,15,18,.3);animation:rise .3s cubic-bezier(.22,1,.36,1) both}
 
+/* Quiz editor: a restored draft */
+.qe-restored{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:24px;background:var(--amber-bg);border:1px solid rgba(224,134,43,.25)}
+.qe-restored .circle{color:var(--amber)}
+.qe-restored div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.qe-restored b{font-size:15px;font-weight:600}.qe-restored small{font-size:13px;color:var(--soft)}
+@media (max-width:860px){.qe-restored{flex-wrap:wrap}.qe-restored .btn{width:100%;justify-content:center}}
+
 /* No connection */
 .offline{align-items:center;text-align:center;padding:48px 24px;gap:12px}
 .offline-icon{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink);box-shadow:var(--shadow)}
@@ -670,10 +677,10 @@ tbody tr:last-child td{border-bottom:0}
     el.innerHTML = icon('check') + esc(text); document.body.append(el);
     setTimeout(() => el.remove(), 2400);
   }
-  function confirmDialog({ title, text, action = 'Удалить', danger = true, iconName = 'trash' }) {
+  function confirmDialog({ title, text, action = 'Удалить', danger = true, iconName = 'trash', cancel = 'Отмена' }) {
     return new Promise(resolve => {
       const layer = document.createElement('div'); layer.className = 'layer';
-      layer.innerHTML = `<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title"><span class="circle" style="${danger ? '' : 'color:var(--ink)'}">${icon(iconName)}</span><h2 id="dlg-title">${esc(title)}</h2><p>${esc(text)}</p><div class="dialog-actions"><button type="button" class="btn" data-no>Отмена</button><button type="button" class="btn ${danger ? 'danger' : 'black'}" data-yes>${esc(action)}</button></div></section>`;
+      layer.innerHTML = `<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title"><span class="circle" style="${danger ? '' : 'color:var(--ink)'}">${icon(iconName)}</span><h2 id="dlg-title">${esc(title)}</h2><p>${esc(text)}</p><div class="dialog-actions"><button type="button" class="btn" data-no>${esc(cancel)}</button><button type="button" class="btn ${danger ? 'danger' : 'black'}" data-yes>${esc(action)}</button></div></section>`;
       const done = value => { layer.remove(); document.removeEventListener('keydown', onKey); resolve(value); };
       const onKey = event => { if (event.key === 'Escape') done(false); };
       layer.addEventListener('click', event => { if (event.target === layer || event.target.closest('[data-no]')) done(false); if (event.target.closest('[data-yes]')) done(true); });
@@ -1267,12 +1274,38 @@ tbody tr:last-child td{border-bottom:0}
      choosing the right answer repaint the questions. */
   let qe = null;
   const blankQuestion = () => ({ id: null, text: '', options: ['', '', ''], correct: -1, explanation: '', open: true });
+  /* Everything typed in the quiz editor is kept in this browser as it is typed, so leaving
+     by accident loses nothing: the next time the editor opens, the draft comes back. */
+  const QE_KEY = id => `chetele-quiz-draft:${id || 'new'}`;
+  const qeContent = () => qe ? JSON.stringify({ ...qe, questions: qe.questions.map(({ open, ...q }) => q), restoredAt: undefined, baseline: undefined }) : '';
+  const qeDirty = () => Boolean(qe && qe.baseline !== undefined && qeContent() !== qe.baseline);
+  let qeTimer = null;
+  function qeStore() {
+    clearTimeout(qeTimer);
+    qeTimer = setTimeout(() => {
+      if (!qe || shownView !== 'quiz-editor') return;
+      try { if (qeDirty()) localStorage.setItem(QE_KEY(qe.id), JSON.stringify({ savedAt: Date.now(), qe: JSON.parse(qeContent()) })); else localStorage.removeItem(QE_KEY(qe.id)); } catch {}
+      paintQeStatus();
+    }, 300);
+  }
+  function qeForget(id) { try { localStorage.removeItem(QE_KEY(id)); } catch {} }
+  const qeTime = ms => new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+  function paintQeStatus() { const el = $('#qe-status'); if (el) el.textContent = qeDirty() ? 'Черновик сохранён в этом браузере' : ''; }
   async function showQuizEditor(id) {
     loading(id ? 'Изменить тест' : 'Новый тест');
     try {
       if (id) { const q = await req(`admin/quizzes/${id}`); qe = { ...q, questions: q.questions.map(x => ({ ...x, options: x.options.slice(), open: false })) }; if (qe.questions[0]) qe.questions[0].open = true; }
       else qe = { id: null, title: '', description: '', category: 'Основы', status: 'draft', featured: false, showAnswers: true, shuffleQuestions: true, shuffleOptions: false, showStats: true, timeLimitMin: null, levels: QZ_LEVELS.slice(), questionTimeSec: null, questions: [blankQuestion()] };
     } catch (error) { failed('Тест', error); return; }
+    qe.baseline = qeContent(); qe.restoredAt = null;
+    try {
+      const saved = JSON.parse(localStorage.getItem(QE_KEY(id)) || 'null');
+      if (saved && saved.qe && JSON.stringify(saved.qe) !== qe.baseline) {
+        const baseline = qe.baseline;
+        qe = { ...saved.qe, questions: saved.qe.questions.map((q, i) => ({ ...q, options: q.options.slice(), open: i === 0 })), baseline, restoredAt: saved.savedAt };
+      }
+    } catch {}
+    leaveOk = false;
     paintQuizEditor();
   }
   function questionCard(q, i) {
@@ -1301,6 +1334,7 @@ tbody tr:last-child td{border-bottom:0}
     const tog = (key, label, text) => `<label class="toggle"><div><b>${label}</b><small>${text}</small></div><input type="checkbox" data-qe-flag="${key}" ${qe[key] ? 'checked' : ''}><span class="switch" aria-hidden="true"></span></label>`;
     mount(`<header class="top"><div class="top-back"><a class="btn-glass" href="#quizzes${editing ? '/' + qe.id : ''}" aria-label="Назад к тестам">${icon('back')}</a><div class="top-copy"><span>Тесты${editing ? ' · ' + (QZ_STATUS[qe.status] || QZ_STATUS.draft)[0].toLowerCase() : ''}</span><h1>${editing ? 'Изменить тест' : 'Новый тест'}</h1></div></div>
       <div class="top-actions">${published ? '' : '<button type="button" class="btn" data-qe-save="draft">Сохранить черновик</button>'}<button type="button" class="btn black" data-qe-save="published">${published ? 'Сохранить' : 'Опубликовать'}</button></div></header>
+      ${qe.restoredAt ? `<div class="qe-restored"><span class="circle">${icon('reset')}</span><div><b>Восстановлен несохранённый черновик</b><small>Изменения от ${qeTime(qe.restoredAt)} — вы вышли, не сохранив их.</small></div><button type="button" class="btn small" data-qe-discard>${editing ? 'Отменить изменения' : 'Начать заново'}</button></div>` : ''}
       <div class="editor quiz-editor">
         <div class="editor-form">
           <section class="glass card"><div class="card-head"><h2>Основное</h2></div>
@@ -1315,7 +1349,7 @@ tbody tr:last-child td{border-bottom:0}
             <div style="display:flex;flex-direction:column;gap:10px">${qe.questions.map(questionCard).join('')}</div>
             <button type="button" data-qe-add style="height:56px;border-radius:22px;border:2px dashed rgba(16,22,26,.16);background:rgba(255,255,255,.35);color:var(--soft);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">${icon('plus')}Добавить вопрос</button>
           </section>
-          <p id="qe-error" class="error" role="alert"></p>
+          <p id="qe-error" class="error" role="alert"></p><small id="qe-status" class="muted" aria-live="polite">${qeDirty() ? 'Черновик сохранён в этом браузере' : ''}</small>
         </div>
         <div class="preview quiz-side">
           <section class="glass card"><div class="card-head"><h2>Правила</h2></div><div>${tog('showAnswers', 'Показывать ответ сразу', 'Верный вариант и пояснение после каждого вопроса')}${tog('shuffleQuestions', 'Перемешивать вопросы', 'У каждого участника свой порядок')}${tog('shuffleOptions', 'Перемешивать варианты', 'Варианты ответа меняются местами')}${tog('showStats', 'Показывать статистику', 'Участники видят, сколько человек прошли и средний результат')}</div></section>
@@ -1345,6 +1379,7 @@ tbody tr:last-child td{border-bottom:0}
     try {
       const saved = qe.id ? await send(`admin/quizzes/${qe.id}`, 'PUT', body) : await send('admin/quizzes', 'POST', body);
       const id = qe.id || saved.id; delete qz.details[id]; data.quizzes = null;
+      qeForget(qe.id); qeForget(id); qe.baseline = qeContent(); leaveOk = true;
       toast(status === 'draft' ? 'Черновик сохранён' : qe.status === 'published' ? 'Изменения сохранены' : 'Тест опубликован');
       location.hash = `#quizzes/${id}`;
     } catch (err) { $('#qe-error').textContent = err.message; button.disabled = false; }
@@ -1358,14 +1393,17 @@ tbody tr:last-child td{border-bottom:0}
     else if (d.qeOpt) { const [i, k] = d.qeOpt.split('|').map(Number); qe.questions[i].options[k] = t.value; }
     else if (d.qeLevel !== undefined) qe.levels[+d.qeLevel] = t.value;
     else if (d.qeTime !== undefined) qe.questionTimeSec = Math.round(Number(t.value)) || null;
+    qeStore();
   });
   main.addEventListener('change', event => {
     if (!qe || shownView !== 'quiz-editor') return;
     const t = event.target, d = t.dataset;
-    if (d.qeFlag) { qe[d.qeFlag] = t.checked; return; }
+    qeStore();
+    if (d.qeFlag) { qe[d.qeFlag] = t.checked; qeStore(); return; }
     if (d.qeField === 'category') qe.category = t.value;
     if (d.qeTimemode !== undefined) { qe.customTime = t.value === 'custom'; qe.questionTimeSec = t.value === 'custom' ? (qe.questionTimeSec || 25) : t.value ? Number(t.value) : null; paintQuizEditor(); return; }
     if (d.qeRight) { const [i, k] = d.qeRight.split('|').map(Number); qe.questions[i].correct = k; paintQuizEditor(); }
+    qeStore();
   });
   main.addEventListener('click', event => {
     const t = event.target;
@@ -1375,7 +1413,9 @@ tbody tr:last-child td{border-bottom:0}
     const st = t.closest('[data-qz-status]'); if (st) { setQuizStatus(st.dataset.id, st.dataset.qzStatus); return; }
     const del = t.closest('[data-qz-delete]'); if (del) { deleteQuiz(del.dataset.qzDelete); return; }
     if (!qe || shownView !== 'quiz-editor') return;
+    qeStore();
     const save = t.closest('[data-qe-save]'); if (save) { saveQuiz(save.dataset.qeSave, save); return; }
+    if (t.closest('[data-qe-discard]')) { confirmDialog({ title: qe.id ? 'Отменить изменения?' : 'Начать заново?', text: qe.id ? 'Несохранённые изменения пропадут, тест останется как был.' : 'Несохранённый черновик теста удалится.', action: qe.id ? 'Отменить изменения' : 'Удалить черновик', cancel: 'Оставить' }).then(ok => { if (!ok) return; qeForget(qe.id); showQuizEditor(qe.id); }); return; }
     if (t.closest('[data-qe-add]')) { qe.questions.forEach(q => { q.open = false; }); qe.questions.push(blankQuestion()); paintQuizEditor(); requestAnimationFrame(() => { const last = main.querySelectorAll('[data-qe-text]'); last[last.length - 1]?.focus(); }); return; }
     const tg = t.closest('[data-qe-toggle]'); if (tg) { const i = +tg.dataset.qeToggle, open = !qe.questions[i].open; qe.questions.forEach(q => { q.open = false; }); qe.questions[i].open = open; paintQuizEditor(); return; }
     const mv = t.closest('[data-qe-move]'); if (mv) { const [i, dir] = mv.dataset.qeMove.split('|').map(Number), j = i + dir; if (j < 0 || j >= qe.questions.length) return; [qe.questions[i], qe.questions[j]] = [qe.questions[j], qe.questions[i]]; paintQuizEditor(); return; }
@@ -1717,7 +1757,18 @@ tbody tr:last-child td{border-bottom:0}
     else if (current === 'settings') showSettings();
     else showOverview();
   }
-  window.addEventListener('hashchange', route);
+  /* Leaving the quiz editor with unsaved changes asks first; the draft stays in this browser either way. */
+  let leaveOk = false, routedHash = location.hash;
+  window.addEventListener('hashchange', () => {
+    const target = location.hash;
+    if (shownView === 'quiz-editor' && !leaveOk && qeDirty() && target !== routedHash) {
+      history.replaceState(null, '', routedHash);
+      confirmDialog({ title: 'Выйти без сохранения?', text: 'Тест ещё не сохранён на сайте. Черновик останется в этом браузере — откройте редактор снова, и он восстановится.', action: 'Выйти', cancel: 'Остаться', danger: false, iconName: 'alert' })
+        .then(ok => { if (!ok) return; leaveOk = true; location.hash = target; });
+      return;
+    }
+    routedHash = target; route();
+  });
 
   main.addEventListener('click', event => {
     const t = event.target;
