@@ -405,6 +405,36 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(!(response.headers.get('content-type')||'').includes('json')) isHostingStub(response).then(stub=>{ if(stub) showMaintenance(); });
       return response;
     }
+    /* Segmented controls and switches that are drawn again after a tap start where they were
+       and slide to the new place, the way the fasting choice does. */
+    function controlKey(el){ return `${el.closest('[id]')?.id||''}|${el.dataset.setting||el.dataset.settingToggle||el.getAttribute('aria-label')||''}`; }
+    const segIndex=seg=>[...seg.querySelectorAll(':scope>button')].findIndex(button=>button.classList.contains('active'));
+    function controlStates(){
+      const states=new Map();
+      document.querySelectorAll('.glass-seg').forEach(seg=>states.set(`seg:${controlKey(seg)}`,segIndex(seg)));
+      document.querySelectorAll('.st-switch input').forEach(input=>states.set(`sw:${controlKey(input)}`,input.checked));
+      return states;
+    }
+    /* What each control showed after the last drawing: a tap has already flipped a checkbox
+       by the time the screen is drawn again, so the live state cannot tell where it was. */
+    let shownControls=new Map();
+    function slideControls(){
+      const before=shownControls, started=[];
+      document.querySelectorAll('.glass-seg').forEach(seg=>{
+        const was=before.get(`seg:${controlKey(seg)}`), now=segIndex(seg);
+        if(was==null||was<0||now<0||was===now) return;
+        seg.style.setProperty('--seg-from',`calc(${was} * (100% + 4px))`); seg.classList.add('seg-from'); started.push(()=>seg.classList.remove('seg-from'));
+      });
+      document.querySelectorAll('.st-switch input').forEach(input=>{
+        const was=before.get(`sw:${controlKey(input)}`);
+        if(was==null||was===input.checked) return;
+        const box=input.closest('.st-switch'); box.classList.add(was?'from-on':'from-off'); started.push(()=>box.classList.remove('from-on','from-off'));
+      });
+      shownControls=controlStates();
+      if(!started.length) return;
+      document.body.offsetWidth;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>started.forEach(run=>run())));
+    }
     /* When the hosting switches the site off, its own HTML page answers instead of the API.
        The app then shows its own maintenance screen and checks every 30 s until the server is
        back, then reloads. Marks keep being saved on the phone meanwhile. */
@@ -930,7 +960,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
           root.innerHTML=`${head('Азкары',setInfo.title,`${done} из ${items.length} прочитано`,round('data-zikr-go="hub"','softBack','Назад'))}<section class="zg-set-banner"><i class="zg-set-icon">${icon(setInfo.icon)}</i><span><b>${done===items.length?'Все азкары прочитаны':`Осталось ${items.length-done}`}</b><small>Время: ${setInfo.when}</small></span><span class="zg-track" aria-hidden="true"><i style="width:${percent(done,items.length)}%"></i></span></section><ol class="zg-list">${rows}</ol>`;
           return;
         }
-        root.innerHTML=`${head('Зикр',titles[zikrFilter],zikrs(items.length),round('data-zikr-go="hub"','softBack','Назад'))}<div class="stats-seg glass-seg" role="radiogroup" aria-label="Фильтр зикров">${Object.entries({all:'Все',starred:'Избранные',open:'Осталось'}).map(([id,label])=>`<button type="button" role="radio" aria-checked="${zikrFilter===id}" class="${zikrFilter===id?'active':''}" data-zikr-filter="${id}">${label}</button>`).join('')}</div>${rows?`<ol class="zg-list">${rows}</ol>`:'<p class="zg-empty">Здесь пока пусто.</p>'}`;
+        root.innerHTML=`${head('Зикр',titles[zikrFilter],zikrs(items.length),round('data-zikr-go="hub"','softBack','Назад'))}<div class="stats-seg glass-seg" role="radiogroup" aria-label="Фильтр зикров">${Object.entries({all:'Все',starred:'Избранные',open:'Осталось'}).map(([id,label])=>`<button type="button" role="radio" aria-checked="${zikrFilter===id}" class="${zikrFilter===id?'active':''}" data-zikr-filter="${id}">${label}</button>`).join('')}</div>${rows?`<ol class="zg-list">${rows}</ol>`:'<p class="zg-empty">Здесь пока пусто.</p>'}`; slideControls();
         return;
       }
       if(zikrScreen==='counter'){
@@ -2219,7 +2249,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       function settingsSheet(){let sheet=document.querySelector('#app-settings-sheet');if(sheet)return sheet;sheet=document.createElement('div');sheet.id='app-settings-sheet';sheet.className='calendar-sheet';sheet.innerHTML='<button class="calendar-sheet-backdrop" data-close-app-settings aria-label="Закрыть"></button><section class="calendar-sheet-panel settings-sheet-panel" role="dialog" aria-modal="true"><div class="sheet-grabber"></div><div class="sheet-header"><h2></h2><button class="settings-close" data-close-app-settings aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><div class="settings-sheet-content"></div></section>';document.body.append(sheet);return sheet;}
       /* Settings as a full screen, as on the canvas: theme, language and two comfort switches.
          The buttons and switches keep data-setting / data-setting-toggle, so the handler below saves them. */
-      function paintSettingsView(){const view=document.querySelector('#settings-view');if(!view)return;const ky=preferences.language==='ky';const seg=(key,options)=>`<div class="glass-seg st-seg" data-setting="${key}" role="radiogroup" aria-label="${key==='theme'?text('theme'):text('language')}" style="--n:${options.length}">${options.map(([value,label])=>`<button type="button" role="radio" data-value="${value}" aria-checked="${preferences[key]===value}" class="${preferences[key]===value?'active':''}">${label}</button>`).join('')}</div>`;const toggle=(key,title,sub)=>`<li><label class="st-row"><span><b>${title}</b><small>${sub}</small></span><span class="st-switch"><input type="checkbox" data-setting-toggle="${key}" ${preferences[key]?'checked':''}><i></i></span></label></li>`;view.innerHTML=`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="profile-view" aria-label="${ky?'Профилге кайтуу':'Назад в профиль'}">${icon('softBack')}</button><div><span class="stats-eyebrow">${text('profile')}</span><h2>${text('settings')}</h2></div></header><section class="st-card"><b>${text('theme')}</b>${seg('theme',[['light',text('light')],['dark',text('dark')],['system',ky?'Түзмөк менен':'Как в системе']])}</section><section class="st-card"><b>${text('language')}</b>${seg('language',[['ru','Русский'],['ky','Кыргызча']])}</section><section class="st-group"><h3>${ky?'Ыңгайлуулук':'Удобство'}</h3><ol class="st-list">${toggle('largeText',text('large'),ky?'Окууга ыңгайлуураак':'Удобнее читать')}${toggle('reduceMotion',ky?'Анимацияны азайтуу':'Меньше анимаций',ky?'Экрандар кыймылсыз алмашат':'Экраны меняются без движения')}</ol></section>`;}
+      function paintSettingsView(){const view=document.querySelector('#settings-view');if(!view)return;const ky=preferences.language==='ky';const seg=(key,options)=>`<div class="glass-seg st-seg" data-setting="${key}" role="radiogroup" aria-label="${key==='theme'?text('theme'):text('language')}" style="--seg-n:${options.length}">${options.map(([value,label])=>`<button type="button" role="radio" data-value="${value}" aria-checked="${preferences[key]===value}" class="${preferences[key]===value?'active':''}">${label}</button>`).join('')}</div>`;const toggle=(key,title,sub)=>`<li><label class="st-row"><span><b>${title}</b><small>${sub}</small></span><span class="st-switch"><input type="checkbox" data-setting-toggle="${key}" ${preferences[key]?'checked':''}><i></i></span></label></li>`;view.innerHTML=`<header class="stats-top zg-top"><button type="button" class="zg-round" data-view="profile-view" aria-label="${ky?'Профилге кайтуу':'Назад в профиль'}">${icon('softBack')}</button><div><span class="stats-eyebrow">${text('profile')}</span><h2>${text('settings')}</h2></div></header><section class="st-card"><b>${text('theme')}</b>${seg('theme',[['light',text('light')],['dark',text('dark')],['system',ky?'Түзмөк менен':'Как в системе']])}</section><section class="st-card"><b>${text('language')}</b>${seg('language',[['ru','Русский'],['ky','Кыргызча']])}</section><section class="st-group"><h3>${ky?'Ыңгайлуулук':'Удобство'}</h3><ol class="st-list">${toggle('largeText',text('large'),ky?'Окууга ыңгайлуураак':'Удобнее читать')}${toggle('reduceMotion',ky?'Анимацияны азайтуу':'Меньше анимаций',ky?'Экрандар кыймылсыз алмашат':'Экраны меняются без движения')}</ol></section>`;slideControls();}
       function paintSettings(){paintSettingsView();const sheet=document.querySelector('#app-settings-sheet');if(!sheet)return;sheet.querySelector('h2').textContent=text('settings');const content=sheet.querySelector('.settings-sheet-content');content.innerHTML=`<p class="settings-section-title">${text('interface')}</p><div class="settings-row-card"><div><b>${text('theme')}</b></div><div class="settings-segment" data-setting="theme"><button data-value="light">${text('light')}</button><button data-value="dark">${text('dark')}</button><button data-value="system">${text('system')}</button></div></div><div class="settings-row-card"><div><b>${text('language')}</b></div><div class="settings-segment" data-setting="language"><button data-value="ru">${text('russian')}</button><button data-value="ky">${text('kyrgyz')}</button></div></div><p class="settings-section-title">${text('accessibility')}</p><label class="settings-row-card"><div><b>${text('large')}</b><p>${text('largeDesc')}</p></div><span class="settings-switch"><input type="checkbox" data-setting-toggle="largeText"><i></i></span></label><label class="settings-row-card"><div><b>${text('motion')}</b><p>${text('motionDesc')}</p></div><span class="settings-switch"><input type="checkbox" data-setting-toggle="reduceMotion"><i></i></span></label><p class="settings-section-title">${text('notifications')}</p><div class="settings-row-card"><div><b>${text('notifications')}</b><p>${text('notifyDesc')}</p></div></div><button class="settings-notifications" data-open-notifications>${text('manageNotify')}</button>`;content.querySelectorAll('[data-setting]').forEach(group=>group.querySelectorAll('button').forEach(button=>button.classList.toggle('active',preferences[group.dataset.setting]===button.dataset.value)));content.querySelectorAll('[data-setting-toggle]').forEach(input=>input.checked=!!preferences[input.dataset.settingToggle]);}
       function openSettings(){settingsSheet();paintSettings();openSheet('app-settings-sheet');}
       document.addEventListener('click',event=>{const settingsButton=event.target.closest('[data-profile-menu="settings"]');if(settingsButton){event.preventDefault();event.stopImmediatePropagation();paintSettingsView();showView('settings-view');window.scrollTo(0,0);return;}if(event.target.closest('[data-close-app-settings]')){closeSheet('app-settings-sheet');return;}const option=event.target.closest('[data-setting] button');if(option){preferences[option.closest('[data-setting]').dataset.setting]=option.dataset.value;persist();applyPreferences();return;}if(event.target.matches('[data-setting-toggle]')){preferences[event.target.dataset.settingToggle]=event.target.checked;persist();applyPreferences();return;}if(event.target.closest('[data-open-notifications]')){closeSheet('app-settings-sheet');document.querySelector('#reminder-settings-button')?.click();}},true);
@@ -3472,6 +3502,16 @@ body #app .glass-seg:before{content:"";position:absolute;z-index:0;top:4px;botto
 body #app .glass-seg:has(button:nth-child(2).active):before{transform:translateX(calc(100% + 4px))}
 body #app .glass-seg:has(button:nth-child(3).active):before{transform:translateX(calc(200% + 8px))}
 body #app .glass-seg button{position:relative;z-index:1}
+body #app .glass-seg.seg-from:before{transition:none!important;transform:translateX(var(--seg-from))!important}
+body #app .st-switch:is(.from-on,.from-off) i,body #app .st-switch:is(.from-on,.from-off) i:after{transition:none!important}
+body #app .st-switch.from-off input:checked+i{background:rgba(16,22,26,.18)}
+body #app .st-switch.from-off input:checked+i:after{transform:none}
+body #app .st-switch.from-on input:not(:checked)+i{background:#0B0F12}
+body #app .st-switch.from-on input:not(:checked)+i:after{transform:translateX(20px)}
+body.app-dark #app .st-switch.from-off input:checked+i{background:rgba(255,255,255,.18)}
+body.app-dark #app .st-switch.from-off input:checked+i:after{background:#fff}
+body.app-dark #app .st-switch.from-on input:not(:checked)+i{background:#EEF5F2}
+body.app-dark #app .st-switch.from-on input:not(:checked)+i:after{background:#0B1110}
 body #app .glass-seg button.active{background:transparent!important;box-shadow:none!important}
 body.app-dark #app .glass-seg:before{background:rgba(255,255,255,.9)}
 
@@ -3793,8 +3833,8 @@ body #app:has(#settings-view.active),body #app:has(#profile-sub-view.active){pad
 body #app:has(#settings-view.active) .nav,body #app:has(#profile-sub-view.active) .nav{display:none}
 body #app .st-card{padding:18px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;flex-direction:column;gap:12px}
 body #app .st-card>b{font-size:16px;font-weight:600}
-body #app .glass-seg.st-seg{border:0;border-radius:22px;background:rgba(16,22,26,.06);backdrop-filter:none;-webkit-backdrop-filter:none;grid-template-columns:repeat(var(--n),minmax(0,1fr))}
-body #app .glass-seg.st-seg:before{width:calc((100% - 8px - (var(--n) - 1) * 4px) / var(--n));border-radius:18px;box-shadow:0 2px 8px rgba(16,22,26,.10)}
+body #app .glass-seg.st-seg{border:0;border-radius:22px;background:rgba(16,22,26,.06);backdrop-filter:none;-webkit-backdrop-filter:none;grid-template-columns:repeat(var(--seg-n),minmax(0,1fr))}
+body #app .glass-seg.st-seg:before{width:calc((100% - 8px - (var(--seg-n) - 1) * 4px) / var(--seg-n));border-radius:18px;box-shadow:0 2px 8px rgba(16,22,26,.10)}
 body #app .glass-seg.st-seg button{border-radius:18px;color:#5E6A71}
 body #app .glass-seg.st-seg button.active{color:#10161A}
 body #app .st-group{display:flex;flex-direction:column;gap:12px}
