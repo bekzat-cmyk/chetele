@@ -225,8 +225,11 @@ tbody tr:last-child td{border-bottom:0}
 .d-rows span{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(16,22,26,.06);font-size:14px}
 .d-rows span:last-child{border-bottom:0}
 .d-rows em{font-style:normal;color:var(--muted)}
-.d-actions{display:flex;gap:8px}
-.d-actions .btn{flex:1;height:46px;font-size:14px}
+.d-actions{display:flex;flex-wrap:wrap;gap:8px;container-type:inline-size}
+.d-actions .btn{flex:1;min-width:0;height:46px;font-size:14px}
+/* A narrow side panel cannot hold «Изменить», «Опубликовать» and the bin in one row:
+   publish/hide moves to its own full-width row below. */
+@container (max-width:360px){.d-actions :is([data-qz-status],[data-resume]){order:3;flex-basis:100%}}
 .d-close{display:flex;align-items:center;justify-content:space-between}
 .detail-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:30px 10px;text-align:center;color:var(--muted);font-size:14px;line-height:1.45}
 

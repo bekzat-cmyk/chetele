@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="assets/lottie.min.js" defer></script>
   <script src="assets/i18n-ky.js?v=5"></script>
   <script src="assets/deeds.js?v=2"></script>
   <script src="assets/hadiths.js?v=1"></script>
@@ -29,7 +28,7 @@
 /* The welcome screen stays light in every theme: the logo and the animation are drawn for a light page. */
 body.app-dark .app-preloader{background:#F2F1EB!important}
 body.app-dark .app-preloader .app-preloader-welcome{color:#0c3528!important}
-body.app-dark .app-preloader .app-preloader-tagline{color:#896b35!important}.app-preloader-inner { display:grid; justify-items:center; width:min(100%,320px); animation:preloader-in .55s cubic-bezier(.2,.8,.2,1) both; }.app-preloader-logo { width:260px; height:260px; object-fit:contain; }.app-preloader-welcome { margin:-20px 0 5px; color:#0c3528; font-size:20px; font-weight:760; letter-spacing:-.45px; text-align:center; }.app-preloader-tagline { margin:0; color:#896b35; font-size:13px; font-weight:700; letter-spacing:.04em; text-align:center; }.preloader-lottie { width:100px; height:76px; margin-top:10px; overflow:hidden; }.preloader-lottie svg { width:100%!important; height:100%!important; } @keyframes preloader-in { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:scale(1); } }
+body.app-dark .app-preloader .app-preloader-tagline{color:#896b35!important}.app-preloader-inner { display:grid; justify-items:center; width:min(100%,320px); animation:preloader-in .55s cubic-bezier(.2,.8,.2,1) both; }.app-preloader-logo { width:260px; height:260px; object-fit:contain; }.app-preloader-welcome { margin:-20px 0 5px; color:#0c3528; font-size:20px; font-weight:760; letter-spacing:-.45px; text-align:center; }.app-preloader-tagline { margin:0; color:#896b35; font-size:13px; font-weight:700; letter-spacing:.04em; text-align:center; }.preloader-lottie { width:100px; height:76px; margin-top:10px; overflow:hidden; }.preloader-lottie video { width:100%; height:100%; object-fit:contain; mix-blend-mode:darken; pointer-events:none; } .preloader-lottie video::-webkit-media-controls,.preloader-lottie video::-webkit-media-controls-start-playback-button { display:none!important; -webkit-appearance:none; } @keyframes preloader-in { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:scale(1); } }
     body.sheet-open { overflow:hidden; overscroll-behavior:none; }
     button,input { font:inherit; }
     button { border:0; cursor:pointer; touch-action:manipulation; }
@@ -1790,7 +1789,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
        launches just flash the logo while the app gets ready. */
     const preloaderStartedAt=Date.now(), firstLaunch=(()=>{ try { if(localStorage.getItem('chetele-launched')) return false; localStorage.setItem('chetele-launched','1'); } catch {} return true; })();
     if(!firstLaunch) document.querySelector('#preloader-lottie')?.remove();
-    document.addEventListener('DOMContentLoaded',()=>{ const container=document.querySelector('#preloader-lottie'); if(container&&window.lottie) window.lottie.loadAnimation({container,renderer:'svg',loop:true,autoplay:true,path:'assets/preloader-animation.json'}); });
+    /* The welcome animation is a 50 KB muted video (it used to be a 920 KB Lottie file plus a
+       300 KB player). It only plays on the first launch. */
+    if(firstLaunch){ const container=document.querySelector('#preloader-lottie'); if(container){ const video=document.createElement('video'); Object.assign(video,{src:'assets/preloader.mp4',muted:true,loop:true,autoplay:true,playsInline:true,preload:'auto'}); video.setAttribute('playsinline',''); video.setAttribute('muted',''); container.appendChild(video); video.play?.().catch(()=>{}); } }
     function dismissPreloader(){ const preloader=document.querySelector('#app-preloader'); if(!preloader||preloader.classList.contains('is-hidden')) return; const wait=Math.max(0,(firstLaunch?3000:500)-(Date.now()-preloaderStartedAt)); setTimeout(()=>{ requestAnimationFrame(()=>preloader.classList.add('is-hidden')); setTimeout(()=>{ preloader.hidden=true; },450); },wait); }
     /* Notifications open a screen: ?open=deeds shows today's deeds, other names open that section. */
     function openTarget(target){

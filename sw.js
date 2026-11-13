@@ -1,5 +1,5 @@
-const CACHE_NAME = 'chetele-static-v124';
-const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/lottie.min.js', '/assets/i18n-ky.js?v=5', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=7', '/assets/preloader-animation.json'];
+const CACHE_NAME = 'chetele-static-v125';
+const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/i18n-ky.js?v=5', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=7'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES.map(url => new Request(url, { cache: 'reload' })))));
@@ -15,6 +15,8 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
+  /* Videos are fetched in ranges by Safari; a whole cached file breaks playback, so they go straight to the network. */
+  if (url.pathname.endsWith('.mp4')) return;
 
   if (event.request.mode === 'navigate') {
     if (url.pathname === '/' || url.pathname === '/index.html') event.respondWith(openPage(event));
