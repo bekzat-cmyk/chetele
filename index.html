@@ -1390,9 +1390,14 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
         // Rows that changed place slide to it instead of jumping (same period only).
         const before=boardShownPeriod===key?new Map([...leaderboard.querySelectorAll('.rt-row[data-name]')].map(row=>[row.dataset.name,row.getBoundingClientRect().top])):new Map();
-        const shownPodium=leaderboard.querySelector('.rt-podium:not([aria-busy])'), podiumFrom=boardShownPeriod===key&&shownPodium?new Map([...shownPodium.querySelectorAll('.rt-step')].map(step=>[Number(step.textContent.trim()),step.offsetHeight])):null;
-        leaderboard.innerHTML=podium+meCard+list;
-        growPodium(podiumFrom);
+        const html=podium+meCard+list;
+        // The same data again (a refresh right after opening) leaves the board, and its animation, alone.
+        if(!(html===leaderboard.shownHtml&&leaderboard.firstElementChild===leaderboard.shownNode)){
+          const shownPodium=leaderboard.querySelector('.rt-podium:not([aria-busy])'), podiumFrom=boardShownPeriod===key&&shownPodium?new Map([...shownPodium.querySelectorAll('.rt-step')].map(step=>[Number(step.textContent.trim()),step.offsetHeight])):null;
+          leaderboard.innerHTML=html; leaderboard.shownHtml=html; leaderboard.shownNode=leaderboard.firstElementChild;
+          const since=performance.now()-podiumIntroAt;
+          if(podiumFrom&&since<1700) growPodium(null,since); else growPodium(podiumFrom);
+        }
         if(before.size&&!motionOff()) leaderboard.querySelectorAll('.rt-row[data-name]').forEach(row=>{ const top=before.get(row.dataset.name); const shift=top===undefined?0:top-row.getBoundingClientRect().top; if(Math.abs(shift)>1) row.animate([{transform:`translateY(${shift}px)`},{transform:'translateY(0)'}],{duration:360,easing:'cubic-bezier(.2,.8,.2,1)'}); });
       }
       boardShownPeriod=key;
@@ -1655,26 +1660,28 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       [...document.querySelectorAll('.calendar-sheet:not([hidden]) .calendar-sheet-backdrop')].pop()?.click();
     });
     function scoreUpdate(before){ const after=completed(); if(after>before) state.score=(state.score||0)+(after-before)*10; if(after<before) state.score=Math.max(0,(state.score||0)-(before-after)*10); recordDay(); refreshStreak(); const completedToday=entryDateKey===todayKey&&after===dailyMax()&&before<dailyMax(), minimumReached=entryDateKey===todayKey&&after>=3&&before<3&&!state.minimumCelebratedDays?.[todayKey], shouldCelebrate=completedToday&&!state.celebratedDays?.[todayKey], unlocked=state.achievementBaselineReady?achievementData().find(badge=>badge.earned&&!state.seenAchievements?.[badge.title]):null; if(shouldCelebrate) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; if(minimumReached) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(unlocked) state.seenAchievements={...(state.seenAchievements||{}),[unlocked.title]:true}; save(); render(); requestAnimationFrame(()=>{ if(shouldCelebrate) showReward('done'); else if(minimumReached) showReward('minimum'); if(unlocked) showReward('badge',unlocked); }); }
-    /* The podium grows in: the steps rise from the floor one after another (3rd, 2nd, 1st), then
-       the avatars and names appear. On a refresh of the same board the steps only ease to their
-       new heights. `from` maps place → the height it had before, or is null for the full intro. */
-    function growPodium(from){
+    /* The podium grows in: the steps rise out of the floor one after another (3rd, 2nd, 1st),
+       then the avatars and names appear. Only transform and opacity move, which the phone's
+       GPU handles without laying the page out again every frame. A redraw that lands in the
+       middle (fresh data from the server) carries on from the same moment via `elapsed`.
+       On a refresh of the same board, `from` (place → previous height) eases changed steps. */
+    let podiumIntroAt=-1e9;
+    function growPodium(from,elapsed=0){
       const podium=document.querySelector('#leaderboard .rt-podium:not([aria-busy])');
       if(!podium||motionOff()||!document.querySelector('#rating-view')?.classList.contains('active')) return;
-      const slots=[...podium.querySelectorAll('.rt-slot')], order={3:0,2:1,1:2};
-      let longest=0;
-      if(!from) podium.style.minHeight=`${podium.offsetHeight}px`;
-      slots.forEach(slot=>{
-        const step=slot.querySelector('.rt-step'), place=Number(step?.textContent.trim())||0, height=step?.offsetHeight||0;
-        const start=from?(from.get(place)??height):0;
-        if(!step||Math.abs(start-height)<1) return;
-        if(!from) [step,...slot.querySelectorAll('.rt-crown,.rt-avatar,.rt-name')].forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
-        const delay=from?0:120+(order[place]??0)*160, duration=from?500:850;
-        step.animate([{height:`${start}px`},{height:`${height}px`}],{duration,delay,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});
-        if(!from) slot.querySelectorAll('.rt-crown,.rt-avatar,.rt-name').forEach((el,i)=>el.animate([{opacity:0,transform:'translateY(10px) scale(.96)'},{opacity:1,transform:'none'}],{duration:450,delay:delay+420+i*60,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
-        longest=Math.max(longest,delay+duration+600);
+      if(!from&&!elapsed) podiumIntroAt=performance.now();
+      const order={3:0,2:1,1:2}, ease='cubic-bezier(.2,.8,.2,1)';
+      podium.querySelectorAll('.rt-slot').forEach(slot=>{
+        const step=slot.querySelector('.rt-step'); if(!step) return;
+        const place=Number(step.textContent.trim())||0, height=step.offsetHeight;
+        if(from){ const start=from.get(place)??height; if(Math.abs(start-height)>=1) step.animate([{height:`${start}px`},{height:`${height}px`}],{duration:500,easing:ease}); return; }
+        const parts=[...slot.querySelectorAll('.rt-crown,.rt-avatar,.rt-name')];
+        [step,...parts].forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
+        const delay=120+(order[place]??0)*160;
+        const moves=[step.animate([{transform:'translateY(101%)'},{transform:'translateY(0)'}],{duration:850,delay,easing:ease,fill:'backwards'}),
+          ...parts.map((el,i)=>el.animate([{opacity:0,transform:'translateY(10px) scale(.96)'},{opacity:1,transform:'none'}],{duration:450,delay:delay+420+i*60,easing:ease,fill:'backwards'}))];
+        if(elapsed) moves.forEach(move=>{ move.currentTime=elapsed; });
       });
-      if(!from) setTimeout(()=>{ podium.style.minHeight=''; },longest);
     }
     function showView(viewId){
       // A new section starts at the top, so its cards rise where they can be seen.
