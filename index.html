@@ -413,6 +413,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const states=new Map();
       document.querySelectorAll('.glass-seg').forEach(seg=>states.set(`seg:${controlKey(seg)}`,segIndex(seg)));
       document.querySelectorAll('.st-switch input').forEach(input=>states.set(`sw:${controlKey(input)}`,input.checked));
+      document.querySelectorAll('.prayer-tahajjud .pill').forEach(pill=>states.set(`pill:${controlKey(pill)}`,pill.querySelector('.active')?.dataset.choice||'no'));
       return states;
     }
     /* What each control showed after the last drawing: a tap has already flipped a checkbox
@@ -431,6 +432,11 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const box=input.closest('.st-switch'); box.classList.add(was?'from-on':'from-off'); started.push(()=>box.classList.remove('from-on','from-off'));
       });
       shownControls=controlStates();
+      document.querySelectorAll('.prayer-tahajjud .pill').forEach(pill=>{
+        const was=before.get(`pill:${controlKey(pill)}`), now=pill.querySelector('.active')?.dataset.choice||'no';
+        if(was==null||was===now) return;
+        pill.classList.add(`from-${was}`); started.push(()=>pill.classList.remove('from-yes','from-no'));
+      });
       if(!started.length) return;
       document.body.offsetWidth;
       requestAnimationFrame(()=>requestAnimationFrame(()=>started.forEach(run=>run())));
@@ -772,6 +778,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       renderStats();
       renderZikr();
       window.cheteleTranslateUi?.();
+      slideControls();
     }
     /* A new hadith every day from assets/hadiths.js; the list repeats only after it ends. */
     function hadithOfTheDay(){ return window.ChetHadiths.hadithForDate(new Date()); }
@@ -4856,6 +4863,22 @@ body #app .zg-count .rd-down .rd-old{animation:rd-out-down .5s cubic-bezier(.22,
 @keyframes rd-in-down{from{transform:translateY(-105%);opacity:.2}to{transform:translateY(0);opacity:1}}
 @keyframes rd-out-down{from{transform:translateY(0);opacity:1}to{transform:translateY(105%);opacity:0}}
 @media (prefers-reduced-motion:reduce){body #app .zg-count .rd-new,body #app .zg-count .rd-old{animation:none}body #app .zg-count .rd-old{display:none}}
+/* Tahajjud yes/no: one thumb slides between the answers, like the fasting choice. */
+body #app .prayer-tahajjud .pill{position:relative;display:grid;grid-template-columns:1fr 1fr;flex-direction:row}
+body #app .prayer-tahajjud .pill button[data-choice="no"]{grid-area:1/1}
+body #app .prayer-tahajjud .pill button[data-choice="yes"]{grid-area:1/2}
+body #app .prayer-tahajjud .pill button,body #app .prayer-tahajjud .pill button.active,body #app .prayer-tahajjud .pill:not(:has(.active)) button[data-choice="no"],body.app-dark #app .prayer-tahajjud .pill button.active,body.app-dark #app .prayer-tahajjud .pill:not(:has(.active)) button[data-choice="no"]{position:relative;z-index:1;background:transparent!important;box-shadow:none!important}
+body #app .prayer-tahajjud .pill:not(:has(.active)) button[data-choice="no"]{color:#10161A}
+body #app .prayer-tahajjud .pill:before{content:"";position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:18px;background:#fff;box-shadow:0 2px 8px rgba(16,22,26,.10);transition:transform .38s cubic-bezier(.2,.8,.2,1),background-color .3s ease,box-shadow .3s ease}
+body #app .prayer-tahajjud .pill:has([data-choice="yes"].active):before{transform:translateX(100%);background:#0B0F12;box-shadow:none}
+body #app .prayer-tahajjud .pill.from-no:before{transition:none!important;transform:none!important;background:#fff!important;box-shadow:0 2px 8px rgba(16,22,26,.10)!important}
+body #app .prayer-tahajjud .pill.from-yes:before{transition:none!important;transform:translateX(100%)!important;background:#0B0F12!important;box-shadow:none!important}
+body.app-dark #app .prayer-tahajjud .pill button[data-choice="yes"].active{background:transparent!important;box-shadow:none!important}
+body.app-dark #app .prayer-tahajjud .pill:before,body.app-dark #app .prayer-tahajjud .pill.from-no:before{background:rgba(255,255,255,.14)!important;box-shadow:none!important}
+body.app-dark #app .prayer-tahajjud .pill:has([data-choice="yes"].active):before,body.app-dark #app .prayer-tahajjud .pill.from-yes:before{background:#EEF5F2!important;box-shadow:none!important}
+body.app-dark #app .prayer-tahajjud .pill:not(:has(.active)) button[data-choice="no"]{color:var(--ink)}
+body.a11y-reduce #app .prayer-tahajjud .pill:before{transition:none}
+@media (prefers-reduced-motion:reduce){body #app .prayer-tahajjud .pill:before{transition:none}}
 </style>
 </body>
 </html>
