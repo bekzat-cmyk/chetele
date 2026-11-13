@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <script src="assets/lottie.min.js" defer></script>
-  <script src="assets/i18n-ky.js?v=4"></script>
+  <script src="assets/i18n-ky.js?v=5"></script>
   <script src="assets/deeds.js?v=2"></script>
   <script src="assets/hadiths.js?v=1"></script>
   <script src="assets/fasting.js?v=1"></script>
@@ -293,7 +293,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
-    const APP_VERSION = '2.4';
+    const APP_VERSION = '2.5';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -403,8 +403,54 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const token=state.token;
       const response=await fetch(url,{...options,headers:{...(options.headers||{}),...(token?{'X-Auth-Token':token}:{})}});
       if(response.status===401&&token&&token===state.token) requireRelogin();
+      if(!(response.headers.get('content-type')||'').includes('json')) isHostingStub(response).then(stub=>{ if(stub) showMaintenance(); });
       return response;
     }
+    /* When the hosting switches the site off, its own HTML page answers instead of the API.
+       The app then shows its own maintenance screen and checks every 30 s until the server is
+       back, then reloads. Marks keep being saved on the phone meanwhile. */
+    const maintenance={shown:false,dismissed:false,timer:0};
+    async function isHostingStub(response){
+      const type=response.headers.get('content-type')||'';
+      if(type.includes('json')||!type.includes('html')) return false;
+      if([502,503,504].includes(response.status)) return true;
+      try { return /ISPsystem|Аккаунт отключ|account (is )?(suspended|disabled|blocked)/i.test(await response.clone().text()); } catch { return false; }
+    }
+    async function probeServer(){
+      try {
+        const response=await fetch(`${apiUrl('runtime')}&nc=${Date.now()}`,{cache:'no-store'});
+        if(await isHostingStub(response)) return 'down';
+        return (response.headers.get('content-type')||'').includes('json')?'up':'unknown';
+      } catch { return 'offline'; }
+    }
+    function showMaintenance(){
+      if(maintenance.shown||maintenance.dismissed) return;
+      maintenance.shown=true;
+      const layer=document.createElement('div'); layer.className='maint'; layer.id='maintenance-screen';
+      layer.innerHTML=`<section role="alertdialog" aria-modal="true" aria-labelledby="maint-title" aria-describedby="maint-text">
+        <div class="maint-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <h1 id="maint-title">Технические работы</h1>
+        <p id="maint-text">Сервер Chetele сейчас недоступен. Мы уже занимаемся этим — скоро всё заработает.</p>
+        <div class="maint-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Отметки сохраняются на телефоне и отправятся, когда сервер вернётся.</span></div>
+        <button type="button" class="maint-retry" data-maint-retry>Проверить снова</button>
+        <button type="button" class="maint-close" data-maint-close>Продолжить без сервера</button>
+        <small role="status" data-maint-status>Проверяем автоматически каждые 30 секунд</small>
+      </section>`;
+      document.body.appendChild(layer);
+      const status=layer.querySelector('[data-maint-status]'), retry=layer.querySelector('[data-maint-retry]');
+      const check=async manual=>{
+        if(manual){ retry.disabled=true; status.textContent='Проверяем…'; }
+        const result=await probeServer();
+        if(result==='up'){ location.reload(); return; }
+        if(manual){ retry.disabled=false; status.textContent=result==='offline'?'Нет интернета на телефоне':'Сервер пока недоступен'; }
+      };
+      retry.addEventListener('click',()=>check(true));
+      layer.querySelector('[data-maint-close]').addEventListener('click',()=>{ maintenance.dismissed=true; maintenance.shown=false; clearInterval(maintenance.timer); layer.remove(); });
+      maintenance.timer=setInterval(()=>check(false),30000);
+      setTimeout(()=>retry.focus(),50);
+    }
+    /* The service worker leaves a flag when it opened the saved app instead of the hosting's page. */
+    if('caches' in window) caches.match('/__maintenance').then(flag=>{ if(flag) probeServer().then(result=>{ if(result==='down') showMaintenance(); }); }).catch(()=>{});
     const localDateKey = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
     let todayKey = localDateKey();
     let entryDateKey = state.activeDate || todayKey;
@@ -3244,6 +3290,30 @@ body.app-dark .app-sheet h2{color:#eef5f2}
 body.app-dark .app-sheet p{color:#9baea7}
 body.app-dark .app-sheet .stay{background:#eef5f2;color:#0b1110}
 body.app-dark .app-sheet .leave{background:rgba(240,147,138,.14);color:#F0938A}
+/* Maintenance screen when the hosting has switched the site off */
+.maint{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));box-sizing:border-box;background:linear-gradient(180deg,#EAF3EE 0%,#F6F8F7 60%);overflow:auto;animation:appSheetFade .25s ease both}
+.maint section{width:min(100%,420px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;color:#10161A}
+.maint-icon{width:96px;height:96px;border-radius:48px;background:#fff;box-shadow:0 18px 40px rgba(31,107,79,.14);display:grid;place-items:center;margin-bottom:8px}
+.maint-icon svg{width:42px;height:42px;fill:none;stroke:#1F6B4F;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;animation:maintTurn 2.6s ease-in-out infinite;transform-origin:50% 50%}
+.maint h1{margin:0;font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.maint p{margin:0;font-size:16px;line-height:1.5;color:#5E6A71}
+.maint-note{width:100%;box-sizing:border-box;margin:8px 0 6px;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.85);border:1px solid rgba(16,22,26,.06);display:flex;align-items:center;gap:12px;text-align:left;font-size:14px;line-height:1.4;font-weight:600}
+.maint-note svg{width:30px;height:30px;flex:none;padding:7px;box-sizing:border-box;border-radius:15px;background:rgba(47,155,110,.14);fill:none;stroke:#1F6B4F;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.maint button{width:100%;height:54px;border-radius:27px;border:0;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+.maint .maint-retry{background:#0B0F12;color:#fff}
+.maint .maint-retry:disabled{opacity:.6}
+.maint .maint-close{background:rgba(16,22,26,.06);color:#10161A}
+.maint small{font-size:13px;color:#7d8793;min-height:18px}
+body.app-dark .maint{background:linear-gradient(180deg,#0f1c18 0%,#0b1110 60%)}
+body.app-dark .maint section{color:#eef5f2}
+body.app-dark .maint p,body.app-dark .maint small{color:#9baea7}
+body.app-dark .maint-icon{background:#17201e;box-shadow:none}
+body.app-dark .maint-icon svg,body.app-dark .maint-note svg{stroke:#76e9af}
+body.app-dark .maint-note{background:#17201e;border-color:rgba(255,255,255,.06)}
+body.app-dark .maint .maint-retry{background:#eef5f2;color:#0b1110}
+body.app-dark .maint .maint-close{background:rgba(255,255,255,.08);color:#eef5f2}
+@keyframes maintTurn{0%,60%,100%{transform:rotate(0)}20%{transform:rotate(-18deg)}40%{transform:rotate(12deg)}}
+@media (prefers-reduced-motion:reduce){.maint,.maint-icon svg{animation:none}}
 @keyframes appSheetFade{from{opacity:0}}
 @keyframes appSheetUp{from{transform:translateY(40px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.app-sheet,.app-sheet section{animation:none}}

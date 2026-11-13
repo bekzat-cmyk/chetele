@@ -1,5 +1,5 @@
-const CACHE_NAME = 'chetele-static-v122';
-const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/lottie.min.js', '/assets/i18n-ky.js?v=4', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=7', '/assets/preloader-animation.json'];
+const CACHE_NAME = 'chetele-static-v123';
+const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/lottie.min.js', '/assets/i18n-ky.js?v=5', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=7', '/assets/preloader-animation.json'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES)));
@@ -17,11 +17,7 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
 
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put('/index.html', copy));
-      return response;
-    }).catch(() => caches.match('/index.html')));
+    if (url.pathname === '/' || url.pathname === '/index.html') event.respondWith(openPage(event.request));
     return;
   }
 
@@ -35,6 +31,28 @@ self.addEventListener('fetch', event => {
     return response;
   }).catch(() => caches.match(event.request)));
 });
+
+/* Only the real app page is kept for offline launch. When the hosting answers with a page
+   of its own (account switched off, gateway error), the saved app opens instead and a flag
+   tells it to show the maintenance screen. */
+const MAINTENANCE_FLAG = '/__maintenance';
+async function openPage(request) {
+  const cache = await caches.open(CACHE_NAME);
+  let response;
+  try { response = await fetch(request); } catch { return (await cache.match('/index.html')) || Response.error(); }
+  const type = response.headers.get('content-type') || '';
+  const text = response.ok && type.includes('html') ? await response.clone().text() : '';
+  if (text.includes('id="today-view"')) {
+    await cache.put('/index.html', response.clone());
+    await cache.delete(MAINTENANCE_FLAG);
+    return response;
+  }
+  if (response.status === 404) return response;
+  const saved = await cache.match('/index.html');
+  if (!saved) return response;
+  await cache.put(MAINTENANCE_FLAG, new Response('1'));
+  return saved;
+}
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
