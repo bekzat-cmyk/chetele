@@ -258,7 +258,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       window.setTimeout(()=>{ preloader.hidden=true; },450);
     },location.protocol==='file:'?350:4200);
   </script>
-  <main id="app" class="app on-today" hidden>
+  <main id="app" class="app on-today" hidden><button type="button" id="prayer-bar" class="prayer-bar" data-prayer-schedule hidden></button>
     <header class="top"><div><div class="eyebrow" id="welcome">Ассаламу алейкум</div><span id="top-day" class="top-day">Сегодня</span><h1>Мой день</h1></div><span class="top-actions"><button class="avatar top-stats" id="open-stats" type="button" aria-label="Статистика"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></button><button class="avatar" id="avatar" aria-label="Открыть профиль"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></button></span></header>
     <section id="today-view" class="view active"><section id="guest-banner" class="state-offline guest-banner" hidden aria-labelledby="guest-banner-title"><div class="guest-banner-row"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h10a1.5 1.5 0 0 1 1.5 1.5v16a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 20V4A1.5 1.5 0 0 1 7 2.5zM11 18.5h2"/></svg></i><span><b id="guest-banner-title">Данные не сохранятся без регистрации</b><small>Сейчас отметки хранятся только на этом телефоне. Если удалить приложение или сменить телефон, они пропадут.</small></span></div><div class="guest-banner-actions"><button type="button" class="guest-primary" data-auth="signup">Создать профиль</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section><section id="offline-banner" class="state-offline" hidden role="status"><i data-icon="softWifiOff"></i><span><b>Нет связи с сервером</b><small>Отмечайте как обычно — всё сохранится на телефоне и отправится, когда появится интернет.</small></span></section><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
     <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><div class="prayer-countdown"><div class="prayer-countdown-row"><span id="prayer-countdown-label">Осталось</span><b id="prayer-timer" aria-hidden="true">—</b></div><div id="prayer-progress" class="prayer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Время до следующего намаза"><i id="prayer-progress-fill"></i><span id="prayer-progress-knob"></span></div><div class="prayer-progress-ends"><span id="prayer-from"></span><span id="prayer-to"></span></div></div><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
@@ -292,7 +292,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
-    const APP_VERSION = '2.8';
+    const APP_VERSION = '2.9';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -4559,6 +4559,28 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
     document.querySelector('#prayer-progress').setAttribute('aria-valuenow', String(Math.round(share * 100)));
   }
 
+  /* The compact line at the top of every section except the main one: the next prayer, the
+     one on now, and how long is left. A tap opens the day's schedule. Under 15 minutes it is
+     highlighted. It follows the same phases as the card on the main screen. */
+  function paintBar(now, line, index, next, phase, current) {
+    const bar = document.querySelector('#prayer-bar');
+    if (!bar) return;
+    let target = next, from = line[index - 1], iconName, rest;
+    if (phase?.kind === 'fajr') { target = phase.to; from = phase.from; iconName = 'sunrise'; rest = ky() ? 'азыр Багымдат' : 'сейчас Фаджр'; }
+    else if (phase?.kind === 'tahajjud') { target = phase.to; from = phase.from; iconName = 'softTahajjud'; rest = ky() ? 'тахажжуд убактысы' : 'время тахаджуда'; }
+    else if (current) { iconName = ICONS[current.id] || 'sun'; rest = ky() ? `азыр ${label(current)}` : `сейчас ${label(current)}`; }
+    else { iconName = 'sunrise'; rest = ky() ? 'эртең менен' : 'утро'; }
+    const left = target.time - now, soon = left < 15 * 60000;
+    const share = from ? Math.min(1, Math.max(0, (now - from.time) / (target.time - from.time))) : 0;
+    const when = target.tomorrow ? (ky() ? 'эртең ' : 'завтра ') : '';
+    const name = ky() ? `${label(target)} — ${when}${clock(target.time)}` : `${label(target)} ${when ? `${when}в` : 'в'} ${clock(target.time)}`;
+    const chip = ky() ? `${until(left)} калды` : `через ${until(left)}`;
+    bar.classList.toggle('is-soon', soon);
+    bar.setAttribute('aria-label', `${name}, ${chip}. ${rest}. ${ky() ? 'Намаз убактыларын ачуу' : 'Открыть время намазов'}`);
+    bar.innerHTML = `<i aria-hidden="true">${typeof icon === 'function' ? icon(iconName) : ''}</i><span class="prayer-bar-text"><b>${escapeHtml(name)}</b><span> · ${escapeHtml(rest)}</span></span><em>${escapeHtml(chip)}</em><span class="prayer-bar-track" aria-hidden="true"><span style="width:${(share * 100).toFixed(1)}%"></span></span>`;
+    bar.hidden = false;
+  }
+
   function paintCard() {
     if (!document.querySelector('#day-hero')) return;
     const now = new Date(), where = place(), day = P.timesFor(now, where);
@@ -4606,6 +4628,7 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
       return `<span role="listitem" class="prayer-slot ${state}" aria-label="${label(item)}, ${clock(item.time)}${note}"><small>${label(item)}</small><b>${clock(item.time)}</b></span>`;
     }).join('');
     const after = line.slice(index + 1, index + 3);
+    paintBar(now, line, index, next, phase, current);
     document.querySelector('#prayer-after').textContent = after.map((item, i) => {
       const prefix = item.tomorrow && !(i > 0 && after[i - 1].tomorrow) && !next.tomorrow ? (ky() ? 'эртең ' : 'завтра ') : '';
       return `${prefix}${label(item)} ${clock(item.time)}`;
@@ -5187,6 +5210,29 @@ body.app-dark .app-sheet.day-sheet .ds-miss span,body.app-dark .app-sheet.day-sh
 body.app-dark .app-sheet.day-sheet .ds-sum em{background:rgba(255,255,255,.08);color:#eef5f2}
 body.app-dark .app-sheet.day-sheet .ds-sum em.on{background:rgba(95,199,154,.16);color:#7FC8A6}
 body.app-dark .app-sheet.day-sheet button.ds-close{background:rgba(255,255,255,.08);color:#eef5f2}
+/* The prayer line at the top of every section except the main one. */
+body #app .prayer-bar{position:relative;overflow:hidden;width:100%;height:40px;margin:max(12px,calc(54px - env(safe-area-inset-top))) 0 0;padding:0 5px 0 12px;box-sizing:border-box;border-radius:20px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.22);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);color:#fff;display:flex;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s cubic-bezier(.2,.8,.2,1)}
+body #app .prayer-bar:active{transform:scale(.98)}
+body #app .prayer-bar[hidden],body #app.on-today .prayer-bar{display:none}
+body #app .prayer-bar>i{flex:none;display:grid;place-items:center}
+body #app .prayer-bar>i .lucide{width:18px;height:18px;stroke-width:1.8}
+body #app .prayer-bar-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+body #app .prayer-bar-text b{font-weight:600}
+body #app .prayer-bar-text span{color:rgba(255,255,255,.75)}
+body #app .prayer-bar>em{flex:none;height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,.92);color:#10161A;display:inline-flex;align-items:center;font-style:normal;font-size:12px;font-weight:600;white-space:nowrap}
+body #app .prayer-bar-track{position:absolute;left:16px;right:16px;bottom:0;height:2px;background:rgba(255,255,255,.22)}
+body #app .prayer-bar-track span{display:block;height:100%;background:#fff;transition:width .6s ease}
+body #app .prayer-bar.is-soon>em{background:#FFD58A;color:#4A3204}
+body #app .prayer-bar.is-soon .prayer-bar-track span{background:#FFD58A}
+body.app-dark #app .prayer-bar{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.78);color:#EEF5F2}
+body.app-dark #app .prayer-bar-text span{color:rgba(238,245,242,.65)}
+body.app-dark #app .prayer-bar>em{background:rgba(255,255,255,.1);color:#EEF5F2}
+body.app-dark #app .prayer-bar.is-soon>em{background:#F2C979;color:#2A1E05}
+body.app-dark #app .prayer-bar-track{background:rgba(255,255,255,.08)}
+body.app-dark #app .prayer-bar-track span{background:#5FC79A}
+body.app-dark #app .prayer-bar.is-soon .prayer-bar-track span{background:#F2C979}
+/* With the line above them, section headers start right under it. */
+body #app:not(.on-today) :is(.stats-top,.zg-bar,.sp-top,.gp-top,.guest-profile-top){padding-top:18px}
 </style>
 </body>
 </html>
