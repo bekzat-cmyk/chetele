@@ -292,7 +292,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
-    const APP_VERSION = '2.9';
+    const APP_VERSION = '2.10';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -376,7 +376,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     const storeKey = 'niet-app-data-v1';
     const cacheVersionKey = 'niet-cache-version';
     const cacheVersion = '2026-09-14-preserve-account-1';
-    const defaultReminderSettings = () => ({ slots:[{id:'start',label:'Начать путь',time:'12:00',enabled:true},{id:'continue',label:'Продолжить',time:'16:30',enabled:true},{id:'finish',label:'Подвести итог',time:'20:00',enabled:true}], quiet:{enabled:false,start:'22:00',end:'08:00'} });
+    const defaultReminderSettings = () => ({ slots:[{id:'start',label:'Начать путь',time:'12:00',enabled:true},{id:'continue',label:'Продолжить',time:'16:30',enabled:true},{id:'finish',label:'Подвести итог',time:'20:00',enabled:true}], quiet:{enabled:false,start:'22:00',end:'08:00'}, prayer:{enabled:false,before:0,prayers:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}} });
     const blankState = () => ({ name:'', login:'', tasks:{}, qaza:{}, history:{}, drafts:{}, activeDate:'', celebratedDays:{}, minimumCelebratedDays:{}, seenAchievements:{}, achievementBaselineReady:false, score:0, streak:0, bestStreak:0, streakLastDate:'', lastDate:'', reminderSettings:defaultReminderSettings() });
     function markClientVersion(){
       try { localStorage.setItem(cacheVersionKey,cacheVersion); }
@@ -390,9 +390,18 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     let state = loadState();
     let registrationPassword='';
     let registrationError='';
+    /* The place prayer times are counted for (chosen under «Время намазов», kept on this phone),
+       sent with the reminder settings so the server notifies at the same minutes. */
+    function chosenPrayerPlace(){
+      const P=window.ChetPrayer, fallback={lat:42.8746,lng:74.5698,city:'Бишкек'};
+      try { const saved=JSON.parse(localStorage.getItem('chetele-prayer-place')||'null');
+        if(saved?.id==='geo'&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lng)) return {lat:saved.lat,lng:saved.lng,city:saved.name||'Моё место'};
+        const city=P?.CITIES.find(item=>item.id===saved?.id)||P?.CITIES[0]; return city?{lat:city.lat,lng:city.lng,city:city.name}:fallback;
+      } catch { return fallback; }
+    }
     function reminderSettings(){
       const defaults=defaultReminderSettings(), saved=state.reminderSettings||{}, slots=Array.isArray(saved.slots)?saved.slots:[];
-      return {slots:defaults.slots.map(slot=>{ const value=slots.find(item=>item?.id===slot.id)||{}; return {...slot,time:/^([01]\d|2[0-3]):[0-5]\d$/.test(value.time)?value.time:slot.time,enabled:value.enabled!==false}; }),quiet:{enabled:!!saved.quiet?.enabled,start:/^([01]\d|2[0-3]):[0-5]\d$/.test(saved.quiet?.start)?saved.quiet.start:defaults.quiet.start,end:/^([01]\d|2[0-3]):[0-5]\d$/.test(saved.quiet?.end)?saved.quiet.end:defaults.quiet.end}};
+      return {slots:defaults.slots.map(slot=>{ const value=slots.find(item=>item?.id===slot.id)||{}; return {...slot,time:/^([01]\d|2[0-3]):[0-5]\d$/.test(value.time)?value.time:slot.time,enabled:value.enabled!==false}; }),quiet:{enabled:!!saved.quiet?.enabled,start:/^([01]\d|2[0-3]):[0-5]\d$/.test(saved.quiet?.start)?saved.quiet.start:defaults.quiet.start,end:/^([01]\d|2[0-3]):[0-5]\d$/.test(saved.quiet?.end)?saved.quiet.end:defaults.quiet.end},prayer:{enabled:saved.prayer?.enabled===true,before:[0,5,10,15].includes(saved.prayer?.before)?saved.prayer.before:0,prayers:Object.fromEntries(Object.keys(defaults.prayer.prayers).map(id=>[id,saved.prayer?.prayers?.[id]!==false])),...chosenPrayerPlace()}};
     }
     state.reminderSettings=reminderSettings();
     const apiUrl = path => `/api/index.php?path=${encodeURIComponent(path)}`;
@@ -1378,7 +1387,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const settings=reminderSettings(), on=!!state.pushEnabled;
         const titles={start:['Дела дня','Начать путь'],continue:['Продолжим путь','Мягко напомнить'],finish:['Итог дня','Подвести итог']};
         const count=settings.slots.filter(slot=>slot.enabled).length;
-        root.innerHTML=`${head('Напоминания')}<section class="st-card ps-master"><i class="sp-icon ps-bell">${icon('softBell')}</i><span class="ps-copy"><b>Напоминания</b><small>${on?`${count} в день · заголовки по времени дня`:'Выключены'}</small></span>${toggle('data-ps-push',on,'Напоминания')}</section><section class="st-group ${on?'':'is-off'}"><h3>Когда напомнить</h3><ol class="st-list">${settings.slots.map(slot=>`<li><div class="st-row ps-slot"><input class="ps-time" type="time" value="${slot.time}" data-ps-slot-time="${slot.id}" aria-label="Время: ${titles[slot.id][0]}" ${on?'':'disabled'}><span><b>${titles[slot.id][0]}</b><small>${titles[slot.id][1]}</small></span>${toggle(`data-ps-slot="${slot.id}" ${on?'':'disabled'}`,slot.enabled,titles[slot.id][0])}</div></li>`).join('')}</ol></section><section class="st-card ps-quiet ${on?'':'is-off'}"><div class="ps-quiet-top"><i class="sp-icon">${icon('softMoon')}</i><span class="ps-copy"><b>Тихие часы</b><small>Ночью напоминания не приходят</small></span>${toggle(`data-ps-quiet ${on?'':'disabled'}`,settings.quiet.enabled,'Тихие часы')}</div><div class="ps-quiet-times ${settings.quiet.enabled?'':'is-off'}"><label><small>с</small><input class="ps-time" type="time" value="${settings.quiet.start}" data-ps-quiet-time="start" ${on&&settings.quiet.enabled?'':'disabled'}></label><label><small>до</small><input class="ps-time" type="time" value="${settings.quiet.end}" data-ps-quiet-time="end" ${on&&settings.quiet.enabled?'':'disabled'}></label></div></section><button type="button" class="ps-primary" data-ps-test ${on?'':'disabled'}>${icon('softSend')}Отправить тестовое</button><p class="ps-note" role="status">${profileScreenNote||'На iPhone напоминания приходят, когда приложение добавлено на экран «Домой».'}</p>`;
+        /* Prayer notifications: one switch, then each of the five prayers with today's time,
+           and whether to notify at the time or a few minutes ahead. */
+        const pr=settings.prayer, P=window.ChetPrayer, two=n=>String(n).padStart(2,'0');
+        const today=P?Object.fromEntries(P.timesFor(new Date(),{lat:pr.lat,lng:pr.lng}).map(item=>[item.id,`${two(item.time.getHours())}:${two(item.time.getMinutes())}`])):{};
+        const prayerNames={fajr:'Фаджр',dhuhr:'Зухр',asr:'Аср',maghrib:'Магриб',isha:'Иша'}, live=on&&pr.enabled;
+        const beforeSeg=[[0,'Вовремя'],[5,'За 5 мин'],[10,'За 10'],[15,'За 15']].map(([value,label])=>`<button type="button" role="radio" data-ps-prayer-before="${value}" aria-checked="${pr.before===value}" class="${pr.before===value?'active':''}" ${live?'':'disabled'}>${label}</button>`).join('');
+        const prayerGroup=`<section class="st-group ps-prayer ${on?'':'is-off'}"><h3>Время намаза</h3><section class="st-card ps-quiet"><div class="ps-quiet-top"><i class="sp-icon">${icon('softClock')}</i><span class="ps-copy"><b>О времени намаза</b><small>${pr.enabled?`По городу ${escapeHtml(pr.city)} · ${Object.values(pr.prayers).filter(Boolean).length} из 5`:'Уведомление, когда наступает намаз'}</small></span>${toggle(`data-ps-prayer ${on?'':'disabled'}`,pr.enabled,'Уведомления о времени намаза')}</div><div class="ps-prayer-more ${pr.enabled?'':'is-off'}"><div class="glass-seg st-seg" role="radiogroup" aria-label="Когда уведомлять о намазе" style="--seg-n:4">${beforeSeg}</div><ol class="st-list">${Object.keys(prayerNames).map(id=>`<li><div class="st-row ps-slot"><span class="ps-time ps-prayer-at">${today[id]||'—'}</span><span><b>${prayerNames[id]}</b><small>${pr.before?`сигнал в ${today[id]?(()=>{ const [h,m]=today[id].split(':').map(Number), t=h*60+m-pr.before; return `${two(Math.floor((t+1440)%1440/60))}:${two((t+1440)%60)}`; })():'—'}`:'в начале времени'}</small></span>${toggle(`data-ps-prayer-id="${id}" ${live?'':'disabled'}`,pr.prayers[id],prayerNames[id])}</div></li>`).join('')}</ol></div></section></section>`;
+        root.innerHTML=`${head('Напоминания')}<section class="st-card ps-master"><i class="sp-icon ps-bell">${icon('softBell')}</i><span class="ps-copy"><b>Напоминания</b><small>${on?`${count} в день · заголовки по времени дня`:'Выключены'}</small></span>${toggle('data-ps-push',on,'Напоминания')}</section><section class="st-group ${on?'':'is-off'}"><h3>Когда напомнить</h3><ol class="st-list">${settings.slots.map(slot=>`<li><div class="st-row ps-slot"><input class="ps-time" type="time" value="${slot.time}" data-ps-slot-time="${slot.id}" aria-label="Время: ${titles[slot.id][0]}" ${on?'':'disabled'}><span><b>${titles[slot.id][0]}</b><small>${titles[slot.id][1]}</small></span>${toggle(`data-ps-slot="${slot.id}" ${on?'':'disabled'}`,slot.enabled,titles[slot.id][0])}</div></li>`).join('')}</ol></section>${prayerGroup}<section class="st-card ps-quiet ${on?'':'is-off'}"><div class="ps-quiet-top"><i class="sp-icon">${icon('softMoon')}</i><span class="ps-copy"><b>Тихие часы</b><small>Ночью напоминания не приходят</small></span>${toggle(`data-ps-quiet ${on?'':'disabled'}`,settings.quiet.enabled,'Тихие часы')}</div><div class="ps-quiet-times ${settings.quiet.enabled?'':'is-off'}"><label><small>с</small><input class="ps-time" type="time" value="${settings.quiet.start}" data-ps-quiet-time="start" ${on&&settings.quiet.enabled?'':'disabled'}></label><label><small>до</small><input class="ps-time" type="time" value="${settings.quiet.end}" data-ps-quiet-time="end" ${on&&settings.quiet.enabled?'':'disabled'}></label></div></section><button type="button" class="ps-primary" data-ps-test ${on?'':'disabled'}>${icon('softSend')}Отправить тестовое</button><p class="ps-note" role="status">${profileScreenNote||'На iPhone напоминания приходят, когда приложение добавлено на экран «Домой».'}</p>`;
+        slideControls();
         return;
       }
       if(profileScreen==='place'){
@@ -1416,12 +1433,15 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       if(target.matches('[data-ps-slot]')) return savePushSlots(next=>{ next.slots.find(slot=>slot.id===target.dataset.psSlot).enabled=target.checked; });
       if(target.matches('[data-ps-slot-time]')&&target.value) return savePushSlots(next=>{ next.slots.find(slot=>slot.id===target.dataset.psSlotTime).time=target.value; });
       if(target.matches('[data-ps-quiet]')) return savePushSlots(next=>{ next.quiet.enabled=target.checked; });
+      if(target.matches('[data-ps-prayer]')) return savePushSlots(next=>{ next.prayer.enabled=target.checked; });
+      if(target.matches('[data-ps-prayer-id]')) return savePushSlots(next=>{ next.prayer.prayers[target.dataset.psPrayerId]=target.checked; });
       if(target.matches('[data-ps-quiet-time]')&&target.value) return savePushSlots(next=>{ next.quiet[target.dataset.psQuietTime]=target.value; });
     });
     document.addEventListener('input',event=>{ if(event.target.id==='ps-name'){ const preview=document.querySelector('[data-ps-preview]'); if(preview) preview.textContent=event.target.value.trim()||'—'; } });
     document.addEventListener('submit',event=>{ if(event.target.matches('[data-ps-rename]')){ event.preventDefault(); document.querySelector('[data-ps-save]')?.click(); } });
     document.addEventListener('click',async event=>{
       const target=event.target; if(!target.closest('#profile-sub-view')) return;
+      const prayerBefore=target.closest('[data-ps-prayer-before]'); if(prayerBefore){ if(!prayerBefore.disabled&&!prayerBefore.classList.contains('active')) savePushSlots(next=>{ next.prayer.before=Number(prayerBefore.dataset.psPrayerBefore); }); return; }
       if(target.closest('[data-ps-test]')){
         const button=target.closest('[data-ps-test]'); button.disabled=true; profileScreenNote='Отправляем пример…'; document.querySelector('#profile-sub-view .ps-note').textContent=profileScreenNote;
         try { const response=await apiFetch(apiUrl('push/test'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,login:state.login})}); if(!response.ok) throw new Error(); profileScreenNote='Тест отправлен ✦'; }
@@ -1429,7 +1449,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         renderProfileScreen(); return;
       }
       const city=target.closest('[data-ps-city]');
-      if(city){ try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:city.dataset.psCity})); } catch {} profileScreenNote=''; window.chetelePaintPrayer?.(); renderProfileScreen(); renderSoftProfile(); return; }
+      if(city){ try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:city.dataset.psCity})); } catch {} profileScreenNote=''; window.chetelePlaceChanged?.(); window.chetelePaintPrayer?.(); renderProfileScreen(); renderSoftProfile(); return; }
       if(target.closest('[data-ps-geo]')){
         const P=window.ChetPrayer;
         if(!navigator.geolocation||!P){ profileScreenNote='Это устройство не умеет определять место. Выберите город из списка.'; renderProfileScreen(); return; }
@@ -1439,7 +1459,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
           const lat=Math.round(position.coords.latitude*100)/100, lng=Math.round(position.coords.longitude*100)/100;
           const distance=item=>Math.hypot(item.lat-lat,(item.lng-lng)*Math.cos(lat*Math.PI/180));
           const nearest=P.CITIES.reduce((best,item)=>distance(item)<distance(best)?item:best);
-          try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:'geo',lat,lng,name:distance(nearest)<0.35?nearest.name:'Моё место'})); } catch {}
+          try { localStorage.setItem('chetele-prayer-place',JSON.stringify({id:'geo',lat,lng,name:distance(nearest)<0.35?nearest.name:'Моё место'})); } catch {} window.chetelePlaceChanged?.();
           profileScreenNote=''; window.chetelePaintPrayer?.(); renderProfileScreen(); renderSoftProfile();
         },()=>{ profileScreenNote='Не удалось определить место. Выберите город из списка.'; renderProfileScreen(); },{timeout:15000});
         return;
@@ -2259,9 +2279,12 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
     }
     async function savePushSettings(){
       if(!state.pushEnabled||!state.userId||!state.login||!('serviceWorker' in navigator)) return;
+      state.reminderSettings=reminderSettings(); save();
       const registration=await navigator.serviceWorker.ready, subscription=await registration.pushManager.getSubscription(); if(!subscription) return;
       await apiFetch(apiUrl('push/subscriptions'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,login:state.login,subscription:subscription.toJSON(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'Asia/Bishkek',settings:state.reminderSettings})});
     }
+    /* A new city moves prayer notifications to its times: the server is told right away. */
+    window.chetelePlaceChanged=()=>{ if(state.pushEnabled&&reminderSettings().prayer.enabled) savePushSettings().catch(()=>{}); };
     function setReminderUi(){
       const button=document.querySelector('#reminder-button'), status=document.querySelector('#reminder-state'), detail=document.querySelector('#reminder-detail');
       let settingsButton=document.querySelector('#reminder-settings-button'); if(!settingsButton){ settingsButton=document.createElement('button'); settingsButton.id='reminder-settings-button'; settingsButton.className='reminder-settings-button'; settingsButton.type='button'; settingsButton.textContent='Настроить'; settingsButton.addEventListener('click',openReminderSettings); button.before(settingsButton); }
@@ -4499,7 +4522,7 @@ body.a11y-reduce #app .nav button,body.a11y-reduce #app .day-hero-ring #day-hero
       return P.CITIES.find(city => city.id === saved?.id) || P.CITIES[0];
     } catch { return P.CITIES[0]; }
   }
-  function keep(value) { try { localStorage.setItem(placeKey, JSON.stringify(value)); } catch { /* private mode: the city resets next launch */ } }
+  function keep(value) { try { localStorage.setItem(placeKey, JSON.stringify(value)); } catch { /* private mode: the city resets next launch */ } window.chetelePlaceChanged?.(); }
 
   function until(ms) {
     const total = Math.max(1, Math.ceil(ms / 60000)), h = Math.floor(total / 60), m = total % 60;
@@ -5236,6 +5259,15 @@ body #app:not(.on-today) :is(.stats-top,.zg-bar,.sp-top,.gp-top,.guest-profile-t
 body #app:not(.on-today):not(.quiz-focus) #quiz-view .qz-top{padding-top:18px}
 /* While a quiz is being taken the screen stays on the quiz: no prayer line, as there is no menu. */
 body #app.quiz-focus .prayer-bar{display:none}
+/* Dark theme: the period switch wears the same quiet border and fill as the chips under it. */
+body.app-dark #app .glass-seg:not(.st-seg){border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.08)}
+/* Prayer notifications in the reminders screen. */
+body #app .ps-prayer-more{display:flex;flex-direction:column;gap:12px}
+body #app .ps-prayer-more.is-off{opacity:.45}
+body #app .ps-prayer-more .st-list{margin:0}
+body #app .ps-prayer-at{min-width:66px;padding:0 8px;font-size:16px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none}
+body #app .ps-prayer .ps-slot small{white-space:nowrap}
+body #app .ps-prayer .glass-seg.st-seg button{font-size:13px}
 </style>
 </body>
 </html>

@@ -90,6 +90,9 @@ function ensurePushTable(PDO $db): void {
     if (!in_array('reminder_settings', $columns, true)) {
         $db->exec('ALTER TABLE push_subscriptions ADD COLUMN reminder_settings TEXT NULL AFTER reminder_time');
     }
+    if (!in_array('prayer_marker', $columns, true)) {
+        $db->exec('ALTER TABLE push_subscriptions ADD COLUMN prayer_marker VARCHAR(24) NULL AFTER last_sent_marker');
+    }
 }
 
 function ensureEventsTables(PDO $db): void {
@@ -428,7 +431,24 @@ function reminderSettings($value): array {
     $defaults['quiet']['enabled'] = ($quiet['enabled'] ?? false) === true;
     if (validReminderTime($quiet['start'] ?? null)) $defaults['quiet']['start'] = $quiet['start'];
     if (validReminderTime($quiet['end'] ?? null)) $defaults['quiet']['end'] = $quiet['end'];
+    $defaults['prayer'] = prayerReminderSettings($value['prayer'] ?? null);
     return $defaults;
+}
+
+/* Prayer notifications: off until the user turns them on; which of the five prayers, how many
+   minutes before, and the place the times are counted for (the city chosen in the app). */
+function prayerReminderSettings($value): array {
+    $prayer = ['enabled' => false, 'before' => 0, 'prayers' => ['fajr' => true, 'dhuhr' => true, 'asr' => true, 'maghrib' => true, 'isha' => true], 'lat' => 42.8746, 'lng' => 74.5698, 'city' => 'Бишкек'];
+    if (!is_array($value)) return $prayer;
+    $prayer['enabled'] = ($value['enabled'] ?? false) === true;
+    if (in_array($value['before'] ?? 0, [0, 5, 10, 15], true)) $prayer['before'] = $value['before'];
+    $chosen = is_array($value['prayers'] ?? null) ? $value['prayers'] : [];
+    foreach ($prayer['prayers'] as $id => $on) $prayer['prayers'][$id] = ($chosen[$id] ?? true) !== false;
+    $lat = $value['lat'] ?? null; $lng = $value['lng'] ?? null;
+    if (is_numeric($lat) && is_numeric($lng) && abs((float)$lat) <= 66 && abs((float)$lng) <= 180) { $prayer['lat'] = round((float)$lat, 4); $prayer['lng'] = round((float)$lng, 4); }
+    $city = trim((string)($value['city'] ?? ''));
+    if ($city !== '' && mb_strlen($city) <= 60) $prayer['city'] = $city;
+    return $prayer;
 }
 
 function createLogin(PDO $db): string {

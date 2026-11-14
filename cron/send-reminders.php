@@ -19,6 +19,30 @@ if (!function_exists('openssl_pkey_derive') || !function_exists('curl_init')) {
 }
 
 require_once __DIR__ . '/../api/push.php';
+require_once __DIR__ . '/../api/prayer-times.php';
+
+/* A prayer notification is due from its moment (the prayer time, or the minutes before it the
+   user chose) for this many minutes; the marker keeps each prayer to one notification a day. */
+const PRAYER_WINDOW_MINUTES = 5;
+
+function sendPrayerReminder(PDO $db, array $subscription, $prayer, DateTimeImmutable $utcNow, array $config): bool {
+    $due = prayerDue($prayer, (string)$subscription['timezone'], $utcNow->getTimestamp(), PRAYER_WINDOW_MINUTES);
+    if (!$due || ($subscription['prayer_marker'] ?? '') === $due['marker']) return false;
+    $at = (new DateTimeImmutable('@' . $due['time']))->setTimezone(new DateTimeZone($subscription['timezone']))->format('H:i');
+    $name = PRAYER_NAMES[$due['id']];
+    $title = $due['before'] ? "{$name} через {$due['before']} мин" : "{$name} · {$at}";
+    $body = $due['before'] ? "Намаз {$name} в {$at}." : "Наступило время намаза {$name}.";
+    if (in_array($due['id'], ['asr', 'isha'], true)) $body .= ' Нафиль после него отметьте в делах.';
+    // The marker is written before sending, so a crash never sends the same prayer twice.
+    $db->prepare('UPDATE push_subscriptions SET prayer_marker = ? WHERE id = ?')->execute([$due['marker'], $subscription['id']]);
+    $result = sendWebPush([
+        'endpoint' => $subscription['endpoint'],
+        'keys' => ['p256dh' => $subscription['p256dh'], 'auth' => $subscription['auth']],
+    ], ['title' => $title, 'body' => $body, 'url' => '/', 'tag' => 'chetele-prayer'], $config);
+    if (!$result['ok'] && in_array($result['status'], [404, 410], true)) $db->prepare('UPDATE push_subscriptions SET active = 0 WHERE id = ?')->execute([$subscription['id']]);
+    if (!$result['ok']) throw new RuntimeException('HTTP ' . $result['status'] . ' ' . $result['error']);
+    return true;
+}
 
 /* A slot is due from its time until this many minutes later, so a cron that runs a little
    late or skips a minute still sends it; the marker keeps it to once a day. */
@@ -41,7 +65,12 @@ function cronConnect(array $config): PDO {
 try {
     $config = require __DIR__ . '/../api/config.php';
     $db = cronConnect($config);
-    $subscriptions = $db->query('SELECT id, user_id, endpoint, p256dh, auth, timezone, reminder_settings, last_sent_marker FROM push_subscriptions WHERE active = 1')->fetchAll();
+    // The prayer column is added here too, as the cron can run before the site has.
+    if (!in_array('prayer_marker', $db->query('SHOW COLUMNS FROM push_subscriptions')->fetchAll(PDO::FETCH_COLUMN), true)) {
+        $db->exec('ALTER TABLE push_subscriptions ADD COLUMN prayer_marker VARCHAR(24) NULL AFTER last_sent_marker');
+    }
+    $subscriptions = $db->query('SELECT id, user_id, endpoint, p256dh, auth, timezone, reminder_settings, last_sent_marker, prayer_marker FROM push_subscriptions WHERE active = 1')->fetchAll();
+    $prayerSent = 0;
     $utcNow = new DateTimeImmutable('now', new DateTimeZone('UTC'));
     $slotMessages = [
         'start' => 'Начните сегодняшний путь с одного небольшого дела ✦',
@@ -60,6 +89,15 @@ try {
             $defaults = ['slots' => [['id'=>'start','time'=>'12:00','enabled'=>true],['id'=>'continue','time'=>'16:30','enabled'=>true],['id'=>'finish','time'=>'20:00','enabled'=>true]], 'quiet'=>['enabled'=>false,'start'=>'22:00','end'=>'08:00']];
             $settings = json_decode((string)($subscription['reminder_settings'] ?? ''), true);
             if (!is_array($settings)) $settings = $defaults;
+            /* Prayer notifications go out on their own, quiet hours or not: each prayer was
+               turned on by the user for itself. */
+            try {
+                if (sendPrayerReminder($db, $subscription, $settings['prayer'] ?? null, $utcNow, $config)) $prayerSent++;
+            } catch (Throwable $error) {
+                $failed++;
+                $lastError = 'prayer: ' . $error->getMessage();
+                error_log('Chetele prayer reminder error: ' . $lastError);
+            }
             $quiet = $settings['quiet'] ?? $defaults['quiet'];
             $isQuiet = !empty($quiet['enabled']) && (($quiet['start'] <= $quiet['end'] && $time >= $quiet['start'] && $time < $quiet['end']) || ($quiet['start'] > $quiet['end'] && ($time >= $quiet['start'] || $time < $quiet['end'])));
             if ($isQuiet) continue;
@@ -138,7 +176,7 @@ try {
         error_log('Chetele event reminder error: ' . $error->getMessage());
     }
 
-    cronReport(['subscriptions' => count($subscriptions), 'sent' => $sent, 'failed' => $failed, 'eventReminders' => $eventReminders, 'lastError' => $lastError ?? null]);
+    cronReport(['subscriptions' => count($subscriptions), 'sent' => $sent, 'prayerSent' => $prayerSent, 'failed' => $failed, 'eventReminders' => $eventReminders, 'lastError' => $lastError ?? null]);
     echo 'Niet reminders: sent=' . $sent . '; failed=' . $failed . PHP_EOL;
 } catch (Throwable $error) {
     cronReport(['error' => $error->getMessage()]);
