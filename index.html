@@ -5531,6 +5531,21 @@ body #app .ss-card .stats-line{padding:0}
 .app-sheet.share-sheet .ds-close{background:rgba(16,22,26,.06);color:#10161A}
 body.app-dark .app-sheet.share-sheet .ds-close{background:rgba(255,255,255,.08);color:#eef5f2}
 body.app-dark .app-sheet.share-sheet a.stay{background:#eef5f2;color:#0b1110}
+/* The goal field shows focus on its card, not with the general outline. */
+.app-sheet.goal-sheet .gs-field input:focus,.app-sheet.goal-sheet .gs-field input:focus-visible{outline:none!important;box-shadow:none!important}
+/* Tile details and the day sheet use the greens of the main stats chart. */
+html body #app .sd-bar i{background:rgba(47,155,110,.22)}
+html body #app .sd-bar.is-best i{background:rgba(47,155,110,.55)}
+html body #app .sd-bar.zero i{background:rgba(47,155,110,.08)}
+html body #app .sd-bar.on i{background:#1F6B4F}
+html body.app-dark #app .sd-bar i{background:rgba(95,199,154,.2)}
+html body.app-dark #app .sd-bar.is-best i{background:rgba(95,199,154,.5)}
+html body.app-dark #app .sd-bar.zero i{background:rgba(95,199,154,.07)}
+html body.app-dark #app .sd-bar.on i{background:#5FC79A}
+html body #app .sd-avg{border-color:rgba(31,107,79,.35)}
+html body.app-dark #app .sd-avg{border-color:rgba(95,199,154,.35)}
+.app-sheet.day-sheet .ds-sum .stats-track i,.app-sheet.day-sheet .ds-done i{background:#1F6B4F}
+body.app-dark .app-sheet.day-sheet .ds-sum .stats-track i,body.app-dark .app-sheet.day-sheet .ds-done i{background:#5FC79A;color:#0b1110}
 </style>
 </body>
 </html>
