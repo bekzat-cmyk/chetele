@@ -292,7 +292,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
   <script>
-    const APP_VERSION = '2.10';
+    const APP_VERSION = '2.11';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -1076,13 +1076,128 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const monthKeys=Array.from({length:months},(_,i)=>{ const date=new Date(`${todayKey.slice(0,8)}01T12:00:00`); date.setMonth(date.getMonth()-(months-1-i)); return statsKeyOf(date); });
       return {keys:monthKeys,values:monthKeys.map(key=>byMonth[key.slice(0,7)]||0),labels:monthKeys.map(key=>[cap(fmt(key,{month:'short'}).replace('.','')),fmt(key,{month:'long',year:'numeric'})]),prev:null};
     }
+    /* Personal goals: pages or times a day for Quran, salawat and zikr, nights a week for
+       tahajjud. Kept on this phone with the rest of the settings. */
+    const STATS_GOALS={
+      quran:{presets:[2,5,10,20],max:604,per:'day',ask:ky=>ky?'Күнүнө канча бет?':'Сколько страниц в день?',unit:(n,ky)=>ky?'бет':statsPlural(n,'страница','страницы','страниц')},
+      salawat:{presets:[100,300,500,1000],max:100000,per:'day',ask:ky=>ky?'Күнүнө канча жолу?':'Сколько раз в день?',unit:(n,ky)=>ky?'жолу':statsPlural(n,'раз','раза','раз')},
+      tahajjud:{presets:[1,3,5,7],max:7,per:'week',ask:ky=>ky?'Аптасына канча түн?':'Сколько ночей в неделю?',unit:(n,ky)=>ky?'түн':statsPlural(n,'ночь','ночи','ночей')},
+      zikr:{presets:[100,300,500,1000],max:100000,per:'day',ask:ky=>ky?'Күнүнө канча жолу?':'Сколько раз в день?',unit:(n,ky)=>ky?'жолу':statsPlural(n,'раз','раза','раз')}
+    };
+    const statsGoal=metric=>{ const value=Number(state.statsGoals?.[metric]); return Number.isFinite(value)&&value>0?value:0; };
+    // Today's share of the goal (this week's for tahajjud), from 0 to 1.
+    function statsGoalShare(metric){
+      const goal=statsGoal(metric); if(!goal) return 0;
+      const done=STATS_GOALS[metric].per==='week'?Array.from({length:7},(_,i)=>statsValue(statsShift(todayKey,i-6),metric)).reduce((a,b)=>a+b,0):statsValue(todayKey,metric);
+      return Math.min(1,done/goal);
+    }
+    function openGoalSheet(metric){
+      const ky=appLocale()==='ky-KG', spec=STATS_GOALS[metric], current=statsGoal(metric), name=ky?STATS_METRICS[metric].ky:STATS_METRICS[metric].ru;
+      document.querySelector('.app-sheet.goal-sheet')?.remove();
+      const layer=document.createElement('div'); layer.className='app-sheet goal-sheet';
+      const value=current||spec.presets[1];
+      layer.innerHTML=`<section role="dialog" aria-modal="true" aria-labelledby="goal-sheet-title"><i aria-hidden="true"></i><h2 id="goal-sheet-title">${ky?'Максат':'Цель'}: ${name}</h2><p>${spec.ask(ky)}</p><div class="gs-presets" role="radiogroup" aria-label="${ky?'Даяр варианттар':'Готовые варианты'}">${spec.presets.map(n=>`<button type="button" role="radio" aria-checked="${n===value}" class="${n===value?'active':''}" data-goal-pick="${n}">${new Intl.NumberFormat(appLocale()).format(n)}</button>`).join('')}</div><label class="gs-field"><span>${ky?'Же өзүңүз жазыңыз':'Или своё число'}</span><input type="number" inputmode="numeric" min="1" max="${spec.max}" value="${value}" data-goal-input><small>${spec.unit(value,ky)} ${spec.per==='week'?(ky?'аптасына':'в неделю'):(ky?'күнүнө':'в день')}</small></label><button type="button" class="stay" data-goal-save>${ky?'Сактоо':'Сохранить'}</button>${current?`<button type="button" class="ds-close" data-goal-clear>${ky?'Максатты алып салуу':'Убрать цель'}</button>`:''}<button type="button" class="ds-close" data-goal-cancel>${ky?'Жокко чыгаруу':'Отмена'}</button></section>`;
+      const input=layer.querySelector('[data-goal-input]'), unitLabel=layer.querySelector('.gs-field small');
+      const sync=()=>{ const n=Math.max(1,Math.min(spec.max,Math.round(Number(input.value)||0))); unitLabel.textContent=`${spec.unit(n,ky)} ${spec.per==='week'?(ky?'аптасына':'в неделю'):(ky?'күнүнө':'в день')}`; layer.querySelectorAll('[data-goal-pick]').forEach(b=>{ const on=Number(b.dataset.goalPick)===n; b.classList.toggle('active',on); b.setAttribute('aria-checked',String(on)); }); };
+      const close=()=>{ layer.remove(); document.removeEventListener('keydown',onKey); };
+      const onKey=event=>{ if(event.key==='Escape') close(); };
+      const store=n=>{ state.statsGoals={...(state.statsGoals||{}),[metric]:n}; if(!n) delete state.statsGoals[metric]; save(); close(); renderStats(); renderStatsDetail(); };
+      input.addEventListener('input',sync);
+      layer.addEventListener('click',event=>{
+        if(event.target===layer||event.target.closest('[data-goal-cancel]')){ close(); return; }
+        const pick=event.target.closest('[data-goal-pick]'); if(pick){ input.value=pick.dataset.goalPick; sync(); return; }
+        if(event.target.closest('[data-goal-clear]')){ store(0); return; }
+        if(event.target.closest('[data-goal-save]')){ const n=Math.round(Number(input.value)||0); if(n<1||n>spec.max){ input.focus(); return; } store(n); }
+      });
+      document.addEventListener('keydown',onKey);
+      document.body.append(layer); layer.querySelector('[data-goal-save]').focus();
+    }
+    // The goal card on a tile's detail screen.
+    function statsGoalHtml(metric,series,period){
+      const ky=appLocale()==='ky-KG', number=new Intl.NumberFormat(appLocale()), spec=STATS_GOALS[metric], goal=statsGoal(metric), name=ky?STATS_METRICS[metric].ky:STATS_METRICS[metric].ru;
+      if(!goal) return `<section class="stats-card sd-goal is-empty"><div class="stats-line"><i class="stats-circle">${icon('softStar')}</i><span><b>${ky?'Максат коюңуз':'Поставьте цель'}</b><small>${ky?`Мисалы, ${number.format(spec.presets[1])} ${spec.unit(spec.presets[1],ky)} ${spec.per==='week'?'аптасына':'күнүнө'}`:`Например, ${number.format(spec.presets[1])} ${spec.unit(spec.presets[1],ky)} ${spec.per==='week'?'в неделю':'в день'}`}</small></span></div><button type="button" class="sd-goal-btn" data-goal-open="${metric}">${ky?'Максат коюу':'Поставить цель'}</button></section>`;
+      const weekly=spec.per==='week';
+      const done=weekly?Array.from({length:7},(_,i)=>statsValue(statsShift(todayKey,i-6),metric)).reduce((a,b)=>a+b,0):statsValue(todayKey,metric);
+      const met=!weekly&&period!=='all'?series.values.filter(v=>v>=goal).length:0;
+      const share=Math.min(1,done/goal);
+      return `<section class="stats-card sd-goal"><div class="sd-goal-head"><span><small>${ky?'Максат':'Цель'}</small><b>${number.format(goal)} ${spec.unit(goal,ky)} ${weekly?(ky?'аптасына':'в неделю'):(ky?'күнүнө':'в день')}</b></span><button type="button" class="sd-goal-btn ghost" data-goal-open="${metric}">${ky?'Өзгөртүү':'Изменить'}</button></div><div class="sd-goal-bar"><span class="stats-track" aria-hidden="true"><i style="width:${Math.round(share*100)}%"></i></span><span>${weekly?(ky?'Ушул 7 күндө':'За 7 дней'):(ky?'Бүгүн':'Сегодня')} <b>${number.format(done)} ${ky?'/':'из'} ${number.format(goal)}</b>${share>=1?` · ${ky?'аткарылды!':'выполнено!'}`:''}</span></div>${!weekly&&period!=='all'?`<p class="sd-verdict">${ky?`Максат ${series.values.length} күндүн ${met} күнүндө аткарылды.`:`Цель выполнена в ${met} из ${series.values.length} ${statsPlural(series.values.length,'дня','дней','дней')}.`}</p>`:''}</section>`;
+    }
+    /* The month's results as a picture for stories (1080×1920): drawn on a canvas, then
+       shared through the phone's share sheet or saved. In the first week of a month it sums
+       up the month before; later, the month so far. */
+    function statsShareMonth(){
+      const today=new Date(`${todayKey}T12:00:00`);
+      if(today.getDate()<=7){ const prev=new Date(today.getFullYear(),today.getMonth()-1,1,12); return {key:statsKeyOf(prev).slice(0,7),done:true}; }
+      return {key:todayKey.slice(0,7),done:false};
+    }
+    function statsMonthSummary(){
+      const {key,done}=statsShareMonth(), entries=new Map(achievementEntries().map(entry=>[entry.date,entry]));
+      const [y,m]=key.split('-').map(Number), last=done?new Date(y,m,0).getDate():Number(todayKey.slice(8));
+      const sum={deeds:0,days:0,quran:0,salawat:0,zikr:0,tahajjud:0,fast:0,streak:0}; let run=0;
+      for(let d=1;d<=last;d++){
+        const date=`${key}-${String(d).padStart(2,'0')}`, entry=entries.get(date), tasks=entry?.tasks||{}, count=entry?Math.min(ChetDeeds.countDeeds(tasks,entry.qaza),ChetDeeds.maxFor(date)):0;
+        sum.deeds+=count; if(count){ sum.days++; run++; sum.streak=Math.max(sum.streak,run); } else run=0;
+        sum.quran+=amount(tasks.quran); sum.salawat+=amount(tasks.salawat); sum.zikr+=amount(tasks.tasbihat);
+        if(tasks.tahajjud==='yes') sum.tahajjud++; if(tasks.fast==='yes') sum.fast++;
+      }
+      const month=new Intl.DateTimeFormat(appLocale(),{month:'long'}).format(new Date(y,m-1,1));
+      return {...sum,key,done,last,month,year:y};
+    }
+    function statsShareHtml(){
+      const ky=appLocale()==='ky-KG', s=statsMonthSummary(), genitive=s.month.replace(/ь$/,'я').replace(/й$/,'я').replace(/т$/,'та');
+      return `<section class="stats-card ss-card"><div class="stats-line"><i class="stats-circle">${icon('softSend')}</i><span><b>${ky?`${s.month} айынын жыйынтыгы`:`Итоги ${genitive}`}</b><small>${ky?'Сторис үчүн сүрөт':'Картинка для сторис'}${s.done?'':(ky?' · азырынча':' · пока что')}</small></span></div><button type="button" class="sd-goal-btn" data-share-month>${ky?'Бөлүшүү':'Поделиться'}</button></section>`;
+    }
+    async function drawMonthCard(){
+      const ky=appLocale()==='ky-KG', s=statsMonthSummary(), number=new Intl.NumberFormat(appLocale()), pl=statsPlural;
+      const canvas=document.createElement('canvas'); canvas.width=1080; canvas.height=1920; const c=canvas.getContext('2d');
+      const font=getComputedStyle(document.body).fontFamily||'sans-serif';
+      try { await document.fonts?.ready; } catch {}
+      const bg=c.createLinearGradient(0,0,0,1920); bg.addColorStop(0,'#3F6F66'); bg.addColorStop(.35,'#6F9C92'); bg.addColorStop(.7,'#B9D2CA'); bg.addColorStop(1,'#ECF0EF'); c.fillStyle=bg; c.fillRect(0,0,1080,1920);
+      const glow=c.createRadialGradient(900,180,10,900,180,520); glow.addColorStop(0,'rgba(255,255,255,.28)'); glow.addColorStop(1,'rgba(255,255,255,0)'); c.fillStyle=glow; c.fillRect(0,0,1080,1920);
+      const round=(x,y,w,h,r,fill)=>{ c.beginPath(); c.roundRect?c.roundRect(x,y,w,h,r):c.rect(x,y,w,h); c.fillStyle=fill; c.fill(); };
+      const text=(t,x,y,size,weight,color,align='left')=>{ c.font=`${weight} ${size}px ${font}`; c.fillStyle=color; c.textAlign=align; c.fillText(t,x,y); };
+      const genitive=s.month.replace(/ь$/,'я').replace(/й$/,'я').replace(/т$/,'та');
+      text(ky?`${s.year}-жыл`:`${s.year}`,90,200,40,'500','rgba(255,255,255,.8)');
+      text(ky?`${s.month.charAt(0).toUpperCase()+s.month.slice(1)} айы`:`Итоги ${genitive}`,90,300,92,'700','#FFFFFF');
+      if(state.name) text(state.name,90,380,46,'500','rgba(255,255,255,.85)');
+      round(60,460,960,420,64,'rgba(255,255,255,.94)');
+      text(number.format(s.deeds),110,690,200,'700','#10161A');
+      text(ky?'иш белгиленди':pl(s.deeds,'дело отмечено','дела отмечено','дел отмечено'),110,780,48,'500','#3B474D');
+      text(ky?`${s.last} күндүн ${s.days} күнүндө`:`за ${s.days} ${pl(s.days,'день','дня','дней')} из ${s.last}`,110,840,40,'400','#5E6A71');
+      const cells=[[ky?'Куран':'Куран',`${number.format(s.quran)}`,ky?'бет':pl(s.quran,'страница','страницы','страниц')],[ky?'Салабат':'Салават',number.format(s.salawat),ky?'жолу':pl(s.salawat,'раз','раза','раз')],[ky?'Зикир':'Зикр',number.format(s.zikr),ky?'жолу':pl(s.zikr,'раз','раза','раз')],[ky?'Тахажжуд':'Тахаджуд',String(s.tahajjud),ky?'түн':pl(s.tahajjud,'ночь','ночи','ночей')],[ky?'Орозо':'Пост',String(s.fast),ky?'күн':pl(s.fast,'день','дня','дней')],[ky?'Эң узун катар':'Лучшая серия',String(s.streak),ky?'күн':pl(s.streak,'день','дня','дней')]];
+      cells.forEach(([label,value,unit],i)=>{ const x=60+(i%2)*490, y=920+Math.floor(i/2)*250; round(x,y,470,226,48,'rgba(255,255,255,.78)'); text(label,x+44,y+70,38,'500','#5E6A71'); text(value,x+44,y+164,84,'700','#10161A'); c.font=`700 84px ${font}`; const w=c.measureText(value).width; text(unit,x+44+w+16,y+164,36,'500','#5E6A71'); });
+      try { const logo=await new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src='img/logo.png'; }); // The logo file has wide transparent margins: draw only the mark itself.
+        const probe=document.createElement('canvas'); probe.width=logo.width; probe.height=logo.height; const pc=probe.getContext('2d'); pc.drawImage(logo,0,0);
+        const px=pc.getImageData(0,0,logo.width,logo.height).data; let x0=logo.width,y0=logo.height,x1=0,y1=0;
+        for(let y=0;y<logo.height;y+=2) for(let x=0;x<logo.width;x+=2) if(px[(y*logo.width+x)*4+3]>24){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+        if(x1>x0&&y1>y0){ const sw=x1-x0, sh=y1-y0, h=170, w=sw/sh*h; c.drawImage(logo,x0,y0,sw,sh,(1080-w)/2,1672,w,h); } } catch {}
+      text(ky?'chetele.ru · күчтүү такыбаага жол':'chetele.ru · путь к сильному таква',540,1890,34,'500','#3B474D','center');
+      return await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    }
+    async function openMonthShare(){
+      const ky=appLocale()==='ky-KG', s=statsMonthSummary();
+      const blob=await drawMonthCard(); if(!blob) return;
+      const url=URL.createObjectURL(blob), name=`chetele-${s.key}.png`, file=new File([blob],name,{type:'image/png'});
+      document.querySelector('.app-sheet.share-sheet')?.remove();
+      const layer=document.createElement('div'); layer.className='app-sheet share-sheet';
+      const canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+      layer.innerHTML=`<section role="dialog" aria-modal="true" aria-labelledby="share-sheet-title"><i aria-hidden="true"></i><h2 id="share-sheet-title">${ky?'Айдын жыйынтыгы':'Итоги месяца'}</h2><img class="sh-preview" src="${url}" alt="${ky?'Айдын жыйынтыгы сүрөтү':'Картинка с итогами месяца'}">${canShare?`<button type="button" class="stay" data-share-go>${ky?'Бөлүшүү':'Поделиться'}</button>`:''}<a class="${canShare?'ds-close':'stay'} sh-save" href="${url}" download="${name}">${ky?'Сүрөттү сактоо':'Сохранить картинку'}</a><button type="button" class="ds-close" data-share-close>${ky?'Жабуу':'Закрыть'}</button></section>`;
+      const close=()=>{ layer.remove(); URL.revokeObjectURL(url); document.removeEventListener('keydown',onKey); };
+      const onKey=event=>{ if(event.key==='Escape') close(); };
+      layer.addEventListener('click',async event=>{
+        if(event.target===layer||event.target.closest('[data-share-close]')){ close(); return; }
+        if(event.target.closest('[data-share-go]')){ try { await navigator.share({files:[file],title:ky?'Айдын жыйынтыгы':'Итоги месяца'}); } catch { /* the user closed the share sheet */ } }
+      });
+      document.addEventListener('keydown',onKey);
+      document.body.append(layer); layer.querySelector('[data-share-go],.sh-save')?.focus();
+    }
     let statsDetail={metric:'quran',period:'week',picked:-1};
     function renderStatsDetail(animate=false){
       const root=document.querySelector('#stats-detail-view'); if(!root) return;
       const locale=appLocale(), ky=locale==='ky-KG', number=new Intl.NumberFormat(locale), pl=statsPlural;
       const {metric,period}=statsDetail, spec=STATS_METRICS[metric], series=statsSeries(metric,period), values=series.values, last=values.length-1;
       const picked=statsDetail.picked>=0&&statsDetail.picked<=last?statsDetail.picked:last;
-      const total=values.reduce((a,b)=>a+b,0), max=Math.max(1,...values), active=values.filter(Boolean).length, avg=values.length?total/values.length:0;
+      const goal=STATS_GOALS[metric].per==='day'&&period!=='all'?statsGoal(metric):0, total=values.reduce((a,b)=>a+b,0), max=Math.max(1,...values,goal), active=values.filter(Boolean).length, avg=values.length?total/values.length:0;
       const binary=spec.binary&&period!=='all', unit=n=>spec.unit(n,ky,pl), short=spec.short(ky);
       const valueText=v=>binary?(v?(ky?'болду':'был'):(ky?'болгон жок':'не было')):`${number.format(v)} ${short||unit(v)}`;
       const name=ky?spec.ky:spec.ru, periodName=period==='week'?(ky?'апта':'неделя'):period==='month'?(ky?'ай':'месяц'):(ky?'бардык убакыт':'всё время');
@@ -1090,7 +1205,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const height=v=>v?Math.max(10,Math.round(v/max*138)):4, wide=values.length>10;
       const bars=values.map((v,i)=>{ const on=i===picked, today=i===last&&period!=='all';
         const label=period==='month'&&i%5!==0&&!today&&!on?'':series.labels[i][0];
-        return `<button type="button" class="sd-bar${on?' on':''}${v===max&&v?' is-best':''}${v?'':' zero'}" data-detail-pick="${i}" aria-pressed="${on}" aria-label="${escapeHtml(series.labels[i][1])}: ${valueText(v)}"><i style="height:${height(v)}px${animate?`;animation-delay:${Math.round(i*(wide?18:45))}ms`:''}"${animate?' class="grow"':''}></i><small>${label}</small></button>`; }).join('');
+        return `<button type="button" class="sd-bar${on?' on':''}${v&&v===Math.max(...values)?' is-best':''}${v?'':' zero'}" data-detail-pick="${i}" aria-pressed="${on}" aria-label="${escapeHtml(series.labels[i][1])}: ${valueText(v)}"><i style="height:${height(v)}px${animate?`;animation-delay:${Math.round(i*(wide?18:45))}ms`:''}"${animate?' class="grow"':''}></i><small>${label}</small></button>`; }).join('');
       const best=values.indexOf(Math.max(...values)), prev=series.prev, change=prev==null?null:total-prev;
       const prevWord=period==='week'?(ky?'мурдагы аптага':'к прошлой'):(ky?'мурдагы айга':`к ${(series.prevName||'').replace(/[ьй]$/,m=>'ю').replace(/([^ю])$/,'$1у')}`);
       const same=period==='week'?(ky?'мурдагы аптадай':'как на прошлой'):(ky?'мурдагы айдай':'как в прошлом месяце');
@@ -1108,6 +1223,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       } else { const big=Math.max(total,prev,1);
         compare=row(period==='week'?(ky?'Ушул апта':'Эта неделя'):(ky?'Ушул ай':'Этот месяц'),binary?String(total):number.format(total),total/big,true)+row(period==='week'?(ky?'Мурдагы':'Прошлая'):(ky?'Мурдагы ай':'Прошлый'),binary?String(prev):number.format(prev),prev/big,false)+`<p class="sd-verdict">${!total&&!prev?(ky?'Бул мезгилде азырынча белги жок.':'За этот период пока нет отметок.'):change>=0?(ky?'Мурдагыдан көп — ушундай уланта бериңиз!':'Больше, чем в прошлый раз, — так держать!'):(ky?`Мурдагыга жетүү үчүн ${number.format(-change)} калды.`:`Чуть меньше, чем в прошлый раз: осталось ${number.format(-change)}, чтобы догнать.`)}</p>`;
       }
+      const goalLine=goal?`<span class="sd-avg sd-goal-line" style="bottom:${24+Math.round(goal/max*138)}px"><em>${ky?'максат':'цель'} ${number.format(goal)}</em></span>`:'';
       const avgLine=binary||!total?'':`<span class="sd-avg" style="bottom:${24+Math.round(avg/max*138)}px"><em>${ky?'орточо':'в среднем'} ${number.format(Math.round(avg))}</em></span>`;
       const chips=Object.entries(STATS_METRICS).map(([id,item])=>`<button type="button" role="radio" aria-checked="${id===metric}" class="${id===metric?'active':''}" data-detail-metric="${id}">${ky?item.ky:item.ru}</button>`).join('');
       const seg=[['week',ky?'Апта':'Неделя'],['month',ky?'Ай':'Месяц'],['all',ky?'Бардык убакыт':'Всё время']].map(([id,label])=>`<button type="button" role="radio" data-detail-period="${id}" aria-checked="${id===period}" class="${id===period?'active':''}">${label}</button>`).join('');
@@ -1115,8 +1231,9 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       root.innerHTML=`<header class="stats-top"><div><button type="button" class="stats-back" data-view="stats-view" aria-label="${ky?'Статистикага кайтуу':'Назад к статистике'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky?'Статистика':'Статистика'} · ${periodName}</span><h2>${name}</h2><span class="stats-period-label">${headline}</span></div><i class="stats-badge" aria-hidden="true">${icon(spec.icon)}</i></header>
         <div class="rt-metrics" role="radiogroup" aria-label="${ky?'Эмнени көрсөтүү':'Что показать'}">${chips}</div>
         <div class="stats-seg glass-seg" role="radiogroup" aria-label="${ky?'Мезгил':'Период подробностей'}">${seg}</div>
-        <article class="stats-chart-card sd-card" aria-label="${name}"><div class="sd-head"><div class="sd-picked"><small>${pickedLabel}</small><b>${valueText(values[picked]||0)}</b></div><em class="sd-delta${tone}">${delta}</em></div><div class="sd-chart">${avgLine}<div class="sd-bars${wide?' wide':''}" style="grid-template-columns:repeat(${values.length},minmax(0,1fr))">${bars}</div></div><p class="sd-tip">${period==='all'?(ky?'Айды көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть месяц'):(ky?'Күндү көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть день')}</p></article>
+        <article class="stats-chart-card sd-card" aria-label="${name}"><div class="sd-head"><div class="sd-picked"><small>${pickedLabel}</small><b>${valueText(values[picked]||0)}</b></div><em class="sd-delta${tone}">${delta}</em></div><div class="sd-chart">${avgLine}${goalLine}<div class="sd-bars${wide?' wide':''}" style="grid-template-columns:repeat(${values.length},minmax(0,1fr))">${bars}</div></div><p class="sd-tip">${period==='all'?(ky?'Айды көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть месяц'):(ky?'Күндү көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть день')}</p></article>
         <div class="sd-facts">${facts}</div>
+        ${statsGoalHtml(metric,series,period)}
         <section class="stats-card sd-compare" aria-label="${ky?'Салыштыруу':'Сравнение'}"><div class="stats-section-sub">${ky?'Салыштыруу':'Сравнение'}</div>${compare}</section>`;
       root.querySelectorAll('[data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
       slideControls();
@@ -1170,7 +1287,71 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
       const period=target.closest('[data-detail-period]'); if(period){ if(period.dataset.detailPeriod!==statsDetail.period){ statsDetail={...statsDetail,period:period.dataset.detailPeriod,picked:-1}; renderStatsDetail(true); } return; }
       const pick=target.closest('[data-detail-pick]'); if(pick){ statsDetail={...statsDetail,picked:Number(pick.dataset.detailPick)}; renderStatsDetail(); return; }
       const day=target.closest('[data-stats-day]'); if(day){ openStatsDay(day.dataset.statsDay); return; }
+      const goalOpen=target.closest('[data-goal-open]'); if(goalOpen){ openGoalSheet(goalOpen.dataset.goalOpen); return; }
+      if(target.closest('[data-share-month]')){ const button=target.closest('[data-share-month]'); button.disabled=true; openMonthShare().finally(()=>{ button.disabled=false; }); return; }
     });
+    /* Insights: a few short sentences drawn from the user's own days — the week compared
+       with the weeks before, the nafil most often missed, the strongest day of the week, a
+       streak waiting for today. At most three, the most useful first. */
+    function statsInsightsHtml(){
+      const ky=appLocale()==='ky-KG', number=new Intl.NumberFormat(appLocale()), pl=statsPlural;
+      const entries=new Map(achievementEntries().map(entry=>[entry.date,entry])), count=key=>{ const entry=entries.get(key); return entry?Math.min(ChetDeeds.countDeeds(entry.tasks,entry.qaza),ChetDeeds.maxFor(key)):0; };
+      const days=n=>ky?'күн':pl(n,'день','дня','дней'), deeds=n=>ky?'иш':pl(n,'дело','дела','дел');
+      const items=[];
+      const last28=Array.from({length:28},(_,i)=>statsShift(todayKey,i-27)), active=last28.filter(key=>count(key)>0);
+      const streak=Number(state.streak||0), hour=new Date().getHours();
+      if(!count(todayKey)&&streak>0&&hour>=12) items.push(['softFlame','warn',ky?`Бүгүн азырынча эч нерсе белгиленген жок. Бир иш — жана ${streak} күндүк катар уланат.`:`Сегодня ещё ничего не отмечено. Одно дело — и серия «${streak} ${days(streak)} подряд» продолжится.`]);
+      // This week against the seven before it, each the seven days ending on the same weekday.
+      const weekSum=offset=>Array.from({length:7},(_,i)=>count(statsShift(todayKey,i-6-offset*7))).reduce((a,b)=>a+b,0);
+      const now=weekSum(0), before=Array.from({length:7},(_,i)=>weekSum(i+1)), seen=before.filter(Boolean).length;
+      if(now&&seen>=3&&now>Math.max(...before)) items.push(['softSpark','good',ky?`Бул аптаңыз — акыркы эки айдагы эң мыктысы: ${number.format(now)} иш.`:`Эта неделя — ваша лучшая за два месяца: ${number.format(now)} ${deeds(now)}.`]);
+      else if(now&&seen>=3){ const best=Math.max(...before); if(best-now>0&&best-now<=8) items.push(['softSpark','',ky?`Мыкты аптаңызга чейин ${best-now} иш калды.`:`До вашей лучшей недели осталось ${best-now} ${deeds(best-now)}.`]); }
+      // The nafil prayer done least often over four weeks.
+      if(active.length>=7){
+        const by=NAFIL.map(item=>[item,active.filter(key=>{ const nafil=entries.get(key)?.tasks?.nafil; return nafil===true||(nafil&&typeof nafil==='object'&&nafil[item.id]); }).length]).sort((a,b)=>a[1]-b[1]);
+        const [weak,times]=by[0], strong=by[by.length-1][1];
+        if(strong-times>=3&&times<active.length/2) items.push(['softNafil','',ky?`Көбүнчө ${weak.label} напилин калтырасыз — ${active.length} күндүн ${times} күнүндө гана.`:`Чаще всего пропускаете нафиль ${weak.label} — лишь ${times} из ${active.length} ${pl(active.length,'дня','дней','дней')}.`]);
+      }
+      // The strongest day of the week over eight weeks.
+      const last56=Array.from({length:56},(_,i)=>statsShift(todayKey,i-56)).filter(key=>count(key)>0);
+      if(last56.length>=14){
+        const sums=Array(7).fill(0), seenDays=Array(7).fill(0);
+        last56.forEach(key=>{ const d=new Date(`${key}T12:00:00`).getDay(); sums[d]+=count(key); seenDays[d]++; });
+        const avg=sums.map((sum,d)=>seenDays[d]>=2?sum/seenDays[d]:0), overall=sums.reduce((a,b)=>a+b,0)/last56.length, bestDay=avg.indexOf(Math.max(...avg));
+        if(avg[bestDay]>=overall*1.15){ const name=new Intl.DateTimeFormat(appLocale(),{weekday:'long'}).format(new Date(2026,10,1+((bestDay+7)%7))); const plural=ky?name:({'понедельник':'понедельникам','вторник':'вторникам','среда':'средам','четверг':'четвергам','пятница':'пятницам','суббота':'субботам','воскресенье':'воскресеньям'})[name]||name; items.push(['softStats','',ky?`${name} күндөрү эң көп иш жасайсыз — орточо ${Math.round(avg[bestDay])} иш.`:`По ${plural} вы делаете больше всего — в среднем ${Math.round(avg[bestDay])} ${deeds(Math.round(avg[bestDay]))}.`]); }
+      }
+      if(!items.length) items.push(['softInfo','',ky?'Бир нече күн иштерди белгилеп туруңуз — бул жерде адаттарыңыз боюнча кеңештер пайда болот.':'Отмечайте дела несколько дней — здесь появятся подсказки по вашим привычкам.']);
+      return `<section class="stats-card si-card" aria-label="${ky?'Кеңештер':'Подсказки'}"><div class="stats-section-sub">${ky?'Кеңештер':'Подсказки'}</div>${items.slice(0,3).map(([iconName,tone,text])=>`<p class="si-item${tone?` is-${tone}`:''}"><i class="stats-circle" aria-hidden="true">${icon(iconName)}</i><span>${text}</span></p>`).join('')}</section>`;
+    }
+    /* Personal records over all time, each with the day or week it was set. */
+    function statsRecordsHtml(){
+      const ky=appLocale()==='ky-KG', locale=appLocale(), number=new Intl.NumberFormat(locale), pl=statsPlural;
+      const list=achievementEntries(), day=key=>new Intl.DateTimeFormat(locale,{day:'numeric',month:'long'}).format(new Date(`${key}T12:00:00`));
+      let streak=0, longest=0, tahajjud=0, longestTahajjud=0, previous='';
+      const best={deeds:[0,''],salawat:[0,''],quran:[0,''],zikr:[0,'']}, weeks={};
+      list.forEach(entry=>{
+        const consecutive=previous===statsShift(entry.date,-1), count=Math.min(ChetDeeds.countDeeds(entry.tasks,entry.qaza),ChetDeeds.maxFor(entry.date));
+        streak=count>0?(consecutive?streak+1:1):0; longest=Math.max(longest,streak);
+        tahajjud=entry.tasks?.tahajjud==='yes'?(consecutive?tahajjud+1:1):0; longestTahajjud=Math.max(longestTahajjud,tahajjud);
+        [['deeds',count],['salawat',amount(entry.tasks?.salawat)],['quran',amount(entry.tasks?.quran)],['zikr',amount(entry.tasks?.tasbihat)]].forEach(([id,value])=>{ if(value>best[id][0]) best[id]=[value,entry.date]; });
+        const monday=statsShift(entry.date,-((new Date(`${entry.date}T12:00:00`).getDay()+6)%7)); weeks[monday]=(weeks[monday]||0)+count;
+        if(count>0||entry.date!==todayKey) previous=entry.date;
+      });
+      longest=Math.max(longest,Number(state.bestStreak||0));
+      const [weekStart,weekSum]=Object.entries(weeks).sort((a,b)=>b[1]-a[1])[0]||['',0];
+      const weekLabel=weekStart?(()=>{ const range=new Intl.DateTimeFormat(locale,{day:'numeric',month:'long'}), from=new Date(`${weekStart}T12:00:00`), to=new Date(`${statsShift(weekStart,6)}T12:00:00`); return (range.formatRange?range.formatRange(from,to):`${range.format(from)} – ${range.format(to)}`).replace(/\./g,''); })():'—';
+      const card=(iconName,label,value,sub,fresh)=>`<div class="sr-card"><span class="sr-top"><small>${label}</small><i aria-hidden="true">${icon(iconName)}</i></span><b>${value}</b><span class="sr-sub">${sub}${fresh?`<em>${ky?'бүгүн':'сегодня'}</em>`:''}</span></div>`;
+      const at=([value,key],unit)=>value?[`${number.format(value)}${unit?` <small>${unit}</small>`:''}`,day(key),key===todayKey]:['—',ky?'азырынча жок':'пока нет',false];
+      const deedsAt=at(best.deeds,''), salawatAt=at(best.salawat,''), quranAt=at(best.quran,ky?'бет':'стр.');
+      return `<section class="sr-section" aria-label="${ky?'Жеке рекорддор':'Личные рекорды'}"><div class="stats-section-head"><h3>${ky?'Жеке рекорддор':'Личные рекорды'}</h3><span>${ky?'бардык убакыт':'за всё время'}</span></div><div class="sr-grid">`
+        +card('softFlame',ky?'Эң узун катар':'Лучшая серия',`${longest} <small>${ky?'күн':pl(longest,'день','дня','дней')}</small>`,ky?'катары менен':'подряд',false)
+        +card('softTahajjud',ky?'Тахажжуд катары':'Тахаджуд подряд',`${longestTahajjud} <small>${ky?'түн':pl(longestTahajjud,'ночь','ночи','ночей')}</small>`,ky?'катары менен':'подряд',false)
+        +card('softDeeds',ky?'Бир күндө иштер':'Дел за день',deedsAt[0],deedsAt[1],deedsAt[2])
+        +card('softStats',ky?'Мыкты апта':'Лучшая неделя',`${number.format(weekSum)} <small>${ky?'иш':pl(weekSum,'дело','дела','дел')}</small>`,weekLabel,weekStart&&statsShift(weekStart,6)>=todayKey&&weekStart<=todayKey)
+        +card('softSalawat',ky?'Салабат бир күндө':'Салават за день',salawatAt[0],salawatAt[1],salawatAt[2])
+        +card('softQuran',ky?'Куран бир күндө':'Куран за день',quranAt[0],quranAt[1],quranAt[2])
+        +`</div></section>`;
+    }
     function renderStats(animate=false){
       const totals=emptyTotals(); personalEntries().forEach(entry=>addToTotals(totals,entry));
       const week=document.querySelector('#stats-week'), content=document.querySelector('#stats-content'), note=document.querySelector('#stats-note'), periodLabel=document.querySelector('#stats-period-label');
@@ -1245,6 +1426,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         const trend=document.querySelector(`#stats-${id}-trend`), series=statsSeries(id,statsPeriod), now=series.values.reduce((a,b)=>a+b,0);
         const text=id==='tahajjud'&&statsPeriod!=='all'?`${series.values.filter(Boolean).length} ${ky?'/':'из'} ${series.values.length}`:series.prev?`${now>=series.prev?'+':'−'}${Math.round(Math.abs(now-series.prev)/series.prev*100)}%`:'';
         if(trend) trend.innerHTML=`${text}${icon('softChevron')}`;
+        const ring=document.querySelector(`[data-stats-detail="${id}"] .stats-tile-top i`); if(ring){ const goal=statsGoal(id); ring.classList.toggle('has-goal',!!goal); ring.style.setProperty('--goal',goal?String(Math.round(statsGoalShare(id)*100)):'0'); ring.classList.toggle('goal-done',!!goal&&statsGoalShare(id)>=1); }
         document.querySelector(`[data-stats-detail="${id}"]`)?.setAttribute('aria-label',`${({quran:'Куран',salawat:ky?'Салабат':'Салават',tahajjud:ky?'Тахажжуд':'Тахаджуд',zikr:ky?'Зикир':'Зикр'})[id]}: ${number.format(value)} ${unit(value)}${text?`, ${text}`:''}. ${ky?'Толугураак':'Подробнее'}`);
       });
       if(document.querySelector('#stats-detail-view')?.classList.contains('active')) renderStatsDetail();
@@ -1263,7 +1445,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
         if(day.future) return `<span class="heat-future" aria-hidden="true">${num}</span>`;
         return `<button type="button" class="heat-${day.level}${day.key===todayKey?' is-today':''}" data-stats-day="${day.key}" aria-label="${format(dateOf(day.key),{day:'numeric',month:'long'})}${day.key===todayKey?(ky?', бүгүн':', сегодня'):''}: ${day.count} ${ky?'/':'из'} ${day.dayMax}">${num}</button>`; };
       const pages=ky?'бет':'стр.';
-      const contentHtml=`<section class="stats-prayer"><div class="stats-section-head"><h3>Намаз</h3><span>${ky?`${periodDays} күндөгү напил`:`нафиль за ${number.format(periodDays)} ${days(periodDays)}`}</span></div><div class="stats-card">${NAFIL.map(nafilRow).join('')}<hr>${line('softQaza',ky?'Каза намаздар':'Пропущенные намазы',ky?'мезгил ичинде толукталды':'восполнено за период',number.format(qaza))}</div></section><section class="stats-fast"><div class="stats-section-head"><h3>${ky?'Орозо':'Пост'}</h3><span>${ky?'ыктыярдуу':'добровольный'}</span></div><div class="stats-card">${line('softFast',ky?'Орозо кармаган күндөр':'Дней в посту',ky?`${periodDays} күндөн`:`из ${number.format(periodDays)} ${days(periodDays)} периода`,number.format(totals.fast))}<div class="stats-track stats-fast-track" aria-hidden="true"><i style="width:${periodDays?Math.min(100,Math.round(totals.fast/periodDays*100)):0}%"></i></div></div></section><section class="stats-card stats-streak" aria-label="${ky?'Катар':'Серия'}"><div class="stats-line"><i class="stats-circle is-flame">${icon('softFlame')}</i><span><b>${streak?(ky?`${streak} күн катары менен`:`${streak} ${days(streak)} подряд`):(ky?'Катарды бүгүн баштаңыз':'Начните серию сегодня')}</b><small>${ky?`Эң узун катар — ${best} күн`:`Лучшая серия — ${best} ${days(best)}`}</small></span></div><div class="stats-weekdays" aria-hidden="true">${weekdays.map(day=>`<span>${day}</span>`).join('')}</div><div class="stats-heat" role="group" aria-label="${ky?`Акыркы төрт апта: ${marked} күн белгиленди`:`Последние четыре недели: отмечено ${marked} ${days(marked)}`}">${heat.map(heatCell).join('')}</div><div class="stats-heat-foot"><span class="stats-legend">${ky?'Аз':'Меньше'}<span class="heat-0"></span><span class="heat-1"></span><span class="heat-2"></span><span class="heat-3"></span>${ky?'Көп':'Больше'}</span><span class="stats-heat-hint">${ky?'күндү басыңыз':'нажмите на день'}</span></div></section><section class="stats-card"><div class="stats-section-sub">${ky?'Башка иштер':'Другие дела'}</div>${line('softJauchan',ky?'Жавшан':'Жавшан',ky?'мезгил ичинде':'за период',`${number.format(totals.jauchan)} ${pages}`)}${line('softKitap',ky?'Китеп':'Книги',ky?'мезгил ичинде':'за период',`${number.format(totals.kitap)} ${pages}`)}</section>`;
+      const contentHtml=`${statsInsightsHtml()}<section class="stats-prayer"><div class="stats-section-head"><h3>Намаз</h3><span>${ky?`${periodDays} күндөгү напил`:`нафиль за ${number.format(periodDays)} ${days(periodDays)}`}</span></div><div class="stats-card">${NAFIL.map(nafilRow).join('')}<hr>${line('softQaza',ky?'Каза намаздар':'Пропущенные намазы',ky?'мезгил ичинде толукталды':'восполнено за период',number.format(qaza))}</div></section><section class="stats-fast"><div class="stats-section-head"><h3>${ky?'Орозо':'Пост'}</h3><span>${ky?'ыктыярдуу':'добровольный'}</span></div><div class="stats-card">${line('softFast',ky?'Орозо кармаган күндөр':'Дней в посту',ky?`${periodDays} күндөн`:`из ${number.format(periodDays)} ${days(periodDays)} периода`,number.format(totals.fast))}<div class="stats-track stats-fast-track" aria-hidden="true"><i style="width:${periodDays?Math.min(100,Math.round(totals.fast/periodDays*100)):0}%"></i></div></div></section><section class="stats-card stats-streak" aria-label="${ky?'Катар':'Серия'}"><div class="stats-line"><i class="stats-circle is-flame">${icon('softFlame')}</i><span><b>${streak?(ky?`${streak} күн катары менен`:`${streak} ${days(streak)} подряд`):(ky?'Катарды бүгүн баштаңыз':'Начните серию сегодня')}</b><small>${ky?`Эң узун катар — ${best} күн`:`Лучшая серия — ${best} ${days(best)}`}</small></span></div><div class="stats-weekdays" aria-hidden="true">${weekdays.map(day=>`<span>${day}</span>`).join('')}</div><div class="stats-heat" role="group" aria-label="${ky?`Акыркы төрт апта: ${marked} күн белгиленди`:`Последние четыре недели: отмечено ${marked} ${days(marked)}`}">${heat.map(heatCell).join('')}</div><div class="stats-heat-foot"><span class="stats-legend">${ky?'Аз':'Меньше'}<span class="heat-0"></span><span class="heat-1"></span><span class="heat-2"></span><span class="heat-3"></span>${ky?'Көп':'Больше'}</span><span class="stats-heat-hint">${ky?'күндү басыңыз':'нажмите на день'}</span></div></section>${statsRecordsHtml()}${statsShareHtml()}<section class="stats-card"><div class="stats-section-sub">${ky?'Башка иштер':'Другие дела'}</div>${line('softJauchan',ky?'Жавшан':'Жавшан',ky?'мезгил ичинде':'за период',`${number.format(totals.jauchan)} ${pages}`)}${line('softKitap',ky?'Китеп':'Книги',ky?'мезгил ичинде':'за период',`${number.format(totals.kitap)} ${pages}`)}</section>`;
       // Rebuilding unchanged cards would replay their entrance, so only real changes are written.
       if(animate||content.statsHtml!==contentHtml){ content.statsHtml=contentHtml; content.innerHTML=contentHtml; }
       note.hidden=state.statsOnline!==false;
@@ -5268,6 +5450,84 @@ body #app .ps-prayer-more .st-list{margin:0}
 body #app .ps-prayer-at{min-width:66px;padding:0 8px;font-size:16px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none}
 body #app .ps-prayer .ps-slot small{white-space:nowrap}
 body #app .ps-prayer .glass-seg.st-seg button{font-size:13px}
+/* Stats: insights in words and personal records. */
+body #app .si-card{display:flex;flex-direction:column;gap:12px}
+body #app .si-item{margin:0;display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.45;color:#1D2A30}
+body #app .si-item .stats-circle{width:36px;height:36px;flex:none}
+body #app .si-item .stats-circle .lucide{width:18px;height:18px}
+body #app .si-item>span{padding-top:7px}
+body #app .si-item.is-good .stats-circle{color:#1F6B4F;background:rgba(47,155,110,.14)}
+body #app .si-item.is-warn .stats-circle{color:#A0563B;background:rgba(255,213,138,.45)}
+body #app .sr-section{display:flex;flex-direction:column;gap:12px}
+body #app .sr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body #app .sr-card{min-width:0;padding:14px;border-radius:24px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;flex-direction:column;gap:6px}
+body #app .sr-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+body #app .sr-top small{color:#5E6A71;font-size:12px;font-weight:500}
+body #app .sr-top i{width:28px;height:28px;flex:none;border-radius:14px;background:rgba(255,255,255,.85);border:1px solid rgba(16,22,26,.06);display:grid;place-items:center;color:#10161A}
+body #app .sr-top .lucide{width:15px;height:15px}
+body #app .sr-card>b{font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+body #app .sr-card>b small{font-size:13px;font-weight:500;color:#5E6A71;letter-spacing:0}
+body #app .sr-sub{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#5E6A71;font-size:12px}
+body #app .sr-sub em{height:20px;padding:0 8px;border-radius:10px;background:rgba(47,155,110,.14);color:#1F6B4F;display:inline-flex;align-items:center;font-style:normal;font-size:11px;font-weight:600}
+body.app-dark #app .si-item{color:var(--ink)}
+body.app-dark #app .si-item.is-good .stats-circle{color:#7FC8A6;background:rgba(95,199,154,.16)}
+body.app-dark #app .si-item.is-warn .stats-circle{color:#F2C979;background:rgba(242,201,121,.14)}
+body.app-dark #app .sr-card{border-color:rgba(255,255,255,.08);background:rgba(23,32,30,.72);box-shadow:none}
+body.app-dark #app .sr-top small,body.app-dark #app .sr-card>b small,body.app-dark #app .sr-sub{color:var(--muted)}
+body.app-dark #app .sr-top i{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .sr-sub em{background:rgba(95,199,154,.16);color:#7FC8A6}
+/* Personal goals: the card on a tile's detail, the goal line, the ring on the tile, the sheet. */
+body #app .sd-goal{display:flex;flex-direction:column;gap:12px}
+body #app .sd-goal.is-empty .stats-line{padding:0}
+body #app .sd-goal-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+body #app .sd-goal-head>span{display:flex;flex-direction:column;min-width:0}
+body #app .sd-goal-head small{color:#5E6A71;font-size:13px}
+body #app .sd-goal-head b{font-size:18px;font-weight:600;letter-spacing:-.01em}
+body #app .sd-goal-btn{height:44px;padding:0 18px;border:0;border-radius:22px;background:#0B0F12;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+body #app .sd-goal-btn.ghost{height:38px;padding:0 14px;background:rgba(16,22,26,.06);color:#10161A;font-size:14px}
+body #app .sd-goal-bar{display:flex;flex-direction:column;gap:8px;font-size:13px;color:#5E6A71}
+body #app .sd-goal-bar b{color:#10161A;font-weight:600}
+body #app .sd-goal-bar .stats-track{display:block;width:100%;height:10px;border-radius:5px;background:rgba(16,22,26,.08);overflow:hidden}
+body #app .sd-goal-bar .stats-track i{display:block;height:100%;border-radius:5px;background:#1F6B4F}
+body.app-dark #app .sd-goal-bar .stats-track{background:rgba(255,255,255,.08)}
+body #app .sd-goal-line{border-top:1.5px dashed #1F6B4F}
+body #app .sd-goal-line em{left:0;right:auto;color:#1F6B4F}
+body #app #stats-view .stats-tile-top i.has-goal{position:relative;background:conic-gradient(#1F6B4F calc(var(--goal,0)*1%),rgba(16,22,26,.1) 0);border:0}
+body #app #stats-view .stats-tile-top i.has-goal::before{content:"";position:absolute;inset:3px;border-radius:50%;background:#fff}
+body #app #stats-view .stats-tile-top i.has-goal .lucide{position:relative}
+body #app #stats-view .stats-tile-top i.goal-done::before{background:#E7F3EC}
+body.app-dark #app .sd-goal-head small,body.app-dark #app .sd-goal-bar{color:var(--muted)}
+body.app-dark #app .sd-goal-bar b{color:var(--ink)}
+body.app-dark #app .sd-goal-btn{background:#EEF5F2;color:#0B1110}
+body.app-dark #app .sd-goal-btn.ghost{background:rgba(255,255,255,.08);color:var(--ink)}
+body.app-dark #app .sd-goal-bar .stats-track i{background:#5FC79A}
+body.app-dark #app .sd-goal-line{border-color:#5FC79A}
+body.app-dark #app .sd-goal-line em{color:#7FC8A6}
+body.app-dark #app #stats-view .stats-tile-top i.has-goal{background:conic-gradient(#5FC79A calc(var(--goal,0)*1%),rgba(255,255,255,.12) 0)}
+body.app-dark #app #stats-view .stats-tile-top i.has-goal::before{background:#17201e}
+body.app-dark #app #stats-view .stats-tile-top i.goal-done::before{background:#123d2b}
+.app-sheet.goal-sheet .gs-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.app-sheet.goal-sheet .gs-presets button{height:46px;border-radius:23px;background:#fff;border:1px solid rgba(16,22,26,.08);color:#10161A;font-size:15px}
+.app-sheet.goal-sheet .gs-presets button.active{background:#0B0F12;border-color:#0B0F12;color:#fff}
+.app-sheet.goal-sheet .gs-field{padding:12px 16px;border-radius:20px;background:#fff;border:1px solid rgba(16,22,26,.08);display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}
+.app-sheet.goal-sheet .gs-field span{grid-column:1/-1;color:#5E6A71;font-size:13px}
+.app-sheet.goal-sheet .gs-field input{min-width:0;border:0;background:transparent;font:inherit;font-size:24px;font-weight:600;color:#10161A;outline:none}
+.app-sheet.goal-sheet .gs-field small{color:#5E6A71;font-size:14px}
+.app-sheet.goal-sheet button.ds-close{background:rgba(16,22,26,.06);color:#10161A}
+body.app-dark .app-sheet.goal-sheet .gs-presets button,body.app-dark .app-sheet.goal-sheet .gs-field{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#eef5f2}
+body.app-dark .app-sheet.goal-sheet .gs-presets button.active{background:#eef5f2;border-color:#eef5f2;color:#0b1110}
+body.app-dark .app-sheet.goal-sheet .gs-field input{color:#eef5f2}
+body.app-dark .app-sheet.goal-sheet .gs-field span,body.app-dark .app-sheet.goal-sheet .gs-field small{color:#9baea7}
+body.app-dark .app-sheet.goal-sheet button.ds-close{background:rgba(255,255,255,.08);color:#eef5f2}
+/* Month results for stories. */
+body #app .ss-card{display:flex;flex-direction:column;gap:12px}
+body #app .ss-card .stats-line{padding:0}
+.app-sheet.share-sheet .sh-preview{display:block;align-self:center;width:auto;max-width:100%;max-height:52vh;aspect-ratio:9/16;border-radius:20px;box-shadow:0 12px 30px rgba(16,22,26,.18)}
+.app-sheet.share-sheet a.sh-save{height:54px;border-radius:27px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;text-decoration:none}
+.app-sheet.share-sheet a.stay{background:#0B0F12;color:#fff}
+.app-sheet.share-sheet .ds-close{background:rgba(16,22,26,.06);color:#10161A}
+body.app-dark .app-sheet.share-sheet .ds-close{background:rgba(255,255,255,.08);color:#eef5f2}
+body.app-dark .app-sheet.share-sheet a.stay{background:#eef5f2;color:#0b1110}
 </style>
 </body>
 </html>
