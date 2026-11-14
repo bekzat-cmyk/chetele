@@ -5511,12 +5511,15 @@ body.app-dark #app #stats-view .stats-tile-top i.goal-done::before{background:#1
 .app-sheet.goal-sheet .gs-presets button.active{background:#0B0F12;border-color:#0B0F12;color:#fff}
 .app-sheet.goal-sheet .gs-field{padding:12px 16px;border-radius:20px;background:#fff;border:1px solid rgba(16,22,26,.08);display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}
 .app-sheet.goal-sheet .gs-field span{grid-column:1/-1;color:#5E6A71;font-size:13px}
-.app-sheet.goal-sheet .gs-field input{min-width:0;border:0;background:transparent;font:inherit;font-size:24px;font-weight:600;color:#10161A;outline:none}
+.app-sheet.goal-sheet .gs-field input,.app-dark .app-sheet.goal-sheet .gs-field input{min-width:0;height:36px;margin:0;padding:0;border:0!important;border-radius:0;background:transparent!important;box-shadow:none;-webkit-appearance:none;appearance:none;-moz-appearance:textfield;font:inherit;font-size:24px;font-weight:600;color:#10161A;outline:none}
+.app-sheet.goal-sheet .gs-field input::-webkit-inner-spin-button,.app-sheet.goal-sheet .gs-field input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.app-sheet.goal-sheet .gs-field:focus-within{border-color:#1F6B4F}
+body.app-dark .app-sheet.goal-sheet .gs-field:focus-within{border-color:#5FC79A}
 .app-sheet.goal-sheet .gs-field small{color:#5E6A71;font-size:14px}
 .app-sheet.goal-sheet button.ds-close{background:rgba(16,22,26,.06);color:#10161A}
 body.app-dark .app-sheet.goal-sheet .gs-presets button,body.app-dark .app-sheet.goal-sheet .gs-field{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#eef5f2}
 body.app-dark .app-sheet.goal-sheet .gs-presets button.active{background:#eef5f2;border-color:#eef5f2;color:#0b1110}
-body.app-dark .app-sheet.goal-sheet .gs-field input{color:#eef5f2}
+body.app-dark .app-sheet.goal-sheet .gs-field input{color:#eef5f2!important}
 body.app-dark .app-sheet.goal-sheet .gs-field span,body.app-dark .app-sheet.goal-sheet .gs-field small{color:#9baea7}
 body.app-dark .app-sheet.goal-sheet button.ds-close{background:rgba(255,255,255,.08);color:#eef5f2}
 /* Month results for stories. */
