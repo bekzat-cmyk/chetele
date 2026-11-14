@@ -30,6 +30,7 @@ body #app.quiz-focus .nav{display:none}
 #quiz-view .qz-pill.good{background:rgba(47,155,110,.14);color:#1F6B4F}
 #quiz-view .qz-pill.bad{background:rgba(190,60,50,.10);color:#A3342A}
 #quiz-view .qz-head{display:flex;align-items:center;gap:14px}
+#quiz-view .stats-badge svg{width:22px;height:22px}
 #quiz-view .qz-head b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
 #quiz-view .qz-head small,#quiz-view .qz-muted{color:#5E6A71;font-size:14px;line-height:1.5}
 #quiz-view .qz-ball{width:44px;height:44px;flex:none;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid rgba(16,22,26,.06);color:#10161A;display:grid;place-items:center}
