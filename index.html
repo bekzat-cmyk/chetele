@@ -5233,7 +5233,9 @@ body.app-dark #app .prayer-bar-track span{background:#5FC79A}
 body.app-dark #app .prayer-bar.is-soon .prayer-bar-track span{background:#F2C979}
 /* With the line above them, section headers start right under it. */
 body #app:not(.on-today) :is(.stats-top,.zg-bar,.sp-top,.gp-top,.guest-profile-top){padding-top:18px}
-body #app:not(.on-today) #quiz-view .qz-top{padding-top:18px}
+body #app:not(.on-today):not(.quiz-focus) #quiz-view .qz-top{padding-top:18px}
+/* While a quiz is being taken the screen stays on the quiz: no prayer line, as there is no menu. */
+body #app.quiz-focus .prayer-bar{display:none}
 </style>
 </body>
 </html>
