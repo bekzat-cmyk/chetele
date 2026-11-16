@@ -293,7 +293,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
 <script src="assets/fasting.js?v=1"></script>
 <script src="assets/onboarding.js?v=1"></script>
 <script src="assets/zikr-sync.js?v=3"></script>
-<script src="assets/app.js?v=6b8d7761"></script><script>
+<script src="assets/app.js?v=87fad6b6"></script><script>
     (()=>{
       const originalRenderEvents=window.renderEvents;
       if(typeof originalRenderEvents!=='function') return;
@@ -858,7 +858,7 @@ body.app-dark #app .zikr-continue{background:#fff;color:#0f6b41}
 body.app-dark #app .week-bar i{background:#1f4a36}
     </style>`);
   </script>
-<link rel="stylesheet" href="assets/app.css?v=118ab21c" />
+<link rel="stylesheet" href="assets/app.css?v=b38512ec" />
 
 <script>
 /* Menu capsule from the motion board: one black pill slides and stretches to the
@@ -1058,6 +1058,97 @@ body.app-dark #app .week-bar i{background:#1f4a36}
     return element;
   }
 
+  /* Qibla: the direction of the Kaaba from the chosen place (great-circle bearing from
+     north, clockwise) and the distance to Mecca. The compass screen turns a dial with the
+     phone's heading; without a compass it shows the bearing from north in words. */
+  const KAABA = { lat: 21.4225, lng: 39.8262 };
+  function qiblaFor(where) {
+    const r = d => d * Math.PI / 180, a = r(where.lat), b = r(KAABA.lat), dl = r(KAABA.lng - where.lng);
+    const bearing = (Math.atan2(Math.sin(dl), Math.cos(a) * Math.tan(b) - Math.sin(a) * Math.cos(dl)) * 180 / Math.PI + 360) % 360;
+    const km = 2 * 6371 * Math.asin(Math.sqrt(Math.sin((b - a) / 2) ** 2 + Math.cos(a) * Math.cos(b) * Math.sin(dl / 2) ** 2));
+    return { bearing: Math.round(bearing), km: Math.round(km) };
+  }
+  function sideOf(deg) {
+    const ru = ['север', 'северо-восток', 'восток', 'юго-восток', 'юг', 'юго-запад', 'запад', 'северо-запад'];
+    const kg = ['түндүк', 'түндүк-чыгыш', 'чыгыш', 'түштүк-чыгыш', 'түштүк', 'түштүк-батыш', 'батыш', 'түндүк-батыш'];
+    return (ky() ? kg : ru)[Math.round(deg / 45) % 8];
+  }
+  function qiblaRow(where) {
+    const q = qiblaFor(where), km = new Intl.NumberFormat(appLocale()).format(q.km);
+    return `<button type="button" class="prayer-qibla" data-qibla-open><i aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></i><span><b>${ky() ? 'Кыбла' : 'Кибла'}</b><small>${q.bearing}° · ${sideOf(q.bearing)} · ${km} ${ky() ? 'км Меккеге чейин' : 'км до Мекки'}</small></span>${icon('softChevron')}</button>`;
+  }
+  function qiblaDial(bearing) {
+    const R = 140, c = 160, pt = (deg, rad) => [c + rad * Math.sin(deg * Math.PI / 180), c - rad * Math.cos(deg * Math.PI / 180)];
+    let ticks = '';
+    for (let d = 0; d < 360; d += 5) { const long = d % 30 === 0, [x1, y1] = pt(d, R - (long ? 14 : 7)), [x2, y2] = pt(d, R - 2); ticks += `<line class="${long ? 'long' : ''}" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`; }
+    const letters = (ky() ? [['Т', 0], ['Ч', 90], ['Тш', 180], ['Б', 270]] : [['С', 0], ['В', 90], ['Ю', 180], ['З', 270]]).map(([t, d]) => { const [x, y] = pt(d, R - 34); return `<text x="${x.toFixed(1)}" y="${(y + 6).toFixed(1)}" class="${d === 0 ? 'north' : ''}">${t}</text>`; }).join('');
+    const [kx, ky2] = pt(bearing, R + 2), [lx, ly] = pt(bearing, R - 48);
+    return `<svg class="qb-dial" viewBox="0 -14 320 340" role="img" aria-label="${ky() ? 'Компас' : 'Компас'}"><circle class="qb-halo" cx="${c}" cy="${c}" r="${R + 18}"/><circle class="qb-face" cx="${c}" cy="${c}" r="${R}"/><g class="qb-rose">${ticks}${letters}<line class="qb-path" x1="${c}" y1="${c}" x2="${lx.toFixed(1)}" y2="${ly.toFixed(1)}"/><g class="qb-kaaba" data-x="${kx.toFixed(1)}" data-y="${ky2.toFixed(1)}" transform="translate(${kx.toFixed(1)} ${ky2.toFixed(1)})"><circle r="21"/><rect x="-8" y="-8" width="16" height="16" rx="2"/><line x1="-8" y1="-3" x2="8" y2="-3"/></g></g><circle class="qb-hub" cx="${c}" cy="${c}" r="7"/><path class="qb-pointer" d="M${c} ${c - R - 26} l-12 18 h24 z"/></svg>`;
+  }
+  let qiblaStop = null;
+  function openQibla() {
+    document.querySelector('.qibla-screen')?.remove();
+    const where = place(), q = qiblaFor(where), number = new Intl.NumberFormat(appLocale());
+    const layer = document.createElement('div'); layer.className = 'qibla-screen'; layer.setAttribute('role', 'dialog'); layer.setAttribute('aria-modal', 'true'); layer.setAttribute('aria-labelledby', 'qibla-title');
+    layer.innerHTML = `<header class="stats-top"><div><button type="button" class="stats-back" data-qibla-close aria-label="${ky() ? 'Артка' : 'Назад'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky() ? 'Намаз багыты' : 'Направление молитвы'}</span><h2 id="qibla-title">${ky() ? 'Кыбла' : 'Кибла'}</h2><span class="stats-period-label">${escapeHtml(where.name)}</span></div></header>
+      <div class="qb-status" role="status" aria-live="polite"><b></b><small></small></div>
+      <div class="qb-dial-wrap">${qiblaDial(q.bearing)}</div>
+      <div class="qb-facts"><div><small>${ky() ? 'Багыты' : 'Направление'}</small><b>${q.bearing}° <span>${sideOf(q.bearing)}</span></b></div><div><small>${ky() ? 'Меккеге чейин' : 'До Мекки'}</small><b>${number.format(q.km)} <span>км</span></b></div></div>
+      <section class="qb-card"></section>`;
+    const status = layer.querySelector('.qb-status'), card = layer.querySelector('.qb-card'), rose = layer.querySelector('.qb-rose'), kaaba = layer.querySelector('.qb-kaaba');
+    const setStatus = (title, sub, tone = '') => { status.className = `qb-status${tone ? ` is-${tone}` : ''}`; status.querySelector('b').textContent = title; status.querySelector('small').textContent = sub; };
+    const tip = `<p class="qb-tip"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>${ky() ? 'Телефонду түз, экранын өйдө каратып кармаңыз, металл менен магниттен алысыраак.' : 'Держите телефон горизонтально, экраном вверх, подальше от металла и магнитов.'}</p>`;
+    const fallback = () => {
+      stop(); layer.classList.add('is-static'); layer.classList.remove('is-ok'); rose.style.transform = ''; kaaba.setAttribute('transform', `translate(${kaaba.dataset.x} ${kaaba.dataset.y})`);
+      setStatus(ky() ? `Кыбла — ${q.bearing}°` : `Кибла — ${q.bearing}°`, ky() ? 'түндүктөн саат жебеси боюнча' : 'от севера по часовой стрелке');
+      card.innerHTML = `<b>${ky() ? 'Компас жеткиликсиз' : 'Компас недоступен'}</b><p>${ky() ? `Түндүктү карап туруп, оңго ${q.bearing}° буруңуз — ${sideOf(q.bearing)} тарапка.` : `Встаньте лицом на север и повернитесь вправо на ${q.bearing}° — на ${sideOf(q.bearing)}.`}</p>${typeof DeviceOrientationEvent !== 'undefined' ? `<button type="button" class="qb-secondary" data-qibla-retry>${ky() ? 'Компасты кайра сынап көрүү' : 'Попробовать компас ещё раз'}</button>` : ''}`;
+    };
+    let heading = null, aligned = false, timer = 0, listening = null;
+    const onTurn = event => {
+      let h = typeof event.webkitCompassHeading === 'number' ? event.webkitCompassHeading : event.absolute || event.type === 'deviceorientationabsolute' ? (event.alpha == null ? null : 360 - event.alpha) : null;
+      if (h == null) return;
+      h = (h + (screen.orientation?.angle || 0) + 360) % 360; heading = h; clearTimeout(timer);
+      layer.classList.remove('is-static'); card.innerHTML = tip;
+      rose.style.transform = `rotate(${-h}deg)`;
+      kaaba.setAttribute('transform', `translate(${kaaba.dataset.x} ${kaaba.dataset.y}) rotate(${h})`);
+      const diff = ((q.bearing - h + 540) % 360) - 180, ok = Math.abs(diff) <= 5;
+      layer.classList.toggle('is-ok', ok);
+      if (ok && !aligned) navigator.vibrate?.(40);
+      aligned = ok;
+      if (ok) setStatus(ky() ? 'Сиз Кыбланы карап турасыз' : 'Вы смотрите на Киблу', ky() ? 'намазга даярсыз' : 'можно вставать на намаз', 'ok');
+      else setStatus(ky() ? `${diff > 0 ? 'Оңго' : 'Солго'} ${Math.round(Math.abs(diff))}° буруңуз` : `Поверните ${diff > 0 ? 'вправо' : 'влево'} на ${Math.round(Math.abs(diff))}°`, ky() ? 'жогорку жебе Каабага дал келиши керек' : 'стрелка сверху должна совпасть с Каабой');
+    };
+    const start = () => {
+      stop(); heading = null;
+      const type = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
+      window.addEventListener(type, onTurn); listening = type;
+      setStatus(ky() ? 'Компас иштеп жатат…' : 'Включаем компас…', ky() ? 'телефонду бир аз кыймылдатыңыз' : 'слегка поводите телефоном');
+      card.innerHTML = tip;
+      timer = setTimeout(() => { if (heading == null) fallback(); }, 3500);
+    };
+    const stop = () => { if (listening) window.removeEventListener(listening, onTurn); listening = null; clearTimeout(timer); };
+    const ask = () => {
+      layer.classList.add('is-static');
+      setStatus(ky() ? `Кыбла — ${q.bearing}°` : `Кибла — ${q.bearing}°`, ky() ? 'компас үчүн уруксат керек' : 'для компаса нужно разрешение');
+      card.innerHTML = `<b>${ky() ? 'Компаска уруксат керек' : 'Нужен доступ к компасу'}</b><p>${ky() ? 'Кайсы тарапка бурулууну көрсөтүү үчүн телефондун багыт датчиги керек. Маалымат эч жакка жөнөтүлбөйт.' : 'Чтобы показать, куда повернуться, нужен датчик направления телефона. Данные никуда не отправляются.'}</p><button type="button" class="qb-primary" data-qibla-allow>${ky() ? 'Уруксат берүү' : 'Разрешить доступ'}</button><button type="button" class="qb-secondary" data-qibla-static>${ky() ? 'Компассыз көрсөтүү' : 'Показать без компаса'}</button>`;
+    };
+    const close = () => { stop(); layer.remove(); document.removeEventListener('keydown', onKey); qiblaStop = null; };
+    const onKey = event => { if (event.key === 'Escape') close(); };
+    layer.addEventListener('click', async event => {
+      if (event.target.closest('[data-qibla-close]')) { close(); return; }
+      if (event.target.closest('[data-qibla-static]')) { fallback(); return; }
+      if (event.target.closest('[data-qibla-retry]')) { needsPermission ? ask() : start(); return; }
+      if (event.target.closest('[data-qibla-allow]')) {
+        try { const answer = await DeviceOrientationEvent.requestPermission(); if (answer === 'granted') start(); else fallback(); } catch { fallback(); }
+      }
+    });
+    document.addEventListener('keydown', onKey);
+    (document.querySelector('#app') || document.body).append(layer); qiblaStop = close;
+    const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+    if (typeof DeviceOrientationEvent === 'undefined') fallback(); else if (needsPermission) ask(); else start();
+    layer.querySelector('[data-qibla-close]').focus();
+  }
+
   function paintSchedule() {
     const element = document.querySelector('#prayer-schedule-sheet');
     if (!element || element.hidden) return;
@@ -1076,7 +1167,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
         : isNext ? `${ky() ? 'калды' : 'через'} ${until(item.time - now)}` : past ? (ky() ? 'өттү' : 'прошёл') : '';
       return `<li class="prayer-row ${isNow ? 'current' : past ? 'past' : ''}"><i>${icon(ICONS[item.id])}</i><span><b>${label(item)}</b>${sub ? `<small>${sub}</small>` : ''}</span><time>${clock(item.time)}</time></li>`;
     }).join('');
-    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Ханафий мазхабы' : 'Ханафитский мазхаб'}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul><p class="prayer-note">${ky() ? `Эсептөө: ${P.METHOD_LABEL}. Мечитиңиз менен салыштырыңыз.` : `Расчёт: ${P.METHOD_LABEL}. Сверяйтесь с вашей мечетью.`}</p>`;
+    element.querySelector('.prayer-sheet-content').innerHTML = `<button type="button" class="prayer-place" data-prayer-city>${pin}<span><b>${escapeHtml(where.name)}</b><small>${ky() ? 'Ханафий мазхабы' : 'Ханафитский мазхаб'}</small></span><em>${ky() ? 'Өзгөртүү' : 'Изменить'}</em></button><ul class="prayer-rows">${rows}</ul>${qiblaRow(where)}<p class="prayer-note">${ky() ? `Эсептөө: ${P.METHOD_LABEL}. Мечитиңиз менен салыштырыңыз.` : `Расчёт: ${P.METHOD_LABEL}. Сверяйтесь с вашей мечетью.`}</p>`;
   }
 
   function paintCities(status = '') {
@@ -1115,6 +1206,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
 
   document.addEventListener('click', event => {
     if (event.target.closest('[data-prayer-schedule]')) { openSchedule(); return; }
+    if (event.target.closest('[data-qibla-open]')) { closeSheet('prayer-schedule-sheet'); openQibla(); return; }
     if (event.target.closest('[data-prayer-city]')) { openCities(); return; }
     if (event.target.closest('[data-prayer-geo]')) { useLocation(); return; }
     const pick = event.target.closest('[data-prayer-pick]');

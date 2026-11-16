@@ -2131,3 +2131,75 @@ html body #app .sd-avg{border-color:rgba(31,107,79,.35)}
 html body.app-dark #app .sd-avg{border-color:rgba(95,199,154,.35)}
 .app-sheet.day-sheet .ds-sum .stats-track i,.app-sheet.day-sheet .ds-done i{background:#1F6B4F}
 body.app-dark .app-sheet.day-sheet .ds-sum .stats-track i,body.app-dark .app-sheet.day-sheet .ds-done i{background:#5FC79A;color:#0b1110}
+
+/* Qibla: the row in the prayer schedule and the compass screen. */
+.prayer-sheet .prayer-qibla{width:100%;min-height:64px;margin:12px 0 0;padding:0 16px;box-sizing:border-box;border-radius:22px;border:1px solid rgba(16,22,26,.06);background:#fff;color:#10161A;display:flex;align-items:center;gap:12px;font:inherit;text-align:left;cursor:pointer}
+.prayer-sheet .prayer-qibla>i{width:40px;height:40px;flex:none;border-radius:20px;background:rgba(47,155,110,.14);color:#1F6B4F;display:grid;place-items:center}
+.prayer-sheet .prayer-qibla .lucide{width:20px;height:20px}
+.prayer-sheet .prayer-qibla>span{flex:1;min-width:0;display:flex;flex-direction:column}
+.prayer-sheet .prayer-qibla b{font-size:16px;font-weight:600}
+.prayer-sheet .prayer-qibla small{color:#5E6A71;font-size:13px}
+body.app-dark .prayer-sheet .prayer-qibla{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#eef5f2}
+body.app-dark .prayer-sheet .prayer-qibla>i{background:rgba(95,199,154,.16);color:#7FC8A6}
+body.app-dark .prayer-sheet .prayer-qibla small{color:#9baea7}
+body #app .qibla-screen{position:fixed;inset:0;z-index:85;overflow-y:auto;padding:env(safe-area-inset-top) 20px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box;background:linear-gradient(180deg,#4F7F76 0,#6F9C92 200px,#9DBFB5 380px,#D3E3DE 560px,#ECF0EF 720px,#F2F3F4 900px);color:#10161A;display:flex;flex-direction:column;gap:16px;animation:appSheetFade .2s ease both}
+body #app .qibla-screen>*{max-width:440px;width:100%;margin:0 auto}
+body #app .qb-status{align-self:center;width:auto;padding:12px 20px;border-radius:22px;background:rgba(255,255,255,.9);box-shadow:0 8px 24px rgba(16,22,26,.1);display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;transition:background .25s ease,color .25s ease}
+body #app .qb-status b{font-size:17px;font-weight:600}
+body #app .qb-status small{font-size:13px;opacity:.8}
+body #app .qb-status.is-ok{background:#1F6B4F;color:#fff}
+body #app .qb-dial-wrap{display:flex;justify-content:center}
+body #app .qb-dial{width:min(100%,320px);height:auto}
+body #app .qb-halo{fill:rgba(255,255,255,.28);stroke:rgba(255,255,255,.9);stroke-width:1.5;transition:fill .25s ease,stroke .25s ease}
+body #app .qb-face{fill:rgba(255,255,255,.92)}
+body #app .qb-rose{transform-origin:160px 160px;transition:transform .15s linear}
+body #app .qb-rose line{stroke:rgba(16,22,26,.35);stroke-width:1.2;stroke-linecap:round}
+body #app .qb-rose line.long{stroke:#10161A;stroke-width:2}
+body #app .qb-rose text{font:600 17px Inter,-apple-system,sans-serif;fill:#10161A;text-anchor:middle}
+body #app .qb-rose text.north{fill:#A0563B;font-weight:700}
+body #app .qb-rose .qb-path{stroke:rgba(16,22,26,.25);stroke-width:3;stroke-dasharray:4 6}
+body #app .qb-kaaba circle{fill:#10161A}
+body #app .qb-kaaba rect{fill:none;stroke:#fff;stroke-width:1.8}
+body #app .qb-rose .qb-kaaba line{stroke:#FFD58A;stroke-width:2;stroke-dasharray:none}
+body #app .qb-hub{fill:#10161A}
+body #app .qb-pointer{fill:#fff;stroke:rgba(16,22,26,.15)}
+body #app .qibla-screen.is-ok .qb-halo{fill:rgba(47,155,110,.18);stroke:#1F6B4F;stroke-width:3}
+body #app .qibla-screen.is-ok .qb-path{stroke:#1F6B4F;stroke-dasharray:none}
+body #app .qibla-screen.is-ok :is(.qb-kaaba circle,.qb-hub){fill:#1F6B4F}
+body #app .qibla-screen.is-ok .qb-pointer{fill:#1F6B4F;stroke:#1F6B4F}
+body #app .qibla-screen.is-static .qb-pointer{display:none}
+body #app .qb-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body #app .qb-facts>div{padding:14px;border-radius:24px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.9);display:flex;flex-direction:column;gap:4px}
+body #app .qb-facts small{color:#5E6A71;font-size:12px}
+body #app .qb-facts b{font-size:22px;font-weight:600}
+body #app .qb-facts b span{font-size:13px;font-weight:500;color:#5E6A71}
+body #app .qb-card{padding:16px;border-radius:28px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 30px rgba(16,22,26,.06);display:flex;flex-direction:column;gap:10px}
+body #app .qb-card>b{font-size:17px;font-weight:600}
+body #app .qb-card>p{margin:0;color:#5E6A71;font-size:14px;line-height:1.45}
+body #app .qb-card .qb-tip{display:flex;gap:10px;align-items:flex-start;color:#3B474D}
+body #app .qb-tip .lucide{width:20px;height:20px;flex:none;margin-top:1px}
+body #app .qb-primary,body #app .qb-secondary{height:52px;border:0;border-radius:26px;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+body #app .qb-primary{background:#0B0F12;color:#fff}
+body #app .qb-secondary{background:rgba(16,22,26,.06);color:#10161A}
+body.app-dark #app .qibla-screen{background:linear-gradient(180deg,#1E3A33 0,#14251f 300px,#0b1110 640px);color:var(--ink)}
+body.app-dark #app .qb-status{background:rgba(23,32,30,.9);color:var(--ink)}
+body.app-dark #app .qb-status.is-ok{background:#5FC79A;color:#0B1110}
+body.app-dark #app .qb-face{fill:#17201e}
+body.app-dark #app .qb-halo{fill:rgba(255,255,255,.04);stroke:rgba(255,255,255,.14)}
+body.app-dark #app .qb-rose line{stroke:rgba(238,245,242,.3)}
+body.app-dark #app .qb-rose line.long,body.app-dark #app .qb-rose text{stroke:none;fill:#eef5f2}
+body.app-dark #app .qb-rose line.long{stroke:#eef5f2}
+body.app-dark #app .qb-rose text.north{fill:#F0938A}
+body.app-dark #app .qb-rose .qb-path{stroke:rgba(238,245,242,.25)}
+body.app-dark #app :is(.qb-kaaba circle,.qb-hub){fill:#eef5f2}
+body.app-dark #app .qb-kaaba rect{stroke:#0B1110}
+body.app-dark #app .qb-pointer{fill:#eef5f2;stroke:none}
+body.app-dark #app .qibla-screen.is-ok .qb-halo{fill:rgba(95,199,154,.12);stroke:#5FC79A}
+body.app-dark #app .qibla-screen.is-ok .qb-path{stroke:#5FC79A}
+body.app-dark #app .qibla-screen.is-ok :is(.qb-kaaba circle,.qb-hub),body.app-dark #app .qibla-screen.is-ok .qb-pointer{fill:#5FC79A;stroke:#5FC79A}
+body.app-dark #app :is(.qb-facts>div,.qb-card){background:rgba(23,32,30,.72);border-color:rgba(255,255,255,.08);box-shadow:none}
+body.app-dark #app :is(.qb-facts small,.qb-facts b span,.qb-card>p){color:var(--muted)}
+body.app-dark #app .qb-card .qb-tip{color:var(--ink)}
+body.app-dark #app .qb-primary{background:#eef5f2;color:#0b1110}
+body.app-dark #app .qb-secondary{background:rgba(255,255,255,.08);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){body #app .qb-rose{transition:none}}
