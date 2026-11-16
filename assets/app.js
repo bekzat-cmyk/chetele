@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.15';
+    const APP_VERSION = '2.16';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -1795,7 +1795,7 @@
       scoreUpdate(before);
       if(moveNext) setTimeout(()=>focusFollowingField(field),40);
     }
-    document.addEventListener('input',e=>{ const field=e.target; if(!field.dataset.id && !field.dataset.qaza) return; if(!fieldBaselines.has(field)) fieldBaselines.set(field,completed()); storeFieldValue(field); const oldTimer=fieldTimers.get(field); if(oldTimer) clearTimeout(oldTimer); fieldTimers.set(field,setTimeout(()=>commitField(field,true),700)); });
+    document.addEventListener('input',e=>{ const field=e.target; if(!field.dataset.id && !field.dataset.qaza) return; if(!fieldBaselines.has(field)) fieldBaselines.set(field,completed()); storeFieldValue(field); const oldTimer=fieldTimers.get(field); if(oldTimer) clearTimeout(oldTimer); fieldTimers.set(field,setTimeout(()=>commitField(field,false),700)); });
     document.addEventListener('change',e=>{ const field=e.target; if(field.dataset.id || field.dataset.qaza) commitField(field,false); });
     document.addEventListener('click',e=>{ if(!e.target.closest('[data-back-today]')) return; calendarSelectedDate=todayKey; openSelectedDay(); });
     /* Qaza: tap adds one prayer, a long press removes one, «Сбросить» clears the day's qaza. */
@@ -1857,7 +1857,7 @@
       field.value=value?String(value):'';
       commitField(field,false);
     });
-    document.addEventListener('keydown',e=>{ const field=e.target; if(e.key==='Enter' && (field.dataset.id || field.dataset.qaza)){ e.preventDefault(); commitField(field,true); } });
+    document.addEventListener('keydown',e=>{ const field=e.target; if(e.key==='Enter' && (field.dataset.id || field.dataset.qaza)){ e.preventDefault(); commitField(field,false); field.blur(); } });
     function openSheet(id){ const sheet=document.querySelector('#'+id); clearTimeout(sheet.closing); sheet.classList.remove('is-closing'); sheet.hidden=false; document.body.classList.add('sheet-open'); }
     /* The sheet slides back down before it hides. */
     function closeSheet(id){
