@@ -61,6 +61,24 @@ function ensureAuthColumns(PDO $db): void {
     if (!in_array('pin_hash', $columns, true)) {
         $db->exec('ALTER TABLE users ADD COLUMN pin_hash VARCHAR(255) NULL AFTER login');
     }
+    if (!in_array('prefs', $columns, true)) {
+        $db->exec('ALTER TABLE users ADD COLUMN prefs TEXT NULL AFTER pin_hash');
+    }
+}
+
+/* Personal settings kept with the account (now: statistics goals), so they survive signing out. */
+function cleanPrefs($body): array {
+    $prefs = [];
+    $goals = is_array($body) && is_array($body['statsGoals'] ?? null) ? $body['statsGoals'] : [];
+    $clean = [];
+    foreach ($goals as $metric => $value) {
+        if (count($clean) >= 20) break;
+        if (!is_string($metric) || !preg_match('/^[A-Za-z_]{1,24}$/', $metric)) continue;
+        $number = (int)round((float)$value);
+        if ($number >= 1 && $number <= 100000) $clean[$metric] = $number;
+    }
+    $prefs['statsGoals'] = (object)$clean;
+    return $prefs;
 }
 
 function ensurePushTable(PDO $db): void {
@@ -702,6 +720,21 @@ try {
         }
         if (!$result['ok']) respond(502, ['error' => 'Сервис уведомлений не принял тест.', 'reason' => 'push_gateway_rejected', 'status' => $result['status']]);
         respond(200, ['sent' => true]);
+    }
+
+    if (count($parts) === 3 && $parts[0] === 'users' && $parts[2] === 'prefs' && ($method === 'GET' || $method === 'PUT')) {
+        $userId = $parts[1];
+        if (!preg_match('/^[a-f0-9-]{36}$/i', $userId)) respond(400, ['error' => 'Некорректный пользователь.']);
+        requireUser($db, $userId);
+        if ($method === 'PUT') {
+            $prefs = cleanPrefs(requestBody());
+            $db->prepare('UPDATE users SET prefs = ? WHERE id = ?')->execute([json_encode($prefs, JSON_UNESCAPED_UNICODE), $userId]);
+            respond(200, $prefs);
+        }
+        $statement = $db->prepare('SELECT prefs FROM users WHERE id = ?');
+        $statement->execute([$userId]);
+        $stored = json_decode((string)($statement->fetchColumn() ?: ''), true);
+        respond(200, is_array($stored) ? cleanPrefs($stored) + ['saved' => true] : ['statsGoals' => (object)[], 'saved' => false]);
     }
 
     if ($method === 'GET' && count($parts) === 3 && $parts[0] === 'users' && $parts[2] === 'entries') {

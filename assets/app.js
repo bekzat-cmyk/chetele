@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.16';
+    const APP_VERSION = '2.17';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -372,8 +372,28 @@
       clearTimeout(boardRefreshTimer);
       boardRefreshTimer=setTimeout(()=>visibleBoards().forEach(([period,metric])=>loadLeaderboard(period,metric)),delay);
     }
+    /* Statistics goals live with the account on the server, so signing out and back in keeps them.
+       A change that has not reached the server yet (offline) is sent instead of being overwritten. */
+    async function pushPrefs(){
+      if(!state.userId) return;
+      state.prefsDirty=true; save();
+      try { const response=await apiFetch(apiUrl(`users/${state.userId}/prefs`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statsGoals:state.statsGoals||{}})}); if(response.ok){ state.prefsDirty=false; save(); } } catch {}
+    }
+    async function pullPrefs(){
+      if(!state.userId) return;
+      if(state.prefsDirty) return pushPrefs();
+      try {
+        const userId=state.userId, response=await apiFetch(apiUrl(`users/${userId}/prefs`)); if(!response.ok||userId!==state.userId) return;
+        const prefs=await response.json();
+        if(!prefs.saved){ if(Object.keys(state.statsGoals||{}).length) pushPrefs(); return; }
+        const remote=prefs.statsGoals&&typeof prefs.statsGoals==='object'?prefs.statsGoals:{};
+        if(JSON.stringify(remote)===JSON.stringify(state.statsGoals||{})) return;
+        state.statsGoals={...remote}; save(); renderStats(); renderStatsDetail();
+      } catch {}
+    }
     async function fetchPersonalEntries(restoreCurrent=false){
       if(!state.userId) return;
+      pullPrefs();
       try {
         const response=await apiFetch(apiUrl(`users/${state.userId}/entries`));
         if(!response.ok) throw new Error('Entries failed');
@@ -807,7 +827,7 @@
       const sync=()=>{ const n=Math.max(1,Math.min(spec.max,Math.round(Number(input.value)||0))); unitLabel.textContent=`${spec.unit(n,ky)} ${spec.per==='week'?(ky?'аптасына':'в неделю'):(ky?'күнүнө':'в день')}`; layer.querySelectorAll('[data-goal-pick]').forEach(b=>{ const on=Number(b.dataset.goalPick)===n; b.classList.toggle('active',on); b.setAttribute('aria-checked',String(on)); }); };
       const close=()=>{ layer.remove(); document.removeEventListener('keydown',onKey); };
       const onKey=event=>{ if(event.key==='Escape') close(); };
-      const store=n=>{ state.statsGoals={...(state.statsGoals||{}),[metric]:n}; if(!n) delete state.statsGoals[metric]; save(); close(); renderStats(); renderStatsDetail(); };
+      const store=n=>{ state.statsGoals={...(state.statsGoals||{}),[metric]:n}; if(!n) delete state.statsGoals[metric]; save(); pushPrefs(); close(); renderStats(); renderStatsDetail(); };
       input.addEventListener('input',sync);
       layer.addEventListener('click',event=>{
         if(event.target===layer||event.target.closest('[data-goal-cancel]')){ close(); return; }
