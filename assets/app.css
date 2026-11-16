@@ -750,14 +750,14 @@ body #app .roll-down{animation:soft-roll-down .26s var(--soft-ease) both}
 @keyframes soft-roll-up{from{transform:translateY(60%);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes soft-roll-down{from{transform:translateY(-60%);opacity:0}to{transform:translateY(0);opacity:1}}
 
-/* 5. Menu: the black capsule slides and stretches to the new item (280 ms). */
-body #app .nav.has-pill{position:fixed}
-body #app .nav-pill{position:absolute;z-index:0;top:6px;left:0;height:48px;width:0;border-radius:24px;background:#0B0F12;pointer-events:none;transition:transform .28s var(--soft-ease),width .28s var(--soft-ease),opacity .2s ease}
-/* Padding changes at once so the capsule can measure the new width; the label fades in. */
-body #app .nav.has-pill button{position:relative;z-index:1;transition:color .2s ease,transform .12s var(--soft-ease)}
-body #app .nav.has-pill button.active{animation:soft-label .28s ease both}
-@keyframes soft-label{from{-webkit-text-fill-color:transparent}}
-body #app .nav.has-pill button.active{background:transparent!important}
+/* 5. Menu in the "Bottom bar" style: the capsule and labels are moved by springs in index.html. */
+body #app .nav.has-pill{position:fixed;gap:2px}
+body #app .nav-pill{position:absolute;z-index:0;top:6px;left:0;height:48px;width:0;border-radius:24px;background:#0B0F12;pointer-events:none;transition:opacity .2s ease;will-change:transform,width}
+body #app .nav.has-pill button,body #app .nav.has-pill button.active{position:relative;z-index:1;min-width:0;padding:0 13px;gap:0;font-size:15px;overflow:hidden;background:transparent!important;transition:color .25s ease}
+body #app .nav.has-pill button:active{transform:none}
+body #app .nav.has-pill i{flex:none;will-change:transform}
+body #app .nav .nav-label{color:inherit;display:block;overflow:hidden;white-space:nowrap;width:0;opacity:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+body.a11y-large #app .nav .nav-label{font-size:16px}
 body.app-dark #app .nav.has-pill button.active{background:transparent!important}
 body.app-dark #app .nav-pill{background:#EEF5F2}
 

@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="chetele-build" content="chetele-static-v150" />
+  <meta name="chetele-build" content="chetele-static-v151" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#f6f7fb" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -294,7 +294,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
 <script src="assets/fasting.js?v=1"></script>
 <script src="assets/onboarding.js?v=2"></script>
 <script src="assets/zikr-sync.js?v=3"></script>
-<script src="assets/app.js?v=f1a3f1fb"></script><script>
+<script src="assets/app.js?v=6726d2ac"></script><script>
     (()=>{
       const originalRenderEvents=window.renderEvents;
       if(typeof originalRenderEvents!=='function') return;
@@ -859,26 +859,65 @@ body.app-dark #app .zikr-continue{background:#fff;color:#0f6b41}
 body.app-dark #app .week-bar i{background:#1f4a36}
     </style>`);
   </script>
-<link rel="stylesheet" href="assets/app.css?v=0f0a6ae8" />
+<link rel="stylesheet" href="assets/app.css?v=5536940c" />
 
 <script>
-/* Menu capsule from the motion board: one black pill slides and stretches to the
-   active item instead of each button switching its own background. */
+/* Menu in the "Bottom bar" motion style: the picked tab opens to show its name while the old one
+   closes, the capsule follows the picked tab's live position and width, and the icon squashes
+   and pops. Same springs as the reference (stiffness, damping): label 300/26, capsule 340/28,
+   icon pop 520/14. The loop runs only while something is still moving. */
 (function(){
   const nav=document.querySelector('#app .nav'); if(!nav) return;
   const pill=document.createElement('span'); pill.className='nav-pill'; pill.setAttribute('aria-hidden','true');
   nav.prepend(pill); nav.classList.add('has-pill');
-  let placed=false;
-  function place(){
-    const active=nav.querySelector('button.active');
-    if(!active||!active.offsetWidth){ pill.style.opacity='0'; return; }
-    if(!placed) pill.style.transition='none';
-    pill.style.opacity='1'; pill.style.width=`${active.offsetWidth}px`; pill.style.transform=`translateX(${active.offsetLeft}px)`;
-    if(!placed){ void pill.offsetWidth; pill.style.transition=''; placed=true; }
+  const calm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('a11y-reduce');
+  const S=(x,k,c)=>({x,v:0,t:x,k,c});
+  const step=(s,dt)=>{ const c=calm()?2*Math.sqrt(s.k):s.c, a=-s.k*(s.x-s.t)-c*s.v; s.v+=a*dt; s.x+=s.v*dt; };
+  const still=s=>Math.abs(s.x-s.t)<.05&&Math.abs(s.v)<.05;
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const tabs=[...nav.querySelectorAll('button')].map(el=>{
+    let label=el.querySelector('.nav-label');
+    if(!label){ label=document.createElement('span'); label.className='nav-label';
+      [...el.childNodes].filter(n=>n.nodeType===3&&n.nodeValue.trim()).forEach(n=>label.append(n)); el.append(label); }
+    return {el,label,icon:el.querySelector('i'),full:0,w:S(0,300,26),p:S(1,520,14)};
+  });
+  const X=S(0,340,28), W=S(0,340,28);
+  let cur=-1, frame=0, last=0, placed=false;
+  function measure(){ tabs.forEach(t=>{ const w=t.label.style.width; t.label.style.width='auto'; t.label.style.paddingLeft='8px'; t.full=t.label.offsetWidth; t.label.style.width=w; t.label.style.paddingLeft=''; if(t.el.classList.contains('active')) t.w.t=t.full; }); }
+  function render(){
+    tabs.forEach(t=>{ const w=Math.max(0,t.w.x), f=t.full||1;
+      t.label.style.width=w.toFixed(2)+'px'; t.label.style.paddingLeft=clamp(w/f,0,1)*8+'px';
+      t.label.style.opacity=clamp(w/f*1.4-.4,0,1).toFixed(3);
+      if(t.icon) t.icon.style.transform=Math.abs(t.p.x-1)<.001?'':`scale(${t.p.x.toFixed(4)})`; });
+    pill.style.transform=`translateX(${X.x.toFixed(2)}px)`; pill.style.width=W.x.toFixed(2)+'px';
   }
-  new MutationObserver(place).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
-  new ResizeObserver(place).observe(nav);
-  place();
+  function tick(now){
+    frame=0; const dt=Math.min((now-last)/1000,1/30); last=now;
+    for(let k=0;k<4;k++){ tabs.forEach(t=>{ step(t.w,dt/4); step(t.p,dt/4); });
+      const el=tabs[cur]?.el; if(el){ X.t=el.offsetLeft; W.t=el.offsetWidth; } step(X,dt/4); step(W,dt/4); }
+    render();
+    if(![X,W,...tabs.flatMap(t=>[t.w,t.p])].every(still)) frame=requestAnimationFrame(tick);
+    else { tabs.forEach(t=>{ t.w.x=t.w.t; t.p.x=t.p.t; }); X.x=X.t; W.x=W.t; render(); }
+  }
+  const run=()=>{ if(!frame){ last=performance.now(); frame=requestAnimationFrame(tick); } };
+  function sync(){
+    const i=tabs.findIndex(t=>t.el.classList.contains('active'));
+    if(!nav.offsetWidth||i<0){ pill.style.opacity='0'; placed=false; return; }
+    pill.style.opacity='1';
+    if(i!==cur){ const was=cur; cur=i;
+      tabs.forEach((t,k)=>{ t.w.t=k===i?t.full:0; t.el.setAttribute('aria-current',k===i?'page':'false'); });
+      if(placed&&was>=0&&!calm()){ tabs[i].p.x=.72; tabs[i].p.v=6; } }
+    if(!placed){ /* first show (or shown again): no slide in, start where it belongs */
+      tabs.forEach(t=>{ t.w.x=t.w.t; t.w.v=0; }); render();
+      X.x=X.t=tabs[i].el.offsetLeft; W.x=W.t=tabs[i].el.offsetWidth; X.v=W.v=0; render(); placed=true; return; }
+    run();
+  }
+  measure();
+  new MutationObserver(list=>{ if(list.some(m=>m.type==='characterData'||m.type==='childList')) measure(); sync(); })
+    .observe(nav,{subtree:true,attributes:true,attributeFilter:['class'],characterData:true,childList:true});
+  new ResizeObserver(()=>sync()).observe(nav);
+  document.fonts?.ready.then(()=>{ measure(); placed=false; sync(); });
+  sync();
 })();
 </script>
 <script src="assets/prayer-times.js?v=2"></script>
