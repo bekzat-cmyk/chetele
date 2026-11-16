@@ -87,6 +87,7 @@ svg.i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .brand{display:flex;align-items:center;gap:12px}
 .brand-mark{width:44px;height:44px;border-radius:16px;background:var(--black);color:#fff;display:grid;place-items:center}
 .brand-mark svg.i{width:24px;height:24px;stroke-width:1.7}
+img.brand-mark{display:block;flex:none;object-fit:cover;background:#FAEEE4;box-shadow:0 4px 12px rgba(11,15,18,.18)}
 .brand b{display:block;font-size:17px;font-weight:600}
 .brand small{font-size:12px;color:var(--muted)}
 .login h1{margin:6px 0 0;font-size:30px;font-weight:600;letter-spacing:-.02em}
@@ -577,7 +578,7 @@ tbody tr:last-child td{border-bottom:0}
 <body>
 <section id="login" class="login">
   <form id="login-form" class="glass" novalidate>
-    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
+    <div class="brand"><img class="brand-mark" src="assets/icon-192.png" alt="" width="44" height="44"><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
     <h1>Ассаламу алейкум</h1>
     <p>Войдите, чтобы управлять событиями и участниками сообщества.</p>
     <label class="field"><span>Логин</span><input id="login-name" class="input" autocomplete="username" required></label>
@@ -589,7 +590,7 @@ tbody tr:last-child td{border-bottom:0}
 
 <div id="shell" class="shell" hidden>
   <aside class="side">
-    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
+    <div class="brand"><img class="brand-mark" src="assets/icon-192.png" alt="" width="44" height="44"><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
     <nav class="nav" aria-label="Разделы">
       <a href="#overview" data-route="overview"><span data-icon="home"></span>Обзор<em></em></a>
       <a href="#events" data-route="events"><span data-icon="flag"></span>События<em id="nav-events"></em></a>
