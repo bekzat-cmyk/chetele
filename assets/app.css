@@ -2160,7 +2160,7 @@ body #app .qb-hub{fill:#10161A}
 body #app .qb-pointer{fill:#fff;stroke:rgba(16,22,26,.15)}
 body #app .qibla-screen.is-ok .qb-halo{fill:rgba(47,155,110,.18);stroke:#1F6B4F;stroke-width:3}
 body #app .qibla-screen.is-ok .qb-path{stroke:#1F6B4F;stroke-dasharray:none}
-body #app .qibla-screen.is-ok :is(.qb-kaaba circle,.qb-hub){fill:#1F6B4F}
+body #app .qibla-screen.is-ok .qb-hub{fill:#1F6B4F}
 body #app .qibla-screen.is-ok .qb-pointer{fill:#1F6B4F;stroke:#1F6B4F}
 body #app .qibla-screen.is-static .qb-pointer{display:none}
 body #app .qb-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -2188,12 +2188,11 @@ body.app-dark #app .qb-rose line.long,body.app-dark #app .qb-rose text{stroke:no
 body.app-dark #app .qb-rose line.long{stroke:#eef5f2}
 body.app-dark #app .qb-rose text.north{fill:#F0938A}
 body.app-dark #app .qb-rose .qb-path{stroke:rgba(238,245,242,.25)}
-body.app-dark #app :is(.qb-kaaba circle,.qb-hub){fill:#eef5f2}
-body.app-dark #app .qb-kaaba rect{stroke:#0B1110}
+body.app-dark #app .qb-hub{fill:#eef5f2}
 body.app-dark #app .qb-pointer{fill:#eef5f2;stroke:none}
 body.app-dark #app .qibla-screen.is-ok .qb-halo{fill:rgba(95,199,154,.12);stroke:#5FC79A}
 body.app-dark #app .qibla-screen.is-ok .qb-path{stroke:#5FC79A}
-body.app-dark #app .qibla-screen.is-ok :is(.qb-kaaba circle,.qb-hub),body.app-dark #app .qibla-screen.is-ok .qb-pointer{fill:#5FC79A;stroke:#5FC79A}
+body.app-dark #app .qibla-screen.is-ok .qb-hub,body.app-dark #app .qibla-screen.is-ok .qb-pointer{fill:#5FC79A;stroke:#5FC79A}
 body.app-dark #app :is(.qb-facts>div,.qb-card){background:rgba(23,32,30,.72);border-color:rgba(255,255,255,.08);box-shadow:none}
 body.app-dark #app :is(.qb-facts small,.qb-facts b span,.qb-card>p){color:var(--muted)}
 body.app-dark #app .qb-card .qb-tip{color:var(--ink)}
@@ -2216,8 +2215,21 @@ body #app .qb-rose{position:absolute;inset:0;transform-origin:50% 51.18%;will-ch
 body #app .qb-kaaba-pin{position:absolute;width:13.2%;aspect-ratio:1}
 body #app .qb-kaaba{position:absolute;left:0;top:0;width:100%;height:100%;transform:translate(-50%,-50%);will-change:transform}
 body #app .qb-kaaba svg{display:block;width:100%;height:100%}
-body #app .qb-kaaba circle{fill:#10161A}
-body #app .qb-kaaba rect{fill:none;stroke:#fff;stroke-width:1.8}
-body #app .qb-kaaba line{stroke:#FFD58A;stroke-width:2}
 /* Nothing under the compass is drawn while it is open (the glass blurs cost a lot). */
 body.qibla-open #app>:not(.qibla-screen){visibility:hidden}
+
+/* The Kaaba mark: a black cube with the gold band and door, on a light disc. */
+body #app .qb-kaaba-bg{fill:#fff;stroke:rgba(16,22,26,.16);stroke-width:1.5}
+body #app .qb-k-top{fill:#3A4246}
+body #app .qb-k-left{fill:#10161A}
+body #app .qb-k-right{fill:#1F272B}
+body #app .qb-k-band,body #app .qb-k-door{fill:#D9A93B}
+body #app .qibla-screen.is-ok .qb-kaaba-bg{fill:#E4F3EB;stroke:#1F6B4F;stroke-width:2.5}
+body.app-dark #app .qb-kaaba-bg{fill:#EEF5F2;stroke:none}
+body.app-dark #app .qibla-screen.is-ok .qb-kaaba-bg{fill:#D8F2E5;stroke:#5FC79A;stroke-width:2.5}
+/* The page under the compass does not scroll, and the compass fits the screen height. */
+body.qibla-open{overflow:hidden}
+body #app .qibla-screen{scrollbar-width:none;gap:12px}
+body #app .qibla-screen::-webkit-scrollbar{display:none}
+body #app .qibla-screen .stats-top{padding-top:max(8px,calc(40px - env(safe-area-inset-top)))}
+body #app .qb-dial{width:max(220px,min(100%,320px,calc((100dvh - 430px) * 320 / 340)))}

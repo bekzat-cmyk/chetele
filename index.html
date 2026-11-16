@@ -858,7 +858,7 @@ body.app-dark #app .zikr-continue{background:#fff;color:#0f6b41}
 body.app-dark #app .week-bar i{background:#1f4a36}
     </style>`);
   </script>
-<link rel="stylesheet" href="assets/app.css?v=8af57a71" />
+<link rel="stylesheet" href="assets/app.css?v=0f0a6ae8" />
 
 <script>
 /* Menu capsule from the motion board: one black pill slides and stretches to the
@@ -1089,7 +1089,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
     const box = 'viewBox="0 -14 320 340"';
     return `<div class="qb-dial" role="img" aria-label="${ky() ? 'Компас' : 'Компас'}">
       <svg class="qb-layer" ${box} aria-hidden="true"><circle class="qb-halo" cx="${c}" cy="${c}" r="${R + 18}"/><circle class="qb-face" cx="${c}" cy="${c}" r="${R}"/></svg>
-      <div class="qb-rose"><svg class="qb-layer" ${box} aria-hidden="true">${ticks}${letters}<line class="qb-path" x1="${c}" y1="${c}" x2="${lx.toFixed(1)}" y2="${ly.toFixed(1)}"/></svg><span class="qb-kaaba-pin" style="left:${(kx / 320 * 100).toFixed(2)}%;top:${((ky2 + 14) / 340 * 100).toFixed(2)}%"><span class="qb-kaaba"><svg viewBox="-21 -21 42 42" aria-hidden="true"><circle r="21"/><rect x="-8" y="-8" width="16" height="16" rx="2"/><line x1="-8" y1="-3" x2="8" y2="-3"/></svg></span></span></div>
+      <div class="qb-rose"><svg class="qb-layer" ${box} aria-hidden="true">${ticks}${letters}<line class="qb-path" x1="${c}" y1="${c}" x2="${lx.toFixed(1)}" y2="${ly.toFixed(1)}"/></svg><span class="qb-kaaba-pin" style="left:${(kx / 320 * 100).toFixed(2)}%;top:${((ky2 + 14) / 340 * 100).toFixed(2)}%"><span class="qb-kaaba"><svg viewBox="-21 -21 42 42" aria-hidden="true"><circle class="qb-kaaba-bg" r="20"/><path class="qb-k-top" d="M0 -10 L10 -5 L0 0 L-10 -5 Z"/><path class="qb-k-left" d="M-10 -5 L0 0 L0 12 L-10 7 Z"/><path class="qb-k-right" d="M0 0 L10 -5 L10 7 L0 12 Z"/><path class="qb-k-band" d="M-10 -2.2 L0 2.8 L10 -2.2 L10 0 L0 5 L-10 0 Z"/><path class="qb-k-door" d="M3.2 9.6 L6.4 8 L6.4 4.4 L3.2 6 Z"/></svg></span></span></div>
       <svg class="qb-layer" ${box} aria-hidden="true"><circle class="qb-hub" cx="${c}" cy="${c}" r="7"/><path class="qb-pointer" d="M${c} ${c - R - 26} l-12 18 h24 z"/></svg>
     </div>`;
   }
