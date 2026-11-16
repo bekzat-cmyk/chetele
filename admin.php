@@ -21,7 +21,7 @@ header('X-Robots-Tag: noindex, nofollow');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Chetele · Админ-кабинет</title>
+<title>Istikama · Админ-кабинет</title>
 <!-- With a sign-in kept in this tab, a reload opens the cabinet straight away instead of
      flashing the sign-in form while the saved login is checked. -->
 <script nonce="<?= htmlspecialchars($nonce, ENT_QUOTES) ?>">try { if (sessionStorage.getItem('chetele-admin')) document.documentElement.classList.add('restoring'); } catch {}</script>
@@ -577,7 +577,7 @@ tbody tr:last-child td{border-bottom:0}
 <body>
 <section id="login" class="login">
   <form id="login-form" class="glass" novalidate>
-    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Chetele</b><small>Админ-кабинет</small></div></div>
+    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
     <h1>Ассаламу алейкум</h1>
     <p>Войдите, чтобы управлять событиями и участниками сообщества.</p>
     <label class="field"><span>Логин</span><input id="login-name" class="input" autocomplete="username" required></label>
@@ -589,7 +589,7 @@ tbody tr:last-child td{border-bottom:0}
 
 <div id="shell" class="shell" hidden>
   <aside class="side">
-    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Chetele</b><small>Админ-кабинет</small></div></div>
+    <div class="brand"><span class="brand-mark" data-icon="moon"></span><div><b>Istikama</b><small>Админ-кабинет</small></div></div>
     <nav class="nav" aria-label="Разделы">
       <a href="#overview" data-route="overview"><span data-icon="home"></span>Обзор<em></em></a>
       <a href="#events" data-route="events"><span data-icon="flag"></span>События<em id="nav-events"></em></a>
@@ -733,14 +733,14 @@ tbody tr:last-child td{border-bottom:0}
   let shownView = '';
   /* After a loading placeholder the real page replaces it in place, without a second entrance. */
   function mount(html, key) { main.innerHTML = `<div class="view${key === shownView || shownView === 'loading' ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
-  function loading(title) { mount(top('Chetele', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
+  function loading(title) { mount(top('Istikama', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
   /* Without a connection the page shows a calm placeholder and reloads by itself when the connection returns. */
   function failed(title, error) {
     const offline = error?.offline || !navigator.onLine;
     const body = offline
       ? `<section class="glass card offline"><span class="offline-icon">${icon('wifioff')}</span><h2>Нет соединения с интернетом</h2><p>Проверьте Wi‑Fi или мобильный интернет. Страница обновится сама, как только связь вернётся.</p><button type="button" class="btn black" data-refresh>${icon('refresh')}Повторить</button></section>`
       : `<section class="glass card offline"><span class="offline-icon warn">${icon('alert')}</span><h2>Не удалось загрузить</h2><p>${esc(error?.message || 'Ошибка сервера')}. Попробуйте ещё раз через минуту.</p><button type="button" class="btn black" data-refresh>${icon('refresh')}Повторить</button></section>`;
-    mount(top('Chetele', title, offline ? 'Нет связи' : 'Не удалось загрузить') + body, 'failed');
+    mount(top('Istikama', title, offline ? 'Нет связи' : 'Не удалось загрузить') + body, 'failed');
   }
   window.addEventListener('online', () => { document.querySelector('.offline-bar')?.remove(); if (shownView === 'failed' && cred) { data.events = data.users = data.groups = data.moderation = data.quizzes = null; route(); } });
   window.addEventListener('offline', () => { if (!cred || document.querySelector('.offline-bar')) return; const bar = document.createElement('div'); bar.className = 'offline-bar'; bar.setAttribute('role', 'status'); bar.innerHTML = icon('wifioff') + 'Нет соединения — данные могут быть неактуальны'; document.body.append(bar); });
@@ -768,7 +768,7 @@ tbody tr:last-child td{border-bottom:0}
     const reg = an.regularity || {}, regMax = Math.max(1, ...Object.values(reg).map(Number));
     const regLabels = [['1', '1 день'], ['2–6', '2–6 дней'], ['7–14', '7–14 дней'], ['15–29', '15–29 дней'], ['30', 'каждый день']];
     const regHtml = regLabels.map(([k, l]) => { const n = Number(reg[k]) || 0; return `<div class="deed"><span><b>${l}</b><small>${num(n)} ${plural(n, 'человек', 'человека', 'человек')}</small></span><i class="bar"><i style="width:${Math.round(n / regMax * 100)}%"></i></i></div>`; }).join('');
-    mount(top('Chetele', 'Аналитика', 'Кто возвращается и какие дела ведут', tools() + refreshBtn) + `
+    mount(top('Istikama', 'Аналитика', 'Кто возвращается и какие дела ведут', tools() + refreshBtn) + `
       <div class="kpis">
         ${kpi('users', num(dau), 'активны сегодня', users ? `${Math.round(dau / users * 100)}% от всех` : '')}
         ${kpi('clock', num(Number(an.wau) || 0), 'за 7 дней')}

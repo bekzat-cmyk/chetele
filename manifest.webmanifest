@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "Chetele — путь к сильному таква",
-  "short_name": "Chetele",
+  "name": "Istikama — путь к сильному таква",
+  "short_name": "Istikama",
   "description": "Ежедневный путь к сильному таква.",
   "lang": "ru",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f5f8",
+  "background_color": "#1A3129",
   "theme_color": "#f6f7fb",
   "icons": [
     {

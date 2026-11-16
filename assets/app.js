@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.13';
+    const APP_VERSION = '2.14';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -180,7 +180,7 @@
       layer.innerHTML=`<section role="alertdialog" aria-modal="true" aria-labelledby="maint-title" aria-describedby="maint-text">
         <div class="maint-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
         <h1 id="maint-title">Технические работы</h1>
-        <p id="maint-text">Сервер Chetele сейчас недоступен. Мы уже занимаемся этим — скоро всё заработает.</p>
+        <p id="maint-text">Сервер Istikama сейчас недоступен. Мы уже занимаемся этим — скоро всё заработает.</p>
         <div class="maint-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Отметки сохраняются на телефоне и отправятся, когда сервер вернётся.</span></div>
         <button type="button" class="maint-retry" data-maint-retry>Проверить снова</button>
         <button type="button" class="maint-close" data-maint-close>Продолжить без сервера</button>
@@ -872,7 +872,7 @@
       text(ky?`${s.last} күндүн ${s.days} күнүндө`:`за ${s.days} ${pl(s.days,'день','дня','дней')} из ${s.last}`,110,840,40,'400','#5E6A71');
       const cells=[[ky?'Куран':'Куран',`${number.format(s.quran)}`,ky?'бет':pl(s.quran,'страница','страницы','страниц')],[ky?'Салабат':'Салават',number.format(s.salawat),ky?'жолу':pl(s.salawat,'раз','раза','раз')],[ky?'Зикир':'Зикр',number.format(s.zikr),ky?'жолу':pl(s.zikr,'раз','раза','раз')],[ky?'Тахажжуд':'Тахаджуд',String(s.tahajjud),ky?'түн':pl(s.tahajjud,'ночь','ночи','ночей')],[ky?'Орозо':'Пост',String(s.fast),ky?'күн':pl(s.fast,'день','дня','дней')],[ky?'Эң узун катар':'Лучшая серия',String(s.streak),ky?'күн':pl(s.streak,'день','дня','дней')]];
       cells.forEach(([label,value,unit],i)=>{ const x=60+(i%2)*490, y=920+Math.floor(i/2)*250; round(x,y,470,226,48,'rgba(255,255,255,.78)'); text(label,x+44,y+70,38,'500','#5E6A71'); text(value,x+44,y+164,84,'700','#10161A'); c.font=`700 84px ${font}`; const w=c.measureText(value).width; text(unit,x+44+w+16,y+164,36,'500','#5E6A71'); });
-      try { const logo=await new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src='img/logo.png'; }); // The logo file has wide transparent margins: draw only the mark itself.
+      try { const logo=await new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src='assets/logo-mark.png'; }); // Draw only the visible mark, whatever margins the file has.
         const probe=document.createElement('canvas'); probe.width=logo.width; probe.height=logo.height; const pc=probe.getContext('2d'); pc.drawImage(logo,0,0);
         const px=pc.getImageData(0,0,logo.width,logo.height).data; let x0=logo.width,y0=logo.height,x1=0,y1=0;
         for(let y=0;y<logo.height;y+=2) for(let x=0;x<logo.width;x+=2) if(px[(y*logo.width+x)*4+3]>24){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
@@ -1295,7 +1295,7 @@
       }
       if(profileScreen==='about'){
         const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
-        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="img/logo.png" alt="" width="64" height="64"><span class="ps-copy"><b>Chetele</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
+        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="assets/icon-192.png" alt="" width="64" height="64"><span class="ps-copy"><b>Istikama</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
         return;
       }
       if(profileScreen==='rename'){
@@ -1915,10 +1915,7 @@
     /* The full welcome (3 s with the animation) plays on the very first launch only. Later
        launches just flash the logo while the app gets ready. */
     const preloaderStartedAt=Date.now(), firstLaunch=(()=>{ try { if(localStorage.getItem('chetele-launched')) return false; localStorage.setItem('chetele-launched','1'); } catch {} return true; })();
-    if(!firstLaunch) document.querySelector('#preloader-lottie')?.remove();
-    /* The welcome animation is a 50 KB muted video (it used to be a 920 KB Lottie file plus a
-       300 KB player). It only plays on the first launch. */
-    if(firstLaunch){ const container=document.querySelector('#preloader-lottie'); if(container){ const video=document.createElement('video'); Object.assign(video,{src:'assets/preloader.mp4',muted:true,loop:true,autoplay:true,playsInline:true,preload:'auto'}); video.setAttribute('playsinline',''); video.setAttribute('muted',''); container.appendChild(video); video.play?.().catch(()=>{}); } }
+    /* The welcome screen shows three soft dots while the app starts (the old video was dropped with the green splash). */
     function dismissPreloader(){ const preloader=document.querySelector('#app-preloader'); if(!preloader||preloader.classList.contains('is-hidden')) return; const wait=Math.max(0,(firstLaunch?3000:500)-(Date.now()-preloaderStartedAt)); setTimeout(()=>{ requestAnimationFrame(()=>preloader.classList.add('is-hidden')); setTimeout(()=>{ preloader.hidden=true; },450); },wait); }
     /* Notifications open a screen: ?open=deeds shows today's deeds, other names open that section. */
     function openTarget(target){
