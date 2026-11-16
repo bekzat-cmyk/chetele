@@ -2149,18 +2149,13 @@ body #app .qb-status b{font-size:17px;font-weight:600}
 body #app .qb-status small{font-size:13px;opacity:.8}
 body #app .qb-status.is-ok{background:#1F6B4F;color:#fff}
 body #app .qb-dial-wrap{display:flex;justify-content:center}
-body #app .qb-dial{width:min(100%,320px);height:auto}
 body #app .qb-halo{fill:rgba(255,255,255,.28);stroke:rgba(255,255,255,.9);stroke-width:1.5;transition:fill .25s ease,stroke .25s ease}
 body #app .qb-face{fill:rgba(255,255,255,.92)}
-body #app .qb-rose{transform-origin:160px 160px;transition:transform .15s linear}
 body #app .qb-rose line{stroke:rgba(16,22,26,.35);stroke-width:1.2;stroke-linecap:round}
 body #app .qb-rose line.long{stroke:#10161A;stroke-width:2}
 body #app .qb-rose text{font:600 17px Inter,-apple-system,sans-serif;fill:#10161A;text-anchor:middle}
 body #app .qb-rose text.north{fill:#A0563B;font-weight:700}
 body #app .qb-rose .qb-path{stroke:rgba(16,22,26,.25);stroke-width:3;stroke-dasharray:4 6}
-body #app .qb-kaaba circle{fill:#10161A}
-body #app .qb-kaaba rect{fill:none;stroke:#fff;stroke-width:1.8}
-body #app .qb-rose .qb-kaaba line{stroke:#FFD58A;stroke-width:2;stroke-dasharray:none}
 body #app .qb-hub{fill:#10161A}
 body #app .qb-pointer{fill:#fff;stroke:rgba(16,22,26,.15)}
 body #app .qibla-screen.is-ok .qb-halo{fill:rgba(47,155,110,.18);stroke:#1F6B4F;stroke-width:3}
@@ -2202,4 +2197,25 @@ body.app-dark #app :is(.qb-facts small,.qb-facts b span,.qb-card>p){color:var(--
 body.app-dark #app .qb-card .qb-tip{color:var(--ink)}
 body.app-dark #app .qb-primary{background:#eef5f2;color:#0b1110}
 body.app-dark #app .qb-secondary{background:rgba(255,255,255,.08);color:var(--ink)}
-@media (prefers-reduced-motion:reduce){body #app .qb-rose{transition:none}}
+
+/* The prayer card's two equal actions: the day's schedule and the qibla. */
+body #app .prayer-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
+body #app .prayer-action{height:48px;margin:0;padding:0 12px;border:1px solid rgba(16,22,26,.12);border-radius:24px;background:rgba(255,255,255,.7);color:#10161A;display:flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s cubic-bezier(.2,.8,.2,1),background .2s ease}
+body #app .prayer-action:active{transform:scale(.97)}
+body #app .prayer-action .lucide{width:18px;height:18px;flex:none;stroke-width:1.7}
+body #app .prayer-action span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app-dark #app .prayer-action{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){body #app .prayer-action{transition:none}}
+
+/* Compass layers: only .qb-rose moves, on its own GPU layer. */
+body #app .qb-dial{position:relative;width:min(100%,320px);aspect-ratio:320/340}
+body #app .qb-dial .qb-layer{position:absolute;inset:0;width:100%;height:100%}
+body #app .qb-rose{position:absolute;inset:0;transform-origin:50% 51.18%;will-change:transform;backface-visibility:hidden}
+body #app .qb-kaaba-pin{position:absolute;width:13.2%;aspect-ratio:1}
+body #app .qb-kaaba{position:absolute;left:0;top:0;width:100%;height:100%;transform:translate(-50%,-50%);will-change:transform}
+body #app .qb-kaaba svg{display:block;width:100%;height:100%}
+body #app .qb-kaaba circle{fill:#10161A}
+body #app .qb-kaaba rect{fill:none;stroke:#fff;stroke-width:1.8}
+body #app .qb-kaaba line{stroke:#FFD58A;stroke-width:2}
+/* Nothing under the compass is drawn while it is open (the glass blurs cost a lot). */
+body.qibla-open #app>:not(.qibla-screen){visibility:hidden}

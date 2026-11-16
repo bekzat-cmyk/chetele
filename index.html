@@ -257,7 +257,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <main id="app" class="app on-today" hidden><button type="button" id="prayer-bar" class="prayer-bar" data-prayer-schedule hidden></button>
     <header class="top"><div><div class="eyebrow" id="welcome">Ассаламу алейкум</div><span id="top-day" class="top-day">Сегодня</span><h1>Мой день</h1></div><span class="top-actions"><button class="avatar top-stats" id="open-stats" type="button" aria-label="Статистика"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg></button><button class="avatar" id="avatar" aria-label="Открыть профиль"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></button></span></header>
     <section id="today-view" class="view active"><section id="guest-banner" class="state-offline guest-banner" hidden aria-labelledby="guest-banner-title"><div class="guest-banner-row"><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h10a1.5 1.5 0 0 1 1.5 1.5v16a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 20V4A1.5 1.5 0 0 1 7 2.5zM11 18.5h2"/></svg></i><span><b id="guest-banner-title">Данные не сохранятся без регистрации</b><small>Сейчас отметки хранятся только на этом телефоне. Если удалить приложение или сменить телефон, они пропадут.</small></span></div><div class="guest-banner-actions"><button type="button" class="guest-primary" data-auth="signup">Создать профиль</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section><section id="offline-banner" class="state-offline" hidden role="status"><i data-icon="softWifiOff"></i><span><b>Нет связи с сервером</b><small>Отмечайте как обычно — всё сохранится на телефоне и отправится, когда появится интернет.</small></span></section><div id="past-day-banner" class="past-day-banner" hidden><span class="past-day-icon"></span><div><b id="past-day-title">Вы редактируете другой день</b><small>Изменения сохранятся в этот день</small></div><button type="button" data-back-today>К сегодня</button></div>
-    <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><div class="prayer-countdown"><div class="prayer-countdown-row"><span id="prayer-countdown-label">Осталось</span><b id="prayer-timer" aria-hidden="true">—</b></div><div id="prayer-progress" class="prayer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Время до следующего намаза"><i id="prayer-progress-fill"></i><span id="prayer-progress-knob"></span></div><div class="prayer-progress-ends"><span id="prayer-from"></span><span id="prayer-to"></span></div></div><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><button type="button" class="prayer-schedule" data-prayer-schedule><i><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></i>Расписание на день</button></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
+    <section id="day-hero" class="day-hero" aria-label="Итог дня и время намазов"><div class="day-hero-bar"><svg class="day-hero-ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7"/><circle id="day-hero-ring" cx="9" cy="9" r="7" transform="rotate(-90 9 9)"/></svg><span id="day-hero-done">Дела дня · 0 из 11</span><b id="day-hero-percent">0%</b></div><article class="prayer-card" aria-labelledby="prayer-next"><div class="prayer-card-top"><span>Следующий намаз</span><button type="button" class="prayer-city" data-prayer-city><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span id="prayer-city-name">Бишкек</span></button></div><h2 id="prayer-next">—</h2><div class="prayer-countdown"><div class="prayer-countdown-row"><span id="prayer-countdown-label">Осталось</span><b id="prayer-timer" aria-hidden="true">—</b></div><div id="prayer-progress" class="prayer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Время до следующего намаза"><i id="prayer-progress-fill"></i><span id="prayer-progress-knob"></span></div><div class="prayer-progress-ends"><span id="prayer-from"></span><span id="prayer-to"></span></div></div><p id="prayer-left" class="prayer-left"></p><div id="prayer-strip" class="prayer-strip" role="list"></div><div class="prayer-actions"><button type="button" class="prayer-action" data-prayer-schedule><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg><span>Расписание</span></button><button type="button" class="prayer-action" data-qibla-open><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Кибла</span></button></div></article><div class="day-hero-foot"><span>Дальше</span><b id="prayer-after">—</b></div></section>
     <section id="empty-day" class="state-empty" hidden><span class="state-empty-icon" data-icon="softSpark"></span><h3>Начните с одного дела</h3><p>Сегодня ещё ничего не отмечено. Три небольших дела — и минимум дня выполнен.</p><div class="state-quick"><button type="button" data-empty-focus="salawat"><i data-icon="softSalawat"></i>Салават</button><button type="button" data-empty-focus="quran"><i data-icon="softQuran"></i>Куран</button><button type="button" data-empty-focus="tasbihat"><i data-icon="softZikr"></i>Зикр</button></div></section>
     <section id="empty-streak" class="state-streak" hidden><i data-icon="softFlame"></i><span><b id="empty-streak-title"></b><small>Отметьте дело сегодня, чтобы она продолжилась</small></span></section>
     <button id="calendar-open" class="calendar-card" aria-label="Открыть календарь выполненных дел"><div class="calendar-top"><h2>Эта неделя</h2><span id="week-streak" class="week-streak"></span></div><div id="week-calendar" class="week-calendar"></div></button>
@@ -287,7 +287,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
   <div id="achievement-celebration" class="reward reward-badge" hidden role="dialog" aria-modal="true" aria-labelledby="reward-badge-title"><section class="reward-badge-card"><div class="reward-badge-art"><svg class="reward-rays" viewBox="0 0 220 220" aria-hidden="true"><g><path d="M110 110 L100 0 L120 0 Z"/><path d="M110 110 L100 220 L120 220 Z"/><path d="M110 110 L0 100 L0 120 Z"/><path d="M110 110 L220 100 L220 120 Z"/><path d="M110 110 L28 28 L42 14 Z"/><path d="M110 110 L192 192 L178 206 Z"/><path d="M110 110 L192 28 L206 42 Z"/><path d="M110 110 L28 192 L14 178 Z"/></g></svg><span class="reward-medal"><span id="reward-badge-icon" aria-hidden="true"></span><i class="reward-shine" aria-hidden="true"></i></span></div><div class="reward-badge-text"><span>Новое достижение</span><h2 id="reward-badge-title"></h2><p id="reward-badge-text"></p></div><div class="reward-actions"><button type="button" class="reward-primary" data-reward-close>Продолжить</button><button type="button" class="reward-ghost" data-reward-badges>Все достижения</button></div></section></div>
   <div id="exit-confirmation" class="exit-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="exit-confirmation-title"><section class="exit-card"><div class="exit-icon" aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h11"/></svg></div><h2 id="exit-confirmation-title">Выйти из аккаунта?</h2><p>Ваши отметки сохранены в кабинете. Чтобы вернуться, войдите с тем же логином и паролем.</p><div class="exit-actions"><button id="exit-cancel" class="exit-cancel" type="button">Остаться</button><button id="exit-approve" class="exit-approve" type="button">Выйти</button></div></section></div>
   <div id="personal-goal-modal" class="personal-goal-modal" hidden role="dialog" aria-modal="true" aria-labelledby="personal-goal-title"><form id="personal-goal-form" class="personal-goal-card"><span class="sheet-grabber" aria-hidden="true"></span><div class="personal-goal-head"><span class="personal-goal-titles"><h2 id="personal-goal-title">Ваша цель</h2><span id="personal-goal-event"></span></span><button type="button" class="personal-goal-close" data-goal-close aria-label="Закрыть"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="personal-goal-stepper"><button type="button" data-goal-step="-1" aria-label="Уменьшить цель">−</button><label><input id="personal-goal-input" class="personal-goal-field" type="number" min="1" inputmode="numeric" value="100" aria-label="Личная цель"><span id="personal-goal-unit">раз</span></label><button type="button" class="plus" data-goal-step="1" aria-label="Увеличить цель">+</button></div><div id="personal-goal-presets" class="personal-goal-presets"></div><p id="personal-goal-error" class="personal-goal-error" role="alert"></p><div class="personal-goal-actions"><button id="personal-goal-cancel" class="personal-goal-cancel" type="button">Отмена</button><button id="personal-goal-save" class="personal-goal-save" type="submit">Участвовать</button></div><div id="personal-goal-entries" class="personal-goal-entries" hidden></div><p id="personal-goal-note" class="personal-goal-note">Цель можно изменить позже в карточке события</p></form></div>
-  <script src="assets/i18n-ky.js?v=5"></script>
+  <script src="assets/i18n-ky.js?v=6"></script>
 <script src="assets/deeds.js?v=2"></script>
 <script src="assets/hadiths.js?v=1"></script>
 <script src="assets/fasting.js?v=1"></script>
@@ -858,7 +858,7 @@ body.app-dark #app .zikr-continue{background:#fff;color:#0f6b41}
 body.app-dark #app .week-bar i{background:#1f4a36}
     </style>`);
   </script>
-<link rel="stylesheet" href="assets/app.css?v=b38512ec" />
+<link rel="stylesheet" href="assets/app.css?v=50e42d8c" />
 
 <script>
 /* Menu capsule from the motion board: one black pill slides and stretches to the
@@ -1077,13 +1077,21 @@ body.app-dark #app .week-bar i{background:#1f4a36}
     const q = qiblaFor(where), km = new Intl.NumberFormat(appLocale()).format(q.km);
     return `<button type="button" class="prayer-qibla" data-qibla-open><i aria-hidden="true"><svg class="lucide" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></i><span><b>${ky() ? 'Кыбла' : 'Кибла'}</b><small>${q.bearing}° · ${sideOf(q.bearing)} · ${km} ${ky() ? 'км Меккеге чейин' : 'км до Мекки'}</small></span>${icon('softChevron')}</button>`;
   }
+  /* The dial in three stacked layers: a still face, the rose (ticks, letters, the line to the
+     Kaaba) that turns, and the still pointer on top. Only the rose layer moves, as one
+     GPU-composited element, so the phone redraws nothing else while the compass turns. */
   function qiblaDial(bearing) {
     const R = 140, c = 160, pt = (deg, rad) => [c + rad * Math.sin(deg * Math.PI / 180), c - rad * Math.cos(deg * Math.PI / 180)];
     let ticks = '';
     for (let d = 0; d < 360; d += 5) { const long = d % 30 === 0, [x1, y1] = pt(d, R - (long ? 14 : 7)), [x2, y2] = pt(d, R - 2); ticks += `<line class="${long ? 'long' : ''}" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`; }
     const letters = (ky() ? [['Т', 0], ['Ч', 90], ['Тш', 180], ['Б', 270]] : [['С', 0], ['В', 90], ['Ю', 180], ['З', 270]]).map(([t, d]) => { const [x, y] = pt(d, R - 34); return `<text x="${x.toFixed(1)}" y="${(y + 6).toFixed(1)}" class="${d === 0 ? 'north' : ''}">${t}</text>`; }).join('');
     const [kx, ky2] = pt(bearing, R + 2), [lx, ly] = pt(bearing, R - 48);
-    return `<svg class="qb-dial" viewBox="0 -14 320 340" role="img" aria-label="${ky() ? 'Компас' : 'Компас'}"><circle class="qb-halo" cx="${c}" cy="${c}" r="${R + 18}"/><circle class="qb-face" cx="${c}" cy="${c}" r="${R}"/><g class="qb-rose">${ticks}${letters}<line class="qb-path" x1="${c}" y1="${c}" x2="${lx.toFixed(1)}" y2="${ly.toFixed(1)}"/><g class="qb-kaaba" data-x="${kx.toFixed(1)}" data-y="${ky2.toFixed(1)}" transform="translate(${kx.toFixed(1)} ${ky2.toFixed(1)})"><circle r="21"/><rect x="-8" y="-8" width="16" height="16" rx="2"/><line x1="-8" y1="-3" x2="8" y2="-3"/></g></g><circle class="qb-hub" cx="${c}" cy="${c}" r="7"/><path class="qb-pointer" d="M${c} ${c - R - 26} l-12 18 h24 z"/></svg>`;
+    const box = 'viewBox="0 -14 320 340"';
+    return `<div class="qb-dial" role="img" aria-label="${ky() ? 'Компас' : 'Компас'}">
+      <svg class="qb-layer" ${box} aria-hidden="true"><circle class="qb-halo" cx="${c}" cy="${c}" r="${R + 18}"/><circle class="qb-face" cx="${c}" cy="${c}" r="${R}"/></svg>
+      <div class="qb-rose"><svg class="qb-layer" ${box} aria-hidden="true">${ticks}${letters}<line class="qb-path" x1="${c}" y1="${c}" x2="${lx.toFixed(1)}" y2="${ly.toFixed(1)}"/></svg><span class="qb-kaaba-pin" style="left:${(kx / 320 * 100).toFixed(2)}%;top:${((ky2 + 14) / 340 * 100).toFixed(2)}%"><span class="qb-kaaba"><svg viewBox="-21 -21 42 42" aria-hidden="true"><circle r="21"/><rect x="-8" y="-8" width="16" height="16" rx="2"/><line x1="-8" y1="-3" x2="8" y2="-3"/></svg></span></span></div>
+      <svg class="qb-layer" ${box} aria-hidden="true"><circle class="qb-hub" cx="${c}" cy="${c}" r="7"/><path class="qb-pointer" d="M${c} ${c - R - 26} l-12 18 h24 z"/></svg>
+    </div>`;
   }
   let qiblaStop = null;
   function openQibla() {
@@ -1096,27 +1104,45 @@ body.app-dark #app .week-bar i{background:#1f4a36}
       <div class="qb-facts"><div><small>${ky() ? 'Багыты' : 'Направление'}</small><b>${q.bearing}° <span>${sideOf(q.bearing)}</span></b></div><div><small>${ky() ? 'Меккеге чейин' : 'До Мекки'}</small><b>${number.format(q.km)} <span>км</span></b></div></div>
       <section class="qb-card"></section>`;
     const status = layer.querySelector('.qb-status'), card = layer.querySelector('.qb-card'), rose = layer.querySelector('.qb-rose'), kaaba = layer.querySelector('.qb-kaaba');
+    let shown = null, target = null, frame = 0, lastText = '';
     const setStatus = (title, sub, tone = '') => { status.className = `qb-status${tone ? ` is-${tone}` : ''}`; status.querySelector('b').textContent = title; status.querySelector('small').textContent = sub; };
     const tip = `<p class="qb-tip"><svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>${ky() ? 'Телефонду түз, экранын өйдө каратып кармаңыз, металл менен магниттен алысыраак.' : 'Держите телефон горизонтально, экраном вверх, подальше от металла и магнитов.'}</p>`;
     const fallback = () => {
-      stop(); layer.classList.add('is-static'); layer.classList.remove('is-ok'); rose.style.transform = ''; kaaba.setAttribute('transform', `translate(${kaaba.dataset.x} ${kaaba.dataset.y})`);
+      stop(); layer.classList.add('is-static'); layer.classList.remove('is-ok'); shown = target = null; rose.style.transform = ''; kaaba.style.transform = ''; lastText = '';
       setStatus(ky() ? `Кыбла — ${q.bearing}°` : `Кибла — ${q.bearing}°`, ky() ? 'түндүктөн саат жебеси боюнча' : 'от севера по часовой стрелке');
       card.innerHTML = `<b>${ky() ? 'Компас жеткиликсиз' : 'Компас недоступен'}</b><p>${ky() ? `Түндүктү карап туруп, оңго ${q.bearing}° буруңуз — ${sideOf(q.bearing)} тарапка.` : `Встаньте лицом на север и повернитесь вправо на ${q.bearing}° — на ${sideOf(q.bearing)}.`}</p>${typeof DeviceOrientationEvent !== 'undefined' ? `<button type="button" class="qb-secondary" data-qibla-retry>${ky() ? 'Компасты кайра сынап көрүү' : 'Попробовать компас ещё раз'}</button>` : ''}`;
     };
     let heading = null, aligned = false, timer = 0, listening = null;
+    /* The sensor fires up to 60 times a second. Each reading only stores the heading; one
+       frame later the dial is drawn once, eased toward it (so jitter does not shake it), and
+       the words change only when the whole degrees or the state change. */
+    const draw = () => {
+      frame = 0;
+      if (target == null) return;
+      if (shown == null) shown = target;
+      const delta = ((target - shown + 540) % 360) - 180; // the short way round, through north too
+      shown += Math.abs(delta) < 0.3 ? delta : delta * 0.25;
+      rose.style.transform = `rotate(${-shown}deg)`;
+      kaaba.style.transform = `translate(-50%, -50%) rotate(${shown}deg)`;
+      const h = (shown % 360 + 360) % 360, diff = ((q.bearing - h + 540) % 360) - 180, ok = Math.abs(diff) <= 5, turn = Math.round(Math.abs(diff));
+      const text = ok ? 'ok' : `${diff > 0 ? 'r' : 'l'}${turn}`;
+      if (text !== lastText) {
+        lastText = text;
+        layer.classList.toggle('is-ok', ok);
+        if (ok && !aligned) navigator.vibrate?.(40);
+        aligned = ok;
+        if (ok) setStatus(ky() ? 'Сиз Кыбланы карап турасыз' : 'Вы смотрите на Киблу', ky() ? 'намазга даярсыз' : 'можно вставать на намаз', 'ok');
+        else setStatus(ky() ? `${diff > 0 ? 'Оңго' : 'Солго'} ${turn}° буруңуз` : `Поверните ${diff > 0 ? 'вправо' : 'влево'} на ${turn}°`, ky() ? 'жогорку жебе Каабага дал келиши керек' : 'стрелка сверху должна совпасть с Каабой');
+      }
+      if (Math.abs(delta) >= 0.3) frame = requestAnimationFrame(draw);
+    };
     const onTurn = event => {
       let h = typeof event.webkitCompassHeading === 'number' ? event.webkitCompassHeading : event.absolute || event.type === 'deviceorientationabsolute' ? (event.alpha == null ? null : 360 - event.alpha) : null;
       if (h == null) return;
-      h = (h + (screen.orientation?.angle || 0) + 360) % 360; heading = h; clearTimeout(timer);
-      layer.classList.remove('is-static'); card.innerHTML = tip;
-      rose.style.transform = `rotate(${-h}deg)`;
-      kaaba.setAttribute('transform', `translate(${kaaba.dataset.x} ${kaaba.dataset.y}) rotate(${h})`);
-      const diff = ((q.bearing - h + 540) % 360) - 180, ok = Math.abs(diff) <= 5;
-      layer.classList.toggle('is-ok', ok);
-      if (ok && !aligned) navigator.vibrate?.(40);
-      aligned = ok;
-      if (ok) setStatus(ky() ? 'Сиз Кыбланы карап турасыз' : 'Вы смотрите на Киблу', ky() ? 'намазга даярсыз' : 'можно вставать на намаз', 'ok');
-      else setStatus(ky() ? `${diff > 0 ? 'Оңго' : 'Солго'} ${Math.round(Math.abs(diff))}° буруңуз` : `Поверните ${diff > 0 ? 'вправо' : 'влево'} на ${Math.round(Math.abs(diff))}°`, ky() ? 'жогорку жебе Каабага дал келиши керек' : 'стрелка сверху должна совпасть с Каабой');
+      h = (h + (screen.orientation?.angle || 0) + 360) % 360;
+      if (heading == null) { clearTimeout(timer); layer.classList.remove('is-static'); card.innerHTML = tip; }
+      heading = target = h;
+      if (!frame) frame = requestAnimationFrame(draw);
     };
     const start = () => {
       stop(); heading = null;
@@ -1126,13 +1152,13 @@ body.app-dark #app .week-bar i{background:#1f4a36}
       card.innerHTML = tip;
       timer = setTimeout(() => { if (heading == null) fallback(); }, 3500);
     };
-    const stop = () => { if (listening) window.removeEventListener(listening, onTurn); listening = null; clearTimeout(timer); };
+    const stop = () => { if (listening) window.removeEventListener(listening, onTurn); listening = null; clearTimeout(timer); cancelAnimationFrame(frame); frame = 0; };
     const ask = () => {
       layer.classList.add('is-static');
       setStatus(ky() ? `Кыбла — ${q.bearing}°` : `Кибла — ${q.bearing}°`, ky() ? 'компас үчүн уруксат керек' : 'для компаса нужно разрешение');
       card.innerHTML = `<b>${ky() ? 'Компаска уруксат керек' : 'Нужен доступ к компасу'}</b><p>${ky() ? 'Кайсы тарапка бурулууну көрсөтүү үчүн телефондун багыт датчиги керек. Маалымат эч жакка жөнөтүлбөйт.' : 'Чтобы показать, куда повернуться, нужен датчик направления телефона. Данные никуда не отправляются.'}</p><button type="button" class="qb-primary" data-qibla-allow>${ky() ? 'Уруксат берүү' : 'Разрешить доступ'}</button><button type="button" class="qb-secondary" data-qibla-static>${ky() ? 'Компассыз көрсөтүү' : 'Показать без компаса'}</button>`;
     };
-    const close = () => { stop(); layer.remove(); document.removeEventListener('keydown', onKey); qiblaStop = null; };
+    const close = () => { stop(); layer.remove(); document.body.classList.remove('qibla-open'); document.removeEventListener('keydown', onKey); qiblaStop = null; };
     const onKey = event => { if (event.key === 'Escape') close(); };
     layer.addEventListener('click', async event => {
       if (event.target.closest('[data-qibla-close]')) { close(); return; }
@@ -1143,7 +1169,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
       }
     });
     document.addEventListener('keydown', onKey);
-    (document.querySelector('#app') || document.body).append(layer); qiblaStop = close;
+    (document.querySelector('#app') || document.body).append(layer); document.body.classList.add('qibla-open'); qiblaStop = close;
     const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
     if (typeof DeviceOrientationEvent === 'undefined') fallback(); else if (needsPermission) ask(); else start();
     layer.querySelector('[data-qibla-close]').focus();
@@ -1206,7 +1232,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
 
   document.addEventListener('click', event => {
     if (event.target.closest('[data-prayer-schedule]')) { openSchedule(); return; }
-    if (event.target.closest('[data-qibla-open]')) { closeSheet('prayer-schedule-sheet'); openQibla(); return; }
+    if (event.target.closest('[data-qibla-open]')) { const open = document.querySelector('#prayer-schedule-sheet'); if (open && !open.hidden) closeSheet('prayer-schedule-sheet'); openQibla(); return; }
     if (event.target.closest('[data-prayer-city]')) { openCities(); return; }
     if (event.target.closest('[data-prayer-geo]')) { useLocation(); return; }
     const pick = event.target.closest('[data-prayer-pick]');
