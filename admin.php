@@ -1891,7 +1891,7 @@ tbody tr:last-child td{border-bottom:0}
     if (t.closest('[data-lv-create]')) { lvCreate(); return; }
     if (t.closest('[data-lv-new]')) { lv.fresh = true; lv.key = ''; clearTimeout(lv.poll); clearInterval(lv.tick); paintLive(); req('admin/live').then(body => { lv.recent = body.recent || []; lv.key = ''; paintLive(); }).catch(() => {}); return; }
     const lvLaunch = t.closest('[data-lv-launch]'); if (lvLaunch) { lv.form.quizId = lvLaunch.dataset.lvLaunch; if (!lvActive(lv.data)) lv.fresh = true; location.hash = '#quizzes/live'; return; }
-    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = data.quizzes = data.analytics = null; qz.details = {}; route(); return; }
+    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = data.quizzes = data.analytics = null; qz.details = {}; route(); loadCounts(); return; }
     if (t.closest('[data-search]')) { openSearch(); return; }
     if (t.closest('[data-bell]')) { event.stopPropagation(); openBell(); return; }
     const pause = t.closest('[data-pause]'); if (pause) { setPaused(pause.dataset.pause, true); return; }
@@ -1942,12 +1942,18 @@ tbody tr:last-child td{border-bottom:0}
   });
 
   /* ---------- Sign in and out ---------- */
+  /* The side menu counters come from several lists; they load once in the background after the
+     open view has asked for its own data, so every badge is there whichever section opens first. */
+  function loadCounts() {
+    setTimeout(() => { if (!cred) return; [[loadEvents, 'events'], [loadUsers, 'users'], [loadGroups, 'groups'], [loadQuizzes, 'quizzes']].forEach(([load, key]) => { if (!data[key]) load(true).catch(() => {}); }); }, 900);
+  }
   function enter() {
     document.documentElement.classList.remove('restoring');
     $('#login').hidden = true; $('#shell').hidden = false;
     $('#me-name').textContent = cred.login; $('#me-avatar').textContent = (cred.login || 'a').slice(0, 1);
     paintVersion(); route();
     loadModeration(true).catch(() => {});
+    loadCounts();
     if (data.settings) paintBell(); else req('admin/settings').then(s => { data.settings = s; paintBell(); }).catch(() => {});
   }
   async function logout() {
