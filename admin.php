@@ -345,6 +345,23 @@ tbody tr:last-child td{border-bottom:0}
 /* Pause, moderation, deeds, search and notifications */
 .pill.paused{background:var(--amber-bg);color:var(--amber)}
 .ov-grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.an-rets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.an-ret{padding:16px;border-radius:22px;background:rgba(255,255,255,.55);display:flex;flex-direction:column;gap:8px}
+.an-ret small,.an-ret span{font-size:13px;color:var(--muted)}
+.an-ret b{font-size:34px;font-weight:600;letter-spacing:-.02em}
+.an-scroll{overflow-x:auto}
+.an-table{width:100%;border-collapse:separate;border-spacing:4px;font-size:14px}
+.an-table th{text-align:left;font-weight:500;color:var(--muted);padding:6px 8px;white-space:nowrap}
+.an-table tbody th{color:inherit;font-weight:600}
+.an-table td{padding:8px 10px;border-radius:12px;text-align:center;background:rgba(31,107,79,var(--a,0));white-space:nowrap}
+.an-table td b{display:block;font-weight:600}
+.an-table td small{font-size:11px;color:var(--muted)}
+.an-table td.an-n{background:none;font-weight:600}
+.an-table td.an-na{background:rgba(16,22,26,.04);color:var(--muted)}
+.an-table{display:table}.an-table thead{display:table-header-group}.an-table tbody{display:table-row-group}.an-table tr{display:table-row;padding:0;border:0;cursor:default}.an-table td{display:table-cell;border:0}
+.an-note{margin:0;padding:0 6px;font-size:13px;line-height:1.5}
+@media (max-width:760px){.an-rets{grid-template-columns:minmax(0,1fr)}}
+
 .deed{display:flex;flex-direction:column;gap:6px;padding:8px 0}
 .deed span{display:flex;justify-content:space-between;gap:8px;font-size:14px}
 .deed b{font-weight:600}
@@ -577,6 +594,7 @@ tbody tr:last-child td{border-bottom:0}
       <a href="#overview" data-route="overview"><span data-icon="home"></span>Обзор<em></em></a>
       <a href="#events" data-route="events"><span data-icon="flag"></span>События<em id="nav-events"></em></a>
       <a href="#users" data-route="users"><span data-icon="users"></span>Участники<em id="nav-users"></em></a>
+      <a href="#analytics" data-route="analytics"><span data-icon="chart"></span>Аналитика<em></em></a>
       <a href="#groups" data-route="groups"><span data-icon="group"></span>Группы<em id="nav-groups"></em></a>
       <a href="#moderation" data-route="moderation"><span data-icon="shield"></span>Модерация<em id="nav-moderation"></em></a>
       <a href="#quizzes" data-route="quizzes"><span data-icon="brain"></span>Тесты<em id="nav-quizzes"></em></a>
@@ -602,7 +620,7 @@ tbody tr:last-child td{border-bottom:0}
   /* ---------- Basics ---------- */
   const PATHS = {
     moon:'M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5zM16.5 3.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z',
-    home:'M4 11l8-7 8 7v9H4zM10 20v-6h4v6', flag:'M5 21V4M5 4h11l-2 3.5L16 11H5',
+    home:'M4 11l8-7 8 7v9H4zM10 20v-6h4v6', chart:'M4 20h16M7 16v-5M12 16V6M17 16v-8', flag:'M5 21V4M5 4h11l-2 3.5L16 11H5',
     users:'M9 8a3.5 3.5 0 1 0 0 .01M3 20c.8-3.5 3.3-5.5 6-5.5s5.2 2 6 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c1.6.6 2.6 2.4 3 5.5',
     sliders:'M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4', plus:'M12 5v14M5 12h14', search:'M4 11a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M20 20l-4-4',
     chev:'M9.5 6l6 6-6 6', back:'M14.5 6l-6 6 6 6', more:'M6 12h.01M12 12h.01M18 12h.01', check:'M5 12.5l4.5 4.5L19 7.5',
@@ -694,7 +712,7 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   /* ---------- Data ---------- */
-  const data = { events: null, users: null, overview: null, settings: null, groups: null, moderation: null, quizzes: null };
+  const data = { events: null, users: null, overview: null, settings: null, groups: null, moderation: null, quizzes: null, analytics: null };
   async function loadModeration(force) { if (force || !data.moderation) data.moderation = await req('admin/moderation'); $('#nav-moderation').textContent = data.moderation.length || ''; paintBell(); return data.moderation; }
   async function loadGroups(force) { if (force || !data.groups) data.groups = await req('admin/groups'); $('#nav-groups').textContent = data.groups.length || ''; return data.groups; }
   async function loadEvents(force) { if (force || !data.events) data.events = await req('admin/events'); paintCounts(); return data.events; }
@@ -728,6 +746,47 @@ tbody tr:last-child td{border-bottom:0}
   window.addEventListener('offline', () => { if (!cred || document.querySelector('.offline-bar')) return; const bar = document.createElement('div'); bar.className = 'offline-bar'; bar.setAttribute('role', 'status'); bar.innerHTML = icon('wifioff') + 'Нет соединения — данные могут быть неактуальны'; document.body.append(bar); });
 
   /* ---------- Overview ---------- */
+  /* Analytics: who comes back, how regularly, and which deeds people keep. */
+  async function showAnalytics() {
+    if (!data.analytics) loading('Аналитика');
+    let an;
+    try { an = await req('admin/analytics'); data.analytics = an; }
+    catch (error) { failed('Аналитика', error); return; }
+    const pct = ([n, of]) => of ? Math.round(n / of * 100) : null;
+    const kpi = (name, value, label, chip) => `<article class="glass kpi"><div class="kpi-top"><span class="circle">${icon(name)}</span>${chip ? `<span class="chip">${chip}</span>` : ''}</div><div><b>${value}</b><small>${label}</small></div></article>`;
+    const users = Number(an.users) || 0, mau = Number(an.mau) || 0, dau = Number(an.dau) || 0;
+    const stick = mau ? Math.round(dau / mau * 100) : 0;
+    const ret = an.retention || {};
+    const retCard = (key, title, note) => { const r = ret[key] || [0, 0], v = pct(r); return `<div class="an-ret"><small>${title}</small><b>${v == null ? '—' : v + '%'}</b><i class="bar"><i style="width:${v || 0}%"></i></i><span>${r[1] ? `${num(r[0])} из ${num(r[1])} ${plural(r[1], 'человека', 'человек', 'человек')}` : 'пока мало данных'} · ${note}</span></div>`; };
+    const week = w => { const d = new Date(w + 'T12:00:00'), e = new Date(d); e.setDate(d.getDate() + 6); const f = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' }); return `${f.format(d).replace('.', '')} – ${f.format(e).replace('.', '')}`; };
+    const cell = r => { const v = pct(r); return v == null ? '<td class="an-na">—</td>' : `<td style="--a:${(0.08 + v / 100 * 0.62).toFixed(2)}"><b>${v}%</b><small>${r[0]}/${r[1]}</small></td>`; };
+    const cohorts = (an.cohorts || []).map(c => `<tr><th scope="row">${week(c.week)}</th><td class="an-n">${num(c.signups)}</td>${cell(c.d1)}${cell(c.d7)}${cell(c.d30)}</tr>`).join('');
+    const DEEDS = [['quran', 'Куран'], ['salawat', 'Салават'], ['tasbihat', 'Зикр'], ['asr', 'Нафиль после Асра'], ['kuptan', 'Нафиль после Иши'], ['tahajjud', 'Тахаджуд'], ['avvabin', 'Аввабин'], ['duha', 'Духа'], ['jauchan', 'Жавшан'], ['kitap', 'Книги'], ['fast', 'Пост'], ['qaza', 'Пропущенные намазы']];
+    const days = Number(an.activeDays) || 0;
+    const deedRows = DEEDS.map(([k, l]) => [l, Number(an.deeds?.[k]) || 0]).sort((a, b) => b[1] - a[1]);
+    const deedHtml = days ? deedRows.map(([l, n]) => { const v = Math.round(n / days * 100); return `<div class="deed"><span><b>${l}</b><small>${v}% дней</small></span><i class="bar"><i style="width:${v}%"></i></i></div>`; }).join('') : '<div class="empty">За 30 дней отметок пока нет.</div>';
+    const reg = an.regularity || {}, regMax = Math.max(1, ...Object.values(reg).map(Number));
+    const regLabels = [['1', '1 день'], ['2–6', '2–6 дней'], ['7–14', '7–14 дней'], ['15–29', '15–29 дней'], ['30', 'каждый день']];
+    const regHtml = regLabels.map(([k, l]) => { const n = Number(reg[k]) || 0; return `<div class="deed"><span><b>${l}</b><small>${num(n)} ${plural(n, 'человек', 'человека', 'человек')}</small></span><i class="bar"><i style="width:${Math.round(n / regMax * 100)}%"></i></i></div>`; }).join('');
+    mount(top('Chetele', 'Аналитика', 'Кто возвращается и какие дела ведут', tools() + refreshBtn) + `
+      <div class="kpis">
+        ${kpi('users', num(dau), 'активны сегодня', users ? `${Math.round(dau / users * 100)}% от всех` : '')}
+        ${kpi('clock', num(Number(an.wau) || 0), 'за 7 дней')}
+        ${kpi('flag', num(mau), 'за 30 дней', users ? `${Math.round(mau / users * 100)}% от всех` : '')}
+        ${kpi('flame', stick + '%', 'возвращаются ежедневно', 'сегодня ÷ за 30 дней')}
+      </div>
+      <section class="glass card"><div class="card-head"><h2>Удержание</h2><small class="muted">кто снова отметил дела после регистрации</small></div>
+        <div class="an-rets">${retCard('d1', 'На следующий день', '2-й день')}${retCard('d7', 'Через неделю', 'дни 7–13')}${retCard('d30', 'Через месяц', 'дни 28–34')}</div>
+      </section>
+      <section class="glass card"><div class="card-head"><h2>По неделям регистрации</h2><small class="muted">последние 8 недель</small></div>
+        ${cohorts ? `<div class="an-scroll"><table class="an-table"><thead><tr><th scope="col">Неделя</th><th scope="col">Новых</th><th scope="col">2-й день</th><th scope="col">Неделя</th><th scope="col">Месяц</th></tr></thead><tbody>${cohorts}</tbody></table></div>` : '<div class="empty">За последние 90 дней регистраций не было.</div>'}
+      </section>
+      <div class="ov-grid3">
+        <section class="glass card"><div class="card-head"><h2>Какие дела отмечают</h2><small class="muted">доля активных дней · 30 дней</small></div>${deedHtml}<small class="muted">В среднем ${String(an.avgDeeds || 0).replace('.', ',')} дела в активный день.</small></section>
+        <section class="glass card"><div class="card-head"><h2>Насколько регулярно</h2><small class="muted">активных дней из последних 30</small></div>${regHtml}</section>
+      </div>
+      <p class="muted an-note">Считаются только зарегистрированные участники: отметки гостей хранятся на их телефонах и на сервер не попадают. Активный день — когда отмечено хотя бы одно дело. «—» в таблице значит, что срок ещё не прошёл.</p>`, 'analytics');
+  }
   async function showOverview() {
     /* Repeat visits and «Обновить» keep the current page until fresh numbers arrive. */
     if (!data.overview) loading('Обзор');
@@ -754,7 +813,7 @@ tbody tr:last-child td{border-bottom:0}
     const deedsToday = ov.deedsToday || {}, deedRows = DEEDS.map(([k, l]) => [l, Number(deedsToday[k]) || 0]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 6);
     const deedHtml = deedRows.length ? deedRows.map(([l, n]) => `<div class="deed"><span><b>${l}</b><small>${num(n)} ${plural(n, 'человек', 'человека', 'человек')}</small></span><i class="bar"><i style="width:${Math.round(n / Math.max(1, todayEntries) * 100)}%"></i></i></div>`).join('') : '<div class="empty">Сегодня пока никто не отметил дела.</div>';
     const weekday = new Intl.DateTimeFormat('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
-    mount(top(`Ассаламу алейкум, ${esc(cred.login)}`, 'Обзор', weekday[0].toUpperCase() + weekday.slice(1), tools() + refreshBtn + createBtn) + `
+    mount(top(`Ассаламу алейкум, ${esc(cred.login)}`, 'Обзор', weekday[0].toUpperCase() + weekday.slice(1), tools() + `<a class="btn-glass" href="#analytics" aria-label="Аналитика" title="Аналитика">${icon('chart')}</a>` + refreshBtn + createBtn) + `
       <div class="kpis">
         ${kpi('users', num(users), 'участников всего', ov.newUsersPeriod ? `+${num(ov.newUsersPeriod)} за 30 дней` : '')}
         ${kpi('check', num(todayEntries), 'отметили дела сегодня', users ? `${Math.round(todayEntries / users * 100)}% от всех` : '')}
@@ -1785,7 +1844,7 @@ tbody tr:last-child td{border-bottom:0}
     if (!cred) return;
     document.querySelector('.menu')?.remove();
     const [section = 'overview', id, action] = location.hash.replace(/^#/, '').split('/');
-    const current = ['overview', 'events', 'users', 'groups', 'moderation', 'quizzes', 'settings'].includes(section) ? section : 'overview';
+    const current = ['overview', 'events', 'users', 'analytics', 'groups', 'moderation', 'quizzes', 'settings'].includes(section) ? section : 'overview';
     closePanel();
     document.querySelectorAll('[data-route]').forEach(a => { if (a.dataset.route === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     window.scrollTo(0, 0);
@@ -1795,6 +1854,7 @@ tbody tr:last-child td{border-bottom:0}
       else if (id && action === 'copy') showEditor(null, id);
       else showEvents(id || null);
     } else if (current === 'users') showUsers();
+    else if (current === 'analytics') showAnalytics();
     else if (current === 'groups') {
       if (id === 'new') showGroupEditor(null);
       else if (id && action === 'edit') showGroupEditor(id);
@@ -1831,7 +1891,7 @@ tbody tr:last-child td{border-bottom:0}
     if (t.closest('[data-lv-create]')) { lvCreate(); return; }
     if (t.closest('[data-lv-new]')) { lv.fresh = true; lv.key = ''; clearTimeout(lv.poll); clearInterval(lv.tick); paintLive(); req('admin/live').then(body => { lv.recent = body.recent || []; lv.key = ''; paintLive(); }).catch(() => {}); return; }
     const lvLaunch = t.closest('[data-lv-launch]'); if (lvLaunch) { lv.form.quizId = lvLaunch.dataset.lvLaunch; if (!lvActive(lv.data)) lv.fresh = true; location.hash = '#quizzes/live'; return; }
-    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = data.quizzes = null; qz.details = {}; route(); return; }
+    if (t.closest('[data-refresh]')) { data.events = data.users = data.groups = data.moderation = data.quizzes = data.analytics = null; qz.details = {}; route(); return; }
     if (t.closest('[data-search]')) { openSearch(); return; }
     if (t.closest('[data-bell]')) { event.stopPropagation(); openBell(); return; }
     const pause = t.closest('[data-pause]'); if (pause) { setPaused(pause.dataset.pause, true); return; }

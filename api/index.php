@@ -914,6 +914,65 @@ try {
         respond(200,['deedsToday'=>$deedCounts,'pendingModeration'=>$pendingModeration,'users'=>$users,'activeEvents'=>$activeEvents,'todayEntries'=>$todayEntries,'todayPoints'=>$todayPoints,'newUsersPeriod'=>$newUsersPeriod,'completedEvents'=>$completedEvents,'activity'=>$activity,'recentUsers'=>$recentUsers,'recentEvents'=>$recentEvents]);
     }
 
+    /* Analytics: who comes back. Only registered people are counted (a guest's marks stay on
+       their phone). A day counts as active when at least one deed was marked. Retention looks at
+       people by the week they signed up: back the next day, in their second week (days 7–13)
+       and a month on (days 28–34); a window still open is left out of the share. */
+    if ($method === 'GET' && $parts === ['admin','analytics']) {
+        requireAdmin($config, $db);
+        $today = new DateTimeImmutable($db->query('SELECT CURDATE()')->fetchColumn());
+        $since = $today->modify('-119 days')->format('Y-m-d');
+        $active = [];
+        $rows = $db->prepare('SELECT user_id, entry_date FROM daily_entries WHERE completed_count > 0 AND entry_date >= ?');
+        $rows->execute([$since]);
+        foreach ($rows as $row) $active[$row['user_id']][$row['entry_date']] = true;
+        $countSince = function (int $days) use ($active, $today): int { $from = $today->modify('-' . ($days - 1) . ' days')->format('Y-m-d'); $n = 0; foreach ($active as $dates) foreach ($dates as $d => $_) if ($d >= $from) { $n++; break; } return $n; };
+        $dau = $countSince(1); $wau = $countSince(7); $mau = $countSince(30);
+        $users = $db->prepare('SELECT id, DATE(created_at) AS signed FROM users WHERE created_at >= ?');
+        $users->execute([$today->modify('-90 days')->format('Y-m-d')]);
+        $cohorts = []; $overall = ['d1' => [0, 0], 'd7' => [0, 0], 'd30' => [0, 0]];
+        $windows = ['d1' => [1, 1], 'd7' => [7, 13], 'd30' => [28, 34]];
+        foreach ($users as $u) {
+            $signed = new DateTimeImmutable($u['signed']);
+            $week = $signed->modify('-' . (((int)$signed->format('N')) - 1) . ' days')->format('Y-m-d');
+            if (!isset($cohorts[$week])) $cohorts[$week] = ['week' => $week, 'signups' => 0, 'd1' => [0, 0], 'd7' => [0, 0], 'd30' => [0, 0]];
+            $cohorts[$week]['signups']++;
+            foreach ($windows as $key => [$a, $b]) {
+                if ($signed->modify("+$b days") >= $today) continue; // the window has not closed yet
+                $back = false;
+                for ($i = $a; $i <= $b; $i++) if (isset($active[$u['id']][$signed->modify("+$i days")->format('Y-m-d')])) { $back = true; break; }
+                $cohorts[$week][$key][1]++; $overall[$key][1]++;
+                if ($back) { $cohorts[$week][$key][0]++; $overall[$key][0]++; }
+            }
+        }
+        krsort($cohorts);
+        /* Deeds: the share of active days (last 30) on which each one was marked. */
+        $deeds = ['quran'=>0,'jauchan'=>0,'kitap'=>0,'salawat'=>0,'tasbihat'=>0,'tahajjud'=>0,'fast'=>0,'asr'=>0,'kuptan'=>0,'avvabin'=>0,'duha'=>0,'qaza'=>0];
+        $days = 0; $sum = 0;
+        $recent = $db->prepare('SELECT tasks, qaza, completed_count FROM daily_entries WHERE completed_count > 0 AND entry_date >= ?');
+        $recent->execute([$today->modify('-29 days')->format('Y-m-d')]);
+        foreach ($recent as $row) {
+            $days++; $sum += (int)$row['completed_count'];
+            $tasks = json_decode((string)$row['tasks'], true) ?: []; $qaza = json_decode((string)$row['qaza'], true) ?: [];
+            foreach (['quran','jauchan','kitap','salawat','tasbihat'] as $k) if ((int)($tasks[$k] ?? 0) > 0) $deeds[$k]++;
+            foreach (['tahajjud','fast'] as $k) if (($tasks[$k] ?? '') === 'yes') $deeds[$k]++;
+            $nafil = $tasks['nafil'] ?? null;
+            foreach (['asr','kuptan','avvabin','duha'] as $k) if ($nafil === true || (is_array($nafil) && !empty($nafil[$k]))) $deeds[$k]++;
+            if (is_array($qaza) && array_filter($qaza, fn($v) => (int)$v > 0)) $deeds['qaza']++;
+        }
+        /* How regular people are: active days out of the last 30. */
+        $buckets = ['1' => 0, '2–6' => 0, '7–14' => 0, '15–29' => 0, '30' => 0];
+        $from30 = $today->modify('-29 days')->format('Y-m-d');
+        foreach ($active as $dates) {
+            $n = count(array_filter(array_keys($dates), fn($d) => $d >= $from30));
+            if (!$n) continue;
+            $buckets[$n === 1 ? '1' : ($n <= 6 ? '2–6' : ($n <= 14 ? '7–14' : ($n <= 29 ? '15–29' : '30')))]++;
+        }
+        respond(200, ['dau'=>$dau,'wau'=>$wau,'mau'=>$mau,'users'=>(int)$db->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+            'retention'=>$overall,'cohorts'=>array_values(array_slice($cohorts, 0, 8)),
+            'deeds'=>$deeds,'activeDays'=>$days,'avgDeeds'=>$days ? round($sum / $days, 1) : 0,'regularity'=>$buckets]);
+    }
+
     if ($method === 'GET' && $parts === ['admin','settings']) {
         requireAdmin($config, $db);
         $defaults=['timezone'=>'Asia/Bishkek','defaultLeaderboard'=>true,'defaultVisibility'=>'names','defaultModeration'=>false];
