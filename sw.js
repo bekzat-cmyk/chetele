@@ -1,5 +1,5 @@
-const CACHE_NAME = 'chetele-static-v145';
-const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/i18n-ky.js?v=6', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=8', '/assets/app.js?v=6f2a1239', '/assets/app.css?v=0f0a6ae8'];
+const CACHE_NAME = 'chetele-static-v146';
+const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/img/logo.png', '/assets/i18n-ky.js?v=6', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=1', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=8', '/assets/app.js?v=af8582db', '/assets/app.css?v=0f0a6ae8'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES.map(url => new Request(url, { cache: 'reload' })))));
@@ -25,10 +25,11 @@ self.addEventListener('fetch', event => {
   event.respondWith(openFile(event, url));
 });
 
-/* Launch speed: a Home Screen launch used to wait for the network for every file (about
-   2 MB). Now the saved copy opens at once and the network refreshes it in the background,
-   so the next launch has the newest page. Each deploy also installs a new service worker,
-   which takes over and reloads the open app (see index.html), so updates still arrive. */
+/* Launch: the files with ?v= open from the phone at once. The page itself (one small file)
+   is asked from the network first, for at most PAGE_WAIT ms, so a launch after a deploy
+   opens the new version straight away instead of the old one. With a slow or no network
+   the saved page opens and the network keeps refreshing it in the background. */
+const PAGE_WAIT = 2500;
 const MAINTENANCE_FLAG = '/__maintenance';
 const isHtml = response => (response.headers.get('content-type') || '').includes('text/html');
 
@@ -49,8 +50,11 @@ async function openPage(event) {
   const cache = await caches.open(CACHE_NAME);
   const saved = await cache.match('/index.html');
   const fresh = refreshPage(event.request, cache);
-  if (saved) { event.waitUntil(fresh.catch(() => {})); return saved; }
-  return (await fresh.catch(() => null)) || Response.error();
+  if (!saved) return (await fresh.catch(() => null)) || Response.error();
+  event.waitUntil(fresh.catch(() => {}));
+  const late = new Promise(resolve => setTimeout(resolve, PAGE_WAIT, null));
+  const first = await Promise.race([fresh.then(r => r && r.ok && isHtml(r) ? r : null, () => null), late]);
+  return first || saved;
 }
 
 /* Only the real app page is kept. When the hosting answers with a page of its own (account

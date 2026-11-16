@@ -16,3 +16,13 @@ for name in ('app.js', 'app.css'):
         if updated != text:
             path.write_text(updated)
     print(f'{name} -> {digest}')
+
+# The page carries the service worker's cache name, so after an update it can tell whether it
+# is already the new version and skip a needless reload.
+cache = re.search(r"CACHE_NAME = '([^']+)'", (root / 'sw.js').read_text()).group(1)
+page = root / 'index.html'
+text = page.read_text()
+updated = re.sub(r'<meta name="chetele-build" content="[^"]*"', f'<meta name="chetele-build" content="{cache}"', text)
+if updated != text:
+    page.write_text(updated)
+print(f'build -> {cache}')

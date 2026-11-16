@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.12';
+    const APP_VERSION = '2.13';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -306,7 +306,7 @@
       await settleZikr(entryDateKey);
       try {
         const response=await apiFetch(apiUrl(`users/${state.userId}/entries/${entryDateKey}`), {
-          method:'PUT', headers:{'Content-Type':'application/json'},
+          method:'PUT', headers:{'Content-Type':'application/json'}, keepalive:true,
           body:JSON.stringify({tasks:state.tasks,qaza:state.qaza,zikrSync:2})
         });
         if(response.status===404){ delete state.userId; save(); ensureRemoteUser(); return null; }
@@ -2269,7 +2269,19 @@
        itself, so a deploy reaches the phone without closing the app by hand. */
     if('serviceWorker' in navigator){
       const hadController=!!navigator.serviceWorker.controller; let reloading=false;
-      navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!hadController||reloading) return; reloading=true; const cover=document.querySelector('#app-preloader'); if(cover){ cover.hidden=false; cover.classList.remove('is-hidden'); } if(state.userId) syncCurrentEntry().finally(()=>location.reload()); else location.reload(); });
+      navigator.serviceWorker.addEventListener('controllerchange',async()=>{
+        if(!hadController||reloading) return;
+        /* A page that already came from the network is the new version: nothing to reload. */
+        const build=document.querySelector('meta[name="chetele-build"]')?.content;
+        try { if(build&&(await caches.keys()).includes(build)) return; } catch {}
+        if(reloading) return; reloading=true;
+        const cover=document.querySelector('#app-preloader'); if(cover){ cover.hidden=false; cover.classList.remove('is-hidden'); }
+        /* The day is sent before the reload (keepalive lets it finish even if the page goes first);
+           a weak network gets at most 6 s, so the splash never hangs. */
+        const synced=state.userId?syncCurrentEntry().catch(()=>{}):null;
+        await Promise.race([synced,new Promise(resolve=>setTimeout(resolve,6000))]);
+        location.reload();
+      });
       document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') navigator.serviceWorker.getRegistration().then(registration=>registration?.update()).catch(()=>{}); });
     }
   
