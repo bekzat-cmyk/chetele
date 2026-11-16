@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.14';
+    const APP_VERSION = '2.15';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -2282,3 +2282,17 @@
       document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') navigator.serviceWorker.getRegistration().then(registration=>registration?.update()).catch(()=>{}); });
     }
   
+    /* iOS sometimes leaves the fixed bottom nav where it was while the keyboard was up, or after the app comes back
+       from the background, until the next repaint. Re-anchor it on those moments: the hide/show happens in one frame,
+       so nothing flickers. */
+    (()=>{
+      const nav=document.querySelector('#app .nav'); if(!nav) return;
+      let timer=0;
+      const reanchor=()=>{ nav.style.display='none'; void nav.offsetHeight; nav.style.display=''; };
+      const soon=()=>{ clearTimeout(timer); requestAnimationFrame(reanchor); timer=setTimeout(reanchor,350); };
+      document.addEventListener('focusout',e=>{ if(e.target.matches?.('input,textarea,select,[contenteditable]')) soon(); });
+      window.visualViewport?.addEventListener('resize',soon);
+      window.addEventListener('orientationchange',soon);
+      window.addEventListener('pageshow',soon);
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') soon(); });
+    })();
