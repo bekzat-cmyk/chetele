@@ -858,7 +858,7 @@ body.app-dark #app .zikr-continue{background:#fff;color:#0f6b41}
 body.app-dark #app .week-bar i{background:#1f4a36}
     </style>`);
   </script>
-<link rel="stylesheet" href="assets/app.css?v=50e42d8c" />
+<link rel="stylesheet" href="assets/app.css?v=8af57a71" />
 
 <script>
 /* Menu capsule from the motion board: one black pill slides and stretches to the
@@ -1093,6 +1093,9 @@ body.app-dark #app .week-bar i{background:#1f4a36}
       <svg class="qb-layer" ${box} aria-hidden="true"><circle class="qb-hub" cx="${c}" cy="${c}" r="7"/><path class="qb-pointer" d="M${c} ${c - R - 26} l-12 18 h24 z"/></svg>
     </div>`;
   }
+  const compassKey = 'chetele-compass-allowed';
+  const remembered = () => { try { return localStorage.getItem(compassKey) === '1'; } catch { return false; } };
+  const remember = answer => { try { if (answer === 'granted') localStorage.setItem(compassKey, '1'); else localStorage.removeItem(compassKey); } catch { /* private mode: we just ask again */ } };
   let qiblaStop = null;
   function openQibla() {
     document.querySelector('.qibla-screen')?.remove();
@@ -1165,13 +1168,22 @@ body.app-dark #app .week-bar i{background:#1f4a36}
       if (event.target.closest('[data-qibla-static]')) { fallback(); return; }
       if (event.target.closest('[data-qibla-retry]')) { needsPermission ? ask() : start(); return; }
       if (event.target.closest('[data-qibla-allow]')) {
-        try { const answer = await DeviceOrientationEvent.requestPermission(); if (answer === 'granted') start(); else fallback(); } catch { fallback(); }
+        try { const answer = await DeviceOrientationEvent.requestPermission(); remember(answer); if (answer === 'granted') start(); else fallback(); } catch { fallback(); }
       }
     });
     document.addEventListener('keydown', onKey);
     (document.querySelector('#app') || document.body).append(layer); document.body.classList.add('qibla-open'); qiblaStop = close;
     const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
-    if (typeof DeviceOrientationEvent === 'undefined') fallback(); else if (needsPermission) ask(); else start();
+    /* Once the compass was allowed, the next openings ask the phone straight away: this runs
+       inside the tap that opened the screen, so iPhone either remembers the answer silently or
+       shows only its own prompt, without our card first. */
+    if (typeof DeviceOrientationEvent === 'undefined') fallback();
+    else if (needsPermission && remembered()) {
+      setStatus(ky() ? 'Компас иштеп жатат…' : 'Включаем компас…', ky() ? 'телефонду бир аз кыймылдатыңыз' : 'слегка поводите телефоном');
+      card.innerHTML = tip;
+      DeviceOrientationEvent.requestPermission().then(answer => { remember(answer); if (answer === 'granted') start(); else ask(); }).catch(() => ask());
+    }
+    else if (needsPermission) ask(); else start();
     layer.querySelector('[data-qibla-close]').focus();
   }
 

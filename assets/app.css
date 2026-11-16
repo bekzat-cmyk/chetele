@@ -2179,6 +2179,8 @@ body #app .qb-secondary{background:rgba(16,22,26,.06);color:#10161A}
 body.app-dark #app .qibla-screen{background:linear-gradient(180deg,#1E3A33 0,#14251f 300px,#0b1110 640px);color:var(--ink)}
 body.app-dark #app .qb-status{background:rgba(23,32,30,.9);color:var(--ink)}
 body.app-dark #app .qb-status.is-ok{background:#5FC79A;color:#0B1110}
+body.app-dark #app .qb-status.is-ok b,body.app-dark #app .qb-status.is-ok small{color:#0B1110}
+body.app-dark #app .qb-status.is-ok small{opacity:.75}
 body.app-dark #app .qb-face{fill:#17201e}
 body.app-dark #app .qb-halo{fill:rgba(255,255,255,.04);stroke:rgba(255,255,255,.14)}
 body.app-dark #app .qb-rose line{stroke:rgba(238,245,242,.3)}
