@@ -293,7 +293,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
 <script src="assets/fasting.js?v=1"></script>
 <script src="assets/onboarding.js?v=1"></script>
 <script src="assets/zikr-sync.js?v=3"></script>
-<script src="assets/app.js?v=87fad6b6"></script><script>
+<script src="assets/app.js?v=6f2a1239"></script><script>
     (()=>{
       const originalRenderEvents=window.renderEvents;
       if(typeof originalRenderEvents!=='function') return;
@@ -1221,6 +1221,9 @@ body.app-dark #app .week-bar i{background:#1f4a36}
     openSheet('prayer-schedule-sheet');
     paintSchedule();
   }
+  // Shortcuts on the app icon (manifest) open these by link: ?open=prayer, ?open=qibla.
+  window.cheteleOpenSchedule = openSchedule;
+  window.cheteleOpenQibla = () => openQibla();
   function openCities() {
     const element = paintCities();
     element.remove(); document.body.append(element); // above the schedule when both are open

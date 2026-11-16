@@ -28,5 +28,59 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Отметить дела",
+      "short_name": "Дела",
+      "description": "Сегодняшние дела",
+      "url": "/?open=deeds",
+      "icons": [
+        {
+          "src": "/assets/shortcut-deeds.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Зикр",
+      "short_name": "Зикр",
+      "description": "Счётчик зикра",
+      "url": "/?open=zikr",
+      "icons": [
+        {
+          "src": "/assets/shortcut-zikr.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Время намазов",
+      "short_name": "Намазы",
+      "description": "Расписание на сегодня",
+      "url": "/?open=prayer",
+      "icons": [
+        {
+          "src": "/assets/shortcut-prayer.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Кибла",
+      "short_name": "Кибла",
+      "description": "Направление на Мекку",
+      "url": "/?open=qibla",
+      "icons": [
+        {
+          "src": "/assets/shortcut-qibla.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

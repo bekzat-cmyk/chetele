@@ -1922,6 +1922,13 @@
     function dismissPreloader(){ const preloader=document.querySelector('#app-preloader'); if(!preloader||preloader.classList.contains('is-hidden')) return; const wait=Math.max(0,(firstLaunch?3000:500)-(Date.now()-preloaderStartedAt)); setTimeout(()=>{ requestAnimationFrame(()=>preloader.classList.add('is-hidden')); setTimeout(()=>{ preloader.hidden=true; },450); },wait); }
     /* Notifications open a screen: ?open=deeds shows today's deeds, other names open that section. */
     function openTarget(target){
+      /* Prayer times and the qibla live in the prayer script, which loads after this one:
+         a link opened at launch waits for it. */
+      if(target==='prayer'||target==='qibla'){
+        const run=()=>{ showView('today-view'); (target==='qibla'?window.cheteleOpenQibla:window.cheteleOpenSchedule)?.(); };
+        if(window.cheteleOpenQibla) run(); else document.addEventListener('DOMContentLoaded',run,{once:true});
+        return;
+      }
       const views={deeds:'today-view',zikr:'zikr-view',events:'events-view',stats:'stats-view',rating:'rating-view',quiz:'quiz-view'}, view=views[target];
       if(!view||document.querySelector('#app').hidden) return;
       if(target==='deeds'&&entryDateKey!==todayKey) document.querySelector('[data-back-today]')?.click();
