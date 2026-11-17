@@ -2272,5 +2272,4 @@ body #app .ps-tour{width:100%;margin:0 0 12px}
 body.a11y-reduce .tour-hole,body.a11y-reduce .tour-tip,body.a11y-reduce .tour-arrow{transition:none}
 body.a11y-reduce .tour-tip.is-in{animation:none}
 
-html.tour-lock,html.tour-lock body{overflow:hidden;overscroll-behavior:none}
-.tour-catch{touch-action:none}
+.tour.is-scrolling .tour-hole,.tour.is-scrolling .tour-tip,.tour.is-scrolling .tour-arrow{transition:none}

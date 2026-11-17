@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.22';
+    const APP_VERSION = '2.23';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -2336,11 +2336,13 @@
       let root=null, index=0, lastFocus=null;
       function close(){
         if(!root) return; const old=root; root=null;
-        window.removeEventListener('resize',place); window.removeEventListener('scroll',place,true); document.removeEventListener('keydown',onKey,true);
+        window.removeEventListener('resize',place); window.removeEventListener('scroll',onScroll,true); document.removeEventListener('keydown',onKey,true);
         old.classList.remove('is-on'); setTimeout(()=>old.remove(),motionOff()?0:220);
-        document.documentElement.classList.remove('tour-lock');
         lastFocus?.focus?.({preventScroll:true});
       }
+      /* The page still scrolls under the tour; the hole and the card follow it without easing. */
+      let scrollTimer=0;
+      function onScroll(){ if(!root) return; root.classList.add('is-scrolling'); place(); clearTimeout(scrollTimer); scrollTimer=setTimeout(()=>root?.classList.remove('is-scrolling'),160); }
       function onKey(event){
         if(event.key==='Escape'){ event.preventDefault(); close(); }
         else if(event.key==='ArrowRight') go(index+1); else if(event.key==='ArrowLeft') go(index-1);
@@ -2385,11 +2387,8 @@
           else if(event.target.closest('[data-tour-next]')) go(index+1);
           else if(event.target.closest('[data-tour-prev]')) go(index-1);
         });
-        root.addEventListener('touchmove',event=>event.preventDefault(),{passive:false});
-        root.addEventListener('wheel',event=>event.preventDefault(),{passive:false});
-        document.documentElement.classList.add('tour-lock');
         document.body.appendChild(root);
-        window.addEventListener('resize',place); window.addEventListener('scroll',place,true); document.addEventListener('keydown',onKey,true);
+        window.addEventListener('resize',place); window.addEventListener('scroll',onScroll,true); document.addEventListener('keydown',onKey,true);
         requestAnimationFrame(()=>{ root?.classList.add('is-on'); go(0); });
       }
       window.cheteleStartTour=start;
