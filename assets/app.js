@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.20';
+    const APP_VERSION = '2.22';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -2338,6 +2338,7 @@
         if(!root) return; const old=root; root=null;
         window.removeEventListener('resize',place); window.removeEventListener('scroll',place,true); document.removeEventListener('keydown',onKey,true);
         old.classList.remove('is-on'); setTimeout(()=>old.remove(),motionOff()?0:220);
+        document.documentElement.classList.remove('tour-lock');
         lastFocus?.focus?.({preventScroll:true});
       }
       function onKey(event){
@@ -2367,14 +2368,14 @@
         const target=step.target();
         if(target&&!target.closest('.nav')){
           const r=target.getBoundingClientRect();
-          if(r.top<80||r.bottom>window.innerHeight*.5) window.scrollTo({top:window.scrollY+r.top-110,behavior:motionOff()?'auto':'smooth'});
+          if(r.top<80||r.bottom>window.innerHeight*.5) window.scrollTo(0,Math.max(0,window.scrollY+r.top-110));
         }
         tip.classList.remove('is-in'); void tip.offsetWidth; tip.classList.add('is-in');
         place(); setTimeout(place,350);
         tip.querySelector('[data-tour-next]')?.focus({preventScroll:true});
       }
       function start(){
-        if(root||document.querySelector('#app')?.hidden) return;
+        if(root||document.querySelector('#app')?.hidden||document.querySelector('#chetele-onboarding')) return;
         markSeen(); lastFocus=document.activeElement; index=0;
         if(!document.querySelector('#today-view')?.classList.contains('active')) document.querySelector('#app .nav [data-view="today-view"]')?.click();
         root=document.createElement('div'); root.className='tour';
@@ -2384,19 +2385,27 @@
           else if(event.target.closest('[data-tour-next]')) go(index+1);
           else if(event.target.closest('[data-tour-prev]')) go(index-1);
         });
+        root.addEventListener('touchmove',event=>event.preventDefault(),{passive:false});
+        root.addEventListener('wheel',event=>event.preventDefault(),{passive:false});
+        document.documentElement.classList.add('tour-lock');
         document.body.appendChild(root);
         window.addEventListener('resize',place); window.addEventListener('scroll',place,true); document.addEventListener('keydown',onKey,true);
         requestAnimationFrame(()=>{ root?.classList.add('is-on'); go(0); });
       }
       window.cheteleStartTour=start;
       document.addEventListener('click',event=>{ if(event.target.closest('[data-tour-start]')) setTimeout(start,350); });
-      /* Waits for the cabinet: shown, welcome screen gone, today's deeds drawn, nothing typed into. */
+      /* Waits for the cabinet: shown, welcome screen gone, no sign-in or other sheet open, today's deeds drawn, nothing typed into. */
       if(seen()) return;
-      let tries=0;
-      const timer=setInterval(()=>{
-        if(seen()||++tries>240) return clearInterval(timer);
+      let tries=0, timer=0;
+      const restart=()=>{ timer=setInterval(check,500); };
+      const check=()=>{
+        if(seen()||++tries>7200) return clearInterval(timer);
         const app=document.querySelector('#app'), pre=document.querySelector('#app-preloader');
-        const ready=app&&!app.hidden&&(!pre||pre.hidden)&&document.querySelector('#today-view.active #task-list > *')&&document.visibilityState==='visible'&&!document.activeElement?.matches?.('input,textarea');
-        if(ready){ clearInterval(timer); setTimeout(start,700); }
-      },500);
+        /* The welcome slides (onboarding.js) come first: wait until they are closed, and while they have
+           not been seen yet, because they may open a moment after the splash. */
+        const welcome=document.querySelector('#chetele-onboarding')||(window.ChetOnboarding&&!window.ChetOnboarding.seen());
+        const ready=!welcome&&!document.body.classList.contains('sheet-open')&&app&&!app.hidden&&(!pre||pre.hidden)&&document.querySelector('#today-view.active #task-list > *')&&document.visibilityState==='visible'&&!document.activeElement?.matches?.('input,textarea');
+        if(ready){ clearInterval(timer); setTimeout(()=>{ if(document.body.classList.contains('sheet-open')||document.querySelector('#chetele-onboarding')) return restart(); start(); },1200); }
+      };
+      restart();
     })();
