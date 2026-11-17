@@ -187,6 +187,17 @@ textarea.input{height:104px;padding:14px 16px;resize:vertical;line-height:1.45}
 .split{display:flex;gap:16px;align-items:flex-start}
 .split>.card:first-child{flex:1}
 .detail{width:360px;flex:none;position:sticky;top:16px}
+.users-card .u-go{width:28px;color:var(--muted);text-align:right}
+.users-card .u-go svg{width:18px;height:18px}
+.drawer-layer{position:fixed;inset:0;z-index:40}
+.drawer-scrim{position:absolute;inset:0;background:rgba(11,15,18,.28);animation:fade .2s ease both}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:min(480px,100vw);box-sizing:border-box;overflow-y:auto;padding:24px 28px;background:#F6F9F8;border-radius:30px 0 0 30px;box-shadow:-18px 0 50px rgba(11,15,18,.18);display:flex;flex-direction:column;gap:18px;animation:drawerIn .34s cubic-bezier(.22,1,.36,1) both}
+.drawer>div:last-child{margin-top:auto}
+.drawer-layer.leaving .drawer-scrim{animation:fade .2s ease reverse both}
+.drawer-layer.leaving .drawer{animation:drawerIn .22s ease-in reverse both}
+@keyframes drawerIn{from{transform:translateX(100%)}to{transform:none}}
+@media (max-width:560px){.drawer{border-radius:0;padding:20px}}
+@media (prefers-reduced-motion:reduce){.drawer,.drawer-scrim{animation:none!important}}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .toolbar>span{display:flex;gap:8px;flex-wrap:wrap}
 table{width:100%;border-collapse:collapse}
@@ -733,7 +744,7 @@ tbody tr:last-child td{border-bottom:0}
   /* The page rises in only when the section changes, not on every repaint. */
   let shownView = '';
   /* After a loading placeholder the real page replaces it in place, without a second entrance. */
-  function mount(html, key) { main.innerHTML = `<div class="view${key === shownView || shownView === 'loading' ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
+  function mount(html, key) { if (key !== 'users' && key !== 'loading') { $('#user-drawer')?.remove(); us.selected = null; } main.innerHTML = `<div class="view${key === shownView || shownView === 'loading' ? ' still' : ''}">${html}</div>`; shownView = key; paintBell(); }
   function loading(title) { mount(top('Istikama', title, 'Загружаем…') + '<section class="glass card"><div class="empty">Загружаем данные…</div></section>', 'loading'); }
   /* Without a connection the page shows a calm placeholder and reloads by itself when the connection returns. */
   function failed(title, error) {
@@ -1073,26 +1084,49 @@ tbody tr:last-child td{border-bottom:0}
     const fresh = users.filter(u => String(u.created_at).slice(0, 10) >= monthKey);
     const q = us.query.toLowerCase();
     const base = us.filter === 'new' ? fresh : us.filter === 'events' ? users.filter(u => Number(u.event_count) > 0) : users;
-    const list = base.filter(u => !q || `${u.display_name} ${u.login}`.toLowerCase().includes(q));
+    const list = base.filter(u => !q || `${u.display_name} ${u.login}`.toLowerCase().includes(q))
+      .sort((a, b) => (Number(b.points) || 0) - (Number(a.points) || 0) || String(b.created_at).localeCompare(String(a.created_at)));
     const shown = list.slice(0, 200);
     const selected = users.find(u => u.id === us.selected) || null;
     const rows = shown.length ? shown.map(u => `<tr data-user="${esc(u.id)}" aria-selected="${selected && selected.id === u.id}">
         <td class="wide"><span class="cell-main"><span class="avatar">${esc((u.display_name || '?').slice(0, 1))}</span><div><b>${esc(u.display_name)}</b><small>@${esc(u.login || '—')}</small></div></span></td>
         <td class="hide-sm">${relDay(u.created_at)}</td>
         <td class="hide-sm">${u.last_active ? relDay(u.last_active) : '<span class="muted">ещё не отмечал</span>'}</td>
+        <td class="hide-sm">${num(u.active_days)}</td>
         <td><b>${num(u.points)}</b> <small class="muted">очков</small></td>
         <td class="hide-sm">${num(u.event_count)}</td>
-      </tr>`).join('') : `<tr><td colspan="5" class="wide"><div class="empty">${users.length ? 'Никого не нашли.' : 'Участников пока нет.'}</div></td></tr>`;
+        <td class="u-go" aria-hidden="true">${icon('chev')}</td>
+      </tr>`).join('') : `<tr><td colspan="7" class="wide"><div class="empty">${users.length ? 'Никого не нашли.' : 'Участников пока нет.'}</div></td></tr>`;
     mount(top('Сообщество', 'Участники', `${num(users.length)} ${plural(users.length, 'человек', 'человека', 'человек')} · ${num(fresh.length)} новых за 30 дней`, tools() + refreshBtn + `<button type="button" class="btn" data-users-csv>${icon('download')}Выгрузить CSV</button>`) + `
-      <div class="split">
-        <section class="glass card">
+      <section class="glass card users-card">
           <div class="toolbar"><div class="seg" role="group" aria-label="Фильтр">${[['all', `Все · ${num(users.length)}`], ['new', `Новые · ${num(fresh.length)}`], ['events', `В событиях · ${num(users.filter(u => Number(u.event_count) > 0).length)}`]].map(([k, l]) => `<button type="button" data-ufilter="${k}" aria-pressed="${us.filter === k}">${l}</button>`).join('')}</div>
             <span><label class="search">${icon('search')}<input id="us-search" type="search" placeholder="Имя или логин" aria-label="Найти участника" value="${esc(us.query)}"></label></span></div>
-          <table><thead><tr><th>Участник</th><th>С нами с</th><th>Последняя отметка</th><th>Очки</th><th>События</th></tr></thead><tbody>${rows}</tbody></table>
+          <table><thead><tr><th>Участник</th><th class="hide-sm">С нами с</th><th class="hide-sm">Последняя отметка</th><th class="hide-sm">Дней с отметками</th><th>Очки ↓</th><th class="hide-sm">События</th><th></th></tr></thead><tbody>${rows}</tbody></table>
           ${list.length > shown.length ? `<small class="muted">Показаны первые ${shown.length} из ${num(list.length)} — уточните поиск</small>` : ''}
-        </section>
-        <aside class="glass card detail" aria-label="Карточка участника">${selected ? userDetail(selected) : `<div class="detail-empty"><span class="circle">${icon('users')}</span>Выберите участника, чтобы увидеть его карточку.</div>`}</aside>
-      </div>`, 'users');
+      </section>`, 'users');
+    paintUserDrawer(selected);
+  }
+  /* The member card slides in from the right over the table. It lives outside <main>, because the view's
+     entrance animation would otherwise anchor a fixed panel to the view instead of the window. */
+  let drawerFrom = null;
+  function paintUserDrawer(u) {
+    let layer = $('#user-drawer');
+    if (!u) { if (layer && !layer.classList.contains('leaving')) { layer.classList.add('leaving'); setTimeout(() => layer.remove(), 220); drawerFrom?.focus?.(); drawerFrom = null; } return; }
+    const fresh = !layer || layer.classList.contains('leaving');
+    if (fresh) {
+      layer?.remove(); drawerFrom = document.activeElement;
+      layer = document.createElement('div'); layer.id = 'user-drawer'; layer.className = 'drawer-layer';
+      layer.innerHTML = '<div class="drawer-scrim" data-close-user></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Карточка участника"></aside>';
+      layer.addEventListener('click', event => {
+        const t = event.target;
+        if (t.closest('[data-close-user]')) { us.selected = null; paintUsers(); return; }
+        const reset = t.closest('[data-reset-pass]'); if (reset) { resetPassword(reset.dataset.resetPass); return; }
+        const del = t.closest('[data-delete-user]'); if (del) deleteUser(del.dataset.deleteUser);
+      });
+      document.body.append(layer);
+    }
+    layer.querySelector('.drawer').innerHTML = userDetail(u);
+    if (fresh) layer.querySelector('[data-close-user].btn')?.focus({ preventScroll: true });
   }
   function userDetail(u) {
     const rank = [...data.users].sort((a, b) => (Number(b.points) || 0) - (Number(a.points) || 0)).findIndex(x => x.id === u.id) + 1;
@@ -1915,7 +1949,7 @@ tbody tr:last-child td{border-bottom:0}
     if (t.closest('[data-close-user]')) { us.selected = null; paintUsers(); return; }
     const delUser = t.closest('[data-delete-user]'); if (delUser) { deleteUser(delUser.dataset.deleteUser); return; }
     const delGroup = t.closest('[data-delete-group]'); if (delGroup) { deleteGroup(delGroup.dataset.deleteGroup); return; }
-    const urow = t.closest('tr[data-user]'); if (urow) { us.selected = urow.dataset.user; paintUsers(); if (innerWidth <= 1240) $('.detail')?.scrollIntoView({ behavior: 'smooth' }); }
+    const urow = t.closest('tr[data-user]'); if (urow) { us.selected = urow.dataset.user; paintUsers(); }
   });
   /* Search keeps focus while the list repaints. */
   main.addEventListener('input', event => {
@@ -1937,7 +1971,7 @@ tbody tr:last-child td{border-bottom:0}
     if (!event.target.closest('.panel') && !event.target.closest('[data-bell]')) closePanel();
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { document.querySelector('.menu')?.remove(); closePanel(); }
+    if (event.key === 'Escape') { document.querySelector('.menu')?.remove(); closePanel(); if (us.selected && $('#user-drawer') && !document.querySelector('.layer')) { us.selected = null; paintUsers(); } }
     /* «/» opens search when no field has focus. */
     if (event.key === '/' && cred && !$('#shell').hidden && !event.target.closest('input,textarea,select') && !document.querySelector('.layer')) { event.preventDefault(); openSearch(); }
   });
