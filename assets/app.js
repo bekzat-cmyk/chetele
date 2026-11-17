@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.19';
+    const APP_VERSION = '2.20';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -1315,7 +1315,7 @@
       }
       if(profileScreen==='about'){
         const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
-        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="assets/icon-192.png" alt="" width="64" height="64"><span class="ps-copy"><b>Istikama</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section><article class="st-card ps-fact ps-meaning"><i class="sp-icon">${icon('softStar')}</i><span class="ps-copy"><b>Что значит «Istikama»</b><p>По-арабски «истикама» (استقامة) означает прямоту и стойкость на верном пути. Пророк ﷺ сказал: «Скажи: „Я уверовал в Аллаха“, а затем будь стойким» (Муслим). И ещё: «Самые любимые Аллахом дела те, что постоянны, даже если их немного» (аль-Бухари, Муслим). Поэтому Istikama помогает каждый день понемногу делать благие дела и не бросать их.</p></span></article>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
+        root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="assets/icon-192.png" alt="" width="64" height="64"><span class="ps-copy"><b>Istikama</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section><button type="button" class="ps-secondary ps-tour" data-tour-start>${icon('softStar')}Показать подсказки</button><article class="st-card ps-fact ps-meaning"><i class="sp-icon">${icon('softStar')}</i><span class="ps-copy"><b>Что значит «Istikama»</b><p>По-арабски «истикама» (استقامة) означает прямоту и стойкость на верном пути. Пророк ﷺ сказал: «Скажи: „Я уверовал в Аллаха“, а затем будь стойким» (Муслим). И ещё: «Самые любимые Аллахом дела те, что постоянны, даже если их немного» (аль-Бухари, Муслим). Поэтому Istikama помогает каждый день понемногу делать благие дела и не бросать их.</p></span></article>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
         return;
       }
       if(profileScreen==='rename'){
@@ -2315,4 +2315,88 @@
       window.addEventListener('orientationchange',soon);
       window.addEventListener('pageshow',soon);
       document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') soon(); });
+    })();
+
+    /* First-launch tour: five coach marks (deeds, zikr, events, tests, rating). The screen dims, a hole
+       with a white ring shows the element, and a card beside it explains it. It shows once per phone
+       (the flag outlives sign-out) and can be replayed from Профиль → О приложении. */
+    (()=>{
+      const KEY='chetele-tour-v1';
+      const seen=()=>{ try { return !!localStorage.getItem(KEY); } catch { return true; } };
+      const markSeen=()=>{ try { localStorage.setItem(KEY,'1'); } catch {} };
+      const navIcon=view=>document.querySelector(`#app .nav [data-view="${view}"] svg`)?.outerHTML||'';
+      const STEPS=[
+        {target:()=>document.querySelector('#task-list > *'),icon:'today-view',title:'Отмечайте дела за день',text:'Нажмите на кнопку или впишите число, когда дело сделано. Отметки сохраняются сами.'},
+        {target:()=>document.querySelector('#app .nav [data-view="zikr-view"]'),icon:'zikr-view',title:'Зикр всегда под рукой',text:'Считайте зикры касанием, как на чётках. Счёт сохраняется сам.'},
+        {target:()=>document.querySelector('#app .nav [data-view="events-view"]'),icon:'events-view',title:'События общины',text:'Здесь появляются уроки, встречи и другие события. Нажмите на событие, чтобы узнать подробности.'},
+        {target:()=>document.querySelector('#app .nav [data-view="quiz-view"]'),icon:'quiz-view',title:'Проверьте свои знания',text:'Короткие тесты: отвечайте на вопросы и смотрите свой результат.'},
+        {target:()=>document.querySelector('#app .nav [data-view="rating-view"]'),icon:'rating-view',title:'Очки и рейтинг',text:'Каждое отмеченное дело приносит 10 очков. Рейтинг считается за неделю, месяц и всё время.'}
+      ];
+      const arrowL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>', arrowR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>', cross='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+      let root=null, index=0, lastFocus=null;
+      function close(){
+        if(!root) return; const old=root; root=null;
+        window.removeEventListener('resize',place); window.removeEventListener('scroll',place,true); document.removeEventListener('keydown',onKey,true);
+        old.classList.remove('is-on'); setTimeout(()=>old.remove(),motionOff()?0:220);
+        lastFocus?.focus?.({preventScroll:true});
+      }
+      function onKey(event){
+        if(event.key==='Escape'){ event.preventDefault(); close(); }
+        else if(event.key==='ArrowRight') go(index+1); else if(event.key==='ArrowLeft') go(index-1);
+      }
+      function place(){
+        if(!root) return;
+        const target=STEPS[index].target(), hole=root.querySelector('.tour-hole'), tip=root.querySelector('.tour-tip'), arrow=root.querySelector('.tour-arrow');
+        if(!target) return;
+        const r=target.getBoundingClientRect(), onNav=!!target.closest('.nav'), pad=onNav?2:6;
+        Object.assign(hole.style,{left:`${r.left-pad}px`,top:`${r.top-pad}px`,width:`${r.width+pad*2}px`,height:`${r.height+pad*2}px`,borderRadius:onNav?'999px':'22px'});
+        const vw=window.innerWidth, vh=window.innerHeight, w=Math.min(vw-32,420), left=Math.round((vw-w)/2), h=tip.offsetHeight;
+        tip.style.left=`${left}px`; tip.style.width=`${w}px`;
+        const below=r.bottom+pad+16+h+12<=vh;
+        tip.style.top=below?`${Math.round(r.bottom+pad+16)}px`:`${Math.max(12,Math.round(r.top-pad-16-h))}px`;
+        tip.classList.toggle('is-above',!below);
+        const center=r.left+r.width/2-left;
+        arrow.style.left=`${Math.max(22,Math.min(w-40,center-9))}px`;
+      }
+      function go(next){
+        if(!root) return;
+        if(next>=STEPS.length) return close();
+        if(next<0) return;
+        index=next; const step=STEPS[index], last=index===STEPS.length-1, tip=root.querySelector('.tour-tip');
+        tip.innerHTML=`<span class="tour-arrow" aria-hidden="true"></span><div class="tour-head"><i class="tour-icon">${navIcon(step.icon)}</i><b id="tour-title">${step.title}</b><button type="button" class="tour-x" data-tour-close aria-label="Закрыть подсказки">${cross}</button></div><p>${step.text}</p><div class="tour-foot"><span class="tour-count">${index+1} / ${STEPS.length}</span><span class="tour-btns">${index?`<button type="button" class="tour-prev" data-tour-prev aria-label="Назад">${arrowL}</button>`:''}${last?'<button type="button" class="tour-done" data-tour-next>Готово</button>':`<button type="button" class="tour-next" data-tour-next aria-label="Дальше">${arrowR}</button>`}</span></div>`;
+        const target=step.target();
+        if(target&&!target.closest('.nav')){
+          const r=target.getBoundingClientRect();
+          if(r.top<80||r.bottom>window.innerHeight*.5) window.scrollTo({top:window.scrollY+r.top-110,behavior:motionOff()?'auto':'smooth'});
+        }
+        tip.classList.remove('is-in'); void tip.offsetWidth; tip.classList.add('is-in');
+        place(); setTimeout(place,350);
+        tip.querySelector('[data-tour-next]')?.focus({preventScroll:true});
+      }
+      function start(){
+        if(root||document.querySelector('#app')?.hidden) return;
+        markSeen(); lastFocus=document.activeElement; index=0;
+        if(!document.querySelector('#today-view')?.classList.contains('active')) document.querySelector('#app .nav [data-view="today-view"]')?.click();
+        root=document.createElement('div'); root.className='tour';
+        root.innerHTML='<div class="tour-catch"></div><div class="tour-hole" aria-hidden="true"></div><div class="tour-tip" role="dialog" aria-modal="true" aria-labelledby="tour-title"></div>';
+        root.addEventListener('click',event=>{
+          if(event.target.closest('[data-tour-close]')) close();
+          else if(event.target.closest('[data-tour-next]')) go(index+1);
+          else if(event.target.closest('[data-tour-prev]')) go(index-1);
+        });
+        document.body.appendChild(root);
+        window.addEventListener('resize',place); window.addEventListener('scroll',place,true); document.addEventListener('keydown',onKey,true);
+        requestAnimationFrame(()=>{ root?.classList.add('is-on'); go(0); });
+      }
+      window.cheteleStartTour=start;
+      document.addEventListener('click',event=>{ if(event.target.closest('[data-tour-start]')) setTimeout(start,350); });
+      /* Waits for the cabinet: shown, welcome screen gone, today's deeds drawn, nothing typed into. */
+      if(seen()) return;
+      let tries=0;
+      const timer=setInterval(()=>{
+        if(seen()||++tries>240) return clearInterval(timer);
+        const app=document.querySelector('#app'), pre=document.querySelector('#app-preloader');
+        const ready=app&&!app.hidden&&(!pre||pre.hidden)&&document.querySelector('#today-view.active #task-list > *')&&document.visibilityState==='visible'&&!document.activeElement?.matches?.('input,textarea');
+        if(ready){ clearInterval(timer); setTimeout(start,700); }
+      },500);
     })();
