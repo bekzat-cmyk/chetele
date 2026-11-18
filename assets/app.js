@@ -1,7 +1,7 @@
-    const APP_VERSION = '2.24';
+    const APP_VERSION = '2.25';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
-    window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
+    window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
     const NAFIL = [
       { id:'asr', label:'Аср' }, { id:'kuptan', label:'Иша' },
       { id:'avvabin', label:'Аввабин' }, { id:'duha', label:'Духа' }
