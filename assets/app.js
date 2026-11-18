@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.23';
+    const APP_VERSION = '2.24';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'short'}).format(new Date(`${entryDateKey}T12:00:00`)).replace(/\.$/,''); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -918,7 +918,7 @@
       document.body.append(layer); layer.querySelector('[data-share-go],.sh-save')?.focus();
     }
     let statsDetail={metric:'quran',period:'week',picked:-1};
-    function renderStatsDetail(animate=false){
+    function renderStatsDetail(animate=false,pickOnly=false){
       const root=document.querySelector('#stats-detail-view'); if(!root) return;
       const locale=appLocale(), ky=locale==='ky-KG', number=new Intl.NumberFormat(locale), pl=statsPlural;
       const {metric,period}=statsDetail, spec=STATS_METRICS[metric], series=statsSeries(metric,period), values=series.values, last=values.length-1;
@@ -954,13 +954,19 @@
       const chips=Object.entries(STATS_METRICS).map(([id,item])=>`<button type="button" role="radio" aria-checked="${id===metric}" class="${id===metric?'active':''}" data-detail-metric="${id}">${ky?item.ky:item.ru}</button>`).join('');
       const seg=[['week',ky?'Апта':'Неделя'],['month',ky?'Ай':'Месяц'],['all',ky?'Бардык убакыт':'Всё время']].map(([id,label])=>`<button type="button" role="radio" data-detail-period="${id}" aria-checked="${id===period}" class="${id===period?'active':''}">${label}</button>`).join('');
       const pickedLabel=`${escapeHtml(series.labels[picked][1])}${picked===last&&period!=='all'?(ky?', бүгүн':', сегодня'):''}`;
-      root.innerHTML=`<header class="stats-top"><div><button type="button" class="stats-back" data-view="stats-view" aria-label="${ky?'Статистикага кайтуу':'Назад к статистике'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky?'Статистика':'Статистика'} · ${periodName}</span><h2>${name}</h2><span class="stats-period-label">${headline}</span></div><i class="stats-badge" aria-hidden="true">${icon(spec.icon)}</i></header>
+      const html=`<header class="stats-top"><div><button type="button" class="stats-back" data-view="stats-view" aria-label="${ky?'Статистикага кайтуу':'Назад к статистике'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky?'Статистика':'Статистика'} · ${periodName}</span><h2>${name}</h2><span class="stats-period-label">${headline}</span></div><i class="stats-badge" aria-hidden="true">${icon(spec.icon)}</i></header>
         <div class="rt-metrics" role="radiogroup" aria-label="${ky?'Эмнени көрсөтүү':'Что показать'}">${chips}</div>
         <div class="stats-seg glass-seg" role="radiogroup" aria-label="${ky?'Мезгил':'Период подробностей'}">${seg}</div>
         <article class="stats-chart-card sd-card" aria-label="${name}"><div class="sd-head"><div class="sd-picked"><small>${pickedLabel}</small><b>${valueText(values[picked]||0)}</b></div><em class="sd-delta${tone}">${delta}</em></div><div class="sd-chart">${avgLine}${goalLine}<div class="sd-bars${wide?' wide':''}" style="grid-template-columns:repeat(${values.length},minmax(0,1fr))">${bars}</div></div><p class="sd-tip">${period==='all'?(ky?'Айды көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть месяц'):(ky?'Күндү көрүү үчүн тилкени басыңыз':'Нажмите на столбик, чтобы увидеть день')}</p></article>
         <div class="sd-facts">${facts}</div>
         ${statsGoalHtml(metric,series,period)}
         <section class="stats-card sd-compare" aria-label="${ky?'Салыштыруу':'Сравнение'}"><div class="stats-section-sub">${ky?'Салыштыруу':'Сравнение'}</div>${compare}</section>`;
+      /* Picking a bar only moves the highlight and the caption, the rest of the screen stays put. */
+      const head=root.querySelector('.sd-head');
+      if(pickOnly&&head){ const tpl=document.createElement('template'); tpl.innerHTML=html; head.replaceWith(tpl.content.querySelector('.sd-head'));
+        root.querySelectorAll('.sd-bar').forEach((bar,i)=>{ bar.classList.toggle('on',i===picked); bar.setAttribute('aria-pressed',String(i===picked)); bar.querySelector('small').textContent=tpl.content.querySelectorAll('.sd-bar small')[i]?.textContent||''; });
+        return; }
+      root.innerHTML=html;
       root.querySelectorAll('[data-icon]').forEach(slot=>{ if(!slot.firstChild) slot.innerHTML=icon(slot.dataset.icon); });
       slideControls();
     }
@@ -1011,7 +1017,7 @@
       const tile=target.closest('[data-stats-detail]'); if(tile){ statsDetail={metric:tile.dataset.statsDetail,period:statsPeriod,picked:-1}; showView('stats-detail-view'); return; }
       const metric=target.closest('[data-detail-metric]'); if(metric){ if(metric.dataset.detailMetric!==statsDetail.metric){ statsDetail={...statsDetail,metric:metric.dataset.detailMetric,picked:-1}; renderStatsDetail(true); } return; }
       const period=target.closest('[data-detail-period]'); if(period){ if(period.dataset.detailPeriod!==statsDetail.period){ statsDetail={...statsDetail,period:period.dataset.detailPeriod,picked:-1}; renderStatsDetail(true); } return; }
-      const pick=target.closest('[data-detail-pick]'); if(pick){ statsDetail={...statsDetail,picked:Number(pick.dataset.detailPick)}; renderStatsDetail(); return; }
+      const pick=target.closest('[data-detail-pick]'); if(pick){ statsDetail={...statsDetail,picked:Number(pick.dataset.detailPick)}; renderStatsDetail(false,true); return; }
       const day=target.closest('[data-stats-day]'); if(day){ openStatsDay(day.dataset.statsDay); return; }
       const goalOpen=target.closest('[data-goal-open]'); if(goalOpen){ openGoalSheet(goalOpen.dataset.goalOpen); return; }
       if(target.closest('[data-share-month]')){ const button=target.closest('[data-share-month]'); button.disabled=true; openMonthShare().finally(()=>{ button.disabled=false; }); return; }

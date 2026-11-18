@@ -1128,8 +1128,8 @@ body.app-dark #app .st-switch input:checked+i{background:#EEF5F2}
 body.app-dark #app .st-switch input:checked+i:after{background:#0B1110}
 
 /* Profile screens: achievements, reminders, prayer place, about, rename */
-body #app :is(#settings-view,#profile-sub-view).active>*{animation-name:none}
-body #app :is(#settings-view,#profile-sub-view).active.entering>*{animation-name:soft-rise;animation-duration:.24s;animation-timing-function:var(--soft-ease);animation-fill-mode:both}
+body #app :is(#settings-view,#profile-sub-view,#stats-view,#stats-detail-view).active>*{animation-name:none}
+body #app :is(#settings-view,#profile-sub-view,#stats-view,#stats-detail-view).active.entering>*{animation-name:soft-rise;animation-duration:.24s;animation-timing-function:var(--soft-ease);animation-fill-mode:both}
 body #app #profile-sub-view{color:#10161A}
 body #app .ps-master,body #app .ps-quiet-top,body #app .ps-app,body #app .ps-fact,body #app .ps-preview{flex-direction:row;align-items:center;gap:12px}
 body #app .ps-fact{align-items:flex-start}
