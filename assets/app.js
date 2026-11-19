@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.28';
+    const APP_VERSION = '2.29';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -440,6 +440,7 @@
     }
     function isDone(task){ const v=state.tasks[task.id]; return task.type==='number' ? Number(v)>0 : task.type==='yesno' ? v==='yes' : task.type==='nafil' ? nafilCompleted()===NAFIL.length : !!v; }
     function completed(){ return ChetDeeds.countDeeds(state.tasks,state.qaza); }
+    function dayPoints(){ return ChetDeeds.pointsFor(state.tasks,state.qaza); }
     /* Day states from the canvas: a nudge when nothing is marked yet today, the streak
        that is waiting for today, and a banner while the server cannot be reached. */
     function paintDayStates(){
@@ -651,7 +652,7 @@
     function zikrAdd(id,delta){
       const item=ZIKR.find(zikr=>zikr.id===id); if(!item) return;
       if(id==='salawat') matchSalawatCounter();
-      const before=completed(), current=zikrToday(id), next=Math.min(99999,Math.max(0,current+delta)), change=next-current; if(!change) return;
+      const before=completed(), beforePoints=dayPoints(), current=zikrToday(id), next=Math.min(99999,Math.max(0,current+delta)), change=next-current; if(!change) return;
       const field=id==='salawat'?'salawat':'tasbihat', total=Math.max(0,(Number(state.tasks[field])||0)+change);
       const breakdown={...(state.tasks.zikr&&typeof state.tasks.zikr==='object'?state.tasks.zikr:{}),[id]:next}; if(!next) delete breakdown[id];
       state.tasks={...state.tasks,zikr:breakdown,[field]:total?String(total):''};
@@ -659,7 +660,7 @@
       if(change>0) state.zikrLast={id,at:Date.now()};
       if(change>0&&next%item.goal===0){ zikrCelebrate=true; navigator.vibrate?.([20,40,20]); } else navigator.vibrate?.(8);
       zikrRoll=change>0?'up':'down';
-      scoreUpdate(before);
+      scoreUpdate(before,beforePoints);
       zikrRoll='';
     }
     /* Waiting taps go to the server, the only writer of per-zikr counts, so two
@@ -1344,7 +1345,7 @@
         return;
       }
       if(profileScreen==='about'){
-        const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Каждое отмеченное дело — 10 очков. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
+        const facts=[['softDeeds','Дела дня','12 дел: Куран, Жавшан, книги, четыре нафиль-намаза, тахаджуд, добровольный пост, салават, зикр и пропущенные намазы.'],['softRating','Очки и рейтинг','Дело 10 очков, тахаджуд 50, пост 100. Рейтинг бывает за неделю, месяц и всё время.'],['softClock','Время намазов','Считается на телефоне по вашему городу и работает без интернета.'],['softShield','Данные','Отметки хранятся в вашем кабинете. В рейтинге видно только имя и очки.']];
         root.innerHTML=`${head('О приложении')}<section class="st-card ps-app"><img src="assets/icon-192.png" alt="" width="64" height="64"><span class="ps-copy"><b>Istikama</b><small>Путь к сильному таква · версия ${APP_VERSION}</small></span></section><button type="button" class="ps-secondary ps-tour" data-tour-start>${icon('softStar')}Показать подсказки</button><article class="st-card ps-fact ps-meaning"><i class="sp-icon">${icon('softStar')}</i><span class="ps-copy"><b>Что значит «Istikama»</b><p>По-арабски «истикама» (استقامة) означает прямоту и стойкость на верном пути. Пророк ﷺ сказал: «Скажи: „Я уверовал в Аллаха“, а затем будь стойким» (Муслим). И ещё: «Самые любимые Аллахом дела те, что постоянны, даже если их немного» (аль-Бухари, Муслим). Поэтому Istikama помогает каждый день понемногу делать благие дела и не бросать их.</p></span></article>${facts.map(([iconName,title,text])=>`<article class="st-card ps-fact"><i class="sp-icon">${icon(iconName)}</i><span class="ps-copy"><b>${title}</b><p>${text}</p></span></article>`).join('')}<section class="st-card ps-author" aria-label="Об авторе"><div class="ps-author-row"><span class="ps-author-av" aria-hidden="true">БЖ</span><span class="ps-copy"><small>Автор приложения</small><b>Женишов Бекзат</b><small>Telegram · @bekzat_de</small></span></div><a class="ps-author-link" href="https://t.me/bekzat_de" target="_blank" rel="noopener noreferrer">${icon('softSend')}Написать в Telegram</a></section>`;
         return;
       }
@@ -1558,7 +1559,7 @@
         const podium=`<section class="rt-podium" aria-label="${ky?'Алдыңкы үчөө':'Тройка лидеров'}">${[top[1],top[0],top[2]].filter(Boolean).map(podiumSlot).join('')}</section>`;
         // With shared places the one to catch is the nearest person with more.
         const me=people.find(person=>person.me), above=me?[...people].reverse().find(person=>person.points>me.points):null;
-        let meCard=isGuest()?`<section class="rt-me guest-seat" aria-label="Ваше место"><div class="rt-me-top"><span class="rt-me-place">#?</span><span class="rt-me-copy"><b>Здесь будет ваше место</b><small>Каждое дело — 10 очков. Гостя в рейтинге не видно.</small></span><span class="rt-me-points"><b>0</b><small>очков</small></span></div><div class="guest-cta-actions"><button type="button" class="guest-primary" data-auth="signup">Занять место</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section>`:'';
+        let meCard=isGuest()?`<section class="rt-me guest-seat" aria-label="Ваше место"><div class="rt-me-top"><span class="rt-me-place">#?</span><span class="rt-me-copy"><b>Здесь будет ваше место</b><small>Дело 10 очков, тахаджуд 50, пост 100. Гостя в рейтинге не видно.</small></span><span class="rt-me-points"><b>0</b><small>очков</small></span></div><div class="guest-cta-actions"><button type="button" class="guest-primary" data-auth="signup">Занять место</button><button type="button" class="guest-secondary" data-auth="login">Войти</button></div></section>`:'';
         if(me){
           const gap=above?(metric==='points'?Math.max(10,above.points-me.points+10):above.points-me.points+1):0;
           const goal=me.place===1?(ky?'Сиз биринчи орундасыз — ушундай уланта бериңиз!':'Вы на первом месте — так держать!'):!me.points&&period==='week'?(ky?'Рейтингге кирүү үчүн ишти белгилеңиз':'Отметьте дело, чтобы попасть в рейтинг недели'):above?`${ky?`${above.place}-орунга чейин`:`До ${above.place} места`} — ${number.format(gap)} ${points(gap)}`:'';
@@ -1754,10 +1755,11 @@
       /* The ring shows today's deeds; the streak lives in the pill below the text. */
       const max=dailyMax(), isPastDay=entryDateKey!==todayKey, doneToday=Math.min(isPastDay?completed():entryCompletedCount(todayEntry),max);
       const plural=n=>{ const d=n%10,h=n%100; return d===1&&h!==11?'день':d>=2&&d<=4&&(h<12||h>14)?'дня':'дней'; };
+      const shownPoints=isPastDay?dayPoints():todayEntry?.tasks?ChetDeeds.pointsFor(todayEntry.tasks,todayEntry.qaza):Number(todayEntry?.points)||doneToday*10;
       document.querySelector('#streak-detail').textContent=doneToday;
       document.querySelector('#streak-unit').textContent=ky?`/ ${max}`:`из ${max}`;
       document.querySelector('#streak-title').textContent=ky?(doneToday>=max?'Бардык иштер аткарылды':doneToday>=6?'Жакшы күн, улантыңыз':doneToday>=3?'Күндүн минимуму бар':doneToday>0?'Жол башталды':'Бир иштен баштаңыз'):(doneToday>=max?'Все дела дня выполнены':doneToday>=6?'Хороший день, продолжайте':doneToday>=3?'Минимум дня есть':doneToday>0?'Путь начат':'Начните с одного дела');
-      document.querySelector('#streak-detail-text').textContent=ky?(doneToday?`Бүгүн рейтингке +${doneToday*10} упай.`:'Ар бир иш — рейтингке +10 упай.'):(doneToday?`${isPastDay?'В этот день':'Сегодня'} +${doneToday*10} очков в рейтинг.`:'Каждое дело — плюс 10 очков в рейтинг.');
+      document.querySelector('#streak-detail-text').textContent=ky?(doneToday?`Бүгүн рейтингке +${shownPoints} упай.`:'Иш 10 упай, тахажжуд 50, орозо 100.'):(doneToday?`${isPastDay?'В этот день':'Сегодня'} +${shownPoints} очков в рейтинг.`:'Дело 10 очков, тахаджуд 50, пост 100.');
       document.querySelector('#streak-best').textContent=streak;
       document.querySelector('#streak-best-label').textContent=ky?'күн катары менен':`${plural(streak)} подряд`;
       document.querySelector('#streak-next').textContent=`${ky?'Рекорд':'Рекорд'}: ${best}`;
@@ -1815,7 +1817,7 @@
       document.querySelector('#reward-done-title').textContent=`Все ${max} дел выполнены`;
       document.querySelector('#reward-done-text').textContent='Машаллах! Сегодняшний путь пройден полностью. Пусть Аллах примет ваши дела.';
       document.querySelector('#reward-ring-label').textContent=`${max}/${max}`;
-      document.querySelector('#reward-points').textContent=`+${max*10}`;
+      document.querySelector('#reward-points').textContent=`+${ChetDeeds.maxPoints(entryDateKey)}`;
       document.querySelector('#reward-streak').textContent=String(streak);
       document.querySelector('#reward-streak-label').textContent=`${rewardDays(streak)} подряд`;
       document.querySelector('#reward-rank').textContent=me?`#${me.place||people.indexOf(me)+1}`:`${Number(state.score||0)}`;
@@ -1855,7 +1857,7 @@
       if(!document.querySelector('#personal-goal-modal').hidden){ closePersonalGoalModal(); return; }
       [...document.querySelectorAll('.calendar-sheet:not([hidden]) .calendar-sheet-backdrop')].pop()?.click();
     });
-    function scoreUpdate(before){ const after=completed(); if(after>before) state.score=(state.score||0)+(after-before)*10; if(after<before) state.score=Math.max(0,(state.score||0)-(before-after)*10); recordDay(); refreshStreak(); const completedToday=entryDateKey===todayKey&&after===dailyMax()&&before<dailyMax(), minimumReached=entryDateKey===todayKey&&after>=3&&before<3&&!state.minimumCelebratedDays?.[todayKey], shouldCelebrate=completedToday&&!state.celebratedDays?.[todayKey], unlocked=state.achievementBaselineReady?achievementData().find(badge=>badge.earned&&!state.seenAchievements?.[badge.title]):null; if(shouldCelebrate) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; if(minimumReached) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(unlocked) state.seenAchievements={...(state.seenAchievements||{}),[unlocked.title]:true}; save(); render(); requestAnimationFrame(()=>{ if(shouldCelebrate) showReward('done'); else if(minimumReached) showReward('minimum'); if(unlocked) showReward('badge',unlocked); }); }
+    function scoreUpdate(before,beforePoints=before*10){ const after=completed(), change=dayPoints()-beforePoints; if(change) state.score=Math.max(0,(state.score||0)+change); recordDay(); refreshStreak(); const completedToday=entryDateKey===todayKey&&after===dailyMax()&&before<dailyMax(), minimumReached=entryDateKey===todayKey&&after>=3&&before<3&&!state.minimumCelebratedDays?.[todayKey], shouldCelebrate=completedToday&&!state.celebratedDays?.[todayKey], unlocked=state.achievementBaselineReady?achievementData().find(badge=>badge.earned&&!state.seenAchievements?.[badge.title]):null; if(shouldCelebrate) state.celebratedDays={...(state.celebratedDays||{}),[todayKey]:true}; if(minimumReached) state.minimumCelebratedDays={...(state.minimumCelebratedDays||{}),[todayKey]:true}; if(unlocked) state.seenAchievements={...(state.seenAchievements||{}),[unlocked.title]:true}; save(); render(); requestAnimationFrame(()=>{ if(shouldCelebrate) showReward('done'); else if(minimumReached) showReward('minimum'); if(unlocked) showReward('badge',unlocked); }); }
     /* The podium grows in: the steps rise out of the floor one after another (3rd, 2nd, 1st),
        then the avatars and names appear. Only transform and opacity move, which the phone's
        GPU handles without laying the page out again every frame. A redraw that lands in the
@@ -1902,7 +1904,7 @@
       if(viewId==='quiz-view') window.ChetQuizzes?.show(); else window.ChetQuizzes?.hide();
     }
     document.addEventListener('click',event=>{ const option=event.target.closest('.stats-seg [data-period]'); if(!option||option.dataset.period===statsPeriod) return; statsPeriod=option.dataset.period; renderStats(true); });
-    document.addEventListener('click', e=>{ const before=completed(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before); if(!values[nafil]) document.querySelector(`[data-nafil="${nafil}"]`)?.classList.add('just-checked'); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
+    document.addEventListener('click', e=>{ const before=completed(), beforePoints=dayPoints(); const check=e.target.dataset.check, choice=e.target.dataset.choice, nafil=e.target.closest('[data-nafil]')?.dataset.nafil; if(nafil){ const values=nafilValues(); state.tasks.nafil={...values,[nafil]:!values[nafil]}; scoreUpdate(before,beforePoints); if(!values[nafil]) document.querySelector(`[data-nafil="${nafil}"]`)?.classList.add('just-checked'); return; } if(check){state.tasks[check]=!state.tasks[check]; scoreUpdate(before,beforePoints);} if(choice){state.tasks[e.target.dataset.id]=choice; scoreUpdate(before,beforePoints);} const view=e.target.closest('[data-view]'); if(view) showView(view.dataset.view); });
     const fieldTimers=new WeakMap(), fieldBaselines=new WeakMap();
     function storeFieldValue(field){
       if(field.dataset.id) state.tasks[field.dataset.id]=field.value;
@@ -1930,7 +1932,7 @@
       const timer=fieldTimers.get(field); if(timer) clearTimeout(timer);
       const before=fieldBaselines.has(field) ? fieldBaselines.get(field) : completed();
       storeFieldValue(field); fieldBaselines.delete(field); fieldTimers.delete(field);
-      scoreUpdate(before);
+      scoreUpdate(before,beforePoints);
       if(moveNext) setTimeout(()=>focusFollowingField(field),40);
     }
     document.addEventListener('input',e=>{ const field=e.target; if(!field.dataset.id && !field.dataset.qaza) return; if(!fieldBaselines.has(field)) fieldBaselines.set(field,completed()); storeFieldValue(field); const oldTimer=fieldTimers.get(field); if(oldTimer) clearTimeout(oldTimer); fieldTimers.set(field,setTimeout(()=>commitField(field,false),700)); });
@@ -1941,7 +1943,7 @@
     document.addEventListener('pointerdown',e=>{
       const tile=e.target.closest('[data-qaza-inc]'); if(!tile) return;
       qazaHeld=false; clearTimeout(qazaHoldTimer);
-      qazaHoldTimer=setTimeout(()=>{ const name=tile.dataset.qazaInc, value=Number(state.qaza[name])||0; if(!value) return; qazaHeld=true; const before=completed(); state.qaza={...state.qaza,[name]:value>1?String(value-1):''}; navigator.vibrate?.(25); scoreUpdate(before); rollNumber(`[data-qaza-inc="${name}"] b`,'down'); },550);
+      qazaHoldTimer=setTimeout(()=>{ const name=tile.dataset.qazaInc, value=Number(state.qaza[name])||0; if(!value) return; qazaHeld=true; const before=completed(), beforePoints=dayPoints(); state.qaza={...state.qaza,[name]:value>1?String(value-1):''}; navigator.vibrate?.(25); scoreUpdate(before,beforePoints); rollNumber(`[data-qaza-inc="${name}"] b`,'down'); },550);
     });
     ['pointerup','pointercancel','pointerleave'].forEach(type=>document.addEventListener(type,()=>clearTimeout(qazaHoldTimer)));
     document.addEventListener('contextmenu',e=>{ if(e.target.closest('[data-qaza-inc]')) e.preventDefault(); });
@@ -1949,9 +1951,9 @@
       const add=e.target.closest('[data-qaza-inc]'), reset=e.target.closest('[data-qaza-reset]'); if(!add&&!reset) return;
       if(add&&qazaHeld){ qazaHeld=false; return; }
       if(add) navigator.vibrate?.(10);
-      const before=completed();
+      const before=completed(), beforePoints=dayPoints();
       state.qaza=add?{...state.qaza,[add.dataset.qazaInc]:String((Number(state.qaza[add.dataset.qazaInc])||0)+1)}:Object.fromEntries(QAZA.map(name=>[name,'']));
-      scoreUpdate(before);
+      scoreUpdate(before,beforePoints);
       if(add) rollNumber(`[data-qaza-inc="${add.dataset.qazaInc}"] b`,'up');
     });
     /* Counters roll: the new number comes up after +1 and down after −1. */
@@ -2448,7 +2450,7 @@
         {target:()=>document.querySelector('#app .nav [data-view="zikr-view"]'),icon:'zikr-view',title:'Зикр всегда под рукой',text:'Считайте зикры касанием, как на чётках. Счёт сохраняется сам.'},
         {target:()=>document.querySelector('#app .nav [data-view="events-view"]'),icon:'events-view',title:'События общины',text:'Здесь появляются уроки, встречи и другие события. Нажмите на событие, чтобы узнать подробности.'},
         {target:()=>document.querySelector('#app .nav [data-view="quiz-view"]'),icon:'quiz-view',title:'Проверьте свои знания',text:'Короткие тесты: отвечайте на вопросы и смотрите свой результат.'},
-        {target:()=>document.querySelector('#app .nav [data-view="rating-view"]'),icon:'rating-view',title:'Очки и рейтинг',text:'Каждое отмеченное дело приносит 10 очков. Рейтинг считается за неделю, месяц и всё время.'}
+        {target:()=>document.querySelector('#app .nav [data-view="rating-view"]'),icon:'rating-view',title:'Очки и рейтинг',text:'За отмеченные дела начисляются очки: дело 10 очков, тахаджуд 50, пост 100. Рейтинг считается за неделю, месяц и всё время.'}
       ];
       const arrowL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>', arrowR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>', cross='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
       let root=null, index=0, lastFocus=null;

@@ -56,3 +56,17 @@ test('qaza counts as one deed however many prayers were made up', () => {
 test('zikr breakdown does not add deeds beyond salawat and tasbihat', () => {
   assert.equal(countDeeds({ tasbihat: '33', zikr: { subhanallah: 33 } }, {}), 1);
 });
+
+const deeds = require('../assets/deeds.js');
+
+test('points: 10 per deed, tahajjud 50, the fast 100', () => {
+  assert.equal(deeds.pointsFor({ quran: '3', salawat: '100' }, {}), 20);
+  assert.equal(deeds.pointsFor({ tahajjud: 'yes' }, {}), 50);
+  assert.equal(deeds.pointsFor({ fast: 'yes', tahajjud: 'yes', quran: '1' }, {}), 160);
+  assert.equal(deeds.pointsFor({}, { Аср: '1' }), 10);
+});
+
+test('a full day is worth 250 points, 150 before the fast became a deed', () => {
+  assert.equal(deeds.maxPoints('2026-11-19'), 250);
+  assert.equal(deeds.maxPoints('2026-11-01'), 150);
+});

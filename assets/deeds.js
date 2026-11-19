@@ -30,7 +30,19 @@
       + (Object.values(madeUp).some(isPositive) ? 1 : 0);
   }
 
-  const api = { countDeeds, DAILY_MAX, NAFIL_IDS, FAST_FROM, maxFor };
+  // Rating points: 10 for each deed, the night prayer 50 and the voluntary fast 100.
+  const TAHAJJUD_POINTS = 50, FAST_POINTS = 100;
+  function pointsFor(tasks, qaza) {
+    const day = tasks && typeof tasks === 'object' ? tasks : {};
+    return countDeeds(day, qaza) * 10
+      + (day.tahajjud === 'yes' ? TAHAJJUD_POINTS - 10 : 0)
+      + (day.fast === 'yes' ? FAST_POINTS - 10 : 0);
+  }
+  function maxPoints(dateKey) {
+    return maxFor(dateKey) * 10 + TAHAJJUD_POINTS - 10 + (dateKey && dateKey < FAST_FROM ? 0 : FAST_POINTS - 10);
+  }
+
+  const api = { countDeeds, pointsFor, maxPoints, DAILY_MAX, NAFIL_IDS, FAST_FROM, TAHAJJUD_POINTS, FAST_POINTS, maxFor };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ChetDeeds = api;
 })(typeof window !== 'undefined' ? window : globalThis);

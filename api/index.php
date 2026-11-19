@@ -273,6 +273,23 @@ function saveGroupMembers(PDO $db, int $groupId, array $userIds): void {
     foreach ($userIds as $userId) $insert->execute([$groupId, $userId]);
 }
 
+/* Points of a day: 10 for each deed, but the night prayer counts 50 and the voluntary fast 100. */
+function dayPoints(int $completed, array $tasks): int {
+    return $completed * 10 + (($tasks['tahajjud'] ?? '') === 'yes' ? 40 : 0) + (($tasks['fast'] ?? '') === 'yes' ? 90 : 0);
+}
+
+/* Once: saved days get their points recounted by the rule above (they were 10 per deed). */
+function migratePointsV2(PDO $db): void {
+    $done = $db->prepare('SELECT 1 FROM admin_settings WHERE setting_key = ?');
+    $done->execute(['points_rule_v2']);
+    if ($done->fetchColumn()) return;
+    $db->exec("UPDATE daily_entries SET points = completed_count * 10
+        + CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(tasks, '$.tahajjud')) = 'yes' THEN 40 ELSE 0 END
+        + CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(tasks, '$.fast')) = 'yes' THEN 90 ELSE 0 END
+        WHERE JSON_VALID(tasks)");
+    $db->prepare('INSERT IGNORE INTO admin_settings (setting_key, setting_value) VALUES (?, ?)')->execute(['points_rule_v2', date('c')]);
+}
+
 function ensureAdminSettingsTable(PDO $db): void {
     $db->exec('CREATE TABLE IF NOT EXISTS admin_settings (
         setting_key VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -511,7 +528,7 @@ function normalizeEntry(array $input): array {
     $completed += $normalizedTasks['fast'] === 'yes' ? 1 : 0;
     $completed += count(array_filter($nafil));
     $completed += count(array_filter($normalizedQaza)) > 0 ? 1 : 0;
-    return ['tasks' => $normalizedTasks, 'qaza' => $normalizedQaza, 'completed' => $completed, 'points' => $completed * 10];
+    return ['tasks' => $normalizedTasks, 'qaza' => $normalizedQaza, 'completed' => $completed, 'points' => dayPoints($completed, $normalizedTasks)];
 }
 
 /* This route deliberately runs before the database connection. It makes PHP
@@ -543,6 +560,7 @@ try {
     ensurePushTable($db);
     ensureEventsTables($db);
     ensureAdminSettingsTable($db);
+    migratePointsV2($db);
     ensureGroupsTables($db);
     ensureSessionsTable($db);
 
