@@ -39,6 +39,16 @@ check('week window', leaderboardWindow('week', '2026-10-30'), ['from' => '2026-1
 check('month window', leaderboardWindow('month', '2026-03-10'), ['from' => '2026-03-01', 'to' => '2026-03-10', 'beforeFrom' => '2026-02-01', 'beforeTo' => '2026-02-28']);
 check('all time window', leaderboardWindow('', '2026-10-30'), ['from' => null, 'to' => '2026-10-30', 'beforeFrom' => null, 'beforeTo' => '2026-10-23']);
 
+$order = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+$scores = ['a' => 90, 'b' => 80, 'c' => 70, 'd' => 60, 'e' => 50, 'f' => 40, 'g' => 0, 'h' => 0];
+check('the caller inside the top gets no neighbours', leaderboardPick($order, $scores, 'b', 3), [['a', false], ['b', false], ['c', false]]);
+check('the caller below the top comes with neighbours', leaderboardPick($order, $scores, 'e', 2), [['a', false], ['b', false], ['c', true], ['d', true], ['e', true], ['f', true]]);
+check('nobody with nothing is a neighbour below', leaderboardPick($order, $scores, 'f', 2, 0, 2), [['a', false], ['b', false], ['d', true], ['e', true], ['f', true]]);
+check('someone with nothing gets only their row', leaderboardPick($order, $scores, 'h', 2), [['a', false], ['b', false], ['h', true]]);
+check('the next page has no neighbours', leaderboardPick($order, $scores, 'h', 3, 3), [['d', false], ['e', false], ['f', false]]);
+check('search by part of a name, any case', leaderboardSearch(['a' => 'Турат', 'b' => 'Салих', 'c' => 'Турсун'], ['b', 'c', 'a'], 'тУр'), ['c', 'a']);
+check('search needs two letters', leaderboardSearch(['a' => 'Турат'], ['a'], 'т'), []);
+
 check('key is stable and hides the id', leaderboardKey('user-1', 'secret'), leaderboardKey('user-1', 'secret'));
 check('key is 16 characters', strlen(leaderboardKey('user-1', 'secret')), 16);
 

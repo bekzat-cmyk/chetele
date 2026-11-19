@@ -99,6 +99,37 @@ function leaderboardWindow(string $period, string $today): array {
     return ['from' => null, 'to' => $today, 'beforeFrom' => null, 'beforeTo' => $shift('-7')];
 }
 
+/* Which participants a board request returns, as [id, near] pairs in rank order: the
+   slice from $offset, and on the first page also the caller with up to $around people
+   on each side when the caller is below that slice ("near"). Someone with nothing yet
+   gets only their own row, and nobody with nothing is shown as a neighbour below. */
+function leaderboardPick(array $order, array $scores, ?string $me, int $limit, int $offset = 0, int $around = 2): array {
+    $order = array_map('strval', $order);
+    $rows = array_map(static fn($id) => [$id, false], array_slice($order, $offset, $limit));
+    if ($offset > 0 || $me === null) return $rows;
+    $index = array_search($me, $order, true);
+    if ($index === false || $index < $limit) return $rows;
+    if (($scores[$me] ?? 0) <= 0) { $rows[] = [$me, true]; return $rows; }
+    for ($i = max($limit, $index - $around); $i <= min(count($order) - 1, $index + $around); $i++) {
+        if ($i > $index && ($scores[$order[$i]] ?? 0) <= 0) break;
+        $rows[] = [$order[$i], true];
+    }
+    return $rows;
+}
+
+/* Participants whose name contains $query (two letters at least, any case), in rank order. */
+function leaderboardSearch(array $names, array $order, string $query, int $max = 20): array {
+    $needle = mb_strtolower(trim($query), 'UTF-8');
+    if (mb_strlen($needle, 'UTF-8') < 2) return [];
+    $found = [];
+    foreach ($order as $id) {
+        if (mb_strpos(mb_strtolower((string)($names[$id] ?? ''), 'UTF-8'), $needle, 0, 'UTF-8') === false) continue;
+        $found[] = (string)$id;
+        if (count($found) >= $max) break;
+    }
+    return $found;
+}
+
 /* A stable public key for a participant: the id never leaves the server. */
 function leaderboardKey(string $userId, string $secret): string {
     return substr(hash_hmac('sha256', $userId, $secret), 0, 16);

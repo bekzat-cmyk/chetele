@@ -2275,3 +2275,45 @@ body.a11y-reduce .tour-hole,body.a11y-reduce .tour-tip,body.a11y-reduce .tour-ar
 body.a11y-reduce .tour-tip.is-in{animation:none}
 
 .tour.is-scrolling .tour-hole,.tour.is-scrolling .tour-tip,.tour.is-scrolling .tour-arrow{transition:none}
+
+/* Rating for a big community: search, the next 50 on demand, your neighbours, everyone without points in one line, your row pinned above the menu. */
+body #app .rt-search{height:48px;padding:0 6px 0 16px;box-sizing:border-box;border-radius:24px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;gap:10px;color:#5E6A71}
+body #app .rt-search[hidden]{display:none}
+body #app .rt-search>.lucide{width:18px;height:18px;flex:none}
+body #app .rt-search input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:#10161A;-webkit-appearance:none;appearance:none}
+body #app .rt-search input::-webkit-search-cancel-button{display:none}
+body #app .rt-search input::placeholder{color:#7A858B}
+body #app .rt-search:focus-within{border-color:#10161A}
+body #app .rt-search-clear{width:36px;height:36px;flex:none;border:0;border-radius:18px;background:rgba(16,22,26,.08);color:#10161A;display:grid;place-items:center;padding:0}
+body #app .rt-search-clear[hidden]{display:none}
+body #app .rt-search-clear .lucide{width:16px;height:16px}
+body #app .rt-found{display:flex;flex-direction:column;gap:12px}
+body #app .rt-found[hidden]{display:none}
+body #app .rt-found-note{margin:0;padding:0 4px;color:#5E6A71;font-size:14px}
+body #app .rt-more{width:100%;min-height:48px;border-radius:24px;border:1px solid rgba(16,22,26,.14);background:rgba(255,255,255,.5);color:#10161A;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+body #app .rt-more:disabled{opacity:.6;cursor:default}
+body #app .rt-zero{padding:16px;border-radius:28px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;gap:14px}
+body #app .rt-zero>i{width:44px;height:44px;flex:none;border-radius:22px;background:rgba(16,22,26,.06);display:grid;place-items:center;color:#10161A}
+body #app .rt-zero>i .lucide{width:22px;height:22px}
+body #app .rt-zero>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+body #app .rt-zero b{font-size:15px;font-weight:600}
+body #app .rt-zero small{color:#5E6A71;font-size:13px;line-height:1.35}
+body #app .rt-sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:30;width:min(calc(100% - 24px),520px);min-height:64px;padding:0 16px 0 12px;box-sizing:border-box;border:0;border-radius:22px;background:#0B0F12;color:#fff;box-shadow:0 14px 34px rgba(16,22,26,.28);display:flex;align-items:center;gap:12px;font:inherit;text-align:left;cursor:pointer;animation:rt-sticky-in .24s cubic-bezier(.2,.8,.2,1) both}
+body #app .rt-sticky[hidden]{display:none}
+body #app .rt-sticky-place{min-width:30px;font-size:16px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums}
+body #app .rt-sticky .rt-row-avatar{background:#fff;color:#0B0F12;border-color:transparent}
+body #app .rt-sticky .rt-row-copy small{color:rgba(255,255,255,.72)}
+body #app .rt-sticky>.lucide{width:20px;height:20px;flex:none}
+@keyframes rt-sticky-in{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+body.app-dark #app .rt-search,body.app-dark #app .rt-zero{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:var(--muted)}
+body.app-dark #app .rt-search input{color:var(--ink)}
+body.app-dark #app .rt-search input::placeholder,body.app-dark #app .rt-found-note,body.app-dark #app .rt-zero small{color:var(--muted)}
+body.app-dark #app .rt-search:focus-within{border-color:rgba(255,255,255,.4)}
+body.app-dark #app .rt-search-clear,body.app-dark #app .rt-zero>i{background:rgba(255,255,255,.1);color:var(--ink)}
+body.app-dark #app .rt-zero b{color:var(--ink)}
+body.app-dark #app .rt-more{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:var(--ink)}
+body.app-dark #app .rt-sticky{background:#EEF5F2;color:#0B1110;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+body.app-dark #app .rt-sticky .rt-row-avatar{background:#0B1110;color:#EEF5F2}
+body.app-dark #app .rt-sticky .rt-row-copy small{color:#4C5C54}
+body.a11y-reduce #app .rt-sticky{animation:none}
+@media (prefers-reduced-motion:reduce){body #app .rt-sticky{animation:none}}

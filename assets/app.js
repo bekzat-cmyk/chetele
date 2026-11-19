@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.25';
+    const APP_VERSION = '2.26';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -21,6 +21,11 @@
     const QAZA_LABEL = {'Багымдат':'Фаджр','Пешим':'Зухр','Аср':'Аср','Шам':'Магриб','Куптан':'Иша','Витр':'Витр'};
     /* Lucide icons (ISC licence). Rendered as stroke SVG in the current text colour. */
     const ICON_PATHS = {
+      users:'<path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM20 20v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 4.15a3.5 3.5 0 0 1 0 6.7"/>',
+      search:'<path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/>',
+      x:'<path d="M6 6l12 12M18 6 6 18"/>',
+      arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+      arrowDown:'<path d="M12 5v14M6 13l6 6 6-6"/>',
       /* Soft glass icons drawn for the design canvas: 24 grid, 1.6 stroke. */
       softQuran:'<path d="M12 6.5C10 5 7.3 4.6 4.5 5.2v9.6c2.8-.6 5.5-.2 7.5 1.3 2-1.5 4.7-1.9 7.5-1.3V5.2C16.7 4.6 14 5 12 6.5zM12 6.5v9.6M6 20.5l12-4M18 20.5l-12-4"/>',
       softJauchan:'<path d="M8 4h9a3 3 0 0 1 3 3v1h-3M8 4a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3M8 4a3 3 0 0 0-3 3v1h3M8 20h8a3 3 0 0 0 3-3v-1h-5M11 10h4M11 13.5h3"/>',
@@ -343,6 +348,24 @@
       if(metric!=='points') return state.metricBoards?.[boardKey(period,metric)];
       return period==='week'?state.weekLeaderboard:period==='month'?state.monthLeaderboard:state.remoteLeaderboard;
     }
+    /* The board shows the top ten, the caller with their neighbours and the next 50 on demand;
+       people with nothing yet fold into one line, so a thousand members stay a short screen. */
+    const BOARD_TOP=10, BOARD_PAGE=50, boardMore={}, boardMoreLoading={}, boardMoreFailed={};
+    const boardQuery=(period,metric)=>`${period==='all'?'':`&period=${period}`}${metric==='points'?'':`&metric=${metric}`}`;
+    async function loadBoardMore(){
+      const period=ratingPeriod(), metric=ratingMetric(), key=boardKey(period,metric);
+      if(boardMoreLoading[key]) return;
+      boardMoreLoading[key]=true; renderBoard();
+      try {
+        const offset=BOARD_TOP+(boardMore[key]||[]).length;
+        const response=await apiFetch(`${apiUrl('leaderboard')}&limit=${BOARD_PAGE}&offset=${offset}${boardQuery(period,metric)}`);
+        if(!response.ok) throw new Error('leaderboard_failed');
+        const rows=await response.json(); if(!Array.isArray(rows)) throw new Error('leaderboard_failed');
+        boardMore[key]=[...(boardMore[key]||[]),...rows];
+        boardMoreFailed[key]=false;
+      } catch { boardMoreFailed[key]=true; }
+      finally { delete boardMoreLoading[key]; renderBoard(); }
+    }
     function loadLeaderboard(period,metric='points'){
       const key=boardKey(period,metric);
       if(boardLoading[key]) return boardLoading[key];
@@ -350,13 +373,14 @@
       renderBoard();
       boardLoading[key]=(async()=>{
         try {
-          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=50${period==='all'?'':`&period=${period}`}${metric==='points'?'':`&metric=${metric}`}`);
+          const response=await apiFetch(`${apiUrl('leaderboard')}&limit=${BOARD_TOP}${boardQuery(period,metric)}`);
           if(!response.ok) throw new Error('leaderboard_failed');
           const rows=await response.json();
           if(!Array.isArray(rows)) throw new Error('leaderboard_failed');
           if(metric!=='points') state.metricBoards={...state.metricBoards,[key]:rows};
           else if(period==='week') state.weekLeaderboard=rows; else if(period==='month') state.monthLeaderboard=rows; else state.remoteLeaderboard=rows;
           state.ratingTotal={...state.ratingTotal,[key]:Number(response.headers.get('X-Total-Count'))||0};
+          if(response.headers.has('X-Scored-Count')) state.ratingScored={...state.ratingScored,[key]:Number(response.headers.get('X-Scored-Count'))||0};
           boardStatus[key]='online';
         } catch { boardStatus[key]='offline'; }
         finally { delete boardLoading[key]; renderBoard(); if(key==='all:points') renderProfile(); }
@@ -1426,6 +1450,73 @@
       renderSoftProfile();
     }
     let boardShownPeriod=null;
+    /* Search by name over the whole board: two letters or more ask the server, which
+       answers with places, so a friend is found without scrolling a thousand rows. */
+    let boardFound={q:'',rows:[],status:''}, boardSearchTimer=null, boardSearchSeq=0;
+    function paintBoardSearch({total,rowHtml,normal,ky,number,plural}){
+      const view=document.querySelector('#rating-view'), leaderboard=document.querySelector('#leaderboard'); if(!view||!leaderboard) return;
+      let box=view.querySelector('.rt-search');
+      const wanted=total>BOARD_TOP||boardFound.q;
+      if(!box&&wanted){
+        box=document.createElement('label'); box.className='rt-search';
+        box.innerHTML=`${icon('search')}<input id="rt-search-input" type="search" enterkeyhint="search" autocomplete="off" aria-label="${ky?'Катышуучуну аты боюнча издөө':'Поиск участника по имени'}" placeholder="${ky?'Катышуучуну табуу':'Найти участника'}"><button type="button" class="rt-search-clear" data-rating-clear aria-label="${ky?'Издөөнү тазалоо':'Очистить поиск'}" hidden>${icon('x')}</button>`;
+        leaderboard.before(box);
+        const found=document.createElement('div'); found.id='rt-found'; found.className='rt-found'; found.hidden=true; found.setAttribute('aria-live','polite'); leaderboard.before(found);
+        box.querySelector('input').addEventListener('input',event=>searchBoard(event.target.value));
+      }
+      if(box) box.hidden=!wanted;
+      const found=view.querySelector('#rt-found'); if(!found) return;
+      const active=boardFound.q.length>=2;
+      box?.querySelector('.rt-search-clear')?.toggleAttribute('hidden',!boardFound.q);
+      leaderboard.hidden=active; found.hidden=!active;
+      if(!active) return;
+      const rows=boardFound.rows.map(normal);
+      found.innerHTML=boardFound.status==='loading'&&!rows.length?`<p class="rt-found-note">${ky?'Изделүүдө…':'Ищем…'}</p>`
+        :boardFound.status==='offline'?`<p class="rt-found-note">${ky?'Интернет жок, издөө иштебей турат.':'Нет связи — поиск недоступен.'}</p>`
+        :rows.length?`<p class="rt-found-note">${ky?`Табылды: ${rows.length}`:`Найдено: ${rows.length}`} · ${ky?'орун бүт рейтинг боюнча':'место по всему рейтингу'}</p><ol class="rt-list">${rows.map(rowHtml).join('')}</ol>`
+        :`<p class="rt-found-note">${ky?'Эч ким табылган жок':'Никого не нашли'}</p>`;
+    }
+    function searchBoard(value){
+      const q=String(value||'').trim().slice(0,40);
+      clearTimeout(boardSearchTimer);
+      boardFound={q,rows:q===boardFound.q?boardFound.rows:[],status:q.length>=2?'loading':''};
+      renderBoard();
+      if(q.length<2) return;
+      const seq=++boardSearchSeq, period=ratingPeriod(), metric=ratingMetric();
+      boardSearchTimer=setTimeout(async()=>{
+        try {
+          const response=await apiFetch(`${apiUrl('leaderboard')}&q=${encodeURIComponent(q)}${boardQuery(period,metric)}`);
+          if(!response.ok) throw new Error('search_failed');
+          const rows=await response.json(); if(!Array.isArray(rows)) throw new Error('search_failed');
+          if(seq===boardSearchSeq) boardFound={q,rows,status:'online'};
+        } catch { if(seq===boardSearchSeq) boardFound={q,rows:[],status:'offline'}; }
+        if(seq===boardSearchSeq) renderBoard();
+      },300);
+    }
+    /* Your own row stays pinned above the menu while your place is scrolled out of view. */
+    let boardStickyMe=null;
+    function paintBoardSticky(me,{ky,number,points,initial}){
+      const view=document.querySelector('#rating-view'); if(!view) return;
+      // Kept outside the view: the view's entrance animation would otherwise carry the fixed bar.
+      let bar=document.querySelector('#app > .rt-sticky');
+      boardStickyMe=me&&!isGuest()?me:null;
+      if(!boardStickyMe){ bar?.remove(); return; }
+      if(!bar){ bar=document.createElement('button'); bar.type='button'; bar.className='rt-sticky'; bar.dataset.ratingSticky=''; bar.hidden=true; document.querySelector('#app').append(bar); }
+      const html=`<span class="rt-sticky-place">${me.place}</span><span class="rt-row-avatar">${initial(me.name)}</span><span class="rt-row-copy"><b>${ky?'Сиз':'Вы'}</b><small>${number.format(me.points)} ${points(me.points)}</small></span>${icon('arrowUp')}`;
+      if(bar.innerHTML!==html) bar.innerHTML=html;
+      bar.setAttribute('aria-label',ky?`Сиз ${me.place}-орундасыз. Өз ордуңузга өтүү`:`Вы на ${me.place} месте. Перейти к своему месту`);
+      placeBoardSticky();
+    }
+    function placeBoardSticky(){
+      const bar=document.querySelector('#app > .rt-sticky'); if(!bar) return;
+      const view=document.querySelector('#rating-view');
+      const targets=[...document.querySelectorAll('#leaderboard .rt-me, #leaderboard .rt-row.me, #leaderboard .rt-slot .rt-name b')].filter(node=>!node.closest('.rt-slot')||/· (вы|сиз)$/.test(node.textContent));
+      const inView=targets.some(node=>{ const r=node.getBoundingClientRect(); return r.bottom>60&&r.top<window.innerHeight-120; });
+      const show=!!boardStickyMe&&view?.classList.contains('active')&&!document.querySelector('#leaderboard').hidden&&targets.length>0&&!inView;
+      if(bar.hidden===show) bar.hidden=!show;
+    }
+    let boardStickyFrame=0;
+    window.addEventListener('scroll',()=>{ if(boardStickyFrame) return; boardStickyFrame=requestAnimationFrame(()=>{ boardStickyFrame=0; placeBoardSticky(); }); },{passive:true,capture:true});
     function ratingPeriod(){ return ['month','all'].includes(state.ratingPeriod)?state.ratingPeriod:'week'; }
     /* What the board counts: points, or one deed with its own unit. */
     const RATING_METRICS={points:{label:'Очки',ky:'Упай',unit:['очко','очка','очков'],short:'очк.'},salawat:{label:'Салават',ky:'Салават',unit:['раз','раза','раз'],short:'раз'},zikr:{label:'Зикр',ky:'Зикир',unit:['раз','раза','раз'],short:'раз'},quran:{label:'Куран',ky:'Куран',unit:['страница','страницы','страниц'],short:'стр.'},tahajjud:{label:'Тахаджуд',ky:'Тахажжуд',unit:['ночь','ночи','ночей'],short:'ноч.'},fast:{label:'Пост',ky:'Орозо',unit:['день','дня','дней'],short:'дн.'},nafil:{label:'Нафиль',ky:'Напил',unit:['намаз','намаза','намазов'],short:'нам.'}};
@@ -1439,7 +1530,8 @@
       const points=n=>metric==='points'&&ky?'упай':plural(n,...spec.unit), short=metric==='points'&&ky?'уп.':spec.short;
       const chips=document.querySelector('#rating-metrics');
       if(chips) chips.innerHTML=Object.entries(RATING_METRICS).map(([id,item])=>`<button type="button" role="radio" aria-checked="${id===metric}" class="${id===metric?'active':''}" data-rating-metric="${id}">${ky?item.ky:item.label}</button>`).join('');
-      const people=Array.isArray(source) ? source.map((person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,place:Number(person.place)||index+1,move:Number(person.move)||0,key:/^[0-9a-f]{16}$/.test(person.key||'')?person.key:''})) : [];
+      const normal=(person,index)=>({name:person.name,points:Number(person.points)||0,me:person.me===true,near:person.near===true,place:Number(person.place)||index+1,move:Number(person.move)||0,key:/^[0-9a-f]{16}$/.test(person.key||'')?person.key:''});
+      const people=Array.isArray(source) ? source.map(normal) : [];
       const open=p=>p.key?` data-person="${p.key}" role="button" tabindex="0"`:'';
       const leaderboard=document.querySelector('#leaderboard'), hint=document.querySelector('#rating-hint'), label=document.querySelector('#rating-period-label');
       const initial=name=>escapeHtml(Array.from(String(name).trim())[0]||'·');
@@ -1450,6 +1542,7 @@
       const moveText=move=>{ const n=Math.abs(move); return !move?(ky?'өзгөргөн жок':'без изменений'):`${move>0?'↑':'↓'} ${n} ${ky?'орун':plural(n,'позиция','позиции','позиций')}`; };
       const moveClass=move=>move>0?' up':move<0?' down':'';
       const crown='<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5 8 12l4-6.5 4 6.5 4.5-3.5L19 18H5zM5 21h14"/></svg>';
+      const rowHtml=p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`;
       if(status==='offline' && !people.length){
         leaderboard.innerHTML=`<div class="rt-empty"><b>${ky?'Рейтинг жеткиликсиз':'Рейтинг недоступен'}</b><span>${ky?'Упайларыңыз жоголбойт — интернет пайда болгондо рейтинг жаңыланат.':'Ваши очки не потеряются — рейтинг обновится, когда появится интернет.'}</span></div>`;
       } else if(!Array.isArray(source)){
@@ -1470,12 +1563,23 @@
           const pct=me.place===1?100:above&&above.points?Math.min(100,Math.round(me.points/above.points*100)):0;
           meCard=`<section class="rt-me" aria-label="${ky?'Сиздин ордуңуз':'Ваше место'}"><div class="rt-me-top"><span class="rt-me-place">#${me.place}</span><span class="rt-me-copy"><b>${escapeHtml(me.name)} · ${ky?'сиз':'вы'}</b><small>${moveText(me.move)}${period==='week'?(ky?' аптада':' за неделю'):period==='month'?(ky?' айда':' за месяц'):''}</small></span><span class="rt-me-points"><b>${number.format(me.points)}</b><small>${points(me.points)}</small></span></div><div class="rt-me-goal"><span class="rt-track" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="rt-me-foot"><span>${goal}</span>${above&&me.place>1&&metric==='points'?`<b>≈ ${number.format(Math.ceil(gap/10))} ${ky?'иш':plural(Math.ceil(gap/10),'дело','дела','дел')}</b>`:''}</span></div></section>`;
         }
-        const rest=people.filter(person=>person.place>3);
-        const total=Number(state.ratingTotal?.[key]??state.ratingTotal?.[period])||0;
-        const list=rest.length?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div><ol class="rt-list">${rest.map(p=>`<li class="rt-row${p.me?' me':''}" data-name="${escapeHtml(p.name)}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}, ${moveText(p.move)}"><span class="rt-row-place">${p.place}</span><span class="rt-row-avatar">${initial(p.name)}</span><span class="rt-row-copy"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small class="${moveClass(p.move).trim()}">${moveText(p.move)}</small></span><span class="rt-row-points">${number.format(p.points)}</span></li>`).join('')}</ol></section>`:'';
+        const total=Number(state.ratingTotal?.[key]??state.ratingTotal?.[period])||0, scored=state.ratingScored?.[key];
+        const main=people.filter(p=>!p.near), extra=(boardMore[key]||[]).map(normal), seen=new Set();
+        // Everyone with points below the podium, without repeats; people with nothing fold into one line below.
+        const rest=[...main.filter(p=>p.place>3),...extra].filter(p=>{ const id=p.key||p.name; if(seen.has(id)||(p.points<=0&&scored!=null)) return false; seen.add(id); return true; });
+        const nextOffset=BOARD_TOP+extra.length, left=scored!=null&&main.length>=BOARD_TOP?Math.max(0,scored-nextOffset):0;
+        const moreLabel=boardMoreLoading[key]?(ky?'Жүктөлүүдө…':'Загрузка…'):boardMoreFailed[key]?(ky?'Жүктөлгөн жок — кайра аракет':'Не удалось загрузить — ещё раз'):(ky?`Кийинки ${Math.min(BOARD_PAGE,left)} адамды көрсөтүү`:`Показать следующих ${Math.min(BOARD_PAGE,left)}`);
+        const more=left?`<button type="button" class="rt-more" data-rating-more${boardMoreLoading[key]?' disabled':''}>${moreLabel}</button>`:'';
+        const list=rest.length||more?`<section class="rt-all"><div class="stats-section-head"><h3>${ky?'Бардык катышуучулар':'Все участники'}</h3>${total?`<span>${number.format(total)} ${ky?'адам':plural(total,'человек','человека','человек')}</span>`:''}</div>${rest.length?`<ol class="rt-list">${rest.map(rowHtml).join('')}</ol>`:''}${more}</section>`:'';
+        // The caller far below the list sees the two above and below them.
+        const near=me&&me.near&&me.points>0&&!rest.some(p=>p.me)?people.filter(p=>p.near).sort((a,b)=>a.place-b.place):[];
+        const share=me&&total?Math.max(1,Math.ceil(me.place/total*100)):0;
+        const nearList=near.length>1?`<section class="rt-all rt-near"><div class="stats-section-head"><h3>${ky?'Сизге жакындар':'Рядом с вами'}</h3>${share&&share<100?`<span>${ky?`сиз алдыңкы ${share}%`:`вы в топ-${share}%`}</span>`:''}</div><ol class="rt-list">${near.map(rowHtml).join('')}</ol></section>`:'';
+        const zero=scored!=null&&total>scored?total-scored:0;
+        const zeroCard=zero?`<section class="rt-zero" aria-label="${ky?'Азырынча упайы жоктор':'Пока без очков'}"><i aria-hidden="true">${icon('users')}</i><span><b>${ky?`Дагы ${number.format(zero)} адамда азырынча упай жок`:`Ещё ${number.format(zero)} ${plural(zero,'человек','человека','человек')} пока без очков`}</b><small>${me&&me.points<=0?(ky?'Сиз да ушулардын арасындасыз — бир ишти белгилеңиз':'Вы тоже здесь — отметьте одно дело, чтобы подняться'):(ky?`Баары ${scored+1}-орунду бөлүшөт`:`Все делят ${scored+1} место`)}</small></span></section>`:'';
         // Rows that changed place slide to it instead of jumping (same period only).
         const before=boardShownPeriod===key?new Map([...leaderboard.querySelectorAll('.rt-row[data-name]')].map(row=>[row.dataset.name,row.getBoundingClientRect().top])):new Map();
-        const html=podium+meCard+list;
+        const html=podium+meCard+list+nearList+zeroCard;
         // The same data again (a refresh right after opening) leaves the board, and its animation, alone.
         if(!(html===leaderboard.shownHtml&&leaderboard.firstElementChild===leaderboard.shownNode)){
           const shownPodium=leaderboard.querySelector('.rt-podium:not([aria-busy])'), podiumFrom=boardShownPeriod===key&&shownPodium?new Map([...shownPodium.querySelectorAll('.rt-step')].map(step=>[Number(step.textContent.trim()),step.offsetHeight])):null;
@@ -1486,17 +1590,22 @@
         if(before.size&&!motionOff()) leaderboard.querySelectorAll('.rt-row[data-name]').forEach(row=>{ const top=before.get(row.dataset.name); const shift=top===undefined?0:top-row.getBoundingClientRect().top; if(Math.abs(shift)>1) row.animate([{transform:`translateY(${shift}px)`},{transform:'translateY(0)'}],{duration:360,easing:'cubic-bezier(.2,.8,.2,1)'}); });
       }
       boardShownPeriod=key;
+      paintBoardSearch({total:Number(state.ratingTotal?.[key])||0,rowHtml,normal,ky,number,plural});
+      paintBoardSticky(people.find(p=>p.me),{ky,number,points,initial});
       if(status==='online'||(status==='loading'&&people.length)) hint.textContent=metric!=='points'?(ky?'Күндүн иштериндеги белгилер боюнча эсептелет. Катышуучуну басып, анын карточкасын ачыңыз.':'Считается по отметкам в делах дня. Нажмите на участника, чтобы открыть его карточку.'):(ky?'Упайлар белгиленген иштер үчүн эсептелет. Катышуучуну басып, анын карточкасын ачыңыз.':'Очки считаются за отмеченные дела. Нажмите на участника, чтобы открыть его карточку.');
       else if(status==='offline') hint.textContent=people.length?(ky?'Сервер менен байланыш жок. Интернет пайда болгондо рейтинг жаңыланат.':'Нет связи с сервером. Рейтинг обновится, когда появится интернет.'):'';
       else hint.textContent=ky?'Рейтинг жүктөлүүдө…':'Загрузка рейтинга…';
     }
     document.addEventListener('click',event=>{
+      if(event.target.closest('[data-rating-more]')){ loadBoardMore(); return; }
+      if(event.target.closest('[data-rating-sticky]')){ const target=document.querySelector('#leaderboard .rt-me')||document.querySelector('#leaderboard .rt-row.me'); target?.scrollIntoView({behavior:motionOff()?'auto':'smooth',block:'center'}); return; }
+      if(event.target.closest('[data-rating-clear]')){ const input=document.querySelector('#rt-search-input'); if(input){ input.value=''; input.focus(); } boardFound={q:'',rows:[],status:''}; renderBoard(); return; }
       const chip=event.target.closest('[data-rating-metric]');
-      if(chip){ if(chip.dataset.ratingMetric!==ratingMetric()){ state.ratingMetric=chip.dataset.ratingMetric; save(); renderBoard(); loadLeaderboard(ratingPeriod(),ratingMetric()); } return; }
+      if(chip){ if(chip.dataset.ratingMetric!==ratingMetric()){ state.ratingMetric=chip.dataset.ratingMetric; save(); renderBoard(); loadLeaderboard(ratingPeriod(),ratingMetric()); if(boardFound.q.length>=2) searchBoard(boardFound.q); } return; }
       const person=event.target.closest('[data-person]');
       if(person){ openPersonCard(person.dataset.person); return; }
       const button=event.target.closest('[data-rating-period]'); if(!button||button.dataset.ratingPeriod===ratingPeriod()) return;
-      state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod(),ratingMetric());
+      state.ratingPeriod=button.dataset.ratingPeriod; save(); loadLeaderboard(ratingPeriod(),ratingMetric()); if(boardFound.q.length>=2) searchBoard(boardFound.q);
     });
     /* Events page in the soft glass style: the first running common goal as a hero card
        with progress, my numbers and leaders; personal paths and the rest as glass cards;
@@ -1783,6 +1892,7 @@
       if(viewId==='stats-detail-view') renderStatsDetail(true);
       document.querySelector('#app').classList.toggle('on-glass',['quiz-view','stats-view','stats-detail-view','rating-view','zikr-view','profile-view','settings-view','profile-sub-view','events-view'].includes(viewId));
       if(viewId==='rating-view'){ loadLeaderboard(ratingPeriod(),ratingMetric()); growPodium(null); }
+      placeBoardSticky();
       if(viewId==='profile-view'&&!isGuest()) loadLeaderboard('all');
       if(viewId==='events-view') fetchEvents();
       if(viewId==='zikr-view'){ renderZikr(); riseIn(document.querySelector('#zikr-view')); if(!state.events) fetchEvents(); }

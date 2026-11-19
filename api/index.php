@@ -1347,10 +1347,16 @@ try {
                 'key' => leaderboardKey($id, $secret),
             ];
         };
-        $top = array_slice($ranked['order'], 0, $limit);
-        $rows = array_map(fn($id) => $row((string)$id), $top);
-        /* The caller outside the top list still gets their own row, appended last. */
-        if ($sessionUser !== null && isset($people[$sessionUser]) && !in_array($sessionUser, array_map('strval', $top), true)) $rows[] = $row($sessionUser);
+        header('X-Scored-Count: ' . count(array_filter($now, static fn($score) => $score > 0)));
+        /* ?q= finds people by name with their places; otherwise the top slice (?offset= for
+           the next pages) plus, on the first page, the caller and their neighbours ("near"). */
+        if (isset($_GET['q'])) {
+            $names = array_map(static fn($person) => (string)$person['name'], $people);
+            respond(200, array_map(fn($id) => $row($id), leaderboardSearch($names, $ranked['order'], mb_substr((string)$_GET['q'], 0, 40, 'UTF-8'))));
+        }
+        $offset = min(max((int)($_GET['offset'] ?? 0), 0), 100000);
+        $me = $sessionUser !== null && isset($people[$sessionUser]) ? $sessionUser : null;
+        $rows = array_map(fn($pick) => $row($pick[0]) + ($pick[1] ? ['near' => true] : []), leaderboardPick($ranked['order'], $now, $me, $limit, $offset));
         respond(200, $rows);
     }
 
