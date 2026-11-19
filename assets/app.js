@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.27';
+    const APP_VERSION = '2.28';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -1552,7 +1552,9 @@
         leaderboard.innerHTML=`<div class="rt-empty"><b>${ky?'Рейтинг азырынча бош':'Рейтинг пока пуст'}</b><span>${ky?'Биринчи ишти белгилеңиз — ушул жерде пайда болосуз.':'Отметьте первое дело — и вы появитесь здесь.'}</span></div>`;
       } else {
         const top=people.filter(person=>person.place<=3).sort((a,b)=>a.place-b.place), max=Math.max(1,top[0]?.points||0);
-        const podiumSlot=p=>{ const first=p.place===1; return `<div class="rt-slot${first?' first':''}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}"><span class="rt-crown">${first?crown:''}</span><span class="rt-avatar">${initial(p.name)}</span><span class="rt-name"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small>${number.format(p.points)} ${short}</small></span><div class="rt-step" style="height:${Math.round(60+70*p.points/max)+(first?20:0)}px"><span>${p.place}</span></div></div>`; };
+        // A crown for the first, a silver medal with 2 and a bronze one with 3.
+        const medal=n=>`<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2.5h3l1.6 5M16 2.5h-3l-.9 2.7"/><circle cx="12" cy="14.5" r="6"/><path d="${n===2?'M10.4 12.8a1.8 1.8 0 1 1 3 1.4l-3 2.8h3.4':'M10.5 12.2c.4-.6 1-.9 1.6-.9 1 0 1.7.6 1.7 1.4 0 .8-.7 1.3-1.6 1.3.9 0 1.8.5 1.8 1.4 0 .9-.8 1.5-1.8 1.5-.7 0-1.4-.3-1.8-.9'}"/></svg>`;
+        const podiumSlot=p=>{ const first=p.place===1, tone=p.place===2?' second':p.place===3?' third':''; return `<div class="rt-slot${first?' first':''}${tone}"${open(p)} aria-label="${p.place} ${ky?'орун':'место'}: ${escapeHtml(p.name)}, ${number.format(p.points)} ${points(p.points)}"><span class="rt-crown">${first?crown:p.place===2||p.place===3?medal(p.place):''}</span><span class="rt-avatar">${initial(p.name)}</span><span class="rt-name"><b>${escapeHtml(p.name)}${p.me?(ky?' · сиз':' · вы'):''}</b><small>${number.format(p.points)} ${short}</small></span><div class="rt-step" style="height:${Math.round(60+70*p.points/max)+(first?20:0)}px"><span>${p.place}</span></div></div>`; };
         const podium=`<section class="rt-podium" aria-label="${ky?'Алдыңкы үчөө':'Тройка лидеров'}">${[top[1],top[0],top[2]].filter(Boolean).map(podiumSlot).join('')}</section>`;
         // With shared places the one to catch is the nearest person with more.
         const me=people.find(person=>person.me), above=me?[...people].reverse().find(person=>person.points>me.points):null;

@@ -2321,3 +2321,12 @@ body #app .rt-search input:focus,body #app .rt-search input:focus-visible{outlin
 body.app-dark #app .rt-search{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.08);color:var(--muted)}
 body.app-dark #app .rt-search:focus-within{border-color:var(--ink);background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(255,255,255,.08)}
 body.app-dark #app .rt-search input{color:var(--ink)}
+/* Podium medals: silver for the second place, bronze for the third; the same tone rings the avatar and colours the number on the step. */
+body #app .rt-slot.second .rt-crown,body #app .rt-slot.third .rt-crown{height:24px}
+body #app .rt-slot.second .rt-crown .lucide,body #app .rt-slot.third .rt-crown .lucide{width:24px;height:24px}
+html body #app .rt-slot.second{--medal:#5F6E76;--medal-ring:#8E9AA1}
+html body #app .rt-slot.third{--medal:#9A5B33;--medal-ring:#C08A63}
+html body.app-dark #app .rt-slot.second{--medal:#D4DDE1;--medal-ring:#D4DDE1}
+html body.app-dark #app .rt-slot.third{--medal:#E0A97E;--medal-ring:#E0A97E}
+html body #app .rt-slot:is(.second,.third) .rt-crown,html body #app .rt-slot:is(.second,.third) .rt-step span{color:var(--medal)}
+html body #app .rt-podium .rt-slot:is(.second,.third) .rt-avatar{border:1.5px solid var(--medal-ring)}
