@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.26';
+    const APP_VERSION = '2.27';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };

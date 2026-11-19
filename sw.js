@@ -1,5 +1,5 @@
-const CACHE_NAME = 'chetele-static-v159';
-const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/assets/logo-light.png', '/assets/logo-mark.png', '/assets/i18n-ky.js?v=9', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=2', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=8', '/assets/app.js?v=f58408f5', '/assets/app.css?v=c1e7cb5f'];
+const CACHE_NAME = 'chetele-static-v160';
+const STATIC_FILES = ['/', '/index.html', '/manifest.webmanifest', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/icon-512.png', '/assets/logo-light.png', '/assets/logo-mark.png', '/assets/i18n-ky.js?v=9', '/assets/deeds.js?v=2', '/assets/hadiths.js?v=1', '/assets/fasting.js?v=1', '/assets/onboarding.js?v=2', '/assets/zikr-sync.js?v=3', '/assets/prayer-times.js?v=2', '/assets/quizzes.js?v=8', '/assets/app.js?v=6b2a799f', '/assets/app.css?v=81bceaef'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES.map(url => new Request(url, { cache: 'reload' })))));

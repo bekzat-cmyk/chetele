@@ -2277,13 +2277,10 @@ body.a11y-reduce .tour-tip.is-in{animation:none}
 .tour.is-scrolling .tour-hole,.tour.is-scrolling .tour-tip,.tour.is-scrolling .tour-arrow{transition:none}
 
 /* Rating for a big community: search, the next 50 on demand, your neighbours, everyone without points in one line, your row pinned above the menu. */
-body #app .rt-search{height:48px;padding:0 6px 0 16px;box-sizing:border-box;border-radius:24px;border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;gap:10px;color:#5E6A71}
 body #app .rt-search[hidden]{display:none}
 body #app .rt-search>.lucide{width:18px;height:18px;flex:none}
-body #app .rt-search input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:#10161A;-webkit-appearance:none;appearance:none}
 body #app .rt-search input::-webkit-search-cancel-button{display:none}
 body #app .rt-search input::placeholder{color:#7A858B}
-body #app .rt-search:focus-within{border-color:#10161A}
 body #app .rt-search-clear{width:36px;height:36px;flex:none;border:0;border-radius:18px;background:rgba(16,22,26,.08);color:#10161A;display:grid;place-items:center;padding:0}
 body #app .rt-search-clear[hidden]{display:none}
 body #app .rt-search-clear .lucide{width:16px;height:16px}
@@ -2305,10 +2302,9 @@ body #app .rt-sticky .rt-row-avatar{background:#fff;color:#0B0F12;border-color:t
 body #app .rt-sticky .rt-row-copy small{color:rgba(255,255,255,.72)}
 body #app .rt-sticky>.lucide{width:20px;height:20px;flex:none}
 @keyframes rt-sticky-in{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
-body.app-dark #app .rt-search,body.app-dark #app .rt-zero{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:var(--muted)}
+body.app-dark #app .rt-zero{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:var(--muted)}
 body.app-dark #app .rt-search input{color:var(--ink)}
 body.app-dark #app .rt-search input::placeholder,body.app-dark #app .rt-found-note,body.app-dark #app .rt-zero small{color:var(--muted)}
-body.app-dark #app .rt-search:focus-within{border-color:rgba(255,255,255,.4)}
 body.app-dark #app .rt-search-clear,body.app-dark #app .rt-zero>i{background:rgba(255,255,255,.1);color:var(--ink)}
 body.app-dark #app .rt-zero b{color:var(--ink)}
 body.app-dark #app .rt-more{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:var(--ink)}
@@ -2317,3 +2313,11 @@ body.app-dark #app .rt-sticky .rt-row-avatar{background:#0B1110;color:#EEF5F2}
 body.app-dark #app .rt-sticky .rt-row-copy small{color:#4C5C54}
 body.a11y-reduce #app .rt-sticky{animation:none}
 @media (prefers-reduced-motion:reduce){body #app .rt-sticky{animation:none}}
+/* Search looks like the Salawat and Zikr fields: a soft filled box that turns white with a dark edge while typing; the input inside stays bare. */
+body #app .rt-search{height:56px;padding:0 8px 0 16px;box-sizing:border-box;border-radius:16px;border:1px solid rgba(16,22,26,.08);background:rgba(16,22,26,.05);display:flex;align-items:center;gap:10px;color:#5E6A71;transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease}
+body #app .rt-search:focus-within{border-color:#10161A;background:#fff;box-shadow:0 0 0 4px rgba(16,22,26,.08)}
+body #app .rt-search input,body.app-dark #app .rt-search input{flex:1;min-width:0;height:100%;margin:0;padding:0;border:0!important;border-radius:0;outline:0!important;box-shadow:none!important;background:transparent!important;font:inherit;font-size:16px;color:#10161A;-webkit-appearance:none;appearance:none}
+body #app .rt-search input:focus,body #app .rt-search input:focus-visible{outline:0!important;box-shadow:none!important}
+body.app-dark #app .rt-search{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.08);color:var(--muted)}
+body.app-dark #app .rt-search:focus-within{border-color:var(--ink);background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+body.app-dark #app .rt-search input{color:var(--ink)}
