@@ -1,4 +1,4 @@
-    const APP_VERSION = '2.29';
+    const APP_VERSION = '2.30';
     const appLocale = () => window.cheteleLocale || 'ru-RU';
     /* Header title: weekday and date of the day that is open, e.g. «Среда, 21 октября». */
     window.cheteleHeaderTitle = () => { if(typeof entryDateKey==='undefined') return ''; const text=new Intl.DateTimeFormat(appLocale(),{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${entryDateKey}T12:00:00`)); return text.charAt(0).toUpperCase()+text.slice(1); };
@@ -482,10 +482,38 @@
       else group.querySelector('.fast-thumb').dataset.pos=answer||'';
       return group;
     }
+    /* Friday: a golden greeting and the card of Friday sunnahs. The marks are personal,
+       kept on this phone for the day and give no points. */
+    const JUMA_SUNNAHS=[['ghusl','Полное омовение (гусль)','до выхода на намаз'],['kahf','Сура «Аль-Кахф»','читать в пятницу'],['salawat','Больше салавата','счётчик в разделе «Зикр»'],['early','Прийти на жума-намаз пораньше','до азана'],['dua','Дуа в последний час до магриба','последний час до заката']];
+    const isJumaToday=()=>new Date().getDay()===5&&entryDateKey===todayKey;
+    const jumaKey=()=>`chetele-juma-${todayKey}`;
+    let jumaMemory=[];
+    function jumaMarks(){ try{ const v=JSON.parse(localStorage.getItem(jumaKey())||'null'); return Array.isArray(v)?v:[...jumaMemory]; }catch{ return [...jumaMemory]; } }
+    function paintJuma(){
+      const card=document.querySelector('#juma-card'), on=isJumaToday();
+      document.querySelector('#app')?.classList.toggle('is-juma',new Date().getDay()===5);
+      if(!card) return;
+      card.hidden=!on;
+      if(!on) return;
+      const marks=jumaMarks(), check='<svg class="lucide" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+      document.querySelector('#juma-count').textContent=`${JUMA_SUNNAHS.filter(([id])=>marks.includes(id)).length} / ${JUMA_SUNNAHS.length}`;
+      document.querySelector('#juma-list').innerHTML=JUMA_SUNNAHS.map(([id,title,sub])=>{ const done=marks.includes(id), when=id==='dua'&&window.cheteleJumaDua?window.cheteleJumaDua:sub; return `<button type="button" class="juma-item${done?' done':''}" data-juma="${id}" role="checkbox" aria-checked="${done}"><span class="juma-box">${done?check:''}</span><span class="juma-text"><b>${title}</b><small${id==='dua'?' id="juma-dua-when"':''}>${when}</small></span></button>`; }).join('');
+    }
+    document.addEventListener('click',event=>{
+      const item=event.target.closest('[data-juma]'); if(!item) return;
+      const id=item.dataset.juma, marks=jumaMarks(), at=marks.indexOf(id);
+      if(at<0) marks.push(id); else marks.splice(at,1);
+      jumaMemory=marks;
+      try{ localStorage.setItem(jumaKey(),JSON.stringify(marks)); }catch{ /* private mode: the marks last until reload */ }
+      if(at<0) navigator.vibrate?.(12);
+      paintJuma();
+    });
     function render(){
       paintDayStates();
       if(typeof paintHadithRead==='function') paintHadithRead();
-      document.querySelector('#welcome').textContent = state.name?`Ассаламу алейкум, ${state.name}`:'Ассаламу алейкум';
+      const greet=new Date().getDay()===5?(appLocale()==='ky-KG'?'Жума мубарек':'Жума мубарак'):'Ассаламу алейкум';
+      document.querySelector('#welcome').textContent = state.name?`${greet}, ${state.name}`:greet;
+      paintJuma();
       paintGuest();
       renderProfile(); renderAchievementsTeaser();
       if(!state.achievementBaselineReady&&(!state.userId||Array.isArray(state.remoteEntries))){ settleAchievementBaseline(); save(); }

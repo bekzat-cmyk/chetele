@@ -2330,3 +2330,54 @@ html body.app-dark #app .rt-slot.second{--medal:#D4DDE1;--medal-ring:#D4DDE1}
 html body.app-dark #app .rt-slot.third{--medal:#E0A97E;--medal-ring:#E0A97E}
 html body #app .rt-slot:is(.second,.third) .rt-crown,html body #app .rt-slot:is(.second,.third) .rt-step span{color:var(--medal)}
 html body #app .rt-podium .rt-slot:is(.second,.third) .rt-avatar{border:1.5px solid var(--medal-ring)}
+
+/* Friday: a golden greeting, the Jumu'ah line above the header, the Friday sunnahs card,
+   and the midday slot renamed «Жума» in gold until the prayer has passed. */
+body #app.on-today.is-juma .top .eyebrow{color:#F3D79B;font-weight:600}
+body #app.on-today .prayer-bar.is-juma:not([hidden]){display:flex}
+body #app .prayer-bar.is-juma{border-color:rgba(232,194,122,.6);background:linear-gradient(90deg,rgba(232,194,122,.38),rgba(232,194,122,.14))}
+body #app .prayer-bar.is-juma>em,body #app .prayer-bar.is-juma.is-soon>em{background:#E8C27A;color:#1A140A}
+body #app .prayer-bar.is-juma .prayer-bar-track span{background:#E8C27A}
+body.app-dark #app .prayer-bar.is-juma{border-color:rgba(232,194,122,.45);background:linear-gradient(90deg,rgba(232,194,122,.22),rgba(232,194,122,.08))}
+body.app-dark #app .prayer-bar.is-juma>em{background:#E8C27A;color:#1A140A}
+body.app-dark #app .prayer-bar.is-juma .prayer-bar-track span{background:#E8C27A}
+
+body #app #today-view>.juma-card{order:1}
+body #app .juma-card{display:flex;flex-direction:column;gap:2px;padding:16px 14px 8px;border-radius:28px;border:1px solid #EFD9A6;background:linear-gradient(160deg,rgba(255,244,219,.96),rgba(255,255,255,.72) 65%);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 14px 40px rgba(16,22,26,.08)}
+body #app .juma-card[hidden]{display:none}
+body #app .juma-head{display:flex;align-items:center;gap:12px;padding:0 4px 8px}
+body #app .juma-head>i{flex:none;width:44px;height:44px;border-radius:22px;background:rgba(232,194,122,.28);color:#9A6B12;display:grid;place-items:center}
+body #app .juma-head>i .lucide{width:22px;height:22px;stroke-width:1.8}
+body #app .juma-head>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .juma-head b{font-size:17px;font-weight:600;color:#10161A}
+body #app .juma-head small{font-size:13px;color:#7A6A47}
+body #app .juma-head>em{font-style:normal;font-size:15px;font-weight:700;color:#9A6B12;font-variant-numeric:tabular-nums}
+body #app .juma-item{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:4px;border:0;background:none;font:inherit;text-align:left;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body #app .juma-box{flex:none;width:26px;height:26px;border-radius:9px;border:1.6px solid #D3A957;box-sizing:border-box;display:grid;place-items:center;color:#1A140A;transition:background .18s ease,border-color .18s ease}
+body #app .juma-box .lucide{width:15px;height:15px;stroke-width:3}
+body #app .juma-item.done .juma-box{background:#E8C27A;border-color:#E8C27A;animation:check-pop .24s ease-out}
+body #app .juma-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+body #app .juma-text b{font-size:15px;font-weight:600;color:#10161A}
+body #app .juma-text small{font-size:12px;color:#7A6A47}
+body #app .juma-item.done .juma-text b{color:#8C8574;text-decoration:line-through;text-decoration-color:rgba(140,133,116,.6)}
+body.app-dark #app .juma-card{border-color:rgba(232,194,122,.28);background:linear-gradient(160deg,rgba(232,194,122,.14),rgba(255,255,255,.04) 60%);box-shadow:none}
+body.app-dark #app .juma-head>i{background:rgba(232,194,122,.18);color:#E8C27A}
+body.app-dark #app .juma-head b,body.app-dark #app .juma-text b{color:#F5EFE3}
+body.app-dark #app .juma-head small,body.app-dark #app .juma-text small{color:#BDB29C}
+body.app-dark #app .juma-head>em{color:#E8C27A}
+body.app-dark #app .juma-box{border-color:rgba(232,194,122,.6)}
+body.app-dark #app .juma-item.done .juma-text b{color:#BDB29C}
+
+body #app .prayer-slot.juma,body #app .prayer-slot.juma.current{background:#E8C27A;color:#1A140A}
+body.app-dark #app .prayer-slot.juma,body.app-dark #app .prayer-slot.juma *{background-color:#E8C27A;color:#1A140A!important}
+body.app-dark #app .prayer-slot.juma small{background:none;color:rgba(26,20,10,.75)!important}
+body.app-dark #app .prayer-slot.juma b{background:none}
+body #app .prayer-card.is-juma #prayer-next{color:#10161A}
+body #app .prayer-card.is-juma #prayer-timer{color:#9A6B12}
+body #app .prayer-card.is-juma #prayer-progress-fill{background:linear-gradient(90deg,#C9962F,#E8C27A)}
+body #app .prayer-card.is-juma #prayer-progress-knob{border-color:#C9962F}
+body #app .prayer-card.is-juma .prayer-left{padding:12px 14px;border-radius:18px;background:rgba(232,194,122,.18);color:#5C4718;font-size:13px;line-height:1.45}
+body.app-dark #app .prayer-card.is-juma #prayer-next{color:var(--ink)}
+body.app-dark #app .prayer-card.is-juma #prayer-timer{color:#E8C27A}
+body.app-dark #app .prayer-card.is-juma #prayer-progress-knob{border-color:#E8C27A}
+body.app-dark #app .prayer-card.is-juma .prayer-left{background:rgba(232,194,122,.1);color:#E9DFC9}
