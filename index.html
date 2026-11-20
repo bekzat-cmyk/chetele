@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="chetele-build" content="chetele-static-v163" />
+  <meta name="chetele-build" content="chetele-static-v164" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#f6f7fb" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -295,7 +295,7 @@ body.a11y-reduce .reward-confetti,body.a11y-reduce .reward-shine{display:none}
 <script src="assets/fasting.js?v=1"></script>
 <script src="assets/onboarding.js?v=3"></script>
 <script src="assets/zikr-sync.js?v=3"></script>
-<script src="assets/app.js?v=af1ba4de"></script><script>
+<script src="assets/app.js?v=f4496c59"></script><script>
     (()=>{
       const originalRenderEvents=window.renderEvents;
       if(typeof originalRenderEvents!=='function') return;
@@ -1157,7 +1157,7 @@ body.app-dark #app .week-bar i{background:#1f4a36}
     document.querySelector('.qibla-screen')?.remove();
     const where = place(), q = qiblaFor(where), number = new Intl.NumberFormat(appLocale());
     const layer = document.createElement('div'); layer.className = 'qibla-screen'; layer.setAttribute('role', 'dialog'); layer.setAttribute('aria-modal', 'true'); layer.setAttribute('aria-labelledby', 'qibla-title');
-    layer.innerHTML = `<header class="stats-top"><div><button type="button" class="stats-back" data-qibla-close aria-label="${ky() ? 'Артка' : 'Назад'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky() ? 'Намаз багыты' : 'Направление молитвы'}</span><h2 id="qibla-title">${ky() ? 'Кыбла' : 'Кибла'}</h2><span class="stats-period-label">${escapeHtml(where.name)}</span></div></header>
+    layer.innerHTML = `<header class="stats-top"><div><button type="button" class="stats-back" data-qibla-close aria-label="${ky() ? 'Артка' : 'Назад'}">${icon('softBack')}</button><span class="stats-eyebrow">${ky() ? 'Намаз багыты' : 'Направление молитвы'}</span><h2 id="qibla-title">${ky() ? 'Кыбла' : 'Кибла'}</h2></div></header>
       <div class="qb-status" role="status" aria-live="polite"><b></b><small></small></div>
       <div class="qb-dial-wrap">${qiblaDial(q.bearing)}</div>
       <div class="qb-facts"><div><small>${ky() ? 'Багыты' : 'Направление'}</small><b>${q.bearing}° <span>${sideOf(q.bearing)}</span></b></div><div><small>${ky() ? 'Меккеге чейин' : 'До Мекки'}</small><b>${number.format(q.km)} <span>км</span></b></div></div>
